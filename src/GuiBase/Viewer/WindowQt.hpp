@@ -27,8 +27,12 @@ namespace Gui {
 class RA_GUIBASE_API WindowQt : public QWindow
 {
   public:
-    explicit WindowQt( QScreen* screen );
+    explicit WindowQt( QWindow* parent );
     virtual ~WindowQt();
+
+    virtual void render();
+
+    virtual void initialize();
 
     void resizeEvent( QResizeEvent* event ) override;
     void showEvent( QShowEvent* event ) override;
@@ -53,8 +57,7 @@ class RA_GUIBASE_API WindowQt : public QWindow
 
     // note when updating from globjets
     // updateGL done by base app rendering loop
-
-    bool isOpenGlInitialized() const { return m_glInitialized.load(); }
+    bool isOpenGLInitialized() const { return m_glInitialized.load(); }
 
   public slots:
     /// call deinitializeGL if needed, with context activated
@@ -68,7 +71,6 @@ class RA_GUIBASE_API WindowQt : public QWindow
     bool m_updatePending;
     std::atomic_bool m_glInitialized;
 
-    void initialize();
     void resizeInternal( QResizeEvent* event );
 
     // note when updating from globjets

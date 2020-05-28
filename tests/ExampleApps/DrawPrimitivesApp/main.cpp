@@ -12,6 +12,9 @@
 #include <minimalapp.hpp>
 #include <minimalradium.hpp>
 
+#include <QObject>
+#include <QWidget>
+
 int main( int argc, char* argv[] ) {
 
     // Create default format for Qt.
@@ -27,24 +30,30 @@ int main( int argc, char* argv[] ) {
 
     // Create app and show viewer window
     MinimalApp app( argc, argv );
+
     app.m_viewer->show();
     app.m_viewer->resize( {500, 500} );
-    CORE_ASSERT( app.m_viewer->getContext()->isValid(), "OpenGL was not initialized" );
+    //    CORE_ASSERT( app.m_viewer->getContext()->isValid(), "OpenGL was not initialized" );
     // process all events so that everithing is initialized
     QApplication::processEvents();
 
-    // Create one system
-    MinimalSystem* sys = new MinimalSystem;
-    app.m_engine->registerSystem( "Minimal system", sys );
+    QMetaObject::Connection* const connection = new QMetaObject::Connection;
+    *connection                               = QObject::connect(
+        app.m_viewer.get(), &Ra::Gui::Viewer::glInitialized, [&app, connection]() {
+            // Create one system
+            MinimalSystem* sys = new MinimalSystem;
+            app.m_engine->registerSystem( "Minimal system", sys );
+            // Create and initialize entity and component
+            Ra::Engine::Entity* e = app.m_engine->getEntityManager()->createEntity( "Scene" );
+            MinimalComponent* c   = new MinimalComponent( e );
+            sys->addComponent( e, c );
+            c->initialize();
+            auto aabb = Ra::Engine::RadiumEngine::getInstance()->computeSceneAabb();
+            if ( !aabb.isEmpty() ) { app.m_viewer->fitCameraToScene( aabb ); }
 
-    // Create and initialize entity and component
-    Ra::Engine::Entity* e = app.m_engine->getEntityManager()->createEntity( "Cube" );
-    MinimalComponent* c   = new MinimalComponent( e );
-    sys->addComponent( e, c );
-    c->initialize();
-
-    auto aabb = Ra::Engine::RadiumEngine::getInstance()->computeSceneAabb();
-    if ( !aabb.isEmpty() ) { app.m_viewer->fitCameraToScene( aabb ); }
+            QObject::disconnect( *connection );
+            delete connection;
+        } );
 
     // Start the app.
     app.m_frame_timer->start();

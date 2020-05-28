@@ -88,8 +88,8 @@ void Gui::Viewer::configureKeyMapping_impl() {
 #undef KMA_VALUE
 }
 
-Gui::Viewer::Viewer( QScreen* screen ) :
-    WindowQt( screen ),
+Gui::Viewer::Viewer( QWindow* parent ) :
+    WindowQt( parent ),
     m_currentRenderer( nullptr ),
     m_pickingManager( new PickingManager() ),
     m_isBrushPickingEnabled( false ),
@@ -550,8 +550,7 @@ void Gui::Viewer::keyReleaseEvent( QKeyEvent* event ) {
 void Gui::Viewer::showEvent( QShowEvent* ev ) {
     WindowQt::showEvent( ev );
     /// todo remove this commented code when camera init in ctr is tested on other arch.
-
-    m_camera->resizeViewport( width(), height() );
+    if ( isOpenGLInitialized() ) m_camera->resizeViewport( width(), height() );
 
     emit needUpdate();
 }
@@ -614,13 +613,12 @@ bool Gui::Viewer::changeRenderer( int index ) {
 // Asynchronous rendering implementation
 
 void Gui::Viewer::startRendering( const Scalar dt ) {
-
+    makeCurrent();
     CORE_ASSERT( m_glInitialized.load(), "OpenGL needs to be initialized before rendering." );
 
     CORE_ASSERT( m_currentRenderer != nullptr, "No renderer found." );
 
     m_pickingManager->clear();
-    makeCurrent();
 
     // TODO : as soon as everything could be computed efficiently, activate z-bounds fitting.
     // For the moment (sept 2019), request of the scene bounding box is really inefficient (all is
@@ -660,8 +658,11 @@ void Gui::Viewer::startRendering( const Scalar dt ) {
 }
 
 void Gui::Viewer::swapBuffers() {
-    if ( isExposed() ) { m_context->swapBuffers( this ); }
-    doneCurrent();
+    if ( isOpenGLInitialized() && isExposed() )
+    {
+        m_context->swapBuffers( this );
+        doneCurrent();
+    }
 }
 
 void Gui::Viewer::processPicking() {

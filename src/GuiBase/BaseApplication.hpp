@@ -1,15 +1,19 @@
 #ifndef RADIUMENGINE_BASEAPPLICATION_HPP_
 #define RADIUMENGINE_BASEAPPLICATION_HPP_
-#include <atomic>
-#include <chrono>
-#include <memory>
-#include <vector>
 
-#include <QApplication>
+#include <GuiBase/RaGuiBase.hpp>
 
 #include <Core/Utils/Timer.hpp>
 #include <GuiBase/TimerData/FrameTimerData.hpp>
 #include <PluginBase/RadiumPluginInterface.hpp>
+
+#include <QApplication>
+#include <QCommandLineParser>
+
+#include <atomic>
+#include <chrono>
+#include <memory>
+#include <vector>
 
 class QTimer;
 
@@ -33,20 +37,22 @@ class MainWindowInterface;
 
 namespace Ra {
 namespace GuiBase {
+
+/// virtual class to handle main window creation
+class WindowFactory
+{
+  public:
+    WindowFactory()                                                    = default;
+    virtual ~WindowFactory()                                           = default;
+    virtual Ra::GuiBase::MainWindowInterface* createMainWindow() const = 0;
+};
+
 /// This class contains the main application logic. It owns the engine and the GUI.
 class RA_GUIBASE_API BaseApplication : public QApplication
 {
     Q_OBJECT
 
   public:
-    class WindowFactory
-    {
-      public:
-        WindowFactory()                                                    = default;
-        virtual ~WindowFactory()                                           = default;
-        virtual Ra::GuiBase::MainWindowInterface* createMainWindow() const = 0;
-    };
-
     /** Setup the application, create main window and main connections.
      * \param argc from main()
      * \param argv from main()
@@ -60,6 +66,10 @@ class RA_GUIBASE_API BaseApplication : public QApplication
                      QString applicationName  = "RadiumEngine",
                      QString organizationName = "STORM-IRIT" );
     ~BaseApplication();
+
+    /// This function is attached to viewer glInitialized signals so that
+    /// initialization that need opengl context is done correctly.
+    void deferredInitialization();
 
     /// Advance the engine for one frame.
     void radiumFrame();
@@ -204,7 +214,11 @@ class RA_GUIBASE_API BaseApplication : public QApplication
     std::atomic<int> m_continuousUpdateRequest{1};
 
     Plugins::Context m_pluginContext;
+
+    QCommandLineParser parser;
+    std::string pluginsPath;
 };
+
 } // namespace GuiBase
 } // namespace Ra
 #endif // RADIUMENGINE_BASEAPPLICATION_HPP_

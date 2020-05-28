@@ -51,6 +51,47 @@ static const bool expectPluginsDebug = true;
 static const bool expectPluginsDebug = false;
 #endif
 
+QCommandLineOption
+    fpsOpt( QStringList{"r", "framerate", "fps"},
+            "Control the application framerate, 0 to disable it (and run as fast as possible).",
+            "number",
+            "60" );
+QCommandLineOption maxThreadsOpt(
+    QStringList{"m", "maxthreads", "max-threads"},
+    "Control the maximum number of threads. 0 will set to the number of cores available",
+    "number",
+    "0" );
+QCommandLineOption numFramesOpt( QStringList{"n", "numframes"},
+                                 "Run for a fixed number of frames.",
+                                 "number",
+                                 "0" );
+QCommandLineOption pluginOpt( QStringList{"p", "plugins", "pluginsPath"},
+                              "Set the path to the plugin dlls.",
+                              "folder",
+                              "Plugins" );
+
+QCommandLineOption pluginLoadOpt(
+    QStringList{"l", "load", "loadPlugin"},
+    "Only load plugin with the given name (filename without the extension). If this option is "
+    "not used, all plugins in the plugins folder will be loaded. ",
+    "name" );
+
+QCommandLineOption pluginIgnoreOpt( QStringList{"K", "ignore", "ignorePlugin"},
+                                    "Ignore plugins with the given name. If the name appears "
+                                    "within both load and ignore options, it will be ignored.",
+                                    "name" );
+
+QCommandLineOption fileOpt( QStringList{"f", "file", "scene"},
+                            "Open a scene file at startup.",
+                            "file name",
+                            "foo.bar" );
+
+QCommandLineOption camOpt( QStringList{"c", "camera", "cam"},
+                           "Open a camera file at startup",
+                           "file name",
+                           "foo.bar" );
+QCommandLineOption recordOpt( QStringList{"s", "recordFrames"}, "Enable snapshot recording." );
+
 BaseApplication::BaseApplication( int& argc,
                                   char** argv,
                                   const WindowFactory& factory,
@@ -79,48 +120,12 @@ BaseApplication::BaseApplication( int& argc,
 
     m_targetFPS = 60; // Default
     // TODO at startup, only load "standard plugins". This must be extended.
-    std::string pluginsPath = std::string{Core::Resources::getRadiumPluginsDir()};
+    pluginsPath = std::string{Core::Resources::getRadiumPluginsDir()};
 
-    QCommandLineParser parser;
+
     parser.setApplicationDescription( "Radium Engine RPZ, TMTC" );
     parser.addHelpOption();
     parser.addVersionOption();
-
-    QCommandLineOption fpsOpt(
-        QStringList{"r", "framerate", "fps"},
-        "Control the application framerate, 0 to disable it (and run as fast as possible).",
-        "number",
-        "60" );
-    QCommandLineOption maxThreadsOpt(
-        QStringList{"m", "maxthreads", "max-threads"},
-        "Control the maximum number of threads. 0 will set to the number of cores available",
-        "number",
-        "0" );
-    QCommandLineOption numFramesOpt(
-        QStringList{"n", "numframes"}, "Run for a fixed number of frames.", "number", "0" );
-    QCommandLineOption pluginOpt( QStringList{"p", "plugins", "pluginsPath"},
-                                  "Set the path to the plugin dlls.",
-                                  "folder",
-                                  "Plugins" );
-    QCommandLineOption pluginLoadOpt(
-        QStringList{"l", "load", "loadPlugin"},
-        "Only load plugin with the given name (filename without the extension). If this option is "
-        "not used, all plugins in the plugins folder will be loaded. ",
-        "name" );
-    QCommandLineOption pluginIgnoreOpt( QStringList{"i", "ignore", "ignorePlugin"},
-                                        "Ignore plugins with the given name. If the name appears "
-                                        "within both load and ignore options, it will be ignored.",
-                                        "name" );
-    QCommandLineOption fileOpt( QStringList{"f", "file", "scene"},
-                                "Open a scene file at startup.",
-                                "file name",
-                                "foo.bar" );
-
-    QCommandLineOption camOpt( QStringList{"c", "camera", "cam"},
-                               "Open a camera file at startup",
-                               "file name",
-                               "foo.bar" );
-    QCommandLineOption recordOpt( QStringList{"s", "recordFrames"}, "Enable snapshot recording." );
 
     parser.addOptions( {fpsOpt,
                         pluginOpt,
@@ -131,7 +136,14 @@ BaseApplication::BaseApplication( int& argc,
                         maxThreadsOpt,
                         numFramesOpt,
                         recordOpt} );
+
     parser.process( *this );
+
+
+
+
+    parser.values( pluginIgnoreOpt );
+
 
     if ( parser.isSet( fpsOpt ) ) m_targetFPS = parser.value( fpsOpt ).toUInt();
     if ( parser.isSet( pluginOpt ) ) pluginsPath = parser.value( pluginOpt ).toStdString();
@@ -223,13 +235,24 @@ BaseApplication::BaseApplication( int& argc,
     m_viewer->setupKeyMappingCallbacks();
 
     CORE_ASSERT( m_viewer != nullptr, "GUI was not initialized" );
-    CORE_ASSERT( m_viewer->getContext() != nullptr, "OpenGL context was not created" );
-    CORE_ASSERT( m_viewer->getContext()->isValid(), "OpenGL was not initialized" );
 
     // Connect the signals and allow all pending events to be processed
     // (thus the viewer should have initialized the OpenGL context..)
     createConnections();
-    processEvents();
+
+    // the rest of the initialization has to be done with valid opengl context,
+    // so defer after glInitialized.
+    QMetaObject::Connection* const connection = new QMetaObject::Connection;
+
+    *connection =
+        QObject::connect( m_viewer, &Ra::Gui::Viewer::glInitialized, [this, connection]() {
+            deferredInitialization();
+            QObject::disconnect( *connection );
+            delete connection;
+        } );
+}
+
+void BaseApplication::deferredInitialization() {
 
     // Register the GeometrySystem converting loaded assets to meshes
     m_engine->registerSystem( "GeometrySystem", new Ra::Engine::GeometrySystem, 1000 );
@@ -386,6 +409,7 @@ void BaseApplication::addBasicShaders() {
 }
 
 void BaseApplication::radiumFrame() {
+    if ( !m_viewer->isOpenGLInitialized() ) return;
     FrameTimerData timerData;
     timerData.frameStart = Core::Utils::Clock::now();
 
@@ -502,16 +526,16 @@ BaseApplication::~BaseApplication() {
     QDir().rmdir( m_exportFoldername.c_str() );
 }
 
-bool BaseApplication::loadPlugins( const std::string& pluginsPath,
+bool BaseApplication::loadPlugins( const std::string& pluginsPath2,
                                    const QStringList& loadList,
                                    const QStringList& ignoreList ) {
     QDir pluginsDir( qApp->applicationDirPath() );
     LOG( logINFO ) << " *** Loading Plugins ***";
-    bool result = pluginsDir.cd( pluginsPath.c_str() );
+    bool result = pluginsDir.cd( pluginsPath2.c_str() );
 
     if ( !result )
     {
-        LOG( logERROR ) << "Cannot open specified plugins directory " << pluginsPath;
+        LOG( logERROR ) << "Cannot open specified plugins directory " << pluginsPath2;
         return false;
     }
 
@@ -623,7 +647,7 @@ bool BaseApplication::loadPlugins( const std::string& pluginsPath,
 
                         if ( loadedPlugin->doAddROpenGLInitializer() )
                         {
-                            if ( m_viewer->isOpenGlInitialized() )
+                            if ( m_viewer->isOpenGLInitialized() )
                             {
                                 LOG( logDEBUG ) << "Direct OpenGL initialization for plugin "
                                                 << filename.toStdString();
