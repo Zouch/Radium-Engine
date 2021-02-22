@@ -2,6 +2,7 @@ set( gui_sources
     BaseApplication.cpp
     RadiumWindow/SimpleWindow.cpp
     SelectionManager/SelectionManager.cpp
+    SkeletonBasedAnimation/SkeletonBasedAnimationUI.cpp
     Timeline/HelpDialog.cpp
     Timeline/Timeline.cpp
     Timeline/TimelineFrameSelector.cpp
@@ -34,6 +35,7 @@ set( gui_headers
     RadiumWindow/SimpleWindow.hpp
     RaGui.hpp
     SelectionManager/SelectionManager.hpp
+    SkeletonBasedAnimation/SkeletonBasedAnimationUI.hpp
     Timeline/Configurations.hpp
     Timeline/HelpDialog.hpp
     Timeline/TimelineFrameSelector.hpp
@@ -66,10 +68,12 @@ set( gui_inlines
 )
 
 set( gui_uis
+    SkeletonBasedAnimation/SkeletonBasedAnimationUI.ui
     Timeline/HelpDialog.ui
     Timeline/Timeline.ui
 )
 
 set( gui_resources
+    SkeletonBasedAnimation/SkeletonBasedAnimation.qrc
     Timeline/timeline.qrc
 )

@@ -1,0 +1,16 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Icons/xray.png</file>
+        <file>Icons/DQ.png</file>
+        <file>Icons/DQ_on.png</file>
+        <file>Icons/CoR.png</file>
+        <file>Icons/CoR_on.png</file>
+        <file>Icons/LB.png</file>
+        <file>Icons/LB_on.png</file>
+        <file>Icons/STBSDQ.png</file>
+        <file>Icons/STBSDQ_on.png</file>
+        <file>Icons/STBSLB.png</file>
+        <file>Icons/STBSLB_on.png</file>
+        <file>Textures/Influence0.png</file>
+    </qresource>
+</RCC>
