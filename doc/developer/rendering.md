@@ -9,17 +9,16 @@ Rendering in Radium is managed by the abstract Ra::Engine::Rendering::Renderer c
 This method is general and cannot be modified, it always does the following
 
 ~~~{.cpp}
-void Ra::Engine::Rendering::Renderer::render( const Ra::Engine::ViewingParameters& data )
+void Ra::Engine::Rendering::Renderer::render( const Ra::Engine::Data::ViewingParameters& data )
 {
-  // 0. Save an eventual already bound FBO
+  // 0. Save eventual already bound FBO (e.g. QtOpenGLWidget) and viewport
   saveExternalFBOInternal();
 
-  // 1. Gather render objects and update them
-  renderObjects = m_engine->getRenderObjectManager()->getRenderObjects();
-  updateRenderObjectsInternal( data, renderObjects );
+  // 1. Gather render objects
+  feedRenderQueuesInternal( data );
 
-  // 2. Feed render queues
-  feedRenderQueuesInternal( data, renderObjects );
+  // 2. Update them (from an opengl point of view)
+  updateRenderObjectsInternal( data );
 
   // 3. Do picking if needed
   if ( !m_pickingQueries.empty() )
@@ -28,6 +27,9 @@ void Ra::Engine::Rendering::Renderer::render( const Ra::Engine::ViewingParameter
   }
 
   // 4. Do the rendering.
+  // 4.1 update Renderer internal state
+  updateStepInternal( data );
+  // 4.2 render the scene
   renderInternal( data );
 
   // 5. Post processing
@@ -46,49 +48,54 @@ to feed an already bound FBO. Since the default renderer uses multiple FBOs, the
 
 _This behaviour cannot be modified._
 
-### 1. Gather render objects and update them
-This construct the set of objects that must be drawn for the current frame and update their OpenGL state.
+### 1. Gather render objects
+This construct the set of objects that must be drawn for the current frame.
 
-### 2. Feed the render queue
-This construct the set of render actions that must be done for the current frame.
+### 2. Update the internal state of RenderObjects
+This updates, if needed, the OpenGL internal state of RenderObjects.
 
 ### 3. Do picking if needed
 If there has been some picking requests since the last frame, `doPicking` is called.
-This function just renders all the objects (except _debug_ ones) by drawing them in some color given the ID
-of the entity a render object is attached to.
+This function just renders all the objects (except _debug_ ones) by drawing them in a Id buffer to collect the ids 
+of the entity, the render object, the polygon, ....
 
-Then, for each picking request done, `glReadPixels` is called at the requested location, and object ID is retrieved.
+Then, for each picking request done, `glReadPixels` is called at the requested location, and object Ids are retrieved.
 
 ### 4. Do the rendering
-This method does most of the whole rendering work
-and outputs one final _render pass_ texture, ready to be post-processed.
+This method does most of the whole rendering work in two steps
+#### 4.1 Setup renderer internal state for rendering
+This basically populate the render loop, in a renderer dependent way with objects to be drawn.
+#### 4.2 Render the scene
+This execute the render loop in a renderer dependent way.
 
 ### 5. Post-process the rendering result
-This method will apply post-processing filters on the computed image.
-
+This method will apply post-processing effects on the computed image.
 
 ## Defining a concrete renderer
 
-To define a concrete renderer, the Ra::Engine::Rendering::Renderer class can be inherited to define, at least, the 
-`renderInternal` method. Note that only two methods can be overridden for the renderer, renderInternal (step 4) and 
-postProcessInternal (step 5).
+To define a concrete renderer, the Ra::Engine::Rendering::Renderer class must be derived to define all the method that 
+implements renderer specific tasks and are declared a pure virtual methods in Ra::Engine::Rendering::Renderer.
 
 A concrete renderer will build its rendering loop, the `renderInternal` method, by decomposing it into passes 
-configured, for each Ra::engine::RenderObject, using the Ra::Engine::Rendering::RenderTechique class.
+configured, for each Ra::Engine::Rendering::RenderObject available in the scene, using the 
+Ra::Engine::Rendering::RenderTechnique class.
 
-A Ra::Engine::Rendering::RenderTechnique consists in a set of named Ra::Engine::Data::ShaderConfiguration that provide the GLSL code used
-by each pass to compute the appearance of a Ra::Engine::Rendering::RenderObject and a set of Ra::Engine::Data::ShaderParameterProvider 
-that provide shader data to be used for each pass.
+A Ra::Engine::Rendering::RenderTechnique consists in a set of named Ra::Engine::Data::ShaderConfiguration that provide 
+the GLSL code used by each pass to compute the appearance of a Ra::Engine::Rendering::RenderObject and a set of 
+Ra::Engine::Data::ShaderParameterProvider that provide shader data to be used for each pass.
 
-When rendering, the renderer will loop over all the configured Ra::Engine::Rendering::RenderObject and, for each rendering pass, 
-will get the OpenGL pipeline configuration and parameters from the Ra::Engine::Rendering::RenderTechnique associated with the 
-Ra::Engine::Rendering::RenderObject.
+When rendering, and for each rendering pass, the renderer will first set the global state of the OpenGL pipeline 
+corresponding to the pass then loop over all the Ra::Engine::Rendering::RenderObject to be drawn.
+For each Ra::Engine::Rendering::RenderObject, the renderObject OpenGL pipeline configuration and parameters are fetched 
+from the Ra::Engine::Rendering::RenderTechnique associated with the Ra::Engine::Rendering::RenderObject, and the 
+render object is drawn according to the Ra::Engine::Data::ViewingParameters for the current frame.
 
-The Radium Engine exports a ready to use renderer, Ra::Engine::Rendering::ForwardRenderer, that decomposes the rendering into three 
-passes as described in the \ref forwardRenderer document.
+The Radium Engine exports a ready to use concrete renderer, Ra::Engine::Rendering::ForwardRenderer, used by default by
+the Radium-based applications, that decomposes the rendering into three passes as described in the @ref forwardRenderer
+document.
 
 ## Minimal renderer howto
-This section explain, through the developement of a simple Rendering, how to configure RenderObjects and RenderTechnique 
+This section explain, through the development of a simple Renderer, how to configure RenderObjects and RenderTechnique 
 to be used by a renderer.
 
 ### Developping the Rendering
