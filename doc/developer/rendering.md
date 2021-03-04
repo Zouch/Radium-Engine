@@ -98,12 +98,11 @@ document.
 This section explain, through the development of a simple Renderer, how to configure RenderObjects and RenderTechnique 
 to be used by a renderer.
 
-### Developping the Rendering
+### Developing the Rendering
 Help wanted for this section.
 
 ### Configuring the RenderObjects and their RenderTechnique
 Help wanted for this section.
- 
 
 
 # Radium Engine default rendering information

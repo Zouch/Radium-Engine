@@ -23,8 +23,6 @@ class ShaderProgram;
 
 /**
  * Implementation of the Blinn-Phong Material BSDF.
- * @todo due to "Material.glsl" interface modification, must test this version with all plugins,
- * apps, ... that uses Radium Renderer
  */
 class RA_ENGINE_API BlinnPhongMaterial final : public Material
 {

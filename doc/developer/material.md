@@ -19,9 +19,10 @@ The Radium Engine exposes some predefined materials, the _Radium Material Librar
 to the Ra::Engine::Rendering::ForwardRenderer default renderer. 
 
 # Content of the Radium Material Library
-The Radium Material Library defines two default material :
+The Radium Material Library defines three default materials :
   - BlinnPhong, Ra::Engine::Data::BlinnPhongMaterial, corresponding to the Blinn-Phong BSDF.
-  - Plain, Ra::Engine::Data::PlainMaterial, corresponding to a diffuse, lambertian BSDF.
+  - Lambertian, Ra::Engine::Data::LambertianMaterial, corresponding to the diffuse, lambertian BSDF.
+  - Plain, Ra::Engine::Data::PlainMaterial, corresponding to a constant BSDF.
 
 The _Radium Material Library_ can be used as this by any Radium Application or can be extended by an application or a 
 Radium Plugin by implementing the corresponding interfaces as described in the 
@@ -43,6 +44,14 @@ A simple usage of material is demonstrated in the [HelloRadium Application](http
 When building scene to render, a Ra::Engine::Scene::Component must be added to a system as described into the 
 _Radium Engine programmer manual_.
 A component holds one or several Ra::Engine::Rendering::RenderObject that will be drawn when rendering.
+
+In this example, we will build a Ra::Engine::Scene::TriangleMeshComponent whose own a single Ra::Engine::Rendering::RenderObject
+automatically built from a Ra::Core::Geometry::TriangleMesh and a Ra::Core::Asset::MaterialData which will be converted 
+to a Ra::Engine::Data::Material using the corresponding Ra::Engine::Data::EngineMaterialConverters::ConverterFunction.
+
+\todo Either define a simpleMaterialDemo or add to Ra::Core::Asset::BlinnPhongMaterialData the capabilities of definig per-vertex color  
+
+\todo Note that the following documentation is obsolete from here and up to _Note that this way of using the_
 
 To define a Ra::Engine::Rendering::RenderObject and add it to the component, the geometry of a 3D object (a Ra::Engine::Mesh) 
 must be associated with a Ra::Engine::Rendering::RenderTechnique that links to the required Ra::Engine::Data::Material.
