@@ -43,39 +43,33 @@ A simple usage of material is demonstrated in the [HelloRadium Application](http
 
 When building scene to render, a Ra::Engine::Scene::Component must be added to a system as described into the 
 _Radium Engine programmer manual_.
-A component holds one or several Ra::Engine::Rendering::RenderObject that will be drawn when rendering.
 
 In this example, we will build a Ra::Engine::Scene::TriangleMeshComponent whose own a single Ra::Engine::Rendering::RenderObject
 automatically built from a Ra::Core::Geometry::TriangleMesh and a Ra::Core::Asset::MaterialData which will be converted 
 to a Ra::Engine::Data::Material using the corresponding Ra::Engine::Data::EngineMaterialConverters::ConverterFunction.
+The final appearance of the Ra::Engine::Rendering::RenderObject will be computed by combining the material definition
+with the color attributes defined on the mesh.
 
-\todo Either define a simpleMaterialDemo or add to Ra::Core::Asset::BlinnPhongMaterialData the capabilities of definig per-vertex color  
-
-\todo Note that the following documentation is obsolete from here and up to _Note that this way of using the_
-
-To define a Ra::Engine::Rendering::RenderObject and add it to the component, the geometry of a 3D object (a Ra::Engine::Mesh) 
-must be associated with a Ra::Engine::Rendering::RenderTechnique that links to the required Ra::Engine::Data::Material.
- 
-To do that, the following steps must be done :
-\todo update snippets that are not available anymore.
+To build such a component, the following steps must be done :
 
 1. Create the Ra::Engine::Data::Mesh (see the [documentation about Meshes](@ref develmeshes))
-\snippet HelloRadium/main.cpp Creating the Engine Mesh
+\snippet HelloRadium/main.cpp Creating the cube
 
-2. Create the Ra::Engine::Data::Material
+2. Add an attribute to the mesh to define the bas color of the material
+\snippet HelloRadium/main.cpp Colorize the Cube
+   
+3. Create the Ra::Core::Asset::BlinnPhongMaterialData
 \snippet HelloRadium/main.cpp Creating the Material
 
-3. Create the Ra::Engine::Rendering::RenderTechnique, here using the Ra::Engine::Rendering::EngineRenderTechniques factory, and associate it 
-to the material
-\snippet HelloRadium/main.cpp Creating the RenderTechnique
+4. Create the Ra::Engine::Scene::Entity that will hold the component
+\snippet HelloRadium/main.cpp Create the engine entity for the cube
 
-4. Create the Ra::Engine::Rendering::RenderObject and add it to the Ra::Engine::Scene::Component
-\snippet HelloRadium/main.cpp Creating the RenderObject
+5. Create the component that associates the mesh and the material
+\snippet HelloRadium/main.cpp Create a geometry component with the cube
 
 Note that this way of using the _Radium Material Library_ is very related to the default Radium rendering capabilities
-exposed by the [Radium forward renderer](@ref forwardRenderer). 
-See the [Render technique management](./rendertechnique) documentation to learn how to create your own 
-Ra::Engine::Rendering::RenderTechnique, potentially without associated material.
+exposed by the [Radium forward renderer](@ref forwardRenderer) and rely on definition of material as if it was given by 
+the Ra::IO library. 
 
 If one wants to render objects without BSDF computation but with a specific color computation for the fragment, 
 follow the guidelines from [the dedicated section](#non-bsdf-rendering) of this documentation.

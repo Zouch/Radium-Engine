@@ -165,6 +165,7 @@ BlinnPhongMaterialConverter::operator()( const Ra::Core::Asset::MaterialData* to
     // static cst is safe here
     auto source = static_cast<const Ra::Core::Asset::BlinnPhongMaterialData*>( toconvert );
 
+    result->m_perVertexColor = source->m_diffuseFromMesh;
     if ( source->hasDiffuse() ) result->m_kd = source->m_diffuse;
     if ( source->hasSpecular() ) result->m_ks = source->m_specular;
     if ( source->hasShininess() ) result->m_ns = source->m_shininess;

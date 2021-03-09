@@ -26,7 +26,8 @@ BlinnPhongMaterialData::BlinnPhongMaterialData( const std::string& name ) :
     m_hasTexSpecular( false ),
     m_hasTexShininess( false ),
     m_hasTexNormal( false ),
-    m_hasTexOpacity( false ) {}
+    m_hasTexOpacity( false ),
+    m_diffuseFromMesh( false ) {}
 
 } // namespace Asset
 } // namespace Core
