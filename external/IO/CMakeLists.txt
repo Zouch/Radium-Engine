@@ -28,8 +28,8 @@ if (RADIUM_IO_ASSIMP)
         # For now, only configure in Debug mode to work with xcode
         ExternalProject_Add(assimp
             GIT_REPOSITORY https://github.com/assimp/assimp.git
-            GIT_TAG tags/v5.0.1
-            GIT_SHALLOW TRUE
+            GIT_TAG ec08092dbf559a9da352889317f07afa56c97bdb
+            GIT_SHALLOW FALSE
             GIT_PROGRESS TRUE
             INSTALL_DIR "${CMAKE_INSTALL_PREFIX}"
             CMAKE_ARGS
@@ -68,4 +68,3 @@ if(RADIUM_IO_TINYPLY)
         StatusMessage("[IOExternal]" "tinyply" "${tinyply_DIR}")
     endif()
 endif()
-
