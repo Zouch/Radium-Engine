@@ -30,6 +30,12 @@ class RA_ENGINE_API SkinningComponent : public Component
         STBS_DQS  ///< Stretchable Twistable Bone Skinning with DQS
     };
 
+    /// How to skin the normal, tangent and binormal vectors.
+    enum NormalSkinning {
+        APPROX = 0, ///< Use the standard approximation method.
+        GEOMETRIC   ///< Recompute from scratch from the skinned positions.
+    };
+
     /// The skinning weight type.
     enum WeightType {
         STANDARD = 0, ///< Standard geometric skinning weights
@@ -39,6 +45,7 @@ class RA_ENGINE_API SkinningComponent : public Component
     SkinningComponent( const std::string& name, SkinningType type, Entity* entity ) :
         Component( name, entity ),
         m_skinningType( type ),
+        m_normalSkinning( APPROX ),
         m_isReady( false ),
         m_forceUpdate( false ),
         m_weightBone( 0 ),
@@ -61,6 +68,12 @@ class RA_ENGINE_API SkinningComponent : public Component
     /// \returns the current skinning method.
     inline SkinningType getSkinningType() const { return m_skinningType; }
 
+    /// Sets the method to use to skin the normal, tangent and binormal vectors.
+    void setNormalSkinning( NormalSkinning normalSkinning );
+
+    /// \returns the current method used to skin the normal, tangent and binormal vectors.
+    inline NormalSkinning getNormalSkinning() const { return m_normalSkinning; }
+
     /// Loads the skinning data from the given Handledata.
     /// \note Call initialize() afterwards to finalize data registration.
     void handleSkinDataLoading( const Ra::Core::Asset::HandleData* data,
@@ -68,10 +81,10 @@ class RA_ENGINE_API SkinningComponent : public Component
                                 const Ra::Core::Transform& meshFrame );
 
     /// @returns the reference skinning data.
-    const Ra::Core::Skinning::RefData* getRefData() const { return &m_refData; }
+    const Ra::Core::Animation::SkinningRefData* getSkinningRefData() const { return &m_refData; }
 
     /// @returns the current Pose data.
-    const Ra::Core::Skinning::FrameData* getFrameData() const { return &m_frameData; }
+    const Ra::Core::Animation::SkinningFrameData* getSkinningFrameData() const { return &m_frameData; }
 
     /// @returns the name of the skinned mesh.
     const std::string getMeshName() const;
@@ -139,10 +152,10 @@ class RA_ENGINE_API SkinningComponent : public Component
     Ra::Core::Transform m_meshFrameInv;
 
     /// The refrence Skinning data.
-    Ra::Core::Skinning::RefData m_refData;
+    Ra::Core::Animation::SkinningRefData m_refData;
 
     /// The current Pose data.
-    Ra::Core::Skinning::FrameData m_frameData;
+    Ra::Core::Animation::SkinningFrameData m_frameData;
 
     /// Getter for the animation skeletton.
     Getter<Ra::Core::Animation::Skeleton> m_skeletonGetter;
@@ -157,6 +170,7 @@ class RA_ENGINE_API SkinningComponent : public Component
 
     /// The Skinning Method.
     SkinningType m_skinningType;
+    NormalSkinning m_normalSkinning;
 
     /// Are all the required data available.
     bool m_isReady;
@@ -176,9 +190,6 @@ class RA_ENGINE_API SkinningComponent : public Component
     /// \note These are stored this way because we cannot fill m_refData
     ///       without data from other components (skeleton).
     std::map<std::string, Ra::Core::Transform> m_loadedBindMatrices;
-
-    /// The STBS weights.
-    Ra::Core::Animation::WeightMatrix m_weightSTBS;
 
     /// stretch mode: false = standard, true = smart.
     bool m_smartStretch { true };

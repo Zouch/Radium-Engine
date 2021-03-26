@@ -7,6 +7,7 @@
 #include <Core/Animation/HandleWeight.hpp>
 #include <Core/Animation/LinearBlendSkinning.hpp>
 #include <Core/Animation/Pose.hpp>
+#include <Core/Animation/SkinningData.hpp>
 #include <Core/Geometry/TopologicalMesh.hpp>
 #include <Core/Geometry/TriangleOperation.hpp> // triangleArea
 #include <Core/Utils/Log.hpp>
@@ -49,7 +50,7 @@ Scalar weightSimilarity( const Eigen::SparseVector<Scalar>& v1w,
     return result;
 }
 
-void computeCoR( Skinning::RefData& dataInOut, Scalar sigma, Scalar weightEpsilon ) {
+void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon ) {
     LOG( logDEBUG ) << "Precomputing CoRs";
 
     //
@@ -225,27 +226,51 @@ void computeCoR( Skinning::RefData& dataInOut, Scalar sigma, Scalar weightEpsilo
     }
 }
 
-void corSkinning( const Vector3Array& input,
-                  const Animation::Pose& pose,
-                  const Animation::WeightMatrix& weight,
-                  const Vector3Array& CoR,
-                  Vector3Array& output ) {
-    const uint size = input.size();
-    output.resize( size );
+void centerOfRotationSkinning( const SkinningRefData& refData,
+                               const Vector3Array& tangents,
+                               const Vector3Array& bitangents,
+                               SkinningFrameData& frameData ) {
+    CORE_ASSERT( refData.m_CoR.size() == frameData.m_currentPosition.size(),
+                 "Invalid center of rotations" );
 
-    CORE_ASSERT( CoR.size() == size, "Invalid center of rotations" );
+    const auto& W = refData.m_weights;
+    const auto& vertices = refData.m_referenceMesh.vertices();
+    const auto& normals = refData.m_referenceMesh.normals();
+    const auto& CoR = refData.m_CoR;
+    const auto& pose = frameData.m_currentPose;
 
     // Compute the dual quaternions
-    AlignedStdVector<DualQuaternion> DQ;
-    Animation::computeDQ( pose, weight, DQ );
+    const auto DQ = computeDQ( pose, W );
 
     // Do LBS on the COR with weights of their associated vertices
-    Vector3Array transformedCoR;
-    Animation::linearBlendSkinning( CoR, pose, weight, transformedCoR );
 #pragma omp parallel for
-    for ( int i = 0; i < int( size ); ++i )
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
     {
-        output[i] = DQ[i].rotate( input[i] - CoR[i] ) + transformedCoR[i];
+        frameData.m_currentPosition[i] = Vector3::Zero();
+    }
+    for ( int k = 0; k < W.outerSize(); ++k )
+    {
+        const int nonZero = W.col( k ).nonZeros();
+        WeightMatrix::InnerIterator it0( W, k );
+#pragma omp parallel for
+        for ( int nz = 0; nz < nonZero; ++nz )
+        {
+            WeightMatrix::InnerIterator it = it0 + Eigen::Index( nz );
+            const uint i                   = it.row();
+            const uint j                   = it.col();
+            const Scalar w                 = it.value();
+            frameData.m_currentPosition[i] += w * ( pose[j] * CoR[i] );
+        }
+    }
+
+    // Compute final transformation
+#pragma omp parallel for
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
+    {
+        frameData.m_currentPosition[i] += DQ[i].rotate( vertices[i] - CoR[i] );
+        frameData.m_currentNormal[i] = DQ[i].rotate( normals[i] );
+        frameData.m_currentTangent[i] = DQ[i].rotate( tangents[i] );
+        frameData.m_currentBitangent[i] = DQ[i].rotate( bitangents[i] );
     }
 }
 

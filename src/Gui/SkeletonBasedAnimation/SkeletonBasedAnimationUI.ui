@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>348</width>
-    <height>434</height>
+    <width>385</width>
+    <height>342</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
   <property name="frameShadow">
    <enum>QFrame::Raised</enum>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2">
+  <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="enabled">
@@ -189,26 +189,6 @@
        <string>Rig</string>
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>X-Ray:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Show:</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="1">
         <widget class="QCheckBox" name="m_showSkeleton">
          <property name="text">
@@ -253,6 +233,13 @@
         </widget>
        </item>
        <item row="2" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Show:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
         <spacer name="verticalSpacer_1">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -265,14 +252,65 @@
          </property>
         </spacer>
        </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>X-Ray:</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="m_skinning">
       <attribute name="title">
        <string>Skinning</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_5">
+         <property name="text">
+          <string>Normal Skinning:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="text">
+          <string>Skinning Method:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="m_normalSkinning">
+         <item>
+          <property name="text">
+           <string>Standard Approx.</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Geometric Eval.</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="m_showWeights">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Show Weights</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
         <widget class="QCheckBox" name="m_smartStretch">
          <property name="enabled">
           <bool>false</bool>
@@ -288,7 +326,24 @@
          </property>
         </widget>
        </item>
-       <item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="m_weightsType">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <item>
+          <property name="text">
+           <string>Standard Weights</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>STBS Weights</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="1">
         <widget class="QComboBox" name="m_skinningMethod">
          <property name="enabled">
           <bool>false</bool>
@@ -310,48 +365,17 @@
          </item>
          <item>
           <property name="text">
-           <string>Stretchable and Twistable LBS</string>
+           <string>STBS with LBS</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Stretchable and Twistable DQS</string>
+           <string>STBS with DQS</string>
           </property>
          </item>
         </widget>
        </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_3">
-         <item>
-          <widget class="QCheckBox" name="m_showWeights">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="text">
-            <string>Show Weights</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="m_weightsType">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <item>
-            <property name="text">
-             <string>Standard Weights</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>STBS Weights</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
+       <item row="4" column="0">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

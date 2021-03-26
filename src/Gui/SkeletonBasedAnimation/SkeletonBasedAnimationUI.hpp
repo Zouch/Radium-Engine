@@ -117,6 +117,9 @@ class RA_GUI_API SkeletonBasedAnimationUI : public QFrame
     /// Slot for the user selecting the kind of displayed skinning weights.
     void on_m_weightsType_currentIndexChanged( int index );
 
+    /// Slot for the user changing the way normals are computed.
+    void on_m_normalSkinning_currentIndexChanged( int index );
+
     /// Slot for the user requesting to use LBS skinning.
     void on_actionLBS_triggered();
 

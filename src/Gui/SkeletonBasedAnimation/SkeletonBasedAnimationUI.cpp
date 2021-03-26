@@ -97,6 +97,8 @@ void SkeletonBasedAnimationUI::selectionChanged( const Engine::Scene::ItemEntry&
             ui->m_showWeights->setChecked( skinComp->isShowingWeights() );
             ui->m_weightsType->setEnabled( true );
             ui->m_weightsType->setCurrentIndex( int( skinComp->getWeightsType() ) );
+            ui->m_normalSkinning->setEnabled( true );
+            ui->m_normalSkinning->setCurrentIndex( int( skinComp->getNormalSkinning() ) );
         }
     }
 
@@ -369,6 +371,13 @@ void SkeletonBasedAnimationUI::on_m_weightsType_currentIndexChanged( int newType
     askForUpdate();
 }
 
+void SkeletonBasedAnimationUI::on_m_normalSkinning_currentIndexChanged( int newType ) {
+    for ( auto skin : m_currentSkinnings )
+    {
+        skin->setNormalSkinning( Engine::Scene::SkinningComponent::NormalSkinning( newType ) );
+    }
+    askForUpdate();
+}
 
 void SkeletonBasedAnimationUI::on_actionLBS_triggered() {
     using SkinningType = Ra::Engine::Scene::SkinningComponent::SkinningType;

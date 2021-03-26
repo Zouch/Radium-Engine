@@ -1,18 +1,30 @@
 #pragma once
 
-#include <Core/Animation/HandleWeight.hpp>
-#include <Core/Animation/Pose.hpp>
+#include <RaCore.hpp>
 #include <Core/Containers/VectorArray.hpp>
-#include <Core/Types.hpp>
 
 namespace Ra {
 namespace Core {
 namespace Animation {
 
-void RA_CORE_API linearBlendSkinning( const Vector3Array& inMesh,
-                                      const Pose& pose,
-                                      const WeightMatrix& weight,
-                                      Vector3Array& outMesh );
+struct SkinningRefData;
+struct SkinningFrameData;
+
+/**
+ * \brief Applies Linear-Blend skinning to the current frame.
+ *
+ * Linear-Blend skinning deforms the mesh geometry for frame $t$ as follows:
+ * $\mathbf{p}_i^t = \sum_{s\in S}\omega_{is}\mathbf{M}_s\mathbf{p}_i^0$
+ *
+ * The skinning of the normal, tangent and bitangent vectors is approximated as:
+ * $\mathbf{v}_i^t = \sum_{s\in S}\omega_{is}\mathbf{R}_s\mathbf{v}_i^0$
+ *
+ * \note Assumes frameData is well sized.
+ */
+void RA_CORE_API linearBlendSkinning( const SkinningRefData& refData,
+                                      const Vector3Array& tangents,
+                                      const Vector3Array& bitangents,
+                                      SkinningFrameData& frameData );
 
 } // namespace Animation
 } // namespace Core

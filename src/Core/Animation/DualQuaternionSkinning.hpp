@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Core/Animation/Pose.hpp>
+#include <Core/Animation/HandleWeight.hpp>
 #include <Core/Containers/AlignedStdVector.hpp>
 #include <Core/Containers/VectorArray.hpp>
 #include <Core/Math/DualQuaternion.hpp>
@@ -9,29 +10,48 @@ namespace Ra {
 namespace Core {
 namespace Animation {
 
+struct SkinningRefData;
+struct SkinningFrameData;
+
 using DQList = AlignedStdVector<DualQuaternion>;
 
-/*
- * computeDQ computes the dual quaternions from a given pose and a given set of skinning weights.
+/**
+ * \brief Computes the per-vertex dual quaternion.
  *
- * WARNING : in Debug the function will assert if pose and weight size mismatch. In Release will
- * simply crash.
+ * Such a dual quaternion is computed as:
+ * $\mathbf{Q}_i=\frac{\sum_{s\in S} \omega_{is}\mathbf{Q}_s}
+ *                    {\|\sum_{s\in S} \omega_{is}\mathbf{Q}_s\|$
  */
-void RA_CORE_API computeDQ( const Pose& pose, const Sparse& weight, DQList& DQ );
+DQList RA_CORE_API computeDQ( const Pose& pose, const WeightMatrix& weight );
 
-// Same version, without the parallelism for reference purposes (see github issue #118)
-void RA_CORE_API computeDQ_naive( const Pose& pose, const Sparse& weight, DQList& DQ );
+/**
+ * \brief Default non-optimized, non-parallel implementation of computeDQ.
+ */
+DQList RA_CORE_API computeDQ_naive( const Pose& pose, const WeightMatrix& weight );
 
-/*
- * DualQuaternionSkinning applies a set of dual quaternions to a given input set of vertices and
- * returns the resulting transformed vertices.
+/**
+ * \brief Applies the given Dual-Quaternions to the given vertices.
+ */
+Vector3Array RA_CORE_API applyDualQuaternions( const DQList& DQ,
+                                               Vector3Array& vertices );
+
+/**
+ * \brief Applies Dual-Quaternion skinning to the current frame.
  *
- * WARNING : in Debug the function will assert if input and DQ size mismatch. In Release will simply
- * crash.
+ * Dual-Quaternion skinning deforms the mesh geometry for frame $t$ as follows:
+ * $\mathbf{p}_i^t = \mathbf{Q}_i(\mathbf{p}_i^0)$
+ * , where $\mathbf{Q}_i=\frac{\sum_{s\in S} \omega_{is}\mathbf{Q}_s}
+ *                            {\|\sum_{s\in S} \omega_{is}\mathbf{Q}_s\|$
+ *
+ * The skinning of the normal, tangent and bitangent vectors is approximated as:
+ * $\mathbf{v}_i^t = \mathbf{Q}_i(\mathbf{v}_i^0)$
+ *
+ * \note Assumes frameData is well sized.
  */
-void RA_CORE_API dualQuaternionSkinning( const Ra::Core::Vector3Array& input,
-                                         const DQList& DQ,
-                                         Ra::Core::Vector3Array& output );
+void RA_CORE_API dualQuaternionSkinning( const SkinningRefData& refData,
+                                         const Vector3Array& tangents,
+                                         const Vector3Array& bitangents,
+                                         SkinningFrameData& frameData );
 
 } // namespace Animation
 } // namespace Core

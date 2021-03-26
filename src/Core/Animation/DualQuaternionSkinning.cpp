@@ -1,12 +1,14 @@
 #include <Core/Animation/DualQuaternionSkinning.hpp>
 
+#include <Core/Animation/SkinningData.hpp>
+
 namespace Ra {
 namespace Core {
 namespace Animation {
-void computeDQ( const Pose& pose, const Sparse& weight, DQList& DQ ) {
+
+DQList computeDQ( const Pose& pose, const Sparse& weight ) {
     CORE_ASSERT( ( pose.size() == size_t( weight.cols() ) ), "pose/weight size mismatch." );
-    DQ.clear();
-    DQ.resize( weight.rows(),
+    DQList DQ( weight.rows(),
                DualQuaternion( Quaternion( 0, 0, 0, 0 ), Quaternion( 0, 0, 0, 0 ) ) );
 
     // Stores the first non-zero quaternion for each vertex.
@@ -57,14 +59,15 @@ void computeDQ( const Pose& pose, const Sparse& weight, DQList& DQ ) {
     {
         DQ[i].normalize();
     }
+
+    return DQ;
 }
 
 // alternate naive version, for reference purposes.
 // See Kavan , Collins, Zara and O'Sullivan, 2008
-void computeDQ_naive( const Pose& pose, const Sparse& weight, DQList& DQ ) {
+DQList computeDQ_naive( const Pose& pose, const Sparse& weight ) {
     CORE_ASSERT( ( pose.size() == size_t( weight.cols() ) ), "pose/weight size mismatch." );
-    DQ.clear();
-    DQ.resize( weight.rows(),
+    DQList DQ( weight.rows(),
                DualQuaternion( Quaternion( 0, 0, 0, 0 ), Quaternion( 0, 0, 0, 0 ) ) );
     std::vector<DualQuaternion> poseDQ( pose.size() );
 
@@ -101,18 +104,34 @@ void computeDQ_naive( const Pose& pose, const Sparse& weight, DQList& DQ ) {
     {
         DQ[i].normalize();
     }
+
+    return DQ;
 }
 
-void dualQuaternionSkinning( const Ra::Core::Vector3Array& input,
-                             const DQList& DQ,
-                             Ra::Core::Vector3Array& output ) {
-    const uint size = input.size();
-    CORE_ASSERT( ( size == DQ.size() ), "input/DQ size mismatch." );
-    output.resize( size );
+Vector3Array applyDualQuaternions( const DQList& DQ, Vector3Array& vertices ) {
+    Vector3Array out( vertices.size(), Vector3::Zero() );
 #pragma omp parallel for
-    for ( int i = 0; i < int( size ); ++i )
+    for ( int i = 0; i < int( vertices.size() ); ++i )
     {
-        output[i] = DQ[i].transform( input[i] );
+        out[i] = DQ[i].transform( vertices[i] );
+    }
+    return out;
+}
+
+void dualQuaternionSkinning( const SkinningRefData& refData,
+                             const Vector3Array& tangents,
+                             const Vector3Array& bitangents,
+                             SkinningFrameData& frameData ) {
+    const auto DQ = computeDQ( frameData.m_currentPose, refData.m_weights );
+    const auto& vertices = refData.m_referenceMesh.vertices();
+    const auto& normals = refData.m_referenceMesh.normals();
+#pragma omp parallel for
+    for ( int i = 0; i < frameData.m_currentPosition.size(); ++i )
+    {
+        frameData.m_currentPosition[i] = DQ[i].transform( vertices[i] );
+        frameData.m_currentNormal[i] = DQ[i].rotate( normals[i] );
+        frameData.m_currentTangent[i] = DQ[i].rotate( tangents[i] );
+        frameData.m_currentBitangent[i] = DQ[i].rotate( bitangents[i] );
     }
 }
 } // namespace Animation

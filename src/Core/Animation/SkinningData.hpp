@@ -8,61 +8,69 @@
 
 namespace Ra {
 namespace Core {
-namespace Skinning {
+namespace Animation {
 
 /// Skinning data that gets set at startup including the "reference state"
-struct RefData {
-    /// Skeleton
-    Ra::Core::Animation::Skeleton m_skeleton;
+struct SkinningRefData {
+    /// The animation skeleton.
+    Skeleton m_skeleton;
 
-    /// Mesh in reference position
-    Ra::Core::Geometry::TriangleMesh m_referenceMesh;
+    /// The mesh in reference position.
+    Geometry::TriangleMesh m_referenceMesh;
 
-    /// Reference pose
-    Ra::Core::Animation::Pose m_refPose;
+    /// The reference pose.
+    Pose m_refPose;
 
-    /// Skinning weights.
-    Ra::Core::Animation::WeightMatrix m_weights;
+    /// The matrix of skinning weights.
+    WeightMatrix m_weights;
 
     /// The per-bone bind matrices.
-    std::map<uint, Ra::Core::Transform> m_bindMatrices;
+    std::map<uint, Transform> m_bindMatrices;
 
-    /// Optionnal centers of rotations for CoR skinning
-    Ra::Core::Vector3Array m_CoR;
+    /// The optionnal centers of rotations for CoR skinning.
+    Vector3Array m_CoR;
+
+    /// The matrix of STBS weights.
+    WeightMatrix m_weightSTBS;
 };
 
-/// Pose data of one frame. Poses are in model space
-struct FrameData {
-    /// Pose of the previous frame.
-    Ra::Core::Animation::Pose m_previousPose;
+/// Pose data for one frame. Poses are in model space.
+struct SkinningFrameData {
+    /// The pose at the previous frame.
+    Pose m_previousPose;
 
-    /// Pose of the current frame.
-    Ra::Core::Animation::Pose m_currentPose;
+    /// The pose at the current frame.
+    Pose m_currentPose;
 
-    /// Relative pose from previous to current
-    Ra::Core::Animation::Pose m_prevToCurrentRelPose;
+    /// The relative pose from previous to current.
+    Pose m_prevToCurrentRelPose;
 
-    /// Relative pose from reference pose to current.
-    Ra::Core::Animation::Pose m_refToCurrentRelPose;
+    /// The relative pose from reference pose to current.
+    Pose m_refToCurrentRelPose;
 
-    /// Previous position of the vertices
-    Ra::Core::Vector3Array m_previousPos;
+    /// The position of the mesh vertices at the previous frame.
+    Vector3Array m_previousPosition;
 
-    /// Current position of the vertices
-    Ra::Core::Vector3Array m_currentPos;
+    /// The current mesh vertex position.
+    Vector3Array m_currentPosition;
 
-    /// Current vertex normals
-    Ra::Core::Vector3Array m_currentNormal;
+    /// The current mesh vertex normals.
+    Vector3Array m_currentNormal;
 
-    /// Number of animation frames
+    /// The current mesh vertex tangent vectors.
+    Vector3Array m_currentTangent;
+
+    /// The current mesh vertex bitangent vectors.
+    Vector3Array m_currentBitangent;
+
+    /// The number of the current frame.
     uint m_frameCounter;
 
-    /// Indicator whether skinning must be processed.
+    /// Whether skinning must be processed.
     /// It is set to true if the current pose is different from previous.
     bool m_doSkinning;
 
-    /// Indicator whether the skin must be reset to its initial reference
-    /// configuration.
+    /// Whether the skin must be reset to its initial reference configuration.
     bool m_doReset;
 };
 

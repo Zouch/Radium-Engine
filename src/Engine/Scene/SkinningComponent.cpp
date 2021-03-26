@@ -32,13 +32,14 @@ using Geometry::TriangleMesh;
 using namespace Animation;
 using SpaceType = HandleArray::SpaceType;
 
-using namespace Skinning;
-
 using namespace Utils;
 
 namespace Ra {
 namespace Engine {
 namespace Scene {
+
+static std::string tangentName = Data::Mesh::getAttribName( Data::Mesh::VERTEX_TANGENT );
+static std::string bitangentName = Data::Mesh::getAttribName( Data::Mesh::VERTEX_BITANGENT );
 
 bool findDuplicates( const TriangleMesh& mesh,
                      std::vector<Index>& duplicatesMap ) {
@@ -95,7 +96,8 @@ TriangleMesh triangulate( const PolyMesh& polyMesh )
     TriangleMesh res;
     res.setVertices( polyMesh.vertices() );
     res.setNormals( polyMesh.normals() );
-    AlignedStdVector<Vector3ui> indices;
+    res.copyAllAttributes( polyMesh );
+    VectorArray<Vector3ui> indices;
     // using the same triangulation as in Ra::Engine::PolyMesh::triangulate
     for ( const auto& face : polyMesh.getIndices() )
     {
@@ -145,17 +147,54 @@ void SkinningComponent::initialize() {
         }
 
         // copy mesh triangles and find duplicates for normal computation.
-        TriangleMesh mesh;
         if ( !m_meshIsPoly )
         {
-            mesh = *m_triMeshWriter();
+            m_refData.m_referenceMesh = *m_triMeshWriter();
         }
         else {
-            mesh = triangulate( *m_polyMeshWriter() );
+            m_refData.m_referenceMesh = triangulate( *m_polyMeshWriter() );
         }
-        // = const_cast<TriangleMesh*>( m_meshWriter() );
-        m_refData.m_referenceMesh.copy( mesh );
-        findDuplicates( mesh, m_duplicatesMap );
+        if ( !m_refData.m_referenceMesh.hasAttrib( tangentName ) &&
+             !m_refData.m_referenceMesh.hasAttrib( bitangentName ) )
+        {
+            const auto& normals = m_refData.m_referenceMesh.normals();
+            Vector3Array tangents( normals.size() );
+            Vector3Array bitangents( normals.size() );
+#pragma omp parallel for
+            for ( int i = 0; i < normals.size(); ++i )
+            {
+                Core::Math::getOrthogonalVectors( normals[i], tangents[i], bitangents[i] );
+            }
+            m_refData.m_referenceMesh.addAttrib( tangentName, std::move( tangents ) );
+            m_refData.m_referenceMesh.addAttrib( bitangentName, std::move( bitangents ) );
+        }
+        else if ( !m_refData.m_referenceMesh.hasAttrib( tangentName ) )
+        {
+            const auto& normals = m_refData.m_referenceMesh.normals();
+            const auto& bitangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
+            const auto& bitangents = m_refData.m_referenceMesh.getAttrib( bitangentHandle ).data();
+            Vector3Array tangents( normals.size() );
+#pragma omp parallel for
+            for ( int i = 0; i < normals.size(); ++i )
+            {
+                tangents[i] = bitangents[i].cross( normals[i] );
+            }
+            m_refData.m_referenceMesh.addAttrib( tangentName, std::move( tangents ) );
+        }
+        else if ( !m_refData.m_referenceMesh.hasAttrib( bitangentName ) )
+        {
+            const auto& normals = m_refData.m_referenceMesh.normals();
+            const auto& tangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
+            const auto& tangents = m_refData.m_referenceMesh.getAttrib( tangentHandle ).data();
+            Vector3Array bitangents( normals.size() );
+#pragma omp parallel for
+            for ( int i = 0; i < normals.size(); ++i )
+            {
+                bitangents[i] = normals[i].cross( tangents[i] );
+            }
+            m_refData.m_referenceMesh.addAttrib( bitangentName, std::move( bitangents ) );
+        }
+        findDuplicates( m_refData.m_referenceMesh, m_duplicatesMap );
 
         // get other data
         m_refData.m_skeleton = *m_skeletonGetter();
@@ -168,9 +207,13 @@ void SkinningComponent::initialize() {
         m_frameData.m_doSkinning   = true;
         m_frameData.m_doReset      = false;
 
-        m_frameData.m_previousPos   = m_refData.m_referenceMesh.vertices();
-        m_frameData.m_currentPos    = m_refData.m_referenceMesh.vertices();
+        m_frameData.m_previousPosition = m_refData.m_referenceMesh.vertices();
+        m_frameData.m_currentPosition  = m_refData.m_referenceMesh.vertices();
         m_frameData.m_currentNormal = m_refData.m_referenceMesh.normals();
+        const auto& tangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
+        m_frameData.m_currentTangent = m_refData.m_referenceMesh.getAttrib( tangentHandle ).data();
+        const auto& bitangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
+        m_frameData.m_currentBitangent = m_refData.m_referenceMesh.getAttrib( bitangentHandle ).data();
 
         m_frameData.m_previousPose = m_refData.m_refPose;
         m_frameData.m_currentPose  = m_refData.m_refPose;
@@ -217,80 +260,6 @@ void SkinningComponent::initialize() {
     }
 }
 
-void SkinningComponent::skin() {
-    CORE_ASSERT( m_isReady, "Skinning is not setup" );
-
-    const Skeleton* skel = m_skeletonGetter();
-
-    bool reset = ComponentMessenger::getInstance()->get<bool>( getEntity(), m_skelName );
-
-    // Reset the skin if it wasn't done before
-    if ( reset && !m_frameData.m_doReset )
-    {
-        m_frameData.m_doReset      = true;
-        m_frameData.m_frameCounter = 0;
-        m_forceUpdate              = true;
-    }
-    m_frameData.m_currentPose = skel->getPose( SpaceType::MODEL );
-    if ( m_smartStretch ){ applySmartStretch(); }
-    applyBindMatrices( m_frameData.m_currentPose );
-    if ( !areEqual( m_frameData.m_currentPose, m_frameData.m_previousPose ) ||
-         m_forceUpdate )
-    {
-        m_forceUpdate            = false;
-        m_frameData.m_doSkinning = true;
-        m_frameData.m_frameCounter++;
-        m_frameData.m_refToCurrentRelPose = relativePose( m_frameData.m_currentPose, m_refData.m_refPose );
-        m_frameData.m_prevToCurrentRelPose = relativePose( m_frameData.m_currentPose, m_frameData.m_previousPose );
-
-        switch ( m_skinningType )
-        {
-        case LBS:
-        {
-            linearBlendSkinning( m_refData.m_referenceMesh.vertices(),
-                                 m_frameData.m_currentPose,
-                                 m_refData.m_weights,
-                                 m_frameData.m_currentPos );
-            break;
-        }
-        case DQS:
-        {
-            AlignedStdVector<DualQuaternion> DQ;
-            computeDQ( m_frameData.m_currentPose, m_refData.m_weights, DQ );
-            dualQuaternionSkinning( m_refData.m_referenceMesh.vertices(), DQ, m_frameData.m_currentPos );
-            break;
-        }
-        case COR:
-        {
-            corSkinning( m_refData.m_referenceMesh.vertices(),
-                         m_frameData.m_currentPose,
-                         m_refData.m_weights,
-                         m_refData.m_CoR,
-                         m_frameData.m_currentPos );
-            break;
-        }
-        case STBS_LBS:
-        {
-            linearBlendSkinningSTBS( m_refData.m_referenceMesh.vertices(),
-                                     m_frameData.m_refToCurrentRelPose,
-                                     *skel,
-                                     m_refData.m_skeleton,
-                                     m_refData.m_weights,
-                                     m_weightSTBS,
-                                     m_frameData.m_currentPos );
-            break;
-        }
-        case STBS_DQS:
-        {
-            AlignedStdVector<DualQuaternion> DQ;
-            computeDQSTBS( m_frameData.m_refToCurrentRelPose, *skel, m_refData.m_skeleton, m_refData.m_weights, m_weightSTBS, DQ );
-            dualQuaternionSkinning( m_refData.m_referenceMesh.vertices(), DQ, m_frameData.m_currentPos );
-            break;
-        }
-        }
-    }
-}
-
 void uniformNormal( const Vector3Array& p,
                     const AlignedStdVector<Vector3ui>& T,
                     const std::vector<Index>& duplicateTable,
@@ -324,6 +293,83 @@ void uniformNormal( const Vector3Array& p,
     }
 }
 
+void SkinningComponent::skin() {
+    CORE_ASSERT( m_isReady, "Skinning is not setup" );
+
+    const Skeleton* skel = m_skeletonGetter();
+
+    bool reset = ComponentMessenger::getInstance()->get<bool>( getEntity(), m_skelName );
+
+    // Reset the skin if it wasn't done before
+    if ( reset && !m_frameData.m_doReset )
+    {
+        m_frameData.m_doReset      = true;
+        m_frameData.m_frameCounter = 0;
+        m_forceUpdate              = true;
+    }
+    m_frameData.m_currentPose = skel->getPose( SpaceType::MODEL );
+    if ( m_smartStretch ){ applySmartStretch(); }
+    applyBindMatrices( m_frameData.m_currentPose );
+    if ( !areEqual( m_frameData.m_currentPose, m_frameData.m_previousPose ) ||
+         m_forceUpdate )
+    {
+        m_forceUpdate            = false;
+        m_frameData.m_doSkinning = true;
+        m_frameData.m_frameCounter++;
+        m_frameData.m_refToCurrentRelPose = relativePose( m_frameData.m_currentPose, m_refData.m_refPose );
+        m_frameData.m_prevToCurrentRelPose = relativePose( m_frameData.m_currentPose, m_frameData.m_previousPose );
+
+        const auto tangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
+        const Vector3Array& tangents = m_refData.m_referenceMesh.getAttrib( tangentHandle ).data();
+        const auto bitangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
+        const Vector3Array& bitangents = m_refData.m_referenceMesh.getAttrib( bitangentHandle ).data();
+
+        switch ( m_skinningType )
+        {
+        case LBS:
+        {
+            linearBlendSkinning( m_refData, tangents, bitangents, m_frameData );
+            break;
+        }
+        case DQS:
+        {
+            dualQuaternionSkinning( m_refData, tangents, bitangents, m_frameData );
+            break;
+        }
+        case COR:
+        {
+            centerOfRotationSkinning( m_refData, tangents, bitangents, m_frameData );
+            break;
+        }
+        case STBS_LBS:
+        {
+            linearBlendSkinningSTBS( m_refData, tangents, bitangents, *skel, m_frameData );
+            break;
+        }
+        case STBS_DQS:
+        {
+            dualQuaternionSkinningSTBS( m_refData, tangents, bitangents, *skel, m_frameData );
+            break;
+        }
+        }
+
+        if ( m_normalSkinning == GEOMETRIC )
+        {
+            uniformNormal( m_frameData.m_currentPosition,
+                           m_refData.m_referenceMesh.getIndices(),
+                           m_duplicatesMap,
+                           m_frameData.m_currentNormal );
+#pragma omp parallel for
+            for ( int i = 0; i < m_frameData.m_currentNormal.size(); ++i )
+            {
+                Core::Math::getOrthogonalVectors( m_frameData.m_currentNormal[i],
+                                                  m_frameData.m_currentTangent[i],
+                                                  m_frameData.m_currentBitangent[i] );
+            }
+        }
+    }
+}
+
 void SkinningComponent::endSkinning() {
     if ( m_frameData.m_doSkinning )
     {
@@ -335,22 +381,25 @@ void SkinningComponent::endSkinning() {
         else {
             geom = const_cast<PolyMesh*>( m_polyMeshWriter() );
         }
-        Vector3Array& vertices = geom->verticesWithLock();
-        Vector3Array& normals  = geom->normalsWithLock();
 
-        vertices = m_frameData.m_currentPos;
-
-        // FIXME: normals should be computed by the Skinning method!
-        uniformNormal( vertices, m_refData.m_referenceMesh.getIndices(), m_duplicatesMap, normals );
+        geom->setVertices( m_frameData.m_currentPosition );
+        geom->setNormals( m_frameData.m_currentNormal );
+        auto handle = geom->getAttribHandle<Vector3>( tangentName );
+        if ( handle.idx().isValid() )
+        {
+            geom->getAttrib( handle ).setData( m_frameData.m_currentTangent );
+        }
+        handle = geom->getAttribHandle<Vector3>( bitangentName );
+        if ( handle.idx().isValid() )
+        {
+            geom->getAttrib( handle ).setData( m_frameData.m_currentBitangent );
+        }
 
         std::swap( m_frameData.m_previousPose, m_frameData.m_currentPose );
-        std::swap( m_frameData.m_previousPos, m_frameData.m_currentPos );
+        std::swap( m_frameData.m_previousPosition, m_frameData.m_currentPosition );
 
         m_frameData.m_doReset    = false;
         m_frameData.m_doSkinning = false;
-
-        geom->verticesUnlock();
-        geom->normalsUnlock();
     }
 }
 
@@ -461,11 +510,11 @@ void SkinningComponent::setupIO( const std::string& id ) {
     auto wOut = std::bind( &SkinningComponent::getWeightsOutput, this );
     compMsg->registerOutput<WeightMatrix>( getEntity(), this, id, wOut );
 
-    auto refData = std::bind( &SkinningComponent::getRefData, this );
-    compMsg->registerOutput<RefData>( getEntity(), this, id, refData );
+    auto refData = std::bind( &SkinningComponent::getSkinningRefData, this );
+    compMsg->registerOutput<SkinningRefData>( getEntity(), this, id, refData );
 
-    auto frameData = std::bind( &SkinningComponent::getFrameData, this );
-    compMsg->registerOutput<FrameData>( getEntity(), this, id, frameData );
+    auto frameData = std::bind( &SkinningComponent::getSkinningFrameData, this );
+    compMsg->registerOutput<SkinningFrameData>( getEntity(), this, id, frameData );
 }
 
 void SkinningComponent::setSkinningType( SkinningType type ) {
@@ -473,6 +522,14 @@ void SkinningComponent::setSkinningType( SkinningType type ) {
     if ( m_isReady )
     {
         setupSkinningType( type );
+        m_forceUpdate = true;
+    }
+}
+
+void SkinningComponent::setNormalSkinning( NormalSkinning normalSkinning ) {
+    m_normalSkinning = normalSkinning;
+    if ( m_isReady )
+    {
         m_forceUpdate = true;
     }
 }
@@ -506,13 +563,13 @@ void SkinningComponent::setupSkinningType( SkinningType type ) {
         [[fallthrough]];
     case STBS_LBS:
     {
-        if ( m_weightSTBS.size() == 0 )
+        if ( m_refData.m_weightSTBS.size() == 0 )
         {
-            computeSTBS_weights( m_refData.m_referenceMesh.vertices(),
-                                 m_refData.m_skeleton, m_weightSTBS );
+            m_refData.m_weightSTBS = computeSTBS_weights(
+                m_refData.m_referenceMesh.vertices(), m_refData.m_skeleton );
         }
     }
-    } // end of switch.
+    }
 }
 
 void SkinningComponent::setSmartStretch( bool on ){
@@ -537,7 +594,7 @@ void SkinningComponent::showWeights( bool on ) {
     if ( m_showingWeights )
     {
         // update the displayed weights
-        const auto size = m_frameData.m_currentPos.size();
+        const auto size = m_frameData.m_currentPosition.size();
         m_weightsUV.resize( size, Vector3::Zero() );
         switch ( m_weightType ) {
         case STANDARD:
@@ -553,7 +610,7 @@ void SkinningComponent::showWeights( bool on ) {
     #pragma omp parallel for
             for ( int i = 0; i < int( size ); ++i )
             {
-                m_weightsUV[i][0] = m_weightSTBS.coeff( i, m_weightBone );
+                m_weightsUV[i][0] = m_refData.m_weightSTBS.coeff( i, m_weightBone );
             }
         } break;
         }

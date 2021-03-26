@@ -1,41 +1,40 @@
 #include <Core/Animation/StretchableTwistableBoneSkinning.hpp>
 
+#include <Core/Animation/Skeleton.hpp>
+#include <Core/Animation/SkinningData.hpp>
 #include <Core/Geometry/DistanceQueries.hpp>
 
 namespace Ra {
 namespace Core {
 namespace Animation {
 
-void computeSTBS_weights( const Vector3Array& inMesh,
-                          const Ra::Core::Animation::Skeleton& skel,
-                          Ra::Core::Animation::WeightMatrix& weights ) {
-    weights.resize( int( inMesh.size() ), skel.size() );
+WeightMatrix computeSTBS_weights( const Vector3Array& inMesh,
+                                  const Skeleton& skel ) {
     std::vector<Eigen::Triplet<Scalar>> triplets;
-    for ( int i = 0; i < weights.rows(); ++i )
+    for ( int i = 0; i < int( inMesh.size() ); ++i )
     {
         const auto& pi = inMesh[uint( i )];
-        for ( int j = 0; j < weights.cols(); ++j )
+        for ( int j = 0; j < int( skel.size() ); ++j )
         {
-            Ra::Core::Vector3 a, b;
+            Vector3 a, b;
             skel.getBonePoints( uint( j ), a, b );
-            const Ra::Core::Vector3 ab = b - a;
-            Scalar t                   = Ra::Core::Geometry::projectOnSegment( pi, a, ab );
+            const Vector3 ab = b - a;
+            Scalar t         = Geometry::projectOnSegment( pi, a, ab );
             if ( t > 0 ) { triplets.push_back( Eigen::Triplet<Scalar>( i, j, t ) ); }
         }
     }
+    WeightMatrix weights( uint( inMesh.size() ), skel.size() );
     weights.setFromTriplets( triplets.begin(), triplets.end() );
+    return weights;
 }
 
-void linearBlendSkinningSTBS( const Vector3Array& inMesh,
-                              const Pose& pose,
+void linearBlendSkinningSTBS( const SkinningRefData& refData,
+                              const Vector3Array& tangents,
+                              const Vector3Array& bitangents,
                               const Skeleton& poseSkel,
-                              const Skeleton& restSkel,
-                              const WeightMatrix& weightLBS,
-                              const WeightMatrix& weightSTBS,
-                              Vector3Array& outMesh ) {
-    outMesh.clear();
-    outMesh.resize( inMesh.size(), Vector3::Zero() );
+                              SkinningFrameData& frameData ) {
     // first decompose all pose transforms
+    const auto& pose = frameData.m_refToCurrentRelPose;
     Ra::Core::VectorArray<Matrix3> R( pose.size() );
     Matrix3 S; // we don't mind it
 #pragma omp parallel for
@@ -44,10 +43,21 @@ void linearBlendSkinningSTBS( const Vector3Array& inMesh,
         pose[i].computeRotationScaling( &R[i], &S );
     }
     // then go through vertices
-    for ( int k = 0; k < weightLBS.outerSize(); ++k )
+    const auto& restSkel = refData.m_skeleton;
+    const auto& vertices = refData.m_referenceMesh.vertices();
+    const auto& normals = refData.m_referenceMesh.normals();
+#pragma omp parallel for
+    for ( int i=0; i < frameData.m_currentPosition.size(); ++i )
     {
-        const int nonZero = weightLBS.col( k ).nonZeros();
-        WeightMatrix::InnerIterator it0( weightLBS, k );
+        frameData.m_currentPosition[i] = Vector3::Zero();
+        frameData.m_currentNormal[i] = Vector3::Zero();
+        frameData.m_currentTangent[i] = Vector3::Zero();
+        frameData.m_currentBitangent[i] = Vector3::Zero();
+    }
+    for ( int k = 0; k < refData.m_weights.outerSize(); ++k )
+    {
+        const int nonZero = refData.m_weights.col( k ).nonZeros();
+        WeightMatrix::InnerIterator it0( refData.m_weights, k );
 #pragma omp parallel for
         for ( int nz = 0; nz < nonZero; ++nz )
         {
@@ -58,37 +68,41 @@ void linearBlendSkinningSTBS( const Vector3Array& inMesh,
             Vector3 a, b, a_, b_;
             restSkel.getBonePoints( j, a, b );
             poseSkel.getBonePoints( j, a_, b_ );
-            Vector3 si = ( std::sqrt( ( b_ - a_ ).squaredNorm() / ( b - a ).squaredNorm() ) - 1 ) *
+            Vector3 es = ( std::sqrt( ( b_ - a_ ).squaredNorm() / ( b - a ).squaredNorm() ) - 1 ) *
                          ( b - a );
-            outMesh[i] += w * ( a_ + R[j] * ( weightSTBS.coeff( i, j ) * si - a + inMesh[i] ) );
+            const Scalar eis = refData.m_weightSTBS.coeff( i, j );
+            frameData.m_currentPosition[i] += w * ( a_ + R[j] * ( eis * es - a + vertices[i] ) );
+            frameData.m_currentNormal[i] += w * R[j] * normals[i];
+            frameData.m_currentTangent[i] += w * R[j] * tangents[i];
+            frameData.m_currentBitangent[i] += w * R[j] * bitangents[i];
         }
     }
 }
 
-void computeDQSTBS( const Pose& pose,
-                    const Skeleton& poseSkel,
-                    const Skeleton& restSkel,
-                    const WeightMatrix& weight,
-                    const WeightMatrix& weightSTBS,
-                    DQList& DQ ) {
-    CORE_ASSERT( ( pose.size() == size_t( weight.cols() ) ), "pose/weight size mismatch." );
-    DQ.clear();
-    DQ.resize( weight.rows(),
+DQList computeDQSTBS( const Pose& relPose,
+                      const Skeleton& poseSkel,
+                      const Skeleton& restSkel,
+                      const WeightMatrix& weight,
+                      const WeightMatrix& weightSTBS ) {
+    CORE_ASSERT( ( relPose.size() == size_t( weight.cols() ) ),
+                 "pose/weight size mismatch." );
+    DQList DQ( uint( weight.rows() ),
                DualQuaternion( Quaternion( 0, 0, 0, 0 ), Quaternion( 0, 0, 0, 0 ) ) );
+    std::cout << DQ.size() << std::endl;
     // Stores the first non-zero quaternion for each vertex.
     std::vector<uint> firstNonZero( weight.rows(), std::numeric_limits<uint>::max() );
     // Contains the converted dual quaternions from the pose
-    std::vector<DualQuaternion> poseDQ( pose.size() );
+    std::vector<DualQuaternion> poseDQ( relPose.size() );
     // first decompose all pose transforms
-    VectorArray<Matrix3> R( pose.size() );
-    VectorArray<Vector3> A( pose.size() );
-    VectorArray<Vector3> A_( pose.size() );
-    VectorArray<Vector3> Si( pose.size() );
+    VectorArray<Matrix3> R( relPose.size() );
+    VectorArray<Vector3> A( relPose.size() );
+    VectorArray<Vector3> A_( relPose.size() );
+    VectorArray<Vector3> Si( relPose.size() );
     Matrix3 S; // we don't mind it
 #pragma omp parallel for
-    for ( int i = 0; i < int( pose.size() ); ++i )
+    for ( int i = 0; i < int( relPose.size() ); ++i )
     {
-        pose[i].computeRotationScaling( &R[i], &S );
+        relPose[i].computeRotationScaling( &R[i], &S );
         Ra::Core::Vector3 b, b_;
         restSkel.getBonePoints( i, A[i], b );
         poseSkel.getBonePoints( i, A_[i], b_ );
@@ -98,7 +112,7 @@ void computeDQSTBS( const Pose& pose,
     // Loop through all transforms Tj
     for ( int k = 0; k < weight.outerSize(); ++k )
     {
-        poseDQ[k] = DualQuaternion( pose[k] );
+        poseDQ[k] = DualQuaternion( relPose[k] );
         // Count how many vertices are influenced by the given transform
         const int nonZero = weight.col( k ).nonZeros();
         WeightMatrix::InnerIterator it0( weight, k );
@@ -138,6 +152,28 @@ void computeDQSTBS( const Pose& pose,
     for ( int i = 0; i < int( DQ.size() ); ++i )
     {
         DQ[i].normalize();
+    }
+    return DQ;
+}
+
+void RA_CORE_API dualQuaternionSkinningSTBS( const SkinningRefData& refData,
+                                             const Vector3Array& tangents,
+                                             const Vector3Array& bitangents,
+                                             const Skeleton& poseSkel,
+                                             SkinningFrameData& frameData ) {
+    const auto DQ = computeDQSTBS( frameData.m_refToCurrentRelPose,
+                                   poseSkel, refData.m_skeleton,
+                                   refData.m_weights,
+                                   refData.m_weightSTBS );
+    const auto& vertices = refData.m_referenceMesh.vertices();
+    const auto& normals = refData.m_referenceMesh.normals();
+#pragma omp parallel for
+    for ( int i = 0; i < frameData.m_currentPosition.size(); ++i )
+    {
+        frameData.m_currentPosition[i] = DQ[i].transform( vertices[i] );
+        frameData.m_currentNormal[i] = DQ[i].rotate( normals[i] );
+        frameData.m_currentTangent[i] = DQ[i].rotate( tangents[i] );
+        frameData.m_currentBitangent[i] = DQ[i].rotate( bitangents[i] );
     }
 }
 
