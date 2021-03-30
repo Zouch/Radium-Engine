@@ -122,7 +122,16 @@ void dualQuaternionSkinning( const SkinningRefData& refData,
                              const Vector3Array& tangents,
                              const Vector3Array& bitangents,
                              SkinningFrameData& frameData ) {
-    const auto DQ = computeDQ( frameData.m_currentPose, refData.m_weights );
+    auto pose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
+    // prepare the pose w.r.t. the bind matrices and the mesh tranform
+#pragma omp parallel for
+    for ( int i = 0; i < frameData.m_skeleton.size(); ++i )
+    {
+        pose[i] = refData.m_meshTransformInverse * pose[i] * refData.m_bindMatrices[i];
+    }
+    // compute the dual quaternion for each vertex
+    const auto DQ = computeDQ( pose, refData.m_weights );
+    // apply DQS
     const auto& vertices = refData.m_referenceMesh.vertices();
     const auto& normals = refData.m_referenceMesh.normals();
 #pragma omp parallel for

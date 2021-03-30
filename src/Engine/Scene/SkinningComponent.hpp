@@ -132,11 +132,8 @@ class RA_ENGINE_API SkinningComponent : public Component
     /// Skinning Weight Matrix getter for CC.
     const Ra::Core::Animation::WeightMatrix* getWeightsOutput() const;
 
-    /// Applies smart stretch to the current pose.
-    void applySmartStretch();
-
-    /// Applies the bones bindMatrices to the given skeleton pose.
-    void applyBindMatrices( Ra::Core::Animation::Pose& pose ) const;
+    /// Applies smart stretch to the given pose.
+    void applySmartStretch( Ra::Core::Animation::Pose& pose );
 
   private:
     template<typename T>

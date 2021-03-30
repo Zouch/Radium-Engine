@@ -52,7 +52,6 @@ WeightMatrix RA_CORE_API computeSTBS_weights( const Vector3Array& inMesh,
 void RA_CORE_API linearBlendSkinningSTBS( const SkinningRefData& refData,
                                           const Vector3Array& tangents,
                                           const Vector3Array& bitangents,
-                                          const Skeleton& poseSkel,
                                           SkinningFrameData& frameData );
 
 /**
@@ -97,7 +96,6 @@ DQList RA_CORE_API computeDQSTBS( const Pose& relPose,
 void RA_CORE_API dualQuaternionSkinningSTBS( const SkinningRefData& refData,
                                              const Vector3Array& tangents,
                                              const Vector3Array& bitangents,
-                                             const Skeleton& poseSkel,
                                              SkinningFrameData& frameData );
 /// \}
 

@@ -13,7 +13,8 @@ void linearBlendSkinning( const SkinningRefData& refData,
     const auto& W = refData.m_weights;
     const auto& vertices = refData.m_referenceMesh.vertices();
     const auto& normals = refData.m_referenceMesh.normals();
-    const auto& pose = frameData.m_currentPose;
+    const auto& bindMatrix = refData.m_bindMatrices;
+    const auto& pose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
 #pragma omp parallel for
     for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
     {
@@ -33,10 +34,13 @@ void linearBlendSkinning( const SkinningRefData& refData,
             const uint i                   = it.row();
             const uint j                   = it.col();
             const Scalar w                 = it.value();
-            frameData.m_currentPosition[i] += w * ( pose[j] * vertices[i] );
-            frameData.m_currentNormal[i] += w * ( pose[j].linear() * normals[i] );
-            frameData.m_currentTangent[i] += w * ( pose[j].linear() * tangents[i] );
-            frameData.m_currentBitangent[i] += w * ( pose[j].linear() * bitangents[i] );
+            // prepare the pose w.r.t. the bind matrix and the mesh transform
+            const Transform M = refData.m_meshTransformInverse * pose[j] * bindMatrix[j];
+            // apply LBS
+            frameData.m_currentPosition[i] += w * ( M * vertices[i] );
+            frameData.m_currentNormal[i] += w * ( M.linear() * normals[i] );
+            frameData.m_currentTangent[i] += w * ( M.linear() * tangents[i] );
+            frameData.m_currentBitangent[i] += w * ( M.linear() * bitangents[i] );
         }
     }
 }

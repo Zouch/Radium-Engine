@@ -10,46 +10,34 @@ namespace Ra {
 namespace Core {
 namespace Animation {
 
-/// Skinning data that gets set at startup including the "reference state"
+/// \brief Skinning data that get set at startup including the "reference state".
 struct SkinningRefData {
-    /// The animation skeleton.
-    Skeleton m_skeleton;
-
     /// The mesh in reference position.
     Geometry::TriangleMesh m_referenceMesh;
 
-    /// The reference pose.
-    Pose m_refPose;
+    /// The inverse of the mesh's transform.
+    Transform m_meshTransformInverse;
+
+    /// The animation skeleton saved in rest pose.
+    Skeleton m_skeleton;
+
+    /// The per-bone bind matrices.
+    AlignedStdVector<Transform> m_bindMatrices;
 
     /// The matrix of skinning weights.
     WeightMatrix m_weights;
 
-    /// The per-bone bind matrices.
-    std::map<uint, Transform> m_bindMatrices;
-
     /// The optionnal centers of rotations for CoR skinning.
     Vector3Array m_CoR;
 
-    /// The matrix of STBS weights.
+    /// The optional matrix of weights for STBS skinning.
     WeightMatrix m_weightSTBS;
 };
 
 /// Pose data for one frame. Poses are in model space.
 struct SkinningFrameData {
-    /// The pose at the previous frame.
-    Pose m_previousPose;
-
-    /// The pose at the current frame.
-    Pose m_currentPose;
-
-    /// The relative pose from previous to current.
-    Pose m_prevToCurrentRelPose;
-
-    /// The relative pose from reference pose to current.
-    Pose m_refToCurrentRelPose;
-
-    /// The position of the mesh vertices at the previous frame.
-    Vector3Array m_previousPosition;
+    /// The animation skeleton in the current pose.
+    Skeleton m_skeleton;
 
     /// The current mesh vertex position.
     Vector3Array m_currentPosition;

@@ -197,17 +197,13 @@ void SkinningComponent::initialize() {
         findDuplicates( m_refData.m_referenceMesh, m_duplicatesMap );
 
         // get other data
+        m_refData.m_meshTransformInverse = m_meshFrameInv;
         m_refData.m_skeleton = *m_skeletonGetter();
         createWeightMatrix();
-        m_refData.m_refPose  = m_refData.m_skeleton.getPose( SpaceType::MODEL );
-        applyBindMatrices( m_refData.m_refPose );
 
         // initialize frame data
-        m_frameData.m_frameCounter = 0;
-        m_frameData.m_doSkinning   = true;
-        m_frameData.m_doReset      = false;
+        m_frameData.m_skeleton = m_refData.m_skeleton;
 
-        m_frameData.m_previousPosition = m_refData.m_referenceMesh.vertices();
         m_frameData.m_currentPosition  = m_refData.m_referenceMesh.vertices();
         m_frameData.m_currentNormal = m_refData.m_referenceMesh.normals();
         const auto& tangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
@@ -215,10 +211,9 @@ void SkinningComponent::initialize() {
         const auto& bitangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
         m_frameData.m_currentBitangent = m_refData.m_referenceMesh.getAttrib( bitangentHandle ).data();
 
-        m_frameData.m_previousPose = m_refData.m_refPose;
-        m_frameData.m_currentPose  = m_refData.m_refPose;
-        m_frameData.m_refToCurrentRelPose = relativePose( m_frameData.m_currentPose, m_refData.m_refPose );
-        m_frameData.m_prevToCurrentRelPose = relativePose( m_frameData.m_currentPose, m_frameData.m_previousPose );
+        m_frameData.m_frameCounter = 0;
+        m_frameData.m_doSkinning   = true;
+        m_frameData.m_doReset      = false;
 
         // setup comp data
         m_isReady = true;
@@ -307,17 +302,17 @@ void SkinningComponent::skin() {
         m_frameData.m_frameCounter = 0;
         m_forceUpdate              = true;
     }
-    m_frameData.m_currentPose = skel->getPose( SpaceType::MODEL );
-    if ( m_smartStretch ){ applySmartStretch(); }
-    applyBindMatrices( m_frameData.m_currentPose );
-    if ( !areEqual( m_frameData.m_currentPose, m_frameData.m_previousPose ) ||
+    const auto prevPose = m_frameData.m_skeleton.getPose( SpaceType::MODEL );
+    m_frameData.m_skeleton = *skel;
+    auto currentPose = m_frameData.m_skeleton.getPose( SpaceType::MODEL );
+    if ( m_smartStretch ){ applySmartStretch( currentPose ); }
+    m_frameData.m_skeleton.setPose( currentPose, SpaceType::MODEL );
+    if ( !areEqual( currentPose, prevPose ) ||
          m_forceUpdate )
     {
         m_forceUpdate            = false;
         m_frameData.m_doSkinning = true;
         m_frameData.m_frameCounter++;
-        m_frameData.m_refToCurrentRelPose = relativePose( m_frameData.m_currentPose, m_refData.m_refPose );
-        m_frameData.m_prevToCurrentRelPose = relativePose( m_frameData.m_currentPose, m_frameData.m_previousPose );
 
         const auto tangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
         const Vector3Array& tangents = m_refData.m_referenceMesh.getAttrib( tangentHandle ).data();
@@ -343,12 +338,12 @@ void SkinningComponent::skin() {
         }
         case STBS_LBS:
         {
-            linearBlendSkinningSTBS( m_refData, tangents, bitangents, *skel, m_frameData );
+            linearBlendSkinningSTBS( m_refData, tangents, bitangents, m_frameData );
             break;
         }
         case STBS_DQS:
         {
-            dualQuaternionSkinningSTBS( m_refData, tangents, bitangents, *skel, m_frameData );
+            dualQuaternionSkinningSTBS( m_refData, tangents, bitangents, m_frameData );
             break;
         }
         }
@@ -395,9 +390,6 @@ void SkinningComponent::endSkinning() {
             geom->getAttrib( handle ).setData( m_frameData.m_currentBitangent );
         }
 
-        std::swap( m_frameData.m_previousPose, m_frameData.m_currentPose );
-        std::swap( m_frameData.m_previousPosition, m_frameData.m_currentPosition );
-
         m_frameData.m_doReset    = false;
         m_frameData.m_doSkinning = false;
     }
@@ -430,6 +422,7 @@ void SkinningComponent::handleSkinDataLoading( const Asset::HandleData* data,
 }
 
 void SkinningComponent::createWeightMatrix() {
+    m_refData.m_bindMatrices.resize( m_refData.m_skeleton.size(), Transform::Identity() );
     m_refData.m_weights.resize( int( m_refData.m_referenceMesh.vertices().size() ),
                                 m_refData.m_skeleton.size() );
     std::vector<Eigen::Triplet<Scalar>> triplets;
@@ -459,9 +452,9 @@ void SkinningComponent::createWeightMatrix() {
     { LOG( logINFO ) << "Skinning weights have been normalized"; }
 }
 
-void SkinningComponent::applySmartStretch() {
+void SkinningComponent::applySmartStretch( Pose& pose ) {
     auto refSkel = m_refData.m_skeleton;
-    auto* currentSkel = m_skeletonGetter();
+    const auto& currentSkel = m_frameData.m_skeleton;
     for( int i = 0 ; i < int( refSkel.size() ) ; ++i )
     {
         if( refSkel.m_graph.isRoot( i ) )
@@ -471,8 +464,8 @@ void SkinningComponent::applySmartStretch() {
 
         // get transforms
         const uint parent = refSkel.m_graph.parents()[i];
-        const auto& boneModel = currentSkel->getTransform( i, SpaceType::MODEL );
-        const auto& parentModel = currentSkel->getTransform( parent, SpaceType::MODEL );
+        const auto& boneModel = currentSkel.getTransform( i, SpaceType::MODEL );
+        const auto& parentModel = currentSkel.getTransform( parent, SpaceType::MODEL );
         const auto& parentRef = refSkel.getTransform( parent, SpaceType::MODEL );
         const auto parentT = parentModel * parentRef.inverse( Eigen::Affine );
 
@@ -495,14 +488,7 @@ void SkinningComponent::applySmartStretch() {
         R.translate( -A );
         refSkel.setTransform( parent, R * parentModel, SpaceType::MODEL );
     }
-    m_frameData.m_currentPose = refSkel.getPose( SpaceType::MODEL );
-}
-
-void SkinningComponent::applyBindMatrices( Pose& pose ) const {
-    for ( const auto& bM : m_refData.m_bindMatrices )
-    {
-        pose[bM.first] = m_meshFrameInv * pose[bM.first] * bM.second;
-    }
+    pose = refSkel.getPose( SpaceType::MODEL );
 }
 
 void SkinningComponent::setupIO( const std::string& id ) {
@@ -556,6 +542,7 @@ void SkinningComponent::setupSkinningType( SkinningType type ) {
         break;
     case COR:
     {
+        // FIXME: takes time, would be nice to store them in a file and reload.
         if ( m_refData.m_CoR.empty() ) { computeCoR( m_refData ); }
         break;
     }
@@ -565,8 +552,14 @@ void SkinningComponent::setupSkinningType( SkinningType type ) {
     {
         if ( m_refData.m_weightSTBS.size() == 0 )
         {
-            m_refData.m_weightSTBS = computeSTBS_weights(
-                m_refData.m_referenceMesh.vertices(), m_refData.m_skeleton );
+            auto vertices = m_refData.m_referenceMesh.vertices();
+            Transform M = m_refData.m_meshTransformInverse.inverse();
+#pragma omp parallel for
+            for ( int i = 0; i< vertices.size(); ++i )
+            {
+                vertices[i] = M * vertices[i];
+            }
+            m_refData.m_weightSTBS = computeSTBS_weights( vertices, m_refData.m_skeleton );
         }
     }
     }

@@ -237,8 +237,14 @@ void centerOfRotationSkinning( const SkinningRefData& refData,
     const auto& vertices = refData.m_referenceMesh.vertices();
     const auto& normals = refData.m_referenceMesh.normals();
     const auto& CoR = refData.m_CoR;
-    const auto& pose = frameData.m_currentPose;
+    auto pose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
 
+    // prepare the pose w.r.t. the bind matrices
+#pragma omp parallel for
+    for ( int i = 0; i < frameData.m_skeleton.size(); ++i )
+    {
+        pose[i] = refData.m_meshTransformInverse * pose[i] * refData.m_bindMatrices[i];
+    }
     // Compute the dual quaternions
     const auto DQ = computeDQ( pose, W );
 
