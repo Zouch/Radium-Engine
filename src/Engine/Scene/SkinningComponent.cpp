@@ -13,12 +13,12 @@
 #include <Core/Utils/Color.hpp>
 #include <Core/Utils/Log.hpp>
 
-#include <Engine/RadiumEngine.hpp>
 #include <Engine/Data/BlinnPhongMaterial.hpp>
 #include <Engine/Data/Mesh.hpp>
 #include <Engine/Data/ShaderConfigFactory.hpp>
 #include <Engine/Data/Texture.hpp>
 #include <Engine/Data/TextureManager.hpp>
+#include <Engine/RadiumEngine.hpp>
 #include <Engine/Rendering/RenderObject.hpp>
 #include <Engine/Rendering/RenderObjectManager.hpp>
 #include <Engine/Rendering/RenderTechnique.hpp>
@@ -41,58 +41,7 @@ namespace Scene {
 static std::string tangentName = Data::Mesh::getAttribName( Data::Mesh::VERTEX_TANGENT );
 static std::string bitangentName = Data::Mesh::getAttribName( Data::Mesh::VERTEX_BITANGENT );
 
-bool findDuplicates( const TriangleMesh& mesh,
-                     std::vector<Index>& duplicatesMap ) {
-    bool hasDuplicates = false;
-    duplicatesMap.clear();
-    const uint numVerts = mesh.vertices().size();
-    duplicatesMap.resize( numVerts, Index::Invalid() );
-
-    Vector3Array::const_iterator vertPos;
-    Vector3Array::const_iterator duplicatePos;
-    std::vector<std::pair<Vector3, Index>> vertices;
-
-    for ( uint i = 0; i < numVerts; ++i )
-    {
-        vertices.push_back( std::make_pair( mesh.vertices()[i], Index( i ) ) );
-    }
-
-    std::sort( vertices.begin(),
-               vertices.end(),
-               []( std::pair<Vector3, int> a, std::pair<Vector3, int> b ) {
-                   if ( a.first.x() == b.first.x() )
-                   {
-                       if ( a.first.y() == b.first.y() )
-                           if ( a.first.z() == b.first.z() )
-                               return a.second < b.second;
-                           else
-                               return a.first.z() < b.first.z();
-                       else
-                           return a.first.y() < b.first.y();
-                   }
-                   return a.first.x() < b.first.x();
-               } );
-    // Here vertices contains vertex pos and idx, with equal
-    // vertices contiguous, sorted by idx, so checking if current
-    // vertex equals the previous one state if its a duplicated
-    // vertex position.
-    duplicatesMap[vertices[0].second] = vertices[0].second;
-    for ( uint i = 1; i < numVerts; ++i )
-    {
-        if ( vertices[i].first == vertices[i - 1].first )
-        {
-            duplicatesMap[vertices[i].second] = duplicatesMap[vertices[i - 1].second];
-            hasDuplicates                     = true;
-        }
-        else
-        { duplicatesMap[vertices[i].second] = vertices[i].second; }
-    }
-
-    return hasDuplicates;
-}
-
-TriangleMesh triangulate( const PolyMesh& polyMesh )
-{
+TriangleMesh triangulate( const PolyMesh& polyMesh ) {
     TriangleMesh res;
     res.setVertices( polyMesh.vertices() );
     res.setNormals( polyMesh.normals() );
@@ -128,32 +77,25 @@ TriangleMesh triangulate( const PolyMesh& polyMesh )
 void SkinningComponent::initialize() {
     auto compMsg = ComponentMessenger::getInstance();
     // get the current animation data.
-    bool hasSkel     = compMsg->canGet<Skeleton>( getEntity(), m_skelName );
-    bool hasRefPose  = compMsg->canGet<RefPose>( getEntity(), m_skelName );
-    bool hasTriMesh  = compMsg->canGet<TriangleMesh>( getEntity(), m_meshName );
-    m_meshIsPoly     = compMsg->canGet<PolyMesh>( getEntity(), m_meshName );
+    bool hasSkel    = compMsg->canGet<Skeleton>( getEntity(), m_skelName );
+    bool hasRefPose = compMsg->canGet<RefPose>( getEntity(), m_skelName );
+    bool hasTriMesh = compMsg->canGet<TriangleMesh>( getEntity(), m_meshName );
+    m_meshIsPoly    = compMsg->canGet<PolyMesh>( getEntity(), m_meshName );
 
-    if ( hasSkel && hasRefPose && (hasTriMesh || m_meshIsPoly) )
+    if ( hasSkel && hasRefPose && ( hasTriMesh || m_meshIsPoly ) )
     {
         m_renderObjectReader = compMsg->getterCallback<Index>( getEntity(), m_meshName );
         m_skeletonGetter     = compMsg->getterCallback<Skeleton>( getEntity(), m_skelName );
         if ( !m_meshIsPoly )
-        {
-            m_triMeshWriter = compMsg->rwCallback<TriangleMesh>( getEntity(), m_meshName );
-        }
+        { m_triMeshWriter = compMsg->rwCallback<TriangleMesh>( getEntity(), m_meshName ); }
         else
-        {
-            m_polyMeshWriter = compMsg->rwCallback<PolyMesh>( getEntity(), m_meshName );
-        }
+        { m_polyMeshWriter = compMsg->rwCallback<PolyMesh>( getEntity(), m_meshName ); }
 
         // copy mesh triangles and find duplicates for normal computation.
         if ( !m_meshIsPoly )
-        {
-            m_refData.m_referenceMesh = *m_triMeshWriter();
-        }
-        else {
-            m_refData.m_referenceMesh = triangulate( *m_polyMeshWriter() );
-        }
+        { m_refData.m_referenceMesh = *m_triMeshWriter(); }
+        else 
+        { m_refData.m_referenceMesh = triangulate( *m_polyMeshWriter() ); }
         if ( !m_refData.m_referenceMesh.hasAttrib( tangentName ) &&
              !m_refData.m_referenceMesh.hasAttrib( bitangentName ) )
         {
@@ -171,8 +113,8 @@ void SkinningComponent::initialize() {
         else if ( !m_refData.m_referenceMesh.hasAttrib( tangentName ) )
         {
             const auto& normals = m_refData.m_referenceMesh.normals();
-            const auto& bitangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
-            const auto& bitangents = m_refData.m_referenceMesh.getAttrib( bitangentHandle ).data();
+            const auto& bH = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
+            const auto& bitangents = m_refData.m_referenceMesh.getAttrib( bH ).data();
             Vector3Array tangents( normals.size() );
 #pragma omp parallel for
             for ( int i = 0; i < normals.size(); ++i )
@@ -184,8 +126,8 @@ void SkinningComponent::initialize() {
         else if ( !m_refData.m_referenceMesh.hasAttrib( bitangentName ) )
         {
             const auto& normals = m_refData.m_referenceMesh.normals();
-            const auto& tangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
-            const auto& tangents = m_refData.m_referenceMesh.getAttrib( tangentHandle ).data();
+            const auto& tH = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
+            const auto& tangents = m_refData.m_referenceMesh.getAttrib( tH ).data();
             Vector3Array bitangents( normals.size() );
 #pragma omp parallel for
             for ( int i = 0; i < normals.size(); ++i )
@@ -194,46 +136,42 @@ void SkinningComponent::initialize() {
             }
             m_refData.m_referenceMesh.addAttrib( bitangentName, std::move( bitangents ) );
         }
-        findDuplicates( m_refData.m_referenceMesh, m_duplicatesMap );
+        m_topoMesh.initWithWedge( m_refData.m_referenceMesh );
 
+        auto ro = getRoMgr()->getRenderObject( *m_renderObjectReader() );
         // get other data
-        m_refData.m_meshTransformInverse = m_meshFrameInv;
-        m_refData.m_skeleton = *m_skeletonGetter();
+        m_refData.m_meshTransformInverse = ro->getLocalTransform().inverse();
+        m_refData.m_skeleton             = *m_skeletonGetter();
         createWeightMatrix();
 
         // initialize frame data
         m_frameData.m_skeleton = m_refData.m_skeleton;
 
         m_frameData.m_currentPosition  = m_refData.m_referenceMesh.vertices();
-        m_frameData.m_currentNormal = m_refData.m_referenceMesh.normals();
-        const auto& tangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
-        m_frameData.m_currentTangent = m_refData.m_referenceMesh.getAttrib( tangentHandle ).data();
-        const auto& bitangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
-        m_frameData.m_currentBitangent = m_refData.m_referenceMesh.getAttrib( bitangentHandle ).data();
+        m_frameData.m_currentNormal    = m_refData.m_referenceMesh.normals();
+        const auto& tH = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
+        m_frameData.m_currentTangent = m_refData.m_referenceMesh.getAttrib( tH ).data();
+        const auto& bH = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
+        m_frameData.m_currentBitangent = m_refData.m_referenceMesh.getAttrib( bH ).data();
 
         m_frameData.m_frameCounter = 0;
         m_frameData.m_doSkinning   = true;
         m_frameData.m_doReset      = false;
 
         // setup comp data
-        m_isReady = true;
+        m_isReady     = true;
         m_forceUpdate = true;
         setupSkinningType( m_skinningType );
         setupSkinningType( STBS_LBS ); // ensure weights are present for display
 
         // prepare RO for skinning weights display
-        auto ro         = getRoMgr()->getRenderObject( *m_renderObjectReader() );
-        m_baseMaterial  = ro->getMaterial();
+        m_baseMaterial = ro->getMaterial();
 
         auto attrUV = Data::Mesh::getAttribName( Data::Mesh::VERTEX_TEXCOORD );
         AttribArrayGeometry* geom;
-        if ( !m_meshIsPoly )
-        {
-            geom = const_cast<TriangleMesh*>( m_triMeshWriter() );
-        }
-        else {
-            geom = const_cast<PolyMesh*>( m_polyMeshWriter() );
-        }
+        if ( !m_meshIsPoly ) { geom = const_cast<TriangleMesh*>( m_triMeshWriter() ); }
+        else
+        { geom = const_cast<PolyMesh*>( m_polyMeshWriter() ); }
         if ( geom->hasAttrib( attrUV ) )
         {
             auto handle = geom->getAttribHandle<Vector3>( attrUV );
@@ -246,45 +184,11 @@ void SkinningComponent::initialize() {
         // assign texture
         Data::TextureParameters texParam;
         texParam.name = ":/Textures/Influence0.png";
-        auto tex = RadiumEngine::getInstance()->getTextureManager()->getOrLoadTexture(
-            texParam );
+        auto tex = RadiumEngine::getInstance()->getTextureManager()->getOrLoadTexture( texParam );
         mat->addTexture( Data::BlinnPhongMaterial::TextureSemantic::TEX_DIFFUSE, tex );
         m_weightMaterial.reset( mat );
         // compute default weights uv
         showWeightsType( STANDARD );
-    }
-}
-
-void uniformNormal( const Vector3Array& p,
-                    const AlignedStdVector<Vector3ui>& T,
-                    const std::vector<Index>& duplicateTable,
-                    Vector3Array& normal ) {
-    const uint N = p.size();
-    normal.clear();
-    normal.resize( N, Vector3::Zero() );
-
-    for ( const auto& t : T )
-    {
-        const Index& i = duplicateTable.at( t( 0 ) );
-        const Index& j = duplicateTable.at( t( 1 ) );
-        const Index& k = duplicateTable.at( t( 2 ) );
-        const Vector3 triN   = Geometry::triangleNormal( p[i], p[j], p[k] );
-        if ( !triN.allFinite() ) { continue; }
-        normal[i] += triN;
-        normal[j] += triN;
-        normal[k] += triN;
-    }
-
-#pragma omp parallel for
-    for ( int i = 0; i < N; ++i )
-    {
-        if ( !normal[i].isApprox( Vector3::Zero() ) ) { normal[i].normalize(); }
-    }
-
-#pragma omp parallel for
-    for ( int i = 0; i < N; ++i )
-    {
-        normal[i] = normal[duplicateTable[i]];
     }
 }
 
@@ -314,10 +218,10 @@ void SkinningComponent::skin() {
         m_frameData.m_doSkinning = true;
         m_frameData.m_frameCounter++;
 
-        const auto tangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
-        const Vector3Array& tangents = m_refData.m_referenceMesh.getAttrib( tangentHandle ).data();
-        const auto bitangentHandle = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
-        const Vector3Array& bitangents = m_refData.m_referenceMesh.getAttrib( bitangentHandle ).data();
+        const auto tH = m_refData.m_referenceMesh.getAttribHandle<Vector3>( tangentName );
+        const Vector3Array& tangents = m_refData.m_referenceMesh.getAttrib( tH ).data();
+        const auto bH = m_refData.m_referenceMesh.getAttribHandle<Vector3>( bitangentName );
+        const Vector3Array& bitangents = m_refData.m_referenceMesh.getAttrib( bH ).data();
 
         switch ( m_skinningType )
         {
@@ -350,10 +254,9 @@ void SkinningComponent::skin() {
 
         if ( m_normalSkinning == GEOMETRIC )
         {
-            uniformNormal( m_frameData.m_currentPosition,
-                           m_refData.m_referenceMesh.getIndices(),
-                           m_duplicatesMap,
-                           m_frameData.m_currentNormal );
+            m_topoMesh.updatePositions( m_frameData.m_currentPosition );
+            m_topoMesh.updateWedgeNormals();
+            m_topoMesh.updateTriangleMeshNormals( m_frameData.m_currentNormal );
 #pragma omp parallel for
             for ( int i = 0; i < m_frameData.m_currentNormal.size(); ++i )
             {
@@ -370,12 +273,9 @@ void SkinningComponent::endSkinning() {
     {
         AttribArrayGeometry* geom;
         if ( !m_meshIsPoly )
-        {
-            geom = const_cast<TriangleMesh*>( m_triMeshWriter() );
-        }
-        else {
-            geom = const_cast<PolyMesh*>( m_polyMeshWriter() );
-        }
+        { geom = const_cast<TriangleMesh*>( m_triMeshWriter() ); }
+        else
+        { geom = const_cast<PolyMesh*>( m_polyMeshWriter() ); }
 
         geom->setVertices( m_frameData.m_currentPosition );
         geom->setNormals( m_frameData.m_currentNormal );
@@ -396,12 +296,10 @@ void SkinningComponent::endSkinning() {
 }
 
 void SkinningComponent::handleSkinDataLoading( const Asset::HandleData* data,
-                                               const std::string& meshName,
-                                               const Transform& meshFrame ) {
+                                               const std::string& meshName ) {
     m_skelName = data->getName();
     m_meshName = meshName;
     setupIO( meshName );
-    m_meshFrameInv = meshFrame.inverse();
     for ( const auto& bone : data->getComponentData() )
     {
         auto it_w = bone.m_weights.find( meshName );
@@ -432,11 +330,11 @@ void SkinningComponent::createWeightMatrix() {
         auto it              = m_loadedWeights.find( boneName );
         if ( it != m_loadedWeights.end() )
         {
-            const auto& W   = it->second;
+            const auto& W = it->second;
             for ( uint i = 0; i < W.size(); ++i )
             {
                 const auto& w = W[i];
-                int row{int( w.first )};
+                int row {int( w.first )};
                 CORE_ASSERT( row < m_refData.m_weights.rows(),
                              "Weights are incompatible with mesh." );
                 triplets.push_back( {row, int( col ), w.second} );
@@ -455,22 +353,19 @@ void SkinningComponent::createWeightMatrix() {
 void SkinningComponent::applySmartStretch( Pose& pose ) {
     auto refSkel = m_refData.m_skeleton;
     const auto& currentSkel = m_frameData.m_skeleton;
-    for( int i = 0 ; i < int( refSkel.size() ) ; ++i )
+    for ( int i = 0 ; i < int( refSkel.size() ) ; ++i )
     {
-        if( refSkel.m_graph.isRoot( i ) )
-        {
-            continue;
-        }
+        if ( refSkel.m_graph.isRoot( i ) ) { continue; }
 
         // get transforms
-        const uint parent = refSkel.m_graph.parents()[i];
-        const auto& boneModel = currentSkel.getTransform( i, SpaceType::MODEL );
+        const uint parent       = refSkel.m_graph.parents()[i];
+        const auto& boneModel   = currentSkel.getTransform( i, SpaceType::MODEL );
         const auto& parentModel = currentSkel.getTransform( parent, SpaceType::MODEL );
-        const auto& parentRef = refSkel.getTransform( parent, SpaceType::MODEL );
-        const auto parentT = parentModel * parentRef.inverse( Eigen::Affine );
+        const auto& parentRef   = refSkel.getTransform( parent, SpaceType::MODEL );
+        const auto parentT      = parentModel * parentRef.inverse( Eigen::Affine );
 
         // do nothing for multi-siblings
-        if( refSkel.m_graph.children()[parent].size() > 1 )
+        if ( refSkel.m_graph.children()[parent].size() > 1 )
         {
             refSkel.setTransform( parent, parentModel, SpaceType::MODEL );
             continue;
@@ -480,9 +375,9 @@ void SkinningComponent::applySmartStretch( Pose& pose ) {
         Vector3 A;
         Vector3 B;
         refSkel.getBonePoints( parent, A, B );
-        B = parentT * B;
+        B          = parentT * B;
         Vector3 B_ = boneModel.translation();
-        auto q = Quaternion::FromTwoVectors( ( B - A ), ( B_ - A ) );
+        auto q     = Quaternion::FromTwoVectors( ( B - A ), ( B_ - A ) );
         Transform R( q );
         R.pretranslate( A );
         R.translate( -A );
@@ -493,7 +388,7 @@ void SkinningComponent::applySmartStretch( Pose& pose ) {
 
 void SkinningComponent::setupIO( const std::string& id ) {
     auto compMsg = ComponentMessenger::getInstance();
-    auto wOut = std::bind( &SkinningComponent::getWeightsOutput, this );
+    auto wOut    = std::bind( &SkinningComponent::getWeightsOutput, this );
     compMsg->registerOutput<WeightMatrix>( getEntity(), this, id, wOut );
 
     auto refData = std::bind( &SkinningComponent::getSkinningRefData, this );
@@ -540,20 +435,18 @@ void SkinningComponent::setupSkinningType( SkinningType type ) {
         break;
     case DQS:
         break;
-    case COR:
-    {
+    case COR: {
         // FIXME: takes time, would be nice to store them in a file and reload.
         if ( m_refData.m_CoR.empty() ) { computeCoR( m_refData ); }
         break;
     }
     case STBS_DQS:
         [[fallthrough]];
-    case STBS_LBS:
-    {
+    case STBS_LBS: {
         if ( m_refData.m_weightSTBS.size() == 0 )
         {
             auto vertices = m_refData.m_referenceMesh.vertices();
-            Transform M = m_refData.m_meshTransformInverse.inverse();
+            Transform M   = m_refData.m_meshTransformInverse.inverse();
 #pragma omp parallel for
             for ( int i = 0; i< vertices.size(); ++i )
             {
@@ -562,51 +455,49 @@ void SkinningComponent::setupSkinningType( SkinningType type ) {
             m_refData.m_weightSTBS = computeSTBS_weights( vertices, m_refData.m_skeleton );
         }
     }
-    }
+    } // end of switch.
 }
 
-void SkinningComponent::setSmartStretch( bool on ){
+void SkinningComponent::setSmartStretch( bool on ) {
     m_smartStretch = on;
 }
 
 void SkinningComponent::showWeights( bool on ) {
-    m_showingWeights   = on;
-    auto ro            = getRoMgr()->getRenderObject( *m_renderObjectReader() );
-    auto attrUV        = Data::Mesh::getAttribName( Data::Mesh::VERTEX_TEXCOORD );
+    m_showingWeights = on;
+    auto ro          = getRoMgr()->getRenderObject( *m_renderObjectReader() );
+    auto attrUV      = Data::Mesh::getAttribName( Data::Mesh::VERTEX_TEXCOORD );
     AttribHandle<Vector3> handle;
 
     AttribArrayGeometry* geom;
     if ( !m_meshIsPoly )
-    {
-        geom = const_cast<TriangleMesh*>( m_triMeshWriter() );
-    }
-    else {
-        geom = const_cast<PolyMesh*>( m_polyMeshWriter() );
-    }
+    { geom = const_cast<TriangleMesh*>( m_triMeshWriter() ); }
+    else
+    { geom = const_cast<PolyMesh*>( m_polyMeshWriter() ); }
 
     if ( m_showingWeights )
     {
         // update the displayed weights
         const auto size = m_frameData.m_currentPosition.size();
         m_weightsUV.resize( size, Vector3::Zero() );
-        switch ( m_weightType ) {
-        case STANDARD:
+        switch ( m_weightType )
         {
-    #pragma omp parallel for
+        case STANDARD: {
+#pragma omp parallel for
             for ( int i = 0; i < int( size ); ++i )
             {
                 m_weightsUV[i][0] = m_refData.m_weights.coeff( i, m_weightBone );
             }
-        } break;
-        case STBS:
-        {
-    #pragma omp parallel for
+        }
+        break;
+        case STBS: {
+#pragma omp parallel for
             for ( int i = 0; i < int( size ); ++i )
             {
                 m_weightsUV[i][0] = m_refData.m_weightSTBS.coeff( i, m_weightBone );
             }
-        } break;
         }
+        break;
+        } // end of switch.
         // change the material
         ro->setMaterial( m_weightMaterial );
         ro->getRenderTechnique()->setParametersProvider( m_weightMaterial );
@@ -634,10 +525,7 @@ bool SkinningComponent::isShowingWeights() {
 
 void SkinningComponent::showWeightsType( WeightType type ) {
     m_weightType = type;
-    if ( m_showingWeights )
-    {
-        showWeights( true );
-    }
+    if ( m_showingWeights ) { showWeights( true ); }
 }
 
 SkinningComponent::WeightType SkinningComponent::getWeightsType() {
@@ -646,10 +534,7 @@ SkinningComponent::WeightType SkinningComponent::getWeightsType() {
 
 void SkinningComponent::setWeightBone( uint bone ) {
     m_weightBone = bone;
-    if ( m_showingWeights )
-    {
-        showWeights( true );
-    }
+    if ( m_showingWeights ) { showWeights( true ); }
 }
 
 } // namespace Scene

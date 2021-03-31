@@ -24,7 +24,7 @@ namespace Scene {
 class SkeletonBoneRenderObject;
 class SkeletonBasedAnimationSystem;
 
-/** 
+/**
  * The SkeletonComponent is responsible for the management of skeleton-based
  * character animations. It stores the animation Skeleton and the animation
  * data and is responsible for drawing the skeleton.
@@ -38,14 +38,14 @@ class SkeletonBasedAnimationSystem;
  *    - the current Animation;
  *    - the current animation time;
  *    - whether the animation time has been reset.
-  */
+ */
 class RA_ENGINE_API SkeletonComponent : public Component
 {
   public:
     friend class SkeletonBasedAnimationSystem;
 
     /// Animations are lists of keyframed transforms (one per bone).
-    using Animation = std::vector<Ra::Core::Animation::KeyFramedValue<Ra::Core::Transform>>;
+    using Animation = std::vector<Core::Animation::KeyFramedValue<Core::Transform>>;
 
     SkeletonComponent( const std::string& name, Entity* entity );
     ~SkeletonComponent() override;
@@ -57,12 +57,12 @@ class RA_ENGINE_API SkeletonComponent : public Component
 
     virtual void initialize() override {}
 
-    virtual bool canEdit( const Ra::Core::Utils::Index& roIdx ) const override;
+    virtual bool canEdit( const Core::Utils::Index& roIdx ) const override;
 
-    virtual Ra::Core::Transform getTransform( const Ra::Core::Utils::Index& roIdx ) const override;
+    virtual Core::Transform getTransform( const Core::Utils::Index& roIdx ) const override;
 
-    virtual void setTransform( const Ra::Core::Utils::Index& roIdx,
-                               const Ra::Core::Transform& transform ) override;
+    virtual void setTransform( const Core::Utils::Index& roIdx,
+                               const Core::Transform& transform ) override;
     /// \}
 
     /// \name Build from fileData
@@ -71,12 +71,12 @@ class RA_ENGINE_API SkeletonComponent : public Component
     /**
      * Create the skeleton from the given data.
      */
-    void handleSkeletonLoading( const Ra::Core::Asset::HandleData* data );
+    void handleSkeletonLoading( const Core::Asset::HandleData* data );
 
     /**
      * Create the animations from the given data.
      */
-    void handleAnimationLoading( const std::vector<Ra::Core::Asset::AnimationData*>& data );
+    void handleAnimationLoading( const std::vector<Core::Asset::AnimationData*>& data );
     /// \}
 
     /// \name Skeleton-based animation data
@@ -85,12 +85,12 @@ class RA_ENGINE_API SkeletonComponent : public Component
     /**
      * Set the animation skeleton.
      */
-    void setSkeleton( const Ra::Core::Animation::Skeleton& skel );
+    void setSkeleton( const Core::Animation::Skeleton& skel );
 
     /**
      * \returns the animation skeleton.
      */
-    inline const Ra::Core::Animation::Skeleton* getSkeleton() { return &m_skel; }
+    inline const Core::Animation::Skeleton* getSkeleton() { return &m_skel; }
 
     /**
      * Return the number of animations.
@@ -221,7 +221,7 @@ class RA_ENGINE_API SkeletonComponent : public Component
     /**
      * Returns the map from RO index to bone index.
      */
-    const std::map<Ra::Core::Utils::Index, uint>* getBoneRO2idx() const;
+    const std::map<Core::Utils::Index, uint>* getBoneRO2idx() const;
 
   private:
     /**
@@ -232,7 +232,7 @@ class RA_ENGINE_API SkeletonComponent : public Component
     /**
      * Internal Debug function to display the skeleton hierarchy.
      */
-    void printSkeleton( const Ra::Core::Animation::Skeleton& skeleton );
+    void printSkeleton( const Core::Animation::Skeleton& skeleton );
 
     /// \name Component Communication (CC)
     /// \{
@@ -245,7 +245,7 @@ class RA_ENGINE_API SkeletonComponent : public Component
     /**
      * Reference Pose getter for CC.
      */
-    const Ra::Core::Animation::RefPose* getRefPoseOutput() const;
+    const Core::Animation::RefPose* getRefPoseOutput() const;
 
     /**
      * Current Animation getter for CC.
@@ -268,10 +268,10 @@ class RA_ENGINE_API SkeletonComponent : public Component
     std::string m_skelName;
 
     /// The Animation Skeleton.
-    Ra::Core::Animation::Skeleton m_skel;
+    Core::Animation::Skeleton m_skel;
 
     /// The Reference Pose in model space.
-    Ra::Core::Animation::RefPose m_refPose;
+    Core::Animation::RefPose m_refPose;
 
     /// The animations.
     std::vector<Animation> m_animations;
@@ -280,31 +280,31 @@ class RA_ENGINE_API SkeletonComponent : public Component
     std::vector<Rendering::RenderObject*> m_boneDrawables;
 
     /// Map from bone RO index to bone idx, for CC.
-    std::map<Ra::Core::Utils::Index, uint> m_boneMap;
+    std::map<Core::Utils::Index, uint> m_boneMap;
 
     /// Current animation ID.
-    size_t m_animationID{0};
+    size_t m_animationID {0};
 
     /// Wheither to use the animation's timestep (if available) or the app's.
-    bool m_animationTimeStep{false};
+    bool m_animationTimeStep {false};
 
     /// Time step of each animation.
     std::vector<Scalar> m_dt;
 
     /// Current animation time (might be different from the app time -- see below).
-    Scalar m_animationTime{0_ra};
+    Scalar m_animationTime {0_ra};
 
     /// Animation Play speed.
-    Scalar m_speed{1_ra};
+    Scalar m_speed {1_ra};
 
     /// Whether animation auto repeat mode in on.
-    bool m_autoRepeat{false};
+    bool m_autoRepeat {false};
 
     /// Whether animation ping-pong mode is on.
-    bool m_pingPong{false};
+    bool m_pingPong {false};
 
     /// Was the animation reset?
-    bool m_wasReset{false};
+    bool m_wasReset {false};
 
     /// Mesh for bone display.
     static std::shared_ptr<Data::Mesh> s_boneMesh;

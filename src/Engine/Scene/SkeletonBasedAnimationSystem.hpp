@@ -26,14 +26,12 @@ class RA_ENGINE_API SkeletonBasedAnimationSystem : public System
     /**
      * Creates a task for each AnimationComponent to update skeleton display.
      */
-    void generateTasks( Ra::Core::TaskQueue* taskQueue,
-                        const Ra::Engine::FrameInfo& frameInfo ) override;
+    void generateTasks( Core::TaskQueue* taskQueue, const FrameInfo& frameInfo ) override;
 
     /**
      * Loads Skeletons and Animations from a file data into the givn Entity.
      */
-    void handleAssetLoading( Entity* entity,
-                             const Ra::Core::Asset::FileData* fileData ) override;
+    void handleAssetLoading( Entity* entity, const Core::Asset::FileData* fileData ) override;
     /// \}
 
     /// \name Skeleton display
@@ -60,10 +58,10 @@ class RA_ENGINE_API SkeletonBasedAnimationSystem : public System
 
   private:
     /// True if we want to show xray-bones.
-    bool m_xrayOn{false};
+    bool m_xrayOn {false};
 
     /// The current animation time.
-    Scalar m_time{0};
+    Scalar m_time {0};
 };
 
 } // namespace Scene

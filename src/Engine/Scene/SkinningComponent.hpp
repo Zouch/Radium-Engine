@@ -4,6 +4,7 @@
 #include <Core/Animation/Pose.hpp>
 #include <Core/Animation/SkinningData.hpp>
 #include <Core/Asset/HandleData.hpp>
+#include <Core/Geometry/TopologicalMesh.hpp>
 #include <Core/Geometry/TriangleMesh.hpp>
 #include <Core/Math/DualQuaternion.hpp>
 #include <Core/Utils/Index.hpp>
@@ -76,15 +77,14 @@ class RA_ENGINE_API SkinningComponent : public Component
 
     /// Loads the skinning data from the given Handledata.
     /// \note Call initialize() afterwards to finalize data registration.
-    void handleSkinDataLoading( const Ra::Core::Asset::HandleData* data,
-                                const std::string& meshName,
-                                const Ra::Core::Transform& meshFrame );
+    void handleSkinDataLoading( const Core::Asset::HandleData* data,
+                                const std::string& meshName );
 
     /// @returns the reference skinning data.
-    const Ra::Core::Animation::SkinningRefData* getSkinningRefData() const { return &m_refData; }
+    const Core::Animation::SkinningRefData* getSkinningRefData() const { return &m_refData; }
 
     /// @returns the current Pose data.
-    const Ra::Core::Animation::SkinningFrameData* getSkinningFrameData() const { return &m_frameData; }
+    const Core::Animation::SkinningFrameData* getSkinningFrameData() const { return &m_frameData; }
 
     /// @returns the name of the skinned mesh.
     const std::string getMeshName() const;
@@ -130,40 +130,37 @@ class RA_ENGINE_API SkinningComponent : public Component
     void createWeightMatrix();
 
     /// Skinning Weight Matrix getter for CC.
-    const Ra::Core::Animation::WeightMatrix* getWeightsOutput() const;
+    const Core::Animation::WeightMatrix* getWeightsOutput() const;
 
     /// Applies smart stretch to the given pose.
-    void applySmartStretch( Ra::Core::Animation::Pose& pose );
+    void applySmartStretch( Core::Animation::Pose& pose );
 
   private:
-    template<typename T>
+    template <typename T>
     using Getter = typename ComponentMessenger::CallbackTypes<T>::Getter;
 
-    template<typename T>
+    template <typename T>
     using ReadWrite = typename ComponentMessenger::CallbackTypes<T>::ReadWrite;
 
     /// The mesh name for Component communication.
     std::string m_meshName;
 
-    /// Inverse of the initial mesh transform.
-    Ra::Core::Transform m_meshFrameInv;
-
     /// The refrence Skinning data.
-    Ra::Core::Animation::SkinningRefData m_refData;
+    Core::Animation::SkinningRefData m_refData;
 
     /// The current Pose data.
-    Ra::Core::Animation::SkinningFrameData m_frameData;
+    Core::Animation::SkinningFrameData m_frameData;
 
     /// Getter for the animation skeletton.
-    Getter<Ra::Core::Animation::Skeleton> m_skeletonGetter;
+    Getter<Core::Animation::Skeleton> m_skeletonGetter;
 
     /// Read FMC's RO idx.
-    Getter<Ra::Core::Utils::Index> m_renderObjectReader;
+    Getter<Core::Utils::Index> m_renderObjectReader;
 
     /// Getter/Setter to the mesh
     bool m_meshIsPoly {false};
-    ReadWrite<Ra::Core::Geometry::TriangleMesh> m_triMeshWriter;
-    ReadWrite<Ra::Core::Geometry::PolyMesh> m_polyMeshWriter;
+    ReadWrite<Core::Geometry::TriangleMesh> m_triMeshWriter;
+    ReadWrite<Core::Geometry::PolyMesh> m_polyMeshWriter;
 
     /// The Skinning Method.
     SkinningType m_skinningType;
@@ -175,9 +172,8 @@ class RA_ENGINE_API SkinningComponent : public Component
     /// Whether skinning is mandatory for the current frame.
     bool m_forceUpdate;
 
-    /// The duplicate vertices map, used to recompute smooth normals.
-    // FIXME: implement proper normal skinning such as http://vcg.isti.cnr.it/deformFactors/
-    std::vector<Ra::Core::Utils::Index> m_duplicatesMap;
+    /// The Topological mesh used to geometrically recompute the normals.
+    Core::Geometry::TopologicalMesh m_topoMesh;
 
     /// The skinning weights, stored per bone.
     /// \note These are stored this way because we cannot build the weight matrix
@@ -186,17 +182,17 @@ class RA_ENGINE_API SkinningComponent : public Component
     /// The bind matrices, stored per bone.
     /// \note These are stored this way because we cannot fill m_refData
     ///       without data from other components (skeleton).
-    std::map<std::string, Ra::Core::Transform> m_loadedBindMatrices;
+    std::map<std::string, Core::Transform> m_loadedBindMatrices;
 
     /// stretch mode: false = standard, true = smart.
-    bool m_smartStretch { true };
+    bool m_smartStretch {true};
 
     /// Initial RO Material when not showing skinning weights.
     std::shared_ptr<Data::Material> m_baseMaterial;
     /// Material to be used for the skinning weights
     std::shared_ptr<Data::Material> m_weightMaterial;
-    Ra::Core::Vector3Array m_baseUV;
-    Ra::Core::Vector3Array m_weightsUV;
+    Core::Vector3Array m_baseUV;
+    Core::Vector3Array m_weightsUV;
     uint m_weightBone;
     WeightType m_weightType;
     bool m_showingWeights;

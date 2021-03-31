@@ -20,9 +20,7 @@ namespace Ra {
 namespace Engine {
 namespace Scene {
 
-SkeletonBasedAnimationSystem::SkeletonBasedAnimationSystem() :
-    System(),
-    m_xrayOn( false ) {}
+SkeletonBasedAnimationSystem::SkeletonBasedAnimationSystem() : System(), m_xrayOn( false ) {}
 
 // System Interface
 
@@ -37,7 +35,8 @@ void SkeletonBasedAnimationSystem::generateTasks( Ra::Core::TaskQueue* taskQueue
             if ( !Ra::Core::Math::areApproxEqual( m_time, frameInfo.m_animationTime ) )
             {
                 // here we update the skeleton w.r.t. the animation
-                auto animFunc = std::bind( &SkeletonComponent::update, animComp, frameInfo.m_animationTime );
+                auto animFunc =
+                    std::bind( &SkeletonComponent::update, animComp, frameInfo.m_animationTime );
                 auto animTask = new Ra::Core::FunctionTask(
                     animFunc, "AnimatorTask_" + animComp->getSkeleton()->getName() );
                 taskQueue->registerTask( animTask );
@@ -45,7 +44,7 @@ void SkeletonBasedAnimationSystem::generateTasks( Ra::Core::TaskQueue* taskQueue
             else
             {
                 // here we update the skeleton w.r.t. the manipulation
-                auto animFunc = std::bind( &SkeletonComponent::updateDisplay, animComp ) ;
+                auto animFunc = std::bind( &SkeletonComponent::updateDisplay, animComp );
                 auto animTask = new Ra::Core::FunctionTask(
                     animFunc, "AnimatorTask_" + animComp->getSkeleton()->getName() );
                 taskQueue->registerTask( animTask );
@@ -107,7 +106,7 @@ void SkeletonBasedAnimationSystem::handleAssetLoading( Entity* entity,
                 const auto& skel             = *it;
                 SkinningComponent* component = new SkinningComponent(
                     "SkC_" + geom->getName(), SkinningComponent::LBS, entity );
-                component->handleSkinDataLoading( skel, geom->getName(), geom->getFrame() );
+                component->handleSkinDataLoading( skel, geom->getName() );
                 registerComponent( entity, component );
             }
         }

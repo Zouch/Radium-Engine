@@ -84,7 +84,6 @@ DQList computeDQSTBS( const Pose& relPose,
                  "pose/weight size mismatch." );
     DQList DQ( uint( weight.rows() ),
                DualQuaternion( Quaternion( 0, 0, 0, 0 ), Quaternion( 0, 0, 0, 0 ) ) );
-    std::cout << DQ.size() << std::endl;
     // Stores the first non-zero quaternion for each vertex.
     std::vector<uint> firstNonZero( weight.rows(), std::numeric_limits<uint>::max() );
     // Contains the converted dual quaternions from the pose
