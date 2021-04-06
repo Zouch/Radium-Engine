@@ -17,8 +17,20 @@ namespace Ra {
 namespace Engine {
 namespace Scene {
 
-/// The SkinningComponent class is responsible for applying Geometric Skinning Methods
-/// on an animated object's mesh.
+/**
+ * \brief The SkinningComponent class is responsible for applying Geometric
+ * Skinning Methods on an animated object's mesh.
+ *
+ * Regarding Component Communication, a SkinningComponent gives access to
+ * the following data from the skinned mesh's name:
+ *    - the Ra::Core::Animation::SkinningRefData containing all the
+ *      reference data needed for the skinning.
+ *    - the Ra::Core::Animation::SkinningFrameData containing all the
+ *      data needed for the skinning at the current frame.
+ *
+ * \warning The Ra::Core::Animation::SkinningFrameData better be accessed after
+ *          the skinning task.
+ */
 class RA_ENGINE_API SkinningComponent : public Component
 {
   public:
@@ -55,48 +67,66 @@ class RA_ENGINE_API SkinningComponent : public Component
 
     ~SkinningComponent() override {}
 
-    virtual void initialize() override;
+    /// \name Component Communication (CC)
+    /// \{
 
-    /// Apply the Skinning Method.
+    virtual void initialize() override;
+    /// \}
+
+    /// \name Build from fileData
+    /// \{
+
+    /// Loads the skinning data from the given Handledata.
+    /// \note Call initialize() afterwards to finalize data registration.
+    void handleSkinDataLoading( const Core::Asset::HandleData* data, const std::string& meshName );
+    /// \}
+
+    /// \name Skinning Process
+    /// \{
+
+    /// Apply the Skinning Method and update the SkinningFrameData.
     void skin();
 
-    /// Update internal data and apply postprocesses to the mesh, e.g. normal computation.
+    /// Update internal data and update the skinned mesh.
     void endSkinning();
 
     /// Sets the Skinning method to use.
     void setSkinningType( SkinningType type );
 
-    /// \returns the current skinning method.
+    /// Returns the current skinning method.
     inline SkinningType getSkinningType() const { return m_skinningType; }
 
     /// Sets the method to use to skin the normal, tangent and binormal vectors.
     void setNormalSkinning( NormalSkinning normalSkinning );
 
-    /// \returns the current method used to skin the normal, tangent and binormal vectors.
+    /// Returns the current method used to skin the normal, tangent and binormal vectors.
     inline NormalSkinning getNormalSkinning() const { return m_normalSkinning; }
-
-    /// Loads the skinning data from the given Handledata.
-    /// \note Call initialize() afterwards to finalize data registration.
-    void handleSkinDataLoading( const Core::Asset::HandleData* data,
-                                const std::string& meshName );
-
-    /// @returns the reference skinning data.
-    const Core::Animation::SkinningRefData* getSkinningRefData() const { return &m_refData; }
-
-    /// @returns the current Pose data.
-    const Core::Animation::SkinningFrameData* getSkinningFrameData() const { return &m_frameData; }
-
-    /// @returns the name of the skinned mesh.
-    const std::string getMeshName() const;
-
-    /// @returns the name of the skeleton skinning the mesh.
-    const std::string getSkeletonName() const;
 
     /// Toggles use of smart stretch.
     void setSmartStretch( bool on );
 
-    /// @returns whether smart stretch is active or not.
+    /// Returns whether smart stretch is active or not.
     bool isSmartStretchOn() const { return m_smartStretch; }
+    /// \}
+
+    /// \name Skinning Data
+    /// \{
+
+    /// Returns the name of the skinned mesh.
+    const std::string& getMeshName() const;
+
+    /// Returns the name of the skeleton skinning the mesh.
+    const std::string& getSkeletonName() const;
+
+    /// Returns the reference skinning data.
+    const Core::Animation::SkinningRefData* getSkinningRefData() const { return &m_refData; }
+
+    /// Returns the current Pose data.
+    const Core::Animation::SkinningFrameData* getSkinningFrameData() const { return &m_frameData; }
+    /// \}
+
+    /// \name Skinning Weights Display
+    /// \{
 
     /// Toggles display of skinning weights.
     void showWeights( bool on );
@@ -104,9 +134,7 @@ class RA_ENGINE_API SkinningComponent : public Component
     /// Returns whether the skinning weights are displayed or not.
     bool isShowingWeights();
 
-    /// Set the type of skinning weight to display:
-    ///  - 0 for standard skinning weights
-    ///  - 1 for stbs weights
+    /// Set the type of skinning weight to display
     void showWeightsType( WeightType type );
 
     /// Returns the type of skinning weights displayed.
@@ -114,23 +142,17 @@ class RA_ENGINE_API SkinningComponent : public Component
 
     /// Set the bone to show the weights of.
     void setWeightBone( uint bone );
-
-  public:
-    /// The Entity name for Component communication.
-    std::string m_skelName;
+    /// \}
 
   private:
-    /// Registers the Entity name for Component communication (out).
+    /// Setup Component Communication.
     void setupIO( const std::string& id );
-
-    /// Computes internal data related to the Skinning method.
-    void setupSkinningType( SkinningType type );
 
     /// Internal function to create the skinning weights.
     void createWeightMatrix();
 
-    /// Skinning Weight Matrix getter for CC.
-    const Core::Animation::WeightMatrix* getWeightsOutput() const;
+    /// Internal function to compute the STBS weights.
+    void computeSTBSWeights();
 
     /// Applies smart stretch to the given pose.
     void applySmartStretch( Core::Animation::Pose& pose );
@@ -142,8 +164,11 @@ class RA_ENGINE_API SkinningComponent : public Component
     template <typename T>
     using ReadWrite = typename ComponentMessenger::CallbackTypes<T>::ReadWrite;
 
-    /// The mesh name for Component communication.
+    /// The skinned-mesh name for Component communication.
     std::string m_meshName;
+
+    /// The Skeleton name for Component communication.
+    std::string m_skelName;
 
     /// The refrence Skinning data.
     Core::Animation::SkinningRefData m_refData;
@@ -154,17 +179,14 @@ class RA_ENGINE_API SkinningComponent : public Component
     /// Getter for the animation skeletton.
     Getter<Core::Animation::Skeleton> m_skeletonGetter;
 
-    /// Read FMC's RO idx.
-    Getter<Core::Utils::Index> m_renderObjectReader;
-
-    /// Getter/Setter to the mesh
-    bool m_meshIsPoly {false};
-    ReadWrite<Core::Geometry::TriangleMesh> m_triMeshWriter;
-    ReadWrite<Core::Geometry::PolyMesh> m_polyMeshWriter;
-
     /// The Skinning Method.
     SkinningType m_skinningType;
+
+    /// The method to skin the normal, tangent and bitangent vectors.
     NormalSkinning m_normalSkinning;
+
+    /// Stretch mode: false = standard, true = smart.
+    bool m_smartStretch {true};
 
     /// Are all the required data available.
     bool m_isReady;
@@ -172,33 +194,53 @@ class RA_ENGINE_API SkinningComponent : public Component
     /// Whether skinning is mandatory for the current frame.
     bool m_forceUpdate;
 
+    /// Read FMC's RO idx.
+    Getter<Core::Utils::Index> m_renderObjectReader;
+
+    /// Whether the skinned mesh is a TriangleMesh or a PolyMesh.
+    bool m_meshIsPoly {false};
+
+    /// Getter/Setter to the skinned mesh, in case it is a TriangleMesh.
+    ReadWrite<Core::Geometry::TriangleMesh> m_triMeshWriter;
+
+    /// Getter/Setter to the skinned mesh, in case it is a PolyMesh.
+    ReadWrite<Core::Geometry::PolyMesh> m_polyMeshWriter;
+
     /// The Topological mesh used to geometrically recompute the normals.
     Core::Geometry::TopologicalMesh m_topoMesh;
 
-    /// The skinning weights, stored per bone.
+    /// The per-bone skinning weights.
     /// \note These are stored this way because we cannot build the weight matrix
     ///       without data from other components (skeleton).
     std::map<std::string, std::vector<std::pair<uint, Scalar>>> m_loadedWeights;
-    /// The bind matrices, stored per bone.
+
+    /// The per-bone bind matrices.
     /// \note These are stored this way because we cannot fill m_refData
     ///       without data from other components (skeleton).
     std::map<std::string, Core::Transform> m_loadedBindMatrices;
 
-    /// stretch mode: false = standard, true = smart.
-    bool m_smartStretch {true};
-
     /// Initial RO Material when not showing skinning weights.
     std::shared_ptr<Data::Material> m_baseMaterial;
+
     /// Material to be used for the skinning weights
     std::shared_ptr<Data::Material> m_weightMaterial;
+
+    /// Initial UV coordinates of the skinned mesh vertices.
     Core::Vector3Array m_baseUV;
+
+    /// UV coordinates to display the skinning weights on the skinned mesh.
     Core::Vector3Array m_weightsUV;
+
+    /// The bone to display the skinning weights of.
     uint m_weightBone;
+
+    /// The kind of skinning weights to display.
     WeightType m_weightType;
+
+    /// Whether the skinning weights are displayed or not.
     bool m_showingWeights;
 };
 
 } // namespace Scene
 } // namespace Engine
 } // namespace Ra
-

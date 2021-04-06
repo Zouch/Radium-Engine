@@ -73,10 +73,10 @@ class KeyFramedValue : public KeyFramedValueBase
 
     /**
      * Creates a KeyFramedValue from a first keyframe.
-     * \param frame the first keyframe value.
      * \param t the first keyframe point in time.
+     * \param frame the first keyframe value.
      */
-    KeyFramedValue( VALUE_TYPE frame, Scalar t ) { insertKeyFrame( t, frame ); }
+    KeyFramedValue( Scalar t, VALUE_TYPE frame ) { insertKeyFrame( t, frame ); }
 
     KeyFramedValue( const KeyFramedValue& keyframe ) = default;
 

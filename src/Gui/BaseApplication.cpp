@@ -335,9 +335,11 @@ void BaseApplication::engineBaseInitialization() {
     // Register the TimeSystem managing time dependant systems
     Scalar dt = ( m_targetFPS == 0 ? 1_ra / 60_ra : 1_ra / m_targetFPS );
     m_engine->setConstantTimeStep( dt );
-    // Register the SkeletonBasedAnimationSystem converting loaded assets to skeletons and skinning data
-    m_engine->registerSystem(
-        "SkeletonBasedAnimationSystem", new Ra::Engine::Scene::SkeletonBasedAnimationSystem, defaultSystemPriority );
+    // Register the SkeletonBasedAnimationSystem converting loaded assets to
+    // skeletons and skinning data
+    m_engine->registerSystem( "SkeletonBasedAnimationSystem",
+                              new Ra::Engine::Scene::SkeletonBasedAnimationSystem,
+                              defaultSystemPriority );
 }
 
 void BaseApplication::engineOpenGLInitialize() {
@@ -348,10 +350,10 @@ void BaseApplication::engineOpenGLInitialize() {
     QImage influenceImage( ":/Textures/Influence0.png" );
     auto img = influenceImage.convertToFormat( QImage::Format_RGB888 );
     Engine::Data::TextureParameters texData;
-    texData.width     = size_t( img.width() );
-    texData.height    = size_t( img.height() );
-    texData.texels    = img.bits();
-    texData.name      = ":/Textures/Influence0.png";
+    texData.width  = size_t( img.width() );
+    texData.height = size_t( img.height() );
+    texData.texels = img.bits();
+    texData.name   = ":/Textures/Influence0.png";
     m_engine->getTextureManager()->getOrLoadTexture( texData );
 }
 

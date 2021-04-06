@@ -10,17 +10,17 @@ void linearBlendSkinning( const SkinningRefData& refData,
                           const Vector3Array& tangents,
                           const Vector3Array& bitangents,
                           SkinningFrameData& frameData ) {
-    const auto& W = refData.m_weights;
-    const auto& vertices = refData.m_referenceMesh.vertices();
-    const auto& normals = refData.m_referenceMesh.normals();
+    const auto& W          = refData.m_weights;
+    const auto& vertices   = refData.m_referenceMesh.vertices();
+    const auto& normals    = refData.m_referenceMesh.normals();
     const auto& bindMatrix = refData.m_bindMatrices;
-    const auto& pose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
+    const auto& pose       = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
 #pragma omp parallel for
     for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
     {
-        frameData.m_currentPosition[i] = Vector3::Zero();
-        frameData.m_currentNormal[i] = Vector3::Zero();
-        frameData.m_currentTangent[i] = Vector3::Zero();
+        frameData.m_currentPosition[i]  = Vector3::Zero();
+        frameData.m_currentNormal[i]    = Vector3::Zero();
+        frameData.m_currentTangent[i]   = Vector3::Zero();
         frameData.m_currentBitangent[i] = Vector3::Zero();
     }
     for ( int k = 0; k < W.outerSize(); ++k )

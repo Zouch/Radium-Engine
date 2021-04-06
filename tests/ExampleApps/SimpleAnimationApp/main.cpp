@@ -53,7 +53,7 @@ class KeyFramedGeometryComponent : public Ra::Engine::Scene::TriangleMeshCompone
                                                   entity,
                                                   std::move( mesh ),
                                                   new Ra::Core::Asset::BlinnPhongMaterialData {} ),
-        m_transform( Ra::Core::Transform::Identity(), 0_ra ) {
+        m_transform( 0_ra, Ra::Core::Transform::Identity() ) {
         //! [Creating the transform KeyFrames]
         Ra::Core::Transform T = Ra::Core::Transform::Identity();
         T.rotate( Ra::Core::AngleAxis( Ra::Core::Math::PiDiv3, Ra::Core::Vector3::UnitY() ) );
@@ -65,7 +65,7 @@ class KeyFramedGeometryComponent : public Ra::Engine::Scene::TriangleMeshCompone
         //! [Creating the transform KeyFrames]
         //! [Creating the color KeyFrames]
         auto colors = new Ra::Core::Animation::KeyFramedValue<Ra::Core::Utils::Color>(
-            Ra::Core::Utils::Color::Green(), 0_ra );
+            0_ra, Ra::Core::Utils::Color::Green() );
         colors->insertKeyFrame( 1_ra, Ra::Core::Utils::Color::Red() );
         colors->insertKeyFrame( 2_ra, Ra::Core::Utils::Color::Blue() );
         colors->insertKeyFrame( 3_ra, Ra::Core::Utils::Color::Green() );

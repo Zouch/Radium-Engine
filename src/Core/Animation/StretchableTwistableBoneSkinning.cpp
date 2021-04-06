@@ -9,8 +9,7 @@ namespace Ra {
 namespace Core {
 namespace Animation {
 
-WeightMatrix computeSTBS_weights( const Vector3Array& inMesh,
-                                  const Skeleton& skel ) {
+WeightMatrix computeSTBS_weights( const Vector3Array& inMesh, const Skeleton& skel ) {
     std::vector<Eigen::Triplet<Scalar>> triplets;
     for ( int i = 0; i < int( inMesh.size() ); ++i )
     {
@@ -36,16 +35,16 @@ void linearBlendSkinningSTBS( const SkinningRefData& refData,
     // first decompose all pose transforms
     const auto& refPose = refData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
     const auto& curPose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
-    const auto relPose = relativePose( curPose, refPose );
+    const auto relPose  = relativePose( curPose, refPose );
     // then go through vertices
     const auto& vertices = refData.m_referenceMesh.vertices();
-    const auto& normals = refData.m_referenceMesh.normals();
+    const auto& normals  = refData.m_referenceMesh.normals();
 #pragma omp parallel for
-    for ( int i=0; i < frameData.m_currentPosition.size(); ++i )
+    for ( int i = 0; i < frameData.m_currentPosition.size(); ++i )
     {
-        frameData.m_currentPosition[i] = Vector3::Zero();
-        frameData.m_currentNormal[i] = Vector3::Zero();
-        frameData.m_currentTangent[i] = Vector3::Zero();
+        frameData.m_currentPosition[i]  = Vector3::Zero();
+        frameData.m_currentNormal[i]    = Vector3::Zero();
+        frameData.m_currentTangent[i]   = Vector3::Zero();
         frameData.m_currentBitangent[i] = Vector3::Zero();
     }
     for ( int k = 0; k < refData.m_weights.outerSize(); ++k )
@@ -65,8 +64,11 @@ void linearBlendSkinningSTBS( const SkinningRefData& refData,
             Vector3 es = ( std::sqrt( ( b_ - a_ ).squaredNorm() / ( b - a ).squaredNorm() ) - 1 ) *
                          ( b - a );
             const Scalar eis = refData.m_weightSTBS.coeff( i, j );
-            frameData.m_currentPosition[i] += w * ( refData.m_meshTransformInverse
-                * ( a_ + relPose[j].linear() * ( eis * es - a + refPose[j] * refData.m_bindMatrices[j] * vertices[i] ) ) );
+            frameData.m_currentPosition[i] +=
+                w * ( refData.m_meshTransformInverse *
+                      ( a_ + relPose[j].linear() *
+                                 ( eis * es - a +
+                                   refPose[j] * refData.m_bindMatrices[j] * vertices[i] ) ) );
             auto J = refData.m_meshTransformInverse * curPose[j] * refData.m_bindMatrices[j];
             frameData.m_currentNormal[i] += w * J.linear() * normals[i];
             frameData.m_currentTangent[i] += w * J.linear() * tangents[i];
@@ -80,8 +82,7 @@ DQList computeDQSTBS( const Pose& relPose,
                       const Skeleton& restSkel,
                       const WeightMatrix& weight,
                       const WeightMatrix& weightSTBS ) {
-    CORE_ASSERT( ( relPose.size() == size_t( weight.cols() ) ),
-                 "pose/weight size mismatch." );
+    CORE_ASSERT( ( relPose.size() == size_t( weight.cols() ) ), "pose/weight size mismatch." );
     DQList DQ( uint( weight.rows() ),
                DualQuaternion( Quaternion( 0, 0, 0, 0 ), Quaternion( 0, 0, 0, 0 ) ) );
     // Stores the first non-zero quaternion for each vertex.
@@ -155,23 +156,29 @@ void RA_CORE_API dualQuaternionSkinningSTBS( const SkinningRefData& refData,
                                              const Vector3Array& tangents,
                                              const Vector3Array& bitangents,
                                              SkinningFrameData& frameData ) {
-    const auto relPose = relativePose( frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL ),
-                                       refData.m_skeleton.getPose( HandleArray::SpaceType::MODEL ) );
-    const auto DQ = computeDQSTBS( relPose,
+    const auto relPose =
+        relativePose( frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL ),
+                      refData.m_skeleton.getPose( HandleArray::SpaceType::MODEL ) );
+    const auto DQ        = computeDQSTBS( relPose,
                                    frameData.m_skeleton,
                                    refData.m_skeleton,
                                    refData.m_weights,
                                    refData.m_weightSTBS );
     const auto& vertices = refData.m_referenceMesh.vertices();
-    const auto& normals = refData.m_referenceMesh.normals();
-    Transform M = refData.m_meshTransformInverse.inverse();
+    const auto& normals  = refData.m_referenceMesh.normals();
+    Transform M          = refData.m_meshTransformInverse.inverse();
 #pragma omp parallel for
     for ( int i = 0; i < frameData.m_currentPosition.size(); ++i )
     {
-        frameData.m_currentPosition[i] = refData.m_meshTransformInverse * DQ[i].transform( M * vertices[i] );
-        frameData.m_currentNormal[i] = refData.m_meshTransformInverse.linear() * DQ[i].rotate( M.linear() * normals[i] );
-        frameData.m_currentTangent[i] = refData.m_meshTransformInverse.linear() * DQ[i].rotate( M.linear() * tangents[i] );
-        frameData.m_currentBitangent[i] = refData.m_meshTransformInverse.linear() * DQ[i].rotate( M.linear() * bitangents[i] );
+        // fixme: there might be some manipulation to be done onto DQ[i]
+        frameData.m_currentPosition[i] =
+            refData.m_meshTransformInverse * DQ[i].transform( M * vertices[i] );
+        frameData.m_currentNormal[i] =
+            refData.m_meshTransformInverse.linear() * DQ[i].rotate( M.linear() * normals[i] );
+        frameData.m_currentTangent[i] =
+            refData.m_meshTransformInverse.linear() * DQ[i].rotate( M.linear() * tangents[i] );
+        frameData.m_currentBitangent[i] =
+            refData.m_meshTransformInverse.linear() * DQ[i].rotate( M.linear() * bitangents[i] );
     }
 }
 

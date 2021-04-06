@@ -24,20 +24,20 @@ SkeletonBasedAnimationSystem::SkeletonBasedAnimationSystem() : System(), m_xrayO
 
 // System Interface
 
-void SkeletonBasedAnimationSystem::generateTasks( Ra::Core::TaskQueue* taskQueue,
-                                                  const Ra::Engine::FrameInfo& frameInfo ) {
+void SkeletonBasedAnimationSystem::generateTasks( Core::TaskQueue* taskQueue,
+                                                  const FrameInfo& frameInfo ) {
     for ( auto compEntry : m_components )
     {
         // deal with AnimationComponents
         if ( compEntry.second->getName().compare( 0, 3, "AC_" ) == 0 )
         {
             auto animComp = static_cast<SkeletonComponent*>( compEntry.second );
-            if ( !Ra::Core::Math::areApproxEqual( m_time, frameInfo.m_animationTime ) )
+            if ( !Core::Math::areApproxEqual( m_time, frameInfo.m_animationTime ) )
             {
                 // here we update the skeleton w.r.t. the animation
                 auto animFunc =
                     std::bind( &SkeletonComponent::update, animComp, frameInfo.m_animationTime );
-                auto animTask = new Ra::Core::FunctionTask(
+                auto animTask = new Core::FunctionTask(
                     animFunc, "AnimatorTask_" + animComp->getSkeleton()->getName() );
                 taskQueue->registerTask( animTask );
             }
@@ -45,7 +45,7 @@ void SkeletonBasedAnimationSystem::generateTasks( Ra::Core::TaskQueue* taskQueue
             {
                 // here we update the skeleton w.r.t. the manipulation
                 auto animFunc = std::bind( &SkeletonComponent::updateDisplay, animComp );
-                auto animTask = new Ra::Core::FunctionTask(
+                auto animTask = new Core::FunctionTask(
                     animFunc, "AnimatorTask_" + animComp->getSkeleton()->getName() );
                 taskQueue->registerTask( animTask );
             }
@@ -56,13 +56,13 @@ void SkeletonBasedAnimationSystem::generateTasks( Ra::Core::TaskQueue* taskQueue
             auto skinComp = static_cast<SkinningComponent*>( compEntry.second );
             auto skinFunc = std::bind( &SkinningComponent::skin, skinComp );
             auto skinTask =
-                new Ra::Core::FunctionTask( skinFunc, "SkinnerTask_" + skinComp->getMeshName() );
+                new Core::FunctionTask( skinFunc, "SkinnerTask_" + skinComp->getMeshName() );
             auto endFunc = std::bind( &SkinningComponent::endSkinning, skinComp );
             auto endTask =
-                new Ra::Core::FunctionTask( endFunc, "SkinnerEndTask_" + skinComp->getMeshName() );
+                new Core::FunctionTask( endFunc, "SkinnerEndTask_" + skinComp->getMeshName() );
 
-            Ra::Core::TaskQueue::TaskId skinTaskId = taskQueue->registerTask( skinTask );
-            Ra::Core::TaskQueue::TaskId endTaskId  = taskQueue->registerTask( endTask );
+            auto skinTaskId = taskQueue->registerTask( skinTask );
+            auto endTaskId  = taskQueue->registerTask( endTask );
             taskQueue->addPendingDependency( "AnimatorTask_" + skinComp->getSkeletonName(),
                                              skinTaskId );
             taskQueue->addDependency( skinTaskId, endTaskId );
@@ -72,7 +72,7 @@ void SkeletonBasedAnimationSystem::generateTasks( Ra::Core::TaskQueue* taskQueue
 }
 
 void SkeletonBasedAnimationSystem::handleAssetLoading( Entity* entity,
-                                                       const Ra::Core::Asset::FileData* fileData ) {
+                                                       const Core::Asset::FileData* fileData ) {
     auto skelData = fileData->getHandleData();
     auto animData = fileData->getAnimationData();
 

@@ -58,10 +58,10 @@ Core::Transform SkeletonComponent::getTransform( const Index& roIdx ) const {
 
 void SkeletonComponent::setTransform( const Index& roIdx, const Core::Transform& transform ) {
     CORE_ASSERT( canEdit( roIdx ), "Transform is not editable" );
-    const uint boneIdx = m_boneMap.at( roIdx );
+    const uint boneIdx                = m_boneMap.at( roIdx );
     const Core::Transform& TBoneModel = m_skel.getTransform( boneIdx, SpaceType::MODEL );
     const Core::Transform& TBoneLocal = m_skel.getTransform( boneIdx, SpaceType::LOCAL );
-    auto diff = TBoneModel.inverse() * transform;
+    auto diff                         = TBoneModel.inverse() * transform;
     m_skel.setTransform( boneIdx, TBoneLocal * diff, SpaceType::LOCAL );
 }
 
@@ -80,7 +80,8 @@ void SkeletonComponent::handleSkeletonLoading( const Core::Asset::HandleData* da
     setupIO();
 }
 
-void SkeletonComponent::handleAnimationLoading( const std::vector<Core::Asset::AnimationData*>& data ) {
+void SkeletonComponent::handleAnimationLoading(
+    const std::vector<Core::Asset::AnimationData*>& data ) {
     CORE_ASSERT( ( m_skel.size() != 0 ), "A Skeleton should be loaded first." );
     m_animations.clear();
     m_animations.reserve( data.size() );
@@ -98,19 +99,17 @@ void SkeletonComponent::handleAnimationLoading( const std::vector<Core::Asset::A
                     return m_skel.getLabel( i ) == ha.m_name;
                 } );
             if ( it == handleAnim.cend() )
-            { m_animations.back().push_back( KeyFramedValue( pose[i], 0_ra ) ); }
+            { m_animations.back().push_back( KeyFramedValue( 0_ra, pose[i] ) ); }
             else
             { m_animations.back().push_back( it->m_anim ); }
         }
-
-        m_dt.push_back( data[n]->getTimeStep() );
     }
     if ( m_animations.size() == 0 )
     {
         m_animations.emplace_back();
         for ( uint i = 0; i < m_skel.size(); ++i )
         {
-            m_animations[0].push_back( KeyFramedValue( pose[i], 0_ra ) );
+            m_animations[0].push_back( KeyFramedValue( 0_ra, pose[i] ) );
         }
     }
     m_animationID   = 0;
@@ -129,7 +128,7 @@ SkeletonComponent::Animation& SkeletonComponent::addNewAnimation() {
     m_animations.emplace_back();
     for ( uint i = 0; i < m_skel.size(); ++i )
     {
-        m_animations.back().push_back( KeyFramedValue( m_refPose[i], 0_ra ) );
+        m_animations.back().push_back( KeyFramedValue( 0_ra, m_refPose[i] ) );
     }
     return m_animations.back();
 }
@@ -216,14 +215,6 @@ Scalar SkeletonComponent::getAnimationDuration() const {
         endTime           = std::max( endTime, *times.rbegin() );
     }
     return endTime - startTime;
-}
-
-void SkeletonComponent::toggleAnimationTimeStep( const bool status ) {
-    m_animationTimeStep = status;
-}
-
-bool SkeletonComponent::usesAnimationTimeStep() const {
-    return m_animationTimeStep;
 }
 
 void SkeletonComponent::setSpeed( const Scalar value ) {

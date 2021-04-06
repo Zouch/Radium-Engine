@@ -139,16 +139,16 @@ void AssimpAnimationDataLoader::fetchHandleAnimation( aiNodeAnim* node,
     // According to Assimp's doc, time can be negative so deal with it
     AnimationTime::Time timeOffset = time < 0_ra ? -time : 0_ra;
     keyFrame.insert( time + timeOffset );
-    KeyFramedValue<Core::Vector3> tr( assimpToCore( node->mPositionKeys[0].mValue ),
-                                      time + timeOffset );
+    KeyFramedValue<Core::Vector3> tr( time + timeOffset,
+                                      assimpToCore( node->mPositionKeys[0].mValue ) );
     time = Scalar( node->mRotationKeys[0].mTime );
     keyFrame.insert( time );
-    KeyFramedValue<Core::Quaternion> rot( assimpToCore( node->mRotationKeys[0].mValue ),
-                                          time + timeOffset );
+    KeyFramedValue<Core::Quaternion> rot( time + timeOffset,
+                                          assimpToCore( node->mRotationKeys[0].mValue ) );
     time = Scalar( node->mScalingKeys[0].mTime );
     keyFrame.insert( time );
-    KeyFramedValue<Core::Vector3> s( assimpToCore( node->mScalingKeys[0].mValue ),
-                                     time + timeOffset );
+    KeyFramedValue<Core::Vector3> s( time + timeOffset,
+                                     assimpToCore( node->mScalingKeys[0].mValue ) );
 
     // fetch the other keyframes
     for ( uint i = 1; i < T_size; ++i )

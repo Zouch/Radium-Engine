@@ -37,7 +37,7 @@ class RA_GUI_API SkeletonBasedAnimationUI : public QFrame
     /// \param parent   [optional] the QWidget holding this ui.
     explicit SkeletonBasedAnimationUI( Engine::Scene::SkeletonBasedAnimationSystem* system,
                                        Timeline* timeline = nullptr,
-                                       QWidget* parent = nullptr );
+                                       QWidget* parent    = nullptr );
 
     ~SkeletonBasedAnimationUI();
 
@@ -141,16 +141,16 @@ class RA_GUI_API SkeletonBasedAnimationUI : public QFrame
     Ui::SkeletonBasedAnimationUI* ui;
 
     /// The Skeleton-based animation system.
-    Engine::Scene::SkeletonBasedAnimationSystem* m_system{nullptr};
+    Engine::Scene::SkeletonBasedAnimationSystem* m_system {nullptr};
 
     /// The skeleton component of the current entity.
-    Engine::Scene::SkeletonComponent* m_currentSkeleton{nullptr};
+    Engine::Scene::SkeletonComponent* m_currentSkeleton {nullptr};
 
     /// The skinning components of the current entity.
     std::vector<Engine::Scene::SkinningComponent*> m_currentSkinnings;
 
     /// The Application's Timeline, used to manage keyframes internally.
-    Timeline* m_timeline{nullptr};
+    Timeline* m_timeline {nullptr};
 
     /// The last selection data for updating the Timeline when changing animation.
     Engine::Scene::ItemEntry m_selection;

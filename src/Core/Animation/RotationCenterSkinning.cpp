@@ -233,11 +233,11 @@ void centerOfRotationSkinning( const SkinningRefData& refData,
     CORE_ASSERT( refData.m_CoR.size() == frameData.m_currentPosition.size(),
                  "Invalid center of rotations" );
 
-    const auto& W = refData.m_weights;
+    const auto& W        = refData.m_weights;
     const auto& vertices = refData.m_referenceMesh.vertices();
-    const auto& normals = refData.m_referenceMesh.normals();
-    const auto& CoR = refData.m_CoR;
-    auto pose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
+    const auto& normals  = refData.m_referenceMesh.normals();
+    const auto& CoR      = refData.m_CoR;
+    auto pose            = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
 
     // prepare the pose w.r.t. the bind matrices
 #pragma omp parallel for
@@ -274,8 +274,8 @@ void centerOfRotationSkinning( const SkinningRefData& refData,
     for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
     {
         frameData.m_currentPosition[i] += DQ[i].rotate( vertices[i] - CoR[i] );
-        frameData.m_currentNormal[i] = DQ[i].rotate( normals[i] );
-        frameData.m_currentTangent[i] = DQ[i].rotate( tangents[i] );
+        frameData.m_currentNormal[i]    = DQ[i].rotate( normals[i] );
+        frameData.m_currentTangent[i]   = DQ[i].rotate( tangents[i] );
         frameData.m_currentBitangent[i] = DQ[i].rotate( bitangents[i] );
     }
 }

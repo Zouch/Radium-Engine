@@ -34,7 +34,7 @@ struct SkinningRefData {
     WeightMatrix m_weightSTBS;
 };
 
-/// Pose data for one frame. Poses are in model space.
+/// \brief Pose data for one frame.
 struct SkinningFrameData {
     /// The animation skeleton in the current pose.
     Skeleton m_skeleton;
@@ -54,14 +54,13 @@ struct SkinningFrameData {
     /// The number of the current frame.
     uint m_frameCounter;
 
-    /// Whether skinning must be processed.
-    /// It is set to true if the current pose is different from previous.
+    /// Whether skinning must be processed for the current frame.
     bool m_doSkinning;
 
     /// Whether the skin must be reset to its initial reference configuration.
     bool m_doReset;
 };
 
-} // namespace Skinning
+} // namespace Animation
 } // namespace Core
 } // namespace Ra

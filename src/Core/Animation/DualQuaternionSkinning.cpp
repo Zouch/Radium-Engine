@@ -133,13 +133,13 @@ void dualQuaternionSkinning( const SkinningRefData& refData,
     const auto DQ = computeDQ( pose, refData.m_weights );
     // apply DQS
     const auto& vertices = refData.m_referenceMesh.vertices();
-    const auto& normals = refData.m_referenceMesh.normals();
+    const auto& normals  = refData.m_referenceMesh.normals();
 #pragma omp parallel for
     for ( int i = 0; i < frameData.m_currentPosition.size(); ++i )
     {
-        frameData.m_currentPosition[i] = DQ[i].transform( vertices[i] );
-        frameData.m_currentNormal[i] = DQ[i].rotate( normals[i] );
-        frameData.m_currentTangent[i] = DQ[i].rotate( tangents[i] );
+        frameData.m_currentPosition[i]  = DQ[i].transform( vertices[i] );
+        frameData.m_currentNormal[i]    = DQ[i].rotate( normals[i] );
+        frameData.m_currentTangent[i]   = DQ[i].rotate( tangents[i] );
         frameData.m_currentBitangent[i] = DQ[i].rotate( bitangents[i] );
     }
 }
