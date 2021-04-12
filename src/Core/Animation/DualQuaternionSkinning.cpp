@@ -125,7 +125,7 @@ void dualQuaternionSkinning( const SkinningRefData& refData,
     auto pose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
     // prepare the pose w.r.t. the bind matrices and the mesh tranform
 #pragma omp parallel for
-    for ( int i = 0; i < frameData.m_skeleton.size(); ++i )
+    for ( int i = 0; i < int( frameData.m_skeleton.size() ); ++i )
     {
         pose[i] = refData.m_meshTransformInverse * pose[i] * refData.m_bindMatrices[i];
     }
@@ -135,7 +135,7 @@ void dualQuaternionSkinning( const SkinningRefData& refData,
     const auto& vertices = refData.m_referenceMesh.vertices();
     const auto& normals  = refData.m_referenceMesh.normals();
 #pragma omp parallel for
-    for ( int i = 0; i < frameData.m_currentPosition.size(); ++i )
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
     {
         frameData.m_currentPosition[i]  = DQ[i].transform( vertices[i] );
         frameData.m_currentNormal[i]    = DQ[i].rotate( normals[i] );

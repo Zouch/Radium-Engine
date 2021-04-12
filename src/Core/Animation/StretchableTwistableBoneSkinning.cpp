@@ -40,7 +40,7 @@ void linearBlendSkinningSTBS( const SkinningRefData& refData,
     const auto& vertices = refData.m_referenceMesh.vertices();
     const auto& normals  = refData.m_referenceMesh.normals();
 #pragma omp parallel for
-    for ( int i = 0; i < frameData.m_currentPosition.size(); ++i )
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
     {
         frameData.m_currentPosition[i]  = Vector3::Zero();
         frameData.m_currentNormal[i]    = Vector3::Zero();
@@ -168,7 +168,7 @@ void RA_CORE_API dualQuaternionSkinningSTBS( const SkinningRefData& refData,
     const auto& normals  = refData.m_referenceMesh.normals();
     Transform M          = refData.m_meshTransformInverse.inverse();
 #pragma omp parallel for
-    for ( int i = 0; i < frameData.m_currentPosition.size(); ++i )
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
     {
         // fixme: there might be some manipulation to be done onto DQ[i]
         frameData.m_currentPosition[i] =

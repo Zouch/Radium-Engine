@@ -102,7 +102,7 @@ void SkinningComponent::initialize() {
             Vector3Array tangents( normals.size() );
             Vector3Array bitangents( normals.size() );
 #pragma omp parallel for
-            for ( int i = 0; i < normals.size(); ++i )
+            for ( int i = 0; i < int( normals.size() ); ++i )
             {
                 Core::Math::getOrthogonalVectors( normals[i], tangents[i], bitangents[i] );
             }
@@ -116,7 +116,7 @@ void SkinningComponent::initialize() {
             const auto& bitangents = m_refData.m_referenceMesh.getAttrib( bH ).data();
             Vector3Array tangents( normals.size() );
 #pragma omp parallel for
-            for ( int i = 0; i < normals.size(); ++i )
+            for ( int i = 0; i < int( normals.size() ); ++i )
             {
                 tangents[i] = bitangents[i].cross( normals[i] );
             }
@@ -129,7 +129,7 @@ void SkinningComponent::initialize() {
             const auto& tangents = m_refData.m_referenceMesh.getAttrib( tH ).data();
             Vector3Array bitangents( normals.size() );
 #pragma omp parallel for
-            for ( int i = 0; i < normals.size(); ++i )
+            for ( int i = 0; i < int( normals.size() ); ++i )
             {
                 bitangents[i] = normals[i].cross( tangents[i] );
             }
@@ -252,7 +252,7 @@ void SkinningComponent::skin() {
             m_topoMesh.updateWedgeNormals();
             m_topoMesh.updateTriangleMeshNormals( m_frameData.m_currentNormal );
 #pragma omp parallel for
-            for ( int i = 0; i < m_frameData.m_currentNormal.size(); ++i )
+            for ( int i = 0; i < int( m_frameData.m_currentNormal.size() ); ++i )
             {
                 Core::Math::getOrthogonalVectors( m_frameData.m_currentNormal[i],
                                                   m_frameData.m_currentTangent[i],
@@ -344,7 +344,7 @@ void SkinningComponent::computeSTBSWeights() {
     auto vertices = m_refData.m_referenceMesh.vertices();
     Transform M   = m_refData.m_meshTransformInverse.inverse();
 #pragma omp parallel for
-    for ( int i = 0; i < vertices.size(); ++i )
+    for ( int i = 0; i < int( vertices.size() ); ++i )
     {
         vertices[i] = M * vertices[i];
     }

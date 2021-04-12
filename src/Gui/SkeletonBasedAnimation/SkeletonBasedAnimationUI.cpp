@@ -159,8 +159,8 @@ void SkeletonBasedAnimationUI::postLoadFile( Engine::Scene::Entity* entity ) {
     ui->m_skinning->setEnabled( false );
     // register the animation keyframes into the timeline
     auto c = std::find_if(
-        entity->getComponents().begin(), entity->getComponents().end(), []( const auto& c ) {
-            return ( c->getName().compare( 0, 3, "AC_" ) == 0 );
+        entity->getComponents().begin(), entity->getComponents().end(), []( const auto& cmpt ) {
+            return ( cmpt->getName().compare( 0, 3, "AC_" ) == 0 );
         } );
     if ( c != entity->getComponents().end() )
     {

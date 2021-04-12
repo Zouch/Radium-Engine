@@ -241,7 +241,7 @@ void centerOfRotationSkinning( const SkinningRefData& refData,
 
     // prepare the pose w.r.t. the bind matrices
 #pragma omp parallel for
-    for ( int i = 0; i < frameData.m_skeleton.size(); ++i )
+    for ( int i = 0; i < int( frameData.m_skeleton.size() ); ++i )
     {
         pose[i] = refData.m_meshTransformInverse * pose[i] * refData.m_bindMatrices[i];
     }

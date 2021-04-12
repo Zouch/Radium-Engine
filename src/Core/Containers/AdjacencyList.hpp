@@ -35,6 +35,7 @@ class RA_CORE_API AdjacencyList
     AdjacencyList();
     explicit AdjacencyList( const uint n );
     AdjacencyList( const AdjacencyList& adj );
+    AdjacencyList& operator=( const AdjacencyList& ) = default;
 
     //////////////////////////////////////////////////////////////////////////////
     // DESTRUCTOR
