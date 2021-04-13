@@ -77,14 +77,23 @@ void SkeletonBasedAnimationSystem::handleAssetLoading( Entity* entity,
     auto animData = fileData->getAnimationData();
 
     // deal with AnimationComponents
+    Scalar startTime = std::numeric_limits<Scalar>::max();
+    Scalar endTime   = 0;
     for ( const auto& skel : skelData )
     {
         auto component = new SkeletonComponent( "AC_" + skel->getName(), entity );
         component->handleSkeletonLoading( skel );
         component->handleAnimationLoading( animData );
+        auto [s, e] = component->getAnimationTimeInterval();
+        startTime   = std::min( startTime, s );
+        endTime     = std::max( endTime, e );
         component->setXray( m_xrayOn );
         registerComponent( entity, component );
     }
+    // configure the time on the Engine
+    auto engine = RadiumEngine::getInstance();
+    engine->setStartTime( startTime );
+    engine->setEndTime( endTime );
 
     // deal with SkinningComponents
     auto geomData = fileData->getGeometryData();

@@ -462,6 +462,7 @@ void SkinningComponent::showWeights( bool on ) {
         } // end of switch.
         // change the material
         ro->setMaterial( m_weightMaterial );
+        // TODO : as this considers renderer is ForwardRenderer, find how to generalize.
         ro->getRenderTechnique()->setParametersProvider( m_weightMaterial );
         // get the UV attrib handle, will create it if not there.
         handle = geom->addAttrib<Vector3>( attrUV );

@@ -217,6 +217,20 @@ Scalar SkeletonComponent::getAnimationDuration() const {
     return endTime - startTime;
 }
 
+std::pair<Scalar, Scalar> SkeletonComponent::getAnimationTimeInterval() const {
+
+    if ( m_animations.empty() ) { return {0_ra, 0_ra}; }
+    Scalar startTime = std::numeric_limits<Scalar>::max();
+    Scalar endTime   = 0;
+    for ( auto boneAnim : m_animations[m_animationID] )
+    {
+        const auto& times = boneAnim.getTimes();
+        startTime         = std::min( startTime, *times.begin() );
+        endTime           = std::max( endTime, *times.rbegin() );
+    }
+    return {startTime, endTime};
+}
+
 void SkeletonComponent::setSpeed( const Scalar value ) {
     m_speed = value;
 }

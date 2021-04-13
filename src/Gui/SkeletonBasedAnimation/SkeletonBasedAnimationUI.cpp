@@ -157,31 +157,52 @@ void SkeletonBasedAnimationUI::postLoadFile( Engine::Scene::Entity* entity ) {
     m_currentSkinnings.clear();
     ui->tabWidget->setEnabled( false );
     ui->m_skinning->setEnabled( false );
-    // register the animation keyframes into the timeline
+    // register the animation keyframes of the first animation into the timeline
     auto c = std::find_if(
         entity->getComponents().begin(), entity->getComponents().end(), []( const auto& cmpt ) {
             return ( cmpt->getName().compare( 0, 3, "AC_" ) == 0 );
         } );
-    if ( c != entity->getComponents().end() )
+    if ( m_timeline )
     {
-        auto skel           = static_cast<Ra::Engine::Scene::SkeletonComponent*>( ( *c ).get() );
-        auto& anim          = skel->getAnimation( skel->getAnimationId() );
-        const auto& boneMap = skel->getBoneRO2idx();
-        for ( size_t j = 0; j < anim.size(); ++j )
+        if ( c != entity->getComponents().end() )
         {
-            auto it = std::find_if(
-                boneMap->begin(), boneMap->end(), [j]( const auto& b ) { return b.second == j; } );
-            if ( it == boneMap->end() ) { continue; } // end bone
-            m_timeline->registerKeyFramedValue(
-                it->first,
-                KeyFramedValueController(
-                    &anim[j],
-                    "Animation_" + skel->getSkeleton()->getLabel( uint( j ) ),
-                    [&anim, j, skel]( const Scalar& t ) {
-                        anim[j].insertKeyFrame(
-                            t, skel->getSkeleton()->getPose( HandleArray::SpaceType::LOCAL )[j] );
-                    } ) ); // no update callback here
+            auto skel  = static_cast<Ra::Engine::Scene::SkeletonComponent*>( ( *c ).get() );
+            auto& anim = skel->getAnimation( skel->getAnimationId() );
+            const auto& boneMap = skel->getBoneRO2idx();
+            for ( size_t j = 0; j < anim.size(); ++j )
+            {
+                auto it = std::find_if( boneMap->begin(), boneMap->end(), [j]( const auto& b ) {
+                    return b.second == j;
+                } );
+                if ( it == boneMap->end() ) { continue; } // end bone
+
+                m_timeline->registerKeyFramedValue(
+                    it->first,
+                    KeyFramedValueController(
+                        &anim[j],
+                        "Animation_" + skel->getSkeleton()->getLabel( uint( j ) ),
+                        [&anim, j, skel]( const Scalar& t ) {
+                            anim[j].insertKeyFrame(
+                                t,
+                                skel->getSkeleton()->getPose( HandleArray::SpaceType::LOCAL )[j] );
+                        } ) ); // no update callback here
+            }
         }
+        // update the timeline display interval to the bounding interval of all anims
+        Scalar startTime = std::numeric_limits<Scalar>::max();
+        Scalar endTime   = 0;
+        for ( const auto& animComp : entity->getComponents() )
+        {
+            if ( animComp->getName().compare( 0, 3, "AC_" ) == 0 )
+            {
+                auto skel   = static_cast<Ra::Engine::Scene::SkeletonComponent*>( animComp.get() );
+                auto [s, e] = skel->getAnimationTimeInterval();
+                startTime   = std::min( startTime, s );
+                endTime     = std::max( endTime, e );
+            }
+        }
+        m_timeline->onChangeStart( startTime );
+        m_timeline->onChangeEnd( endTime );
     }
 }
 
