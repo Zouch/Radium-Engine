@@ -218,7 +218,6 @@ Scalar SkeletonComponent::getAnimationDuration() const {
 }
 
 std::pair<Scalar, Scalar> SkeletonComponent::getAnimationTimeInterval() const {
-
     if ( m_animations.empty() ) { return {0_ra, 0_ra}; }
     Scalar startTime = std::numeric_limits<Scalar>::max();
     Scalar endTime   = 0;

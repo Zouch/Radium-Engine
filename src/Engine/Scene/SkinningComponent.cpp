@@ -95,6 +95,7 @@ void SkinningComponent::initialize() {
         if ( !m_meshIsPoly ) { m_refData.m_referenceMesh = *m_triMeshWriter(); }
         else
         { m_refData.m_referenceMesh = triangulate( *m_polyMeshWriter() ); }
+        /// TODO : use the tangent computation algorithms from Core as soon as it is available.
         if ( !m_refData.m_referenceMesh.hasAttrib( tangentName ) &&
              !m_refData.m_referenceMesh.hasAttrib( bitangentName ) )
         {

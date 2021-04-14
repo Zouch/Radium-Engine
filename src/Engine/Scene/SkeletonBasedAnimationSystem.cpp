@@ -127,8 +127,8 @@ void SkeletonBasedAnimationSystem::setXray( bool on ) {
     m_xrayOn = on;
     for ( const auto& comp : m_components )
     {
-        if ( comp.second->getName().compare( 0, 3, "AC_" ) == 0 )
-        { static_cast<SkeletonComponent*>( comp.second )->setXray( on ); }
+        if ( auto animComp = dynamic_cast<SkeletonComponent*>( comp.second ) )
+        { animComp->setXray( on ); }
     }
 }
 
@@ -139,8 +139,8 @@ bool SkeletonBasedAnimationSystem::isXrayOn() {
 void SkeletonBasedAnimationSystem::toggleSkeleton( const bool status ) {
     for ( const auto& comp : m_components )
     {
-        if ( comp.second->getName().compare( 0, 3, "AC_" ) == 0 )
-        { static_cast<SkeletonComponent*>( comp.second )->toggleSkeleton( status ); }
+        if ( auto animComp = dynamic_cast<SkeletonComponent*>( comp.second ) )
+        { animComp->toggleSkeleton( status ); }
     }
 }
 
