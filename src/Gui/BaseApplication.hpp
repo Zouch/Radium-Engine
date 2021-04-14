@@ -82,6 +82,8 @@ class RA_GUI_API BaseApplication : public QApplication
      * consistent initialization wrt the BaseApplication ancestor.
      * The initialize method could be also overloaded by derived classes. In this case, it is
      * recommended that the overload explicetely call the ancestor method..
+     * \todo allow the user to ask for some "standard" systems to be added to the initialized
+     * Engine.
      */
     void initialize( const WindowFactory& factory );
 

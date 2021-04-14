@@ -146,6 +146,7 @@ class RA_ENGINE_API SkeletonComponent : public Component
     /// \{
 
     /// Turns xray display on/off for the skeleton bones.
+    /// \todo the way skeletons will be displayed will be changed.
     void setXray( bool on ) const;
 
     /// Return true if bones are displayed in xray mode, false otherwise.

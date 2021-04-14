@@ -29,9 +29,8 @@ void SkeletonBasedAnimationSystem::generateTasks( Core::TaskQueue* taskQueue,
     for ( auto compEntry : m_components )
     {
         // deal with AnimationComponents
-        if ( compEntry.second->getName().compare( 0, 3, "AC_" ) == 0 )
+        if ( auto animComp = dynamic_cast<SkeletonComponent*>( compEntry.second ) )
         {
-            auto animComp = static_cast<SkeletonComponent*>( compEntry.second );
             if ( !Core::Math::areApproxEqual( m_time, frameInfo.m_animationTime ) )
             {
                 // here we update the skeleton w.r.t. the animation
@@ -51,9 +50,8 @@ void SkeletonBasedAnimationSystem::generateTasks( Core::TaskQueue* taskQueue,
             }
         }
         // deal with SkinningComponents
-        else if ( compEntry.second->getName().compare( 0, 4, "SkC_" ) == 0 )
+        else if ( auto skinComp = dynamic_cast<SkinningComponent*>( compEntry.second ) )
         {
-            auto skinComp = static_cast<SkinningComponent*>( compEntry.second );
             auto skinFunc = std::bind( &SkinningComponent::skin, skinComp );
             auto skinTask =
                 new Core::FunctionTask( skinFunc, "SkinnerTask_" + skinComp->getMeshName() );
@@ -68,6 +66,7 @@ void SkeletonBasedAnimationSystem::generateTasks( Core::TaskQueue* taskQueue,
             taskQueue->addDependency( skinTaskId, endTaskId );
         }
     }
+
     m_time = frameInfo.m_animationTime;
 }
 

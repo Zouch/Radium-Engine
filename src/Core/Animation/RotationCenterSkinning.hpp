@@ -31,6 +31,7 @@ struct SkinningFrameData;
  * and \f$\mathbf{v}_t = \frac{1}{3}(\mathbf{p}_{t_0}+\mathbf{p}_{t_1}+\mathbf{p}_{t_2})\f$
  * , \f$t_j\f$ being the \f$j\f$-th vertex of triangle \f$t\f$ and \f$\mathcal{A}_t\f$ its area.
  *
+ * \note Parallelized loop inside (using openmp).
  */
 // clang-format on
 void RA_CORE_API computeCoR( SkinningRefData& dataInOut,
@@ -62,6 +63,7 @@ void RA_CORE_API computeCoR( SkinningRefData& dataInOut,
  *
  *
  * \note Considers frameData is well sized.
+ * \note Parallelized loop inside (using openmp).
  */
 // clang-format on
 void RA_CORE_API centerOfRotationSkinning( const SkinningRefData& refData,

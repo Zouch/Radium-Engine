@@ -51,6 +51,7 @@ WeightMatrix RA_CORE_API computeSTBS_weights( const Vector3Array& inMesh, const 
  * \f$\mathbf{v}_i^t = \sum_{s\in S}\omega_{is}\mathbf{R}_s\mathbf{K}_{is}\mathbf{v}_i^0\f$
  *
  * \note Assumes frameData is well sized.
+ * \note Parallelized loop inside (using openmp).
  */
 // clang-format on
 void RA_CORE_API linearBlendSkinningSTBS( const SkinningRefData& refData,
@@ -73,6 +74,7 @@ void RA_CORE_API linearBlendSkinningSTBS( const SkinningRefData& refData,
  *
  * \note The current pose must be given relatively to the reference pose.
  * \see R::Core::Animation::relativePose.
+ * \note Parallelized loop inside (using openmp).
  */
 // clang-format on
 DQList RA_CORE_API computeDQSTBS( const Pose& relPose,
@@ -99,6 +101,7 @@ DQList RA_CORE_API computeDQSTBS( const Pose& relPose,
  * \f$\mathbf{v}_i^t = \mathbf{Q}_i(\mathbf{v}_i^0)\f$
  *
  * \note Assumes frameData is well sized.
+ * \note Parallelized loop inside (using openmp).
  */
 // clang-format on
 void RA_CORE_API dualQuaternionSkinningSTBS( const SkinningRefData& refData,

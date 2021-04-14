@@ -24,6 +24,7 @@ struct SkinningFrameData;
  * \f$\mathbf{v}_i^t = \sum_{s\in S}\omega_{is}\mathbf{R}_s\mathbf{v}_i^0\f$
  *
  * \note Assumes frameData is well sized.
+ * \note Parallelized loop inside (using openmp).
  */
 // clang-format on
 void RA_CORE_API linearBlendSkinning( const SkinningRefData& refData,

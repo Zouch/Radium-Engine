@@ -36,6 +36,7 @@ DQList RA_CORE_API computeDQ_naive( const Pose& pose, const WeightMatrix& weight
 
 /**
  * \brief Applies the given Dual-Quaternions to the given vertices.
+ * \note Parallelized loop inside (using openmp).
  */
 Vector3Array RA_CORE_API applyDualQuaternions( const DQList& DQ, Vector3Array& vertices );
 
@@ -52,6 +53,7 @@ Vector3Array RA_CORE_API applyDualQuaternions( const DQList& DQ, Vector3Array& v
  * \f$\mathbf{v}_i^t = \mathbf{Q}_i(\mathbf{v}_i^0)\f$
  *
  * \note Assumes frameData is well sized.
+ * \note Parallelized loop inside (using openmp).
  */
 // clang-format on
 void RA_CORE_API dualQuaternionSkinning( const SkinningRefData& refData,
