@@ -329,6 +329,7 @@ void BaseApplication::initialize( const WindowFactory& factory ) {
 }
 
 void BaseApplication::engineBaseInitialization() {
+    // TODO : modify interface to allow the app to ask for specific systems registration
     // Register the GeometrySystem converting loaded assets to meshes
     m_engine->registerSystem(
         "GeometrySystem", new Ra::Engine::Scene::GeometrySystem, defaultSystemPriority );
@@ -346,6 +347,8 @@ void BaseApplication::engineOpenGLInitialize() {
     // initialize here the OpenGL part of the engine used by the application
     m_engine->initializeGL();
 
+    // TODO : move this to SkeletonBasedAnimationSystem in an InitializeGL method defined on system
+    // The above TODO is related to engineBaseInitialization TODO
     // load texture for animation skinning weights
     QImage influenceImage( ":/Textures/Influence0.png" );
     auto img = influenceImage.convertToFormat( QImage::Format_RGB888 );
