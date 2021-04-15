@@ -117,9 +117,6 @@ class RA_ENGINE_API SkeletonComponent : public Component
     /// Returns the current time of animation.
     Scalar getAnimationTime() const;
 
-    /// Returns the duration of the current animation.
-    Scalar getAnimationDuration() const;
-
     /// Returns the start and end time of the current animation
     std::pair<Scalar, Scalar> getAnimationTimeInterval() const;
 

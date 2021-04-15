@@ -103,9 +103,11 @@ class RA_ENGINE_API SkinningComponent : public Component
     inline NormalSkinning getNormalSkinning() const { return m_normalSkinning; }
 
     /// Toggles use of smart stretch.
+    /// \todo rename this as setPseudoIK
     void setSmartStretch( bool on );
 
     /// Returns whether smart stretch is active or not.
+    /// \todo rename this as isPseudoIKOn
     bool isSmartStretchOn() const { return m_smartStretch; }
     /// \}
 

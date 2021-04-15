@@ -77,11 +77,12 @@ void linearBlendSkinningSTBS( const SkinningRefData& refData,
     }
 }
 
-DQList computeDQSTBS( const Pose& relPose,
-                      const Skeleton& poseSkel,
+DQList computeDQSTBS( const Skeleton& poseSkel,
                       const Skeleton& restSkel,
                       const WeightMatrix& weight,
                       const WeightMatrix& weightSTBS ) {
+    const auto relPose = relativePose( poseSkel.getPose( HandleArray::SpaceType::MODEL ),
+                                       restSkel.getPose( HandleArray::SpaceType::MODEL ) );
     CORE_ASSERT( ( relPose.size() == size_t( weight.cols() ) ), "pose/weight size mismatch." );
     DQList DQ( uint( weight.rows() ),
                DualQuaternion( Quaternion( 0, 0, 0, 0 ), Quaternion( 0, 0, 0, 0 ) ) );
@@ -156,14 +157,8 @@ void RA_CORE_API dualQuaternionSkinningSTBS( const SkinningRefData& refData,
                                              const Vector3Array& tangents,
                                              const Vector3Array& bitangents,
                                              SkinningFrameData& frameData ) {
-    const auto relPose =
-        relativePose( frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL ),
-                      refData.m_skeleton.getPose( HandleArray::SpaceType::MODEL ) );
-    const auto DQ        = computeDQSTBS( relPose,
-                                   frameData.m_skeleton,
-                                   refData.m_skeleton,
-                                   refData.m_weights,
-                                   refData.m_weightSTBS );
+    const auto DQ = computeDQSTBS(
+        frameData.m_skeleton, refData.m_skeleton, refData.m_weights, refData.m_weightSTBS );
     const auto& vertices = refData.m_referenceMesh.vertices();
     const auto& normals  = refData.m_referenceMesh.normals();
     Transform M          = refData.m_meshTransformInverse.inverse();
