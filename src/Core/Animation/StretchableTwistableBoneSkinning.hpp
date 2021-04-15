@@ -72,7 +72,6 @@ void RA_CORE_API linearBlendSkinningSTBS( const SkinningRefData& refData,
  *                       \mathbf{R}_s\mathbf{K}_{is}(e_{is}\mathbf{e}_s-\mathbf{s_a})\f$
  * and \f$\mathcal{R}_{is} = \mathbf{R}_s\mathbf{K}_{is}\f$
  *
- * \see Ra::Core::Animation::relativePose.
  * \note Parallelized loop inside (using openmp).
  */
 // clang-format on
