@@ -28,13 +28,13 @@ Radium offers several cmake functions to configure and build your extension.
 
 \page core Core
 - \subpage develmeshes
+- \subpage develanimation
    
 \page engine Engine
 - \subpage develrendering
 - \subpage develmaterials
 - \subpage develLights
 - \subpage develpicking
-- \subpage develanimation
 - \subpage develtimeline
 
 \page gui Gui

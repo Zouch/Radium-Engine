@@ -15,83 +15,14 @@ There are two ways data can be animated using `Ra::Core::Animation::KeyFramedVal
  - When the data is directly specified as a `Ra::Core::Animation::KeyFramedValue`.
    In this case, particular values at specific times can be specified to create the animation
    keyframes, and then used when requested:
-```c++
-    #include <Core/Animation/KeyFramedValue>
-    #include <Core/Animation/KeyFramedValueInterpolators>
-    struct MyStruct {
-        MyStruct()
-          : m_nonAnimatedData( 2_ra )                       // initialize the non animated data as 2
-          , m_animatedData( 1_ra, 0_ra ) {                  // creating the animated data with value 0 at time 1
-            m_animatedData.insertKeyFrame( 3_ra, 2_ra );    // adding a keyframe with value 2 at time 3
-        }
-
-        Scalar fetch( Scalar time ) {
-            // fetch the interpolated value for the given time
-            Scalar v_t = m_animatedData.at( t, Ra::Core::Animation::linearInterpolate<Scalar> );
-            // use it
-            return m_nonAnimatedData * v_t;
-        }
-
-        Scalar m_nonAnimatedData;
-        Ra::Core::Animation::KeyFramedValue<Scalar> m_animatedData;
-    };
-
-    int main() {
-        MyStruct a;
-        std::cout << a.fetch( 0_ra ) << std::endl; // prints: 0
-        std::cout << a.fetch( 2_ra ) << std::endl; // prints: 2
-        std::cout << a.fetch( 4_ra ) << std::endl; // prints: 4
-    }
-```
+   \snippet unittest/Core/animation.cpp include keyframed
+   \snippet unittest/Core/animation.cpp declare MyStruct
+   \snippet unittest/Core/animation.cpp use MyStruct
  - When the data is not specified as a `Ra::Core::Animation::KeyFramedValue` but one wants to animate it.
    In this case, one must use the `Ra::Core::Animation::KeyFramedValueController` to animate the data:
-```c++
-    // keeping the definition of struct MyStruct above:
-    #include <Core/Animation/KeyFramedValueController>
-    struct MyStructAnimator {
-        MyStructAnimator( MyStruct& struct ) {
-            // create the keyframes for the data
-            auto frames = new Ra::Core::Animation::KeyFramedValue<Scalar>( 0_ra, 0_ra );
-            frames->insertKeyFrame( 4_ra, 4_ra );
-            // create the controller
-            m_controller.m_value = frames;
-            m_controller.m_updater = [frames, &struct]( const Scalar& t ) {
-                // fetch the interpolated value for the given time
-                auto v_t = frames->at( t, Ra::Core::Animation::linearInterpolate<Scalar> );
-                // update the data
-                struct.m_nonAnimatedData = v_t;
-            };
-        }
-
-        void update( Scalar time ) {
-            m_controller.updateKeyFrame( time ); // uses the keyframes to update the data.
-        }
-
-        Ra::Core::KeyFramedValueController m_controller;
-    };
-
-
-    int main() {
-        MyStruct a;                                // now: a.m_nonAnimatedData = 2
-        MyStructAnimator b( a );
-        std::cout << a.fetch( 0_ra ) << std::endl; // prints: 0
-        std::cout << a.fetch( 2_ra ) << std::endl; // prints: 2
-        std::cout << a.fetch( 4_ra ) << std::endl; // prints: 4
-        b.update( 1 );                             // now: a.m_nonAnimatedData = 1
-        std::cout << a.fetch( 0_ra ) << std::endl; // prints: 0
-        std::cout << a.fetch( 2_ra ) << std::endl; // prints: 1
-        std::cout << a.fetch( 4_ra ) << std::endl; // prints: 2
-        b.update( 2 );                             // now: a.m_nonAnimatedData = 2
-        std::cout << a.fetch( 0_ra ) << std::endl; // prints: 0
-        std::cout << a.fetch( 2_ra ) << std::endl; // prints: 2
-        std::cout << a.fetch( 4_ra ) << std::endl; // prints: 4
-        b.update( 4 );                             // now: a.m_nonAnimatedData = 4
-        std::cout << a.fetch( 0_ra ) << std::endl; // prints: 0
-        std::cout << a.fetch( 2_ra ) << std::endl; // prints: 4
-        std::cout << a.fetch( 4_ra ) << std::endl; // prints: 8
-    }
-```
-
+   \snippet unittest/Core/animation.cpp include keyframedvaluecontroller
+   \snippet unittest/Core/animation.cpp declare MyStructAnimator
+   \snippet unittest/Core/animation.cpp use MyStructAnimator
 
 ## Character Animation
 
