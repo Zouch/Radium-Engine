@@ -730,145 +730,144 @@ void MinimalComponent::initialize() {
         }
     }
 
+    Vector3Array points1 {
+        {00._ra, 00._ra, 00._ra},
+        {10._ra, 00._ra, 00._ra},
+        {05._ra, 05._ra, 00._ra},
+        {05._ra, 10._ra, 00._ra},
+        {15._ra, 05._ra, 00._ra},
+        {10._ra, 08._ra, 00._ra},
+        {10._ra, 12._ra, 00._ra},
+        {15._ra, 10._ra, 00._ra},
+    };
+    Vector3Array points2 = {points1[0], points1[0], points1[1], points1[1], points1[1], points1[2],
+                            points1[2], points1[2], points1[2], points1[3], points1[3], points1[3],
+                            points1[4], points1[4], points1[5], points1[5], points1[5], points1[5],
+                            points1[5], points1[5], points1[6], points1[6], points1[7], points1[7]};
+
+    Vector4Array colors1 = {
+        {0_ra, 0_ra, 0_ra, 1_ra},    {1_ra, 1_ra, 1_ra, 1_ra},    {2_ra, 2_ra, 2_ra, 1_ra},
+        {3_ra, 3_ra, 3_ra, 1_ra},    {4_ra, 4_ra, 4_ra, 1_ra},    {5_ra, 5_ra, 5_ra, 1_ra},
+        {6_ra, 6_ra, 6_ra, 1_ra},    {7_ra, 7_ra, 7_ra, 1_ra},    {8_ra, 8_ra, 8_ra, 1_ra},
+        {9_ra, 9_ra, 9_ra, 1_ra},    {10_ra, 10_ra, 10_ra, 1_ra}, {11_ra, 11_ra, 11_ra, 1_ra},
+        {12_ra, 12_ra, 12_ra, 1_ra}, {13_ra, 13_ra, 13_ra, 1_ra}, {14_ra, 14_ra, 14_ra, 1_ra},
+        {15_ra, 15_ra, 15_ra, 1_ra}, {16_ra, 16_ra, 16_ra, 1_ra}, {17_ra, 17_ra, 17_ra, 1_ra},
+        {18_ra, 18_ra, 18_ra, 1_ra}, {19_ra, 19_ra, 19_ra, 1_ra}, {20_ra, 20_ra, 20_ra, 1_ra},
+        {21_ra, 21_ra, 21_ra, 1_ra}, {22_ra, 22_ra, 22_ra, 1_ra}, {23_ra, 23_ra, 23_ra, 1_ra},
+    };
+
+    for ( auto& c : colors1 )
+    {
+        c = colorBoost * Vector4 {dis01( gen ), dis01( gen ), dis01( gen ), 1_ra};
+    }
+
+    Vector3uArray indices1 {
+        {0, 2, 1}, {0, 3, 2}, {1, 2, 5}, {2, 3, 5}, {1, 5, 4}, {3, 6, 5}, {5, 6, 7}, {4, 5, 7}};
+    Vector3uArray indices3 = {{0, 2, 1}, {1, 2, 5}, {1, 5, 4}, {3, 6, 5}, {5, 6, 7}, {4, 5, 7}};
+
+    Vector3uArray indices4 = {
+        {0, 2, 5}, {3, 14, 6}, {4, 12, 15}, {11, 18, 20}, {17, 22, 21}, {16, 13, 23}};
+
+    Vector3uArray indices2 {{0, 5, 2},
+                            {1, 9, 8},
+                            {3, 6, 14},
+                            {7, 10, 19},
+                            {4, 15, 12},
+                            {11, 20, 18},
+                            {17, 21, 22},
+                            {16, 23, 13}};
+
+    Vector4Array colors2 {24, Color::White()};
+    for ( const auto& face : indices2 )
+    {
+        colors2[face[0]] = colors1[face[0]];
+        colors2[face[1]] = colors1[face[0]];
+        colors2[face[2]] = colors1[face[0]];
+    }
+
+    Vector4Array colors3 {24, Color::White()};
+    std::vector<int> topFaceIndices {1, 3, 5, 6};
+    std::vector<int> bottomFaceIndices {0, 2, 4, 7};
+
+    for ( const auto& faceIndex : topFaceIndices )
+    {
+        colors3[indices2[faceIndex][0]] = colors1[0];
+        colors3[indices2[faceIndex][1]] = colors1[0];
+        colors3[indices2[faceIndex][2]] = colors1[0];
+    }
+    for ( const auto& faceIndex : bottomFaceIndices )
+    {
+        colors3[indices2[faceIndex][0]] = colors1[1];
+        colors3[indices2[faceIndex][1]] = colors1[1];
+        colors3[indices2[faceIndex][2]] = colors1[1];
+    }
+    Vector4Array colors4 {24, Color::White()};
+
+    std::vector<std::vector<int>> splitContinuousWedges {// 0
+                                                         {0},
+                                                         {1},
+                                                         // 1
+                                                         {2, 3, 4},
+                                                         // 2
+                                                         {8, 7},
+                                                         {5, 6},
+                                                         // 3
+                                                         {9, 10, 11},
+                                                         // 4
+                                                         {12, 13},
+                                                         // 5
+                                                         {14, 15, 16},
+                                                         {17, 18, 19},
+                                                         // 6
+                                                         {20, 21},
+                                                         // 7
+                                                         {22, 23}};
+
+    for ( size_t i = 0; i < splitContinuousWedges.size(); ++i )
+    {
+        for ( const auto& widx : splitContinuousWedges[i] )
+        {
+            colors4[widx] = colors1[i];
+        }
+    }
+
+    auto findHalfedge = []( TopologicalMesh& topo,
+                            const Vector3& from,
+                            const Vector3& to ) -> optional<TopologicalMesh::HalfedgeHandle> {
+        bool found;
+        TopologicalMesh::HalfedgeHandle he;
+        for ( auto he_iter = topo.halfedges_begin(); he_iter != topo.halfedges_end(); ++he_iter )
+        {
+
+            if ( topo.point( topo.to_vertex_handle( he_iter ) ) == to &&
+                 topo.point( topo.from_vertex_handle( he_iter ) ) == from )
+            {
+                found = true;
+                he    = *he_iter;
+            }
+        }
+        if ( found ) return he;
+        return {};
+    };
+
+    auto addMesh = [this, colorBoost, plainMaterial]( Vector3 pos, TopologicalMesh topo1 ) {
+        topo1.checkIntegrity();
+        auto mesh1 = topo1.toTriangleMesh();
+        std::shared_ptr<Mesh> poly( new Mesh( "TEST", std::move( mesh1 ) ) );
+
+        auto renderObject2 =
+            RenderObject::createRenderObject( "TEST", this, RenderObjectType::Geometry, poly, {} );
+        renderObject2->setMaterial( plainMaterial );
+        renderObject2->setLocalTransform(
+            Transform {Translation( Vector3( pos ) ) * Eigen::UniformScaling<Scalar>( 0.003_ra )} );
+
+        addRenderObject( renderObject2 );
+    };
+
     if ( ENABLE_COLLAPSE )
     {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
-        auto findHalfedge = []( TopologicalMesh& topo,
-                                const Vector3& from,
-                                const Vector3& to ) -> optional<TopologicalMesh::HalfedgeHandle> {
-            bool found;
-            TopologicalMesh::HalfedgeHandle he;
-            for ( auto he_iter = topo.halfedges_begin(); he_iter != topo.halfedges_end();
-                  ++he_iter )
-            {
-
-                if ( topo.point( topo.to_vertex_handle( he_iter ) ) == to &&
-                     topo.point( topo.from_vertex_handle( he_iter ) ) == from )
-                {
-                    found = true;
-                    he    = *he_iter;
-                }
-            }
-            if ( found ) return he;
-            return {};
-        };
-
-        auto addMesh = [this, colorBoost, plainMaterial]( Vector3 pos, TopologicalMesh topo1 ) {
-            topo1.checkIntegrity();
-            auto mesh1 = topo1.toTriangleMesh();
-            std::shared_ptr<Mesh> poly( new Mesh( "TEST", std::move( mesh1 ) ) );
-
-            auto renderObject2 = RenderObject::createRenderObject(
-                "TEST", this, RenderObjectType::Geometry, poly, {} );
-            renderObject2->setMaterial( plainMaterial );
-            renderObject2->setLocalTransform( Transform {
-                Translation( Vector3( pos ) ) * Eigen::UniformScaling<Scalar>( 0.003_ra )} );
-
-            addRenderObject( renderObject2 );
-        };
-
-        Vector3Array points1 {
-            {00._ra, 00._ra, 00._ra},
-            {10._ra, 00._ra, 00._ra},
-            {05._ra, 05._ra, 00._ra},
-            {05._ra, 10._ra, 00._ra},
-            {15._ra, 05._ra, 00._ra},
-            {10._ra, 08._ra, 00._ra},
-            {10._ra, 12._ra, 00._ra},
-            {15._ra, 10._ra, 00._ra},
-        };
-        Vector3Array points2 = {points1[0], points1[0], points1[1], points1[1], points1[1],
-                                points1[2], points1[2], points1[2], points1[2], points1[3],
-                                points1[3], points1[3], points1[4], points1[4], points1[5],
-                                points1[5], points1[5], points1[5], points1[5], points1[5],
-                                points1[6], points1[6], points1[7], points1[7]};
-
-        Vector4Array colors1 = {
-            {0_ra, 0_ra, 0_ra, 1_ra},    {1_ra, 1_ra, 1_ra, 1_ra},    {2_ra, 2_ra, 2_ra, 1_ra},
-            {3_ra, 3_ra, 3_ra, 1_ra},    {4_ra, 4_ra, 4_ra, 1_ra},    {5_ra, 5_ra, 5_ra, 1_ra},
-            {6_ra, 6_ra, 6_ra, 1_ra},    {7_ra, 7_ra, 7_ra, 1_ra},    {8_ra, 8_ra, 8_ra, 1_ra},
-            {9_ra, 9_ra, 9_ra, 1_ra},    {10_ra, 10_ra, 10_ra, 1_ra}, {11_ra, 11_ra, 11_ra, 1_ra},
-            {12_ra, 12_ra, 12_ra, 1_ra}, {13_ra, 13_ra, 13_ra, 1_ra}, {14_ra, 14_ra, 14_ra, 1_ra},
-            {15_ra, 15_ra, 15_ra, 1_ra}, {16_ra, 16_ra, 16_ra, 1_ra}, {17_ra, 17_ra, 17_ra, 1_ra},
-            {18_ra, 18_ra, 18_ra, 1_ra}, {19_ra, 19_ra, 19_ra, 1_ra}, {20_ra, 20_ra, 20_ra, 1_ra},
-            {21_ra, 21_ra, 21_ra, 1_ra}, {22_ra, 22_ra, 22_ra, 1_ra}, {23_ra, 23_ra, 23_ra, 1_ra},
-        };
-
-        for ( auto& c : colors1 )
-        {
-            c = colorBoost * Vector4 {dis01( gen ), dis01( gen ), dis01( gen ), 1_ra};
-        }
-
-        Vector3uArray indices1 {
-            {0, 2, 1}, {0, 3, 2}, {1, 2, 5}, {2, 3, 5}, {1, 5, 4}, {3, 6, 5}, {5, 6, 7}, {4, 5, 7}};
-        Vector3uArray indices3 = {{0, 2, 1}, {1, 2, 5}, {1, 5, 4}, {3, 6, 5}, {5, 6, 7}, {4, 5, 7}};
-
-        Vector3uArray indices4 = {
-            {0, 2, 5}, {3, 14, 6}, {4, 12, 15}, {11, 18, 20}, {17, 22, 21}, {16, 13, 23}};
-
-        Vector3uArray indices2 {{0, 5, 2},
-                                {1, 9, 8},
-                                {3, 6, 14},
-                                {7, 10, 19},
-                                {4, 15, 12},
-                                {11, 20, 18},
-                                {17, 21, 22},
-                                {16, 23, 13}};
-
-        Vector4Array colors2 {24, Color::White()};
-        for ( const auto& face : indices2 )
-        {
-            colors2[face[0]] = colors1[face[0]];
-            colors2[face[1]] = colors1[face[0]];
-            colors2[face[2]] = colors1[face[0]];
-        }
-
-        Vector4Array colors3 {24, Color::White()};
-        std::vector<int> topFaceIndices {1, 3, 5, 6};
-        std::vector<int> bottomFaceIndices {0, 2, 4, 7};
-
-        for ( const auto& faceIndex : topFaceIndices )
-        {
-            colors3[indices2[faceIndex][0]] = colors1[0];
-            colors3[indices2[faceIndex][1]] = colors1[0];
-            colors3[indices2[faceIndex][2]] = colors1[0];
-        }
-        for ( const auto& faceIndex : bottomFaceIndices )
-        {
-            colors3[indices2[faceIndex][0]] = colors1[1];
-            colors3[indices2[faceIndex][1]] = colors1[1];
-            colors3[indices2[faceIndex][2]] = colors1[1];
-        }
-        Vector4Array colors4 {24, Color::White()};
-
-        std::vector<std::vector<int>> splitContinuousWedges {// 0
-                                                             {0},
-                                                             {1},
-                                                             // 1
-                                                             {2, 3, 4},
-                                                             // 2
-                                                             {8, 7},
-                                                             {5, 6},
-                                                             // 3
-                                                             {9, 10, 11},
-                                                             // 4
-                                                             {12, 13},
-                                                             // 5
-                                                             {14, 15, 16},
-                                                             {17, 18, 19},
-                                                             // 6
-                                                             {20, 21},
-                                                             // 7
-                                                             {22, 23}};
-
-        for ( size_t i = 0; i < splitContinuousWedges.size(); ++i )
-        {
-            for ( const auto& widx : splitContinuousWedges[i] )
-            {
-                colors4[widx] = colors1[i];
-            }
-        }
 
         auto addMergeScene =
             [findHalfedge, addMesh, &cellCorner, toCellCenter, cellSize, nCellX, nCellY](
@@ -899,9 +898,10 @@ void MinimalComponent::initialize() {
                 topo.collapse( *optHe );
                 addMesh( pos, topo );
 
-                topo  = TopologicalMesh {mesh};
-                optHe = findHalfedge( topo, from, to );
                 pos += up;
+                topo = TopologicalMesh {mesh};
+                topo.mergeEqualWedges();
+                optHe = findHalfedge( topo, from, to );
                 topo.collapse( *optHe, true );
                 addMesh( pos, topo );
 
@@ -915,9 +915,10 @@ void MinimalComponent::initialize() {
                 topo.collapse( *optHe );
                 addMesh( pos, topo );
 
-                topo  = TopologicalMesh {mesh};
-                optHe = findHalfedge( topo, from, to );
                 pos += up;
+                topo = TopologicalMesh {mesh};
+                topo.mergeEqualWedges();
+                optHe = findHalfedge( topo, from, to );
                 topo.collapse( *optHe, true );
                 addMesh( pos, topo );
             };
@@ -954,6 +955,86 @@ void MinimalComponent::initialize() {
 
         // with "flat face" wedges
         addMergeScene( pos, points2, colors2, indices4, points1[5], points1[2] );
+    }
+
+    if ( ENABLE_SPLIT )
+    {
+        updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
+        updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
+
+        auto addSplitScene =
+            [findHalfedge, addMesh, &cellCorner, toCellCenter, cellSize, nCellX, nCellY](
+                Vector3 pos,
+                const Vector3Array& points,
+                const Vector4Array& colors,
+                const Vector3uArray& indices,
+                Vector3 from,
+                Vector3 to ) {
+                TriangleMesh mesh;
+                TopologicalMesh topo;
+                optional<TopologicalMesh::HalfedgeHandle> optHe;
+                Vector3 up {0_ra, .05_ra, 0_ra};
+
+                mesh.setVertices( points );
+                mesh.addAttrib( Mesh::getAttribName( Mesh::VERTEX_COLOR ),
+                                Vector4Array {colors.begin(), colors.begin() + points.size()} );
+                mesh.setIndices( indices );
+
+                topo = TopologicalMesh {mesh};
+                topo.mergeEqualWedges();
+                topo.garbage_collection();
+
+                addMesh( pos, topo );
+
+                for ( int i = 0; i < 2; ++i )
+                {
+                    for ( auto f : {0.25_ra, 0.5_ra, 0.75_ra} )
+                    {
+                        pos += up;
+                        topo      = TopologicalMesh {mesh};
+                        optHe     = findHalfedge( topo, from, to );
+                        auto edge = topo.edge_handle( *optHe );
+                        topo.mergeEqualWedges();
+                        topo.splitEdge( edge, f );
+                        addMesh( pos, topo );
+                    }
+                    std::swap( from, to );
+                }
+            };
+        Vector3 dx  = Vector3( cellSize / 8_ra, 0_ra, 0_ra );
+        Vector3 pos = cellCorner;
+        pos[2] += toCellCenter[2];
+        // With "continuous" wedges.
+        addSplitScene( pos, points1, colors1, indices1, points1[5], points1[2] );
+        pos += dx;
+
+        // with "top/bottom" wedges
+        addSplitScene( pos, points2, colors3, indices2, points1[5], points1[2] );
+        pos += dx;
+
+        // with continuous"top/bottom" wedges
+        addSplitScene( pos, points2, colors4, indices2, points1[5], points1[2] );
+        pos += dx;
+
+        // with "flat face" wedges
+        addSplitScene( pos, points2, colors2, indices2, points1[5], points1[2] );
+        pos += dx;
+
+        // boundary
+        // With "continuous" wedges.
+        addSplitScene( pos, points1, colors1, indices3, points1[5], points1[2] );
+        pos += dx;
+
+        // with "top/bottom" wedges
+        addSplitScene( pos, points2, colors3, indices4, points1[5], points1[2] );
+        pos += dx;
+
+        // with continuous"top/bottom" wedges
+        addSplitScene( pos, points2, colors4, indices4, points1[5], points1[2] );
+        pos += dx;
+
+        // with "flat face" wedges
+        addSplitScene( pos, points2, colors2, indices4, points1[5], points1[2] );
     }
 }
 
