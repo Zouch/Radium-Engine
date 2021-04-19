@@ -664,45 +664,48 @@ bool TopologicalMesh::splitEdge( TopologicalMesh::EdgeHandle eh, Scalar f ) {
     // incorrect factor
     if ( f < 0 || f > 1 ) { return false; }
 
-    if ( is_boundary( eh ) )
-    {
-        CORE_ASSERT( false, "ouch" );
-        return false;
-    }
-
     const auto h0 = halfedge_handle( eh, 0 );
     const auto o0 = halfedge_handle( eh, 1 );
 
     const auto v0 = to_vertex_handle( o0 );
     const auto v1 = to_vertex_handle( h0 );
 
+    const auto h1 = next_halfedge_handle( h0 );
+    const auto h2 = next_halfedge_handle( h1 );
+    const auto o1 = next_halfedge_handle( o0 );
+    const auto o2 = next_halfedge_handle( o1 );
+
     // add the new point
     const Point p   = Point( f * point( v1 ) + ( 1_ra - f ) * point( v0 ) );
     VertexHandle vh = add_vertex( p );
 
-    const auto h1 = next_halfedge_handle( h0 );
-    const auto h2 = next_halfedge_handle( h1 );
-
-    const auto o1 = next_halfedge_handle( o0 );
-    const auto o2 = next_halfedge_handle( o1 );
-
     // compute interpolated wedge, or the two wedges if not the same wedges
     // around the two vertices of the edge (we always compute for two wedges,
     // even if add will return the same wedge.
-    const auto hw0idx = property( m_wedgeIndexPph, h2 );
-    const auto hw1idx = property( m_wedgeIndexPph, h0 );
-    const auto ow0idx = property( m_wedgeIndexPph, o2 );
-    const auto ow1idx = property( m_wedgeIndexPph, o0 );
-    const auto hw0    = m_wedges.getWedgeData( hw0idx );
-    const auto hw1    = m_wedges.getWedgeData( hw1idx );
-    const auto ow0    = m_wedges.getWedgeData( ow0idx );
-    const auto ow1    = m_wedges.getWedgeData( ow1idx );
-    auto hvw          = interpolateWedgeAttributes( hw0, hw1, f );
-    auto ovw          = interpolateWedgeAttributes( ow1, ow0, f );
-    hvw.m_position    = p;
-    ovw.m_position    = p;
-    auto hvwidx       = m_wedges.add( hvw );
-    auto ovwidx       = m_wedges.add( ovw );
+    WedgeIndex ovwidx;
+    WedgeIndex hvwidx;
+    if ( !is_boundary( h0 ) )
+    {
+
+        const auto hw0idx = property( m_wedgeIndexPph, h2 );
+        const auto hw1idx = property( m_wedgeIndexPph, h0 );
+        const auto hw0    = m_wedges.getWedgeData( hw0idx );
+        const auto hw1    = m_wedges.getWedgeData( hw1idx );
+        auto hvw          = interpolateWedgeAttributes( hw0, hw1, f );
+        hvw.m_position    = p;
+        hvwidx            = m_wedges.add( hvw );
+    }
+    if ( !is_boundary( o0 ) )
+    {
+
+        const auto ow0idx = property( m_wedgeIndexPph, o2 );
+        const auto ow1idx = property( m_wedgeIndexPph, o0 );
+        const auto ow0    = m_wedges.getWedgeData( ow0idx );
+        const auto ow1    = m_wedges.getWedgeData( ow1idx );
+        auto ovw          = interpolateWedgeAttributes( ow1, ow0, f );
+        ovw.m_position    = p;
+        ovwidx            = m_wedges.add( ovw );
+    }
 
     split_copy( eh, vh );
 
