@@ -927,6 +927,7 @@ void MinimalComponent::initialize() {
         pos[2] += toCellCenter[2];
         // With "continuous" wedges.
         addMergeScene( pos, points1, colors1, indices1, points1[5], points1[2] );
+        pos += dx;
 
         // with "top/bottom" wedges
         addMergeScene( pos, points2, colors3, indices2, points1[5], points1[2] );
