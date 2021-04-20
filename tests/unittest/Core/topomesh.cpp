@@ -578,7 +578,7 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/EdgeSplit", "[Core][Core/Geometry][Top
     float f = .3f;
 
     test_split( topo, eh, f );
-    /// \todo : split boundary edge,  collapse,  check float attrib value
+    /// \todo : split boundary edge.
 }
 
 TEST_CASE( "Core/Geometry/TopologicalMesh/Manifold", "[Core][Core/Geometry][TopologicalMesh]" ) {
@@ -1161,7 +1161,6 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
     SECTION( "with flat face wedges" ) {
         addMergeScene( points2, colors2, indices2, points1[5], points1[2] );
     }
-
     SECTION( "boundary  With continuous wedges." ) {
         addMergeScene( points1, colors1, indices3, points1[5], points1[2] );
     }
@@ -1173,5 +1172,122 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
     }
     SECTION( "boundary with flat face wedges" ) {
         addMergeScene( points2, colors2, indices4, points1[5], points1[2] );
+    }
+
+    auto addSplitScene = [findHalfedge]( const Vector3Array& points,
+                                         const Vector4Array& colors,
+                                         const Vector3uArray& indices,
+                                         Vector3 from,
+                                         Vector3 to ) {
+        TriangleMesh mesh;
+        TopologicalMesh topo;
+        optional<TopologicalMesh::HalfedgeHandle> optHe;
+
+        mesh.setVertices( points );
+        mesh.addAttrib( "color", Vector4Array {colors.begin(), colors.begin() + points.size()} );
+        mesh.setIndices( indices );
+
+        topo = TopologicalMesh {mesh};
+        topo.mergeEqualWedges();
+        topo.garbage_collection();
+
+        for ( int i = 0; i < 2; ++i )
+        {
+            for ( auto f : {0.25_ra, 0.5_ra, 0.75_ra} )
+            {
+                topo = TopologicalMesh {mesh};
+                topo.mergeEqualWedges();
+                optHe   = findHalfedge( topo, from, to );
+                auto eh = topo.edge_handle( *optHe );
+
+                auto he0         = topo.halfedge_handle( eh, 0 );
+                auto he0boundary = topo.is_boundary( he0 );
+                auto he1         = topo.halfedge_handle( eh, 1 );
+                auto he1boundary = topo.is_boundary( he1 );
+                auto v0          = topo.from_vertex_handle( he0 ); // i.e. to_vertex_handle(he1)
+                REQUIRE( v0 == topo.to_vertex_handle( he1 ) );
+                auto v1 = topo.to_vertex_handle( he0 );
+                auto p0 = topo.point( v0 );
+                auto p1 = topo.point( v1 );
+
+                auto widx01 = topo.getWedgeIndex( he0 );
+                auto widx00 = topo.getWedgeIndex( topo.prev_halfedge_handle( he0 ) );
+                auto widx10 = topo.getWedgeIndex( he1 );
+                auto widx11 = topo.getWedgeIndex( topo.prev_halfedge_handle( he1 ) );
+
+                topo.splitEdge( eh, f );
+
+                auto vsplit = topo.to_vertex_handle( he1 ); // i.e. from_vertex_handle(he0)
+                REQUIRE( vsplit == topo.from_vertex_handle( he0 ) );
+
+                auto psplit = topo.point( vsplit );
+                auto vcheck = ( f * p1 + ( 1.f - f ) * p0 );
+                REQUIRE( Math::areApproxEqual( ( psplit - vcheck ).squaredNorm(), 0.f ) );
+                REQUIRE( he0boundary == topo.is_boundary( he0 ) );
+                REQUIRE( he1boundary == topo.is_boundary( he1 ) );
+
+                ///\todo factorize code
+                if ( !he0boundary )
+                {
+                    auto wd0 = topo.getWedgeData( widx00 );
+                    auto wd1 = topo.getWedgeData( widx01 );
+                    auto f0  = topo.getWedgeData( widx00 ).m_vector4Attrib[0];
+                    auto f1  = topo.getWedgeData( widx01 ).m_vector4Attrib[0];
+                    auto wd =
+                        topo.getWedgeData( topo.getWedgeIndex( topo.prev_halfedge_handle( he0 ) ) );
+                    auto fsplit = wd.m_vector4Attrib[0];
+                    auto fcheck = ( f * f1 + ( 1.f - f ) * f0 );
+                    REQUIRE( Math::areApproxEqual( ( fsplit - fcheck ).squaredNorm(), 0.f ) );
+                    REQUIRE(
+                        Math::areApproxEqual( ( psplit - wd.m_position ).squaredNorm(), 0.f ) );
+                }
+                else
+                { REQUIRE( topo.getWedgeIndex( topo.prev_halfedge_handle( he0 ) ).isInvalid() ); }
+
+                if ( !he1boundary )
+                {
+                    auto wd0    = topo.getWedgeData( widx10 );
+                    auto wd1    = topo.getWedgeData( widx11 );
+                    auto f0     = topo.getWedgeData( widx10 ).m_vector4Attrib[0];
+                    auto f1     = topo.getWedgeData( widx11 ).m_vector4Attrib[0];
+                    auto wd     = topo.getWedgeData( topo.getWedgeIndex( he1 ) );
+                    auto fsplit = wd.m_vector4Attrib[0];
+                    auto fcheck = ( f * f1 + ( 1.f - f ) * f0 );
+                    REQUIRE( Math::areApproxEqual( ( fsplit - fcheck ).squaredNorm(), 0.f ) );
+                    REQUIRE(
+                        Math::areApproxEqual( ( psplit - wd.m_position ).squaredNorm(), 0.f ) );
+                }
+                else
+                { REQUIRE( topo.getWedgeIndex( he1 ).isInvalid() ); }
+            }
+            std::swap( from, to );
+        }
+    };
+
+    SECTION( "With continuous wedges." ) {
+        addSplitScene( points1, colors1, indices1, points1[5], points1[2] );
+    }
+
+    SECTION( "with top/bottom wedges" ) {
+        addSplitScene( points2, colors3, indices2, points1[5], points1[2] );
+    }
+
+    SECTION( "with continuous top/bottom wedges" ) {
+        addSplitScene( points2, colors4, indices2, points1[5], points1[2] );
+    }
+    SECTION( "with flat face wedges" ) {
+        addSplitScene( points2, colors2, indices2, points1[5], points1[2] );
+    }
+    SECTION( "boundary  With continuous wedges." ) {
+        addSplitScene( points1, colors1, indices3, points1[5], points1[2] );
+    }
+    SECTION( "boundary with top/bottom wedges" ) {
+        addSplitScene( points2, colors3, indices4, points1[5], points1[2] );
+    }
+    SECTION( "boundary with continuous top/bottom wedges" ) {
+        addSplitScene( points2, colors4, indices4, points1[5], points1[2] );
+    }
+    SECTION( "boundary with flat face wedges" ) {
+        addSplitScene( points2, colors2, indices4, points1[5], points1[2] );
     }
 }
