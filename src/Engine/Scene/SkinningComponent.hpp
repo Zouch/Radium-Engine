@@ -188,7 +188,8 @@ class RA_ENGINE_API SkinningComponent : public Component
     NormalSkinning m_normalSkinning;
 
     /// Stretch mode: false = standard, true = smart.
-    bool m_smartStretch {true};
+    /// TODO : verify smart streatch. Does not work with several gltf skeletons
+    bool m_smartStretch {false};
 
     /// Are all the required data available.
     bool m_isReady;
