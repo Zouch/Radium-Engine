@@ -193,6 +193,7 @@ void SkinningComponent::initialize() {
     }
 }
 
+
 void SkinningComponent::skin() {
     CORE_ASSERT( m_isReady, "Skinning is not setup" );
 
@@ -234,13 +235,7 @@ void SkinningComponent::skin() {
             break;
         }
         case COR: {
-#ifdef ENABLE_COR
             centerOfRotationSkinning( m_refData, tangents, bitangents, m_frameData );
-#else
-            //      Center of Rotation Skinning is deactivated due to strong instabilities. Fallback
-            //      to DQS
-            dualQuaternionSkinning( m_refData, tangents, bitangents, m_frameData );
-#endif
             break;
         }
         case STBS_LBS: {
@@ -405,14 +400,6 @@ void SkinningComponent::setupIO( const std::string& id ) {
 }
 
 void SkinningComponent::setSkinningType( SkinningType type ) {
-#ifndef ENABLE_COR
-    if ( type == COR )
-    {
-        LOG( logWARNING ) << "Center of Rotation Skinning is deactivated due to strong "
-                             "instabilities. Fallback to DQS";
-        type = DQS;
-    }
-#endif
     m_skinningType = type;
     if ( m_isReady )
     {
