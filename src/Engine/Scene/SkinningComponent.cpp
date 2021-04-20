@@ -193,7 +193,6 @@ void SkinningComponent::initialize() {
     }
 }
 
-
 void SkinningComponent::skin() {
     CORE_ASSERT( m_isReady, "Skinning is not setup" );
 
