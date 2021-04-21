@@ -341,14 +341,28 @@ void SkinningComponent::createWeightMatrix() {
 }
 
 void SkinningComponent::computeSTBSWeights() {
-    // compute the STBS weights
-    auto vertices = m_refData.m_referenceMesh.vertices();
-    Transform M   = m_refData.m_meshTransformInverse.inverse();
-#pragma omp parallel for
-    for ( int i = 0; i < int( vertices.size() ); ++i )
+    // first skin the mesh using LBS to ensure there is no pose issue
+    // (e.g. when the mesh is in T pose but the skeleton isn't)
+    // but skip the inversion of the global mesh transform since we need the
+    // skinned vertices in model space.
+    const auto& V    = m_refData.m_referenceMesh.vertices();
+    const auto& pose = m_refData.m_skeleton.getPose( SpaceType::MODEL );
+    auto vertices    = Vector3Array( V.size(), Vector3::Zero() );
+    for ( int k = 0; k < m_refData.m_weights.outerSize(); ++k )
     {
-        vertices[i] = M * vertices[i];
+        const int nonZero = m_refData.m_weights.col( k ).nonZeros();
+        WeightMatrix::InnerIterator it0( m_refData.m_weights, k );
+#pragma omp parallel for
+        for ( int nz = 0; nz < nonZero; ++nz )
+        {
+            WeightMatrix::InnerIterator it = it0 + Eigen::Index( nz );
+            const uint i                   = it.row();
+            const uint j                   = it.col();
+            const Scalar w                 = it.value();
+            vertices[i] += w * ( pose[j] * m_refData.m_bindMatrices[j] * V[i] );
+        }
     }
+    // compute the STBS weights
     m_refData.m_weightSTBS = computeSTBS_weights( vertices, m_refData.m_skeleton );
 }
 

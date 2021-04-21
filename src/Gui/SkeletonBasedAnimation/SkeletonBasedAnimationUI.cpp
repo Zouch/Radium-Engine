@@ -342,7 +342,7 @@ void SkeletonBasedAnimationUI::on_m_showSkeleton_toggled( bool checked ) {
 void SkeletonBasedAnimationUI::on_m_smartStretch_toggled( bool checked ) {
     for ( auto skin : m_currentSkinnings )
     {
-        if ( skin ) { skin->setSmartStretch( checked ); }
+        skin->setSmartStretch( checked );
     }
     askForUpdate();
 }
