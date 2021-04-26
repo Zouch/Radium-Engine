@@ -122,8 +122,8 @@ void dualQuaternionSkinning( const SkinningRefData& refData,
                              const Vector3Array& tangents,
                              const Vector3Array& bitangents,
                              SkinningFrameData& frameData ) {
-    auto pose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
     // prepare the pose w.r.t. the bind matrices and the mesh tranform
+    auto pose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
 #pragma omp parallel for
     for ( int i = 0; i < int( frameData.m_skeleton.size() ); ++i )
     {
@@ -137,10 +137,11 @@ void dualQuaternionSkinning( const SkinningRefData& refData,
 #pragma omp parallel for
     for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
     {
-        frameData.m_currentPosition[i]  = DQ[i].transform( vertices[i] );
-        frameData.m_currentNormal[i]    = DQ[i].rotate( normals[i] );
-        frameData.m_currentTangent[i]   = DQ[i].rotate( tangents[i] );
-        frameData.m_currentBitangent[i] = DQ[i].rotate( bitangents[i] );
+        const auto& DQi                 = DQ[i];
+        frameData.m_currentPosition[i]  = DQi.transform( vertices[i] );
+        frameData.m_currentNormal[i]    = DQi.rotate( normals[i] );
+        frameData.m_currentTangent[i]   = DQi.rotate( tangents[i] );
+        frameData.m_currentBitangent[i] = DQi.rotate( bitangents[i] );
     }
 }
 } // namespace Animation

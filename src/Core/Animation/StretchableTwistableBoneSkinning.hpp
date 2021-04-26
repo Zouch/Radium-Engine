@@ -75,10 +75,7 @@ void RA_CORE_API linearBlendSkinningSTBS( const SkinningRefData& refData,
  * \note Parallelized loop inside (using openmp).
  */
 // clang-format on
-DQList RA_CORE_API computeDQSTBS( const Skeleton& poseSkel,
-                                  const Skeleton& restSkel,
-                                  const WeightMatrix& weight,
-                                  const WeightMatrix& weightSTBS );
+DQList RA_CORE_API computeDQSTBS( const SkinningRefData& refData, const Skeleton& poseSkel );
 
 // clang-format off
 /**
