@@ -112,3 +112,4 @@ addRunAndDebugTargets(CustomCameraManipulator)
 
 add_subdirectory(PickingDemoApp)
 add_subdirectory(KeyEventDemoApp)
+add_subdirectory(VolumeDemoApp)
