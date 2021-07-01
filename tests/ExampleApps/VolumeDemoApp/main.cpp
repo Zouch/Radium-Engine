@@ -44,8 +44,37 @@ int main( int argc, char* argv[] ) {
     }
     auto volume     = new Ra::Core::Asset::VolumeData( "DemoVolume" );
     volume->volume  = density;
-    volume->sigma_s = ( Ra::Core::Utils::Color::White() - Ra::Core::Utils::Color::Skin() ) * 50;
-    volume->sigma_a = Ra::Core::Utils::Color::White() * 5;
+
+    // from measured media at https://github.com/mmp/pbrt-v3/blob/master/src/core/medium.cpp
+    // unit :  mm-1
+/*
+    // Skin2
+    volume->sigma_s = Ra::Core::Utils::Color{ 1.09_ra, 1.59_ra, 1.79_ra};
+    volume->sigma_a = Ra::Core::Utils::Color{ 0.013_ra, 0.070_ra, 0.145_ra};
+*/
+    /*
+    // Skin1
+    volume->sigma_s = Ra::Core::Utils::Color{ 0.74_ra, 0.88_ra, 1.01_ra};
+    volume->sigma_a = Ra::Core::Utils::Color{ 0.032_ra, 0.17_ra, 0.48_ra};
+    */
+    /*
+    // Ketchup
+    volume->sigma_s = Ra::Core::Utils::Color{ 0.18_ra, 0.07_ra, 0.03_ra};
+    volume->sigma_a = Ra::Core::Utils::Color{ 0.061_ra, 0.97_ra, 1.45_ra};
+    */
+    /*
+    // Chardonnay
+    volume->sigma_s = Ra::Core::Utils::Color{ 1.7982e-05_ra, 1.3758e-05_ra, 1.2023e-05_ra };
+    volume->sigma_a = Ra::Core::Utils::Color{ 0.010782_ra, 0.011855_ra, 0.023997_ra };
+    */
+/*
+    // As the scene unit is meter, multiply by 1000
+    volume->sigma_s *= 1000;
+    volume->sigma_a *= 1000;
+*/
+
+    // keep default absorption/diffusion  coeffficients : default to Air
+
     Scalar maxDim   = std::max( std::max( sx, sy ), sz );
     Ra::Core::Vector3 p0( 0, 0, 0 );
     Ra::Core::Vector3 p1( sx, sy, sz );
@@ -100,7 +129,7 @@ int main( int argc, char* argv[] ) {
     auto close_timer = new QTimer( &app );
     close_timer->setInterval( 8000 );
     QObject::connect( close_timer, &QTimer::timeout, [&app]() { app.appNeedsToQuit(); } );
-    close_timer->start();
+    //close_timer->start();
 
     return app.exec();
 }

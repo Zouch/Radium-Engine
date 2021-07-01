@@ -1,6 +1,18 @@
 #ifndef VOLUMETRICMATERIAL_GLSL
 #define VOLUMETRICMATERIAL_GLSL
 
+/* ------------------------------------------------------------------------------------------- */
+/*  This should be control by the application using properties on the material on the shader   */
+/* ------------------------------------------------------------------------------------------- */
+// TODO allow to configure these defines from the Radium Material ? From the application ?
+// Subsampling of shadow rays
+#define SHADOW_RAY_SUBSAMPLING 4
+// Compute attenuated incident lighting (costly)
+//#define ATTENUATED_LIGHTING
+// Compute volume shading (single scattering only)
+#define VOLUME_SHADING
+/* -------------------------------------------------------------------------------------------- */
+
 // https://www.alanzucconi.com/2017/10/10/atmospheric-scattering-1/
 // https://www.pbrt.org/fileformat-v3.html#media-world
 // This material definition follows the pbrt v3 heterogeneous participating media definition
@@ -38,10 +50,9 @@ float phaseHG( float cosTheta, float g ) {
     float denom = 1 + g * g + 2 * g * cosTheta;
     return Inv4Pi * ( 1 - g * g ) / ( denom * sqrt( denom ) );
 }
-/* --------------------------------------------------------------------------------------------------------------
- */
 
-#define SHADOW_RAY_SUBSAMPLING 4
+
+
 
 /* --------------------------------------------------------------------------------------------------------------
  */
@@ -52,7 +63,7 @@ bool getTr( Material volume, vec3 p, vec3 dir, out vec3 tr ) {
     // sigma_t for the volume, that will be modulated by the density.
     // Here, we precompute the quantum for the integration
     vec3 sigma_t =
-        ( volume.sigma_a.rgb + volume.sigma_s.rgb ) * SHADOW_RAY_SUBSAMPLING * volume.stepsize;
+        ( volume.sigma_a.rgb + volume.sigma_s.rgb ) * SHADOW_RAY_SUBSAMPLING * volume.stepsize  * volume.scale;
     bool hit = false;
     p += dir * VanderCorput( uint( dot( p, p ) ) ) * volume.stepsize;
     for ( ;; )
@@ -74,31 +85,27 @@ bool getTr( Material volume, vec3 p, vec3 dir, out vec3 tr ) {
     return hit;
 }
 
-#define WANNA_BURN_YOUR_GPU
 /* The following two functions mut be adatped to the lighting process */
 // compute the attenation of the light (miss the light intensity parameter ...
 vec3 lightColor( Material volume, vec3 p, Light l ) {
     // vec3 lightColor = lightContributionFrom(l, p);
     vec3 lightColor = l.color.xyz;
-#ifdef WANNA_BURN_YOUR_GPU
     vec3 Tr       = vec3( 1 );
+#ifdef ATTENUATED_LIGHTING
     vec3 dirLight = getLightDirection( l, p );
     getTr( volume, p, dirLight, Tr );
-#else
-    vec3 Tr = vec3( 1 );
 #endif
     return Tr * lightColor;
 }
 
 // compute the scattering at p
-#define VOLUME_SHADING
 vec3 inscatter( Material volume, vec3 p, vec3 dir, Light l ) {
 #ifdef VOLUME_SHADING
     vec3 dirLight = getLightDirection( l, p );
-    return Inv4Pi * volume.sigma_s.rgb * phaseHG( dot( dir, dirLight ), volume.g ) *
+    return Inv4Pi * volume.sigma_s.rgb * volume.scale * phaseHG( dot( dir, dirLight ), volume.g ) *
            lightColor( volume, p, l );
 #else
-    return Inv4Pi * volume.sigma_s.rgb;
+    return volume.sigma_s.rgb;
 #endif
 }
 
@@ -128,24 +135,20 @@ bool raymarch( Material volume,
                out vec3 color,
                out vec3 tr ) {
     tr = vec3( 1 );
-    // accumulated optical thickness
-    vec3 tau = vec3( 0 );
     // sigma_t for the volume, that will be modulated by the density. Here, we precompute the
     // quantum for the integration
-    vec3 sigma_t = ( volume.sigma_a.rgb + volume.sigma_s.rgb ) * volume.stepsize;
+    vec3 sigma_t = ( volume.sigma_a.rgb + volume.sigma_s.rgb ) * volume.stepsize * volume.scale;
     // The ray marching loop
     bool hit = false;
-    float t  = VanderCorput( uint( dot( p, p ) ) ) * volume.stepsize;
-    p += dir * t;
+    float t = 0;
     for ( ;; )
     {
-        float density = texture( volume.density, p ).r * volume.scale;
+        float density = texture( volume.density, p ).r;
         if ( density > 0 )
         {
             hit = true;
             // Compute Transmission
-            tau = density * sigma_t;
-            tr *= exp( -tau );
+            tr *= exp( -density * sigma_t );
             // Compute scattering at point p
             color += tr * density * inscatter( volume, p, dir, l ) * volume.stepsize;
         }
