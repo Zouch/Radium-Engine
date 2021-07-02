@@ -54,6 +54,10 @@ get_target_property(USE_TINYPLY IO IO_TINYPLY)
 if (${USE_TINYPLY})
     target_compile_definitions(${ra_gui_target} PRIVATE "-DIO_USE_TINYPLY")
 endif ()
+get_target_property(HANDLE_VOLUMES IO IO_VOLUMES)
+if (${HANDLE_VOLUMES})
+    target_compile_definitions(${ra_gui_target} PRIVATE "-DIO_HANDLE_VOLUMES")
+endif ()
 
 target_compile_definitions(${ra_gui_target} PRIVATE "-DRA_GUI_EXPORTS")
 

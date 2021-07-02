@@ -102,4 +102,13 @@ if [ "$BASE" = "IO" ]; then
     find  ../src/${BASE}/TinyPlyLoader/ -name \*.hpp | cut -f 4- -d/ | sort | xargs -n1 echo "   "  >> ${OUTPUT}
     echo ")"     >> ${OUTPUT}
     echo "endif( RADIUM_IO_TINYPLY )"  >> ${OUTPUT}
+    echo "if( RADIUM_IO_VOLUMES )"  >> ${OUTPUT}
+    echo "list(APPEND ${LOWBASE}_sources"  >> ${OUTPUT}
+    find  ../src/${BASE}/VolumesLoader/ -name \*.cpp | cut -f 4- -d/ | sort | xargs -n1 echo "   "  >> ${OUTPUT}
+    echo ")"  >> ${OUTPUT}
+    echo ""      >> ${OUTPUT}
+    echo "list(APPEND ${LOWBASE}_headers"  >> ${OUTPUT}
+    find  ../src/${BASE}/VolumesLoader/ -name \*.hpp | cut -f 4- -d/ | sort | xargs -n1 echo "   "  >> ${OUTPUT}
+    echo ")"     >> ${OUTPUT}
+    echo "endif( RADIUM_IO_VOLUMES )"  >> ${OUTPUT}
 fi
