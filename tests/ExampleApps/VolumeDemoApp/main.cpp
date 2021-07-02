@@ -39,19 +39,21 @@ int main( int argc, char* argv[] ) {
         for ( int j = 0; j < sy; ++j )
         {
             for ( int k = 0; k < sz; ++k )
-            { data[i + sx * ( j + sy * k )] = densityField( i, j, k, 50 ); }
+            {
+                data[i + sx * ( j + sy * k )] = densityField( i, j, k, 50 );
+            }
         }
     }
-    auto volume     = new Ra::Core::Asset::VolumeData( "DemoVolume" );
-    volume->volume  = density;
+    auto volume    = new Ra::Core::Asset::VolumeData( "DemoVolume" );
+    volume->volume = density;
 
     // from measured media at https://github.com/mmp/pbrt-v3/blob/master/src/core/medium.cpp
     // unit :  mm-1
-/*
-    // Skin2
-    volume->sigma_s = Ra::Core::Utils::Color{ 1.09_ra, 1.59_ra, 1.79_ra};
-    volume->sigma_a = Ra::Core::Utils::Color{ 0.013_ra, 0.070_ra, 0.145_ra};
-*/
+    /*
+        // Skin2
+        volume->sigma_s = Ra::Core::Utils::Color{ 1.09_ra, 1.59_ra, 1.79_ra};
+        volume->sigma_a = Ra::Core::Utils::Color{ 0.013_ra, 0.070_ra, 0.145_ra};
+    */
     /*
     // Skin1
     volume->sigma_s = Ra::Core::Utils::Color{ 0.74_ra, 0.88_ra, 1.01_ra};
@@ -67,15 +69,15 @@ int main( int argc, char* argv[] ) {
     volume->sigma_s = Ra::Core::Utils::Color{ 1.7982e-05_ra, 1.3758e-05_ra, 1.2023e-05_ra };
     volume->sigma_a = Ra::Core::Utils::Color{ 0.010782_ra, 0.011855_ra, 0.023997_ra };
     */
-/*
-    // As the scene unit is meter, multiply by 1000
-    volume->sigma_s *= 1000;
-    volume->sigma_a *= 1000;
-*/
+    /*
+        // As the scene unit is meter, multiply by 1000
+        volume->sigma_s *= 1000;
+        volume->sigma_a *= 1000;
+    */
 
     // keep default absorption/diffusion  coeffficients : default to Air
 
-    Scalar maxDim   = std::max( std::max( sx, sy ), sz );
+    Scalar maxDim = std::max( std::max( sx, sy ), sz );
     Ra::Core::Vector3 p0( 0, 0, 0 );
     Ra::Core::Vector3 p1( sx, sy, sz );
     volume->boundingBox    = Ra::Core::Aabb( p0, p1 );
@@ -85,7 +87,7 @@ int main( int argc, char* argv[] ) {
 
     //! [Create the engine entity for the Volume]
     auto e = app.m_engine->getEntityManager()->createEntity( "Volume demo" );
-    e->setTransform( Ra::Core::Transform { Ra::Core::Translation( 0_ra, 0_ra, 0.5_ra ) } );
+    e->setTransform( Ra::Core::Transform {Ra::Core::Translation( 0_ra, 0_ra, 0.5_ra )} );
     //! [Create the engine entity for the Volume]
 
     //! [Create a geometry component with the Volume]
@@ -120,7 +122,6 @@ int main( int argc, char* argv[] ) {
     geometrySystem->addComponent( ce, cc );
     //! [Register the entity/component association to the geometry system ]
 
-
     //! [Tell the window that something is to be displayed]
     app.m_mainWindow->prepareDisplay();
     //! [Tell the window that something is to be displayed]
@@ -129,7 +130,7 @@ int main( int argc, char* argv[] ) {
     auto close_timer = new QTimer( &app );
     close_timer->setInterval( 8000 );
     QObject::connect( close_timer, &QTimer::timeout, [&app]() { app.appNeedsToQuit(); } );
-    //close_timer->start();
+    // close_timer->start();
 
     return app.exec();
 }
