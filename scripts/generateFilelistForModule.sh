@@ -58,15 +58,15 @@ fi
 
 if [ "$BASE" = "IO" ]; then
     echo  "set( ${LOWBASE}_sources"  >> ${OUTPUT}
-    find  ../src/${BASE}/ -name \*.cpp | grep -v deprecated | grep -v AssimpLoader | grep -v TinyPlyLoader | cut -f 4- -d/ | sort | xargs -n1 echo "   "  >> ${OUTPUT}
+    find  ../src/${BASE}/ -name \*.cpp | grep -v deprecated | grep -v AssimpLoader | grep -v TinyPlyLoader | grep -v VolumesLoader | cut -f 4- -d/ | sort | xargs -n1 echo "   "  >> ${OUTPUT}
     echo ")"  >> ${OUTPUT}
     echo ""      >> ${OUTPUT}
     echo  "set( ${LOWBASE}_headers"  >> ${OUTPUT}
-    find  ../src/${BASE}/ -name \*.hpp | grep -v deprecated | grep -v AssimpLoader | grep -v TinyPlyLoader | cut -f 4- -d/ | sort | xargs -n1 echo "   "  >> ${OUTPUT}
+    find  ../src/${BASE}/ -name \*.hpp | grep -v deprecated | grep -v AssimpLoader | grep -v TinyPlyLoader | grep -v VolumesLoader | cut -f 4- -d/ | sort | xargs -n1 echo "   "  >> ${OUTPUT}
     echo ")"  >> ${OUTPUT}
     echo ""  >> ${OUTPUT}
     echo  "set( ${LOWBASE}_inlines"  >> ${OUTPUT}
-    find  ../src/${BASE}/ -name \*.inl | grep -v deprecated | grep -v AssimpLoader | grep -v TinyPlyLoader | cut -f 4- -d/ | sort | xargs -n1 echo "   "  >> ${OUTPUT}
+    find  ../src/${BASE}/ -name \*.inl | grep -v deprecated | grep -v AssimpLoader | grep -v TinyPlyLoader | grep -v VolumesLoader | cut -f 4- -d/ | sort | xargs -n1 echo "   "  >> ${OUTPUT}
     echo ")"      >> ${OUTPUT}
     echo ""      >> ${OUTPUT}
     echo "if(RADIUM_IO_DEPRECATED)"  >> ${OUTPUT}
