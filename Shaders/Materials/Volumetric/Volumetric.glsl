@@ -51,9 +51,6 @@ float phaseHG( float cosTheta, float g ) {
     return Inv4Pi * ( 1 - g * g ) / ( denom * sqrt( denom ) );
 }
 
-
-
-
 /* --------------------------------------------------------------------------------------------------------------
  */
 bool getTr( Material volume, vec3 p, vec3 dir, out vec3 tr ) {
@@ -62,8 +59,8 @@ bool getTr( Material volume, vec3 p, vec3 dir, out vec3 tr ) {
     vec3 tau = vec3( 0 );
     // sigma_t for the volume, that will be modulated by the density.
     // Here, we precompute the quantum for the integration
-    vec3 sigma_t =
-        ( volume.sigma_a.rgb + volume.sigma_s.rgb ) * SHADOW_RAY_SUBSAMPLING * volume.stepsize  * volume.scale;
+    vec3 sigma_t = ( volume.sigma_a.rgb + volume.sigma_s.rgb ) * SHADOW_RAY_SUBSAMPLING *
+                   volume.stepsize * volume.scale;
     bool hit = false;
     p += dir * VanderCorput( uint( dot( p, p ) ) ) * volume.stepsize;
     for ( ;; )
@@ -90,7 +87,7 @@ bool getTr( Material volume, vec3 p, vec3 dir, out vec3 tr ) {
 vec3 lightColor( Material volume, vec3 p, Light l ) {
     // vec3 lightColor = lightContributionFrom(l, p);
     vec3 lightColor = l.color.xyz;
-    vec3 Tr       = vec3( 1 );
+    vec3 Tr         = vec3( 1 );
 #ifdef ATTENUATED_LIGHTING
     vec3 dirLight = getLightDirection( l, p );
     getTr( volume, p, dirLight, Tr );
@@ -140,7 +137,7 @@ bool raymarch( Material volume,
     vec3 sigma_t = ( volume.sigma_a.rgb + volume.sigma_s.rgb ) * volume.stepsize * volume.scale;
     // The ray marching loop
     bool hit = false;
-    float t = 0;
+    float t  = 0;
     for ( ;; )
     {
         float density = texture( volume.density, p ).r;
