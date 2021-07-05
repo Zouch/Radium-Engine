@@ -64,6 +64,8 @@ TEST_CASE( "IO/VolumesLoader", "[IO]" ) {
         REQUIRE( ( Math::areApproxEqual( binsize[0], 1_ra ) &&
                    Math::areApproxEqual( binsize[1], 1_ra ) &&
                    Math::areApproxEqual( binsize[2], 1_ra ) ) );
+        delete volumeData;
+        delete loadedFile;
     }
     SECTION( "Loading PVM data file" ) {
         auto loadedFile = loader.loadFile( "data/Lobster.pvm" );
@@ -85,5 +87,7 @@ TEST_CASE( "IO/VolumesLoader", "[IO]" ) {
         REQUIRE( ( Math::areApproxEqual( binsize[0], 1._ra ) &&
                    Math::areApproxEqual( binsize[1], 1._ra ) &&
                    Math::areApproxEqual( binsize[2], 1.4_ra ) ) );
+        delete volumeData;
+        delete loadedFile;
     }
 }
