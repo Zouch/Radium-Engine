@@ -16,11 +16,11 @@ namespace IO {
 using namespace Ra::Core;
 using namespace Ra::Core::Utils;
 
-const std::string volFileExtension {"vol"};
-const std::string pvmFileExtension {"pvm"};
-VolumeLoader::VolumeLoader() {}
+static const std::string volFileExtension {"vol"};
+static const std::string pvmFileExtension {"pvm"};
 
-VolumeLoader::~VolumeLoader() {}
+VolumeLoader::VolumeLoader()  = default;
+VolumeLoader::~VolumeLoader() = default;
 
 std::vector<std::string> VolumeLoader::getFileExtensions() const {
     return {{"*." + volFileExtension}, {"*." + pvmFileExtension}};

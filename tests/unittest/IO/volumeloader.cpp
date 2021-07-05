@@ -9,13 +9,13 @@ TEST_CASE( "IO/VolumesLoader", "[IO]" ) {
     using namespace Ra::Core::Asset;
     using namespace Ra::Core::Geometry;
 
-    auto loader = std::make_unique<VolumeLoader>();
+    VolumeLoader loader;
 
     SECTION( "Basic FileLoaderInterface" ) {
-        auto loader_name = loader->name();
+        auto loader_name = loader.name();
         REQUIRE( loader_name.compare( "VolumeLoader (pbrt experimental, pvm)" ) == 0 );
 
-        auto supportedFiles = loader->getFileExtensions();
+        auto supportedFiles = loader.getFileExtensions();
 
         auto support_vol = std::find(
             std::begin( supportedFiles ), std::end( supportedFiles ), std::string {"*.vol"} );
@@ -29,17 +29,18 @@ TEST_CASE( "IO/VolumesLoader", "[IO]" ) {
             std::begin( supportedFiles ), std::end( supportedFiles ), std::string {"*.vdb"} );
         REQUIRE( support_openvdb == std::end( supportedFiles ) );
 
-        auto handle_vol = loader->handleFileExtension( "pvm" );
+        auto handle_vol = loader.handleFileExtension( "pvm" );
         REQUIRE( handle_vol );
 
-        auto handle_pvm = loader->handleFileExtension( "pvm" );
+        auto handle_pvm = loader.handleFileExtension( "pvm" );
         REQUIRE( handle_pvm );
 
-        auto handle_openvdb = loader->handleFileExtension( "vdb" );
+        auto handle_openvdb = loader.handleFileExtension( "vdb" );
         REQUIRE( !handle_openvdb );
     }
+
     SECTION( "Loading PVM data file" ) {
-        auto loadedFile = loader->loadFile( "data/Lobster.pvm" );
+        std::unique_ptr<FileData> loadedFile( loader.loadFile( "data/Lobster.pvm" ) );
         REQUIRE( loadedFile != nullptr );
         auto volumeFiledata = loadedFile->getVolumeData();
         REQUIRE( volumeFiledata.size() == 1 );
