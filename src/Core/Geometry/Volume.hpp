@@ -187,6 +187,9 @@ class RA_CORE_API VolumeGrid : public AbstractDiscreteVolume
 
     using Container = std::vector<ValueType>;
 
+    // For now, assume that AbstractDiscreteVolume::ValueType is Scalar
+    using Gradientcontainer = std::vector<Vector3>;
+
   public:
     inline VolumeGrid( const ValueType& defaultValue = ValueType( 0. ) ) :
         AbstractDiscreteVolume( DISCRETE_DENSE ), m_defaultValue( defaultValue ) {}
@@ -199,7 +202,7 @@ class RA_CORE_API VolumeGrid : public AbstractDiscreteVolume
 
     /// Direct access to the managed data
     inline const Container& data() const { return m_data; }
-    /// Direct access, with modification alllowed to the managed data
+    /// Direct access, with modification allowed to the managed data
     inline Container& data() { return m_data; }
 
     /// Add a value to all bins
@@ -209,6 +212,17 @@ class RA_CORE_API VolumeGrid : public AbstractDiscreteVolume
             v += value;
         }
     }
+
+    /// Test if gradients are defined
+    bool hasGradients() const { return m_data.size() == m_gradient.size(); }
+
+    /// Generate gradients from data
+    void computeGradients();
+
+    /// Direct access to the managed gradients
+    inline const Gradientcontainer& gradient() const { return m_gradient; }
+    /// Direct access, with modification allowed to the managed gradients
+    inline Gradientcontainer& gradient() { return m_gradient; }
 
   protected:
     /// Get the function value a given position p
@@ -229,8 +243,12 @@ class RA_CORE_API VolumeGrid : public AbstractDiscreteVolume
     }
 
   private:
+    /// sample the volume at (i, j, k) with "clamp to border" behavior
+    ValueType sample( const IndexType& i );
+
     ValueType m_defaultValue;
     Container m_data;
+    Gradientcontainer m_gradient;
 }; // class VolumeGrid
 
 /** Discrete volume data with sparse storage
