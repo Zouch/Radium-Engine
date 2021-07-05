@@ -13,7 +13,6 @@ TEST_CASE( "IO/VolumesLoader", "[IO]" ) {
     using namespace Ra::Core::Utils;
     using namespace Ra::IO;
 
-
     VolumeLoader loader;
 
     SECTION( "Basic FileLoaderInterface" ) {
