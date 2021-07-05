@@ -9,14 +9,6 @@ namespace Geometry {
 AbstractVolume::AbstractVolume( const VolumeStorageType& type ) :
     AbstractGeometry(), m_type( type ) {}
 
-AbstractVolume::VolumeStorageType AbstractVolume::getType() const {
-    return m_type;
-}
-
-void AbstractVolume::setType( const VolumeStorageType& type ) {
-    m_type = type;
-}
-
 bool AbstractVolume::isParametric() const {
     return ( m_type == PARAMETRIC );
 }

@@ -52,11 +52,11 @@ class RA_CORE_API AbstractVolume : public AbstractGeometry
     ~AbstractVolume()                                  = default;
 
     /// Return the type of geometry.
-    inline VolumeStorageType getType() const;
+    inline VolumeStorageType getType() const { return m_type; }
 
   protected:
     /// Set the type of geometry.
-    inline void setType( const VolumeStorageType& type );
+    inline void setType( const VolumeStorageType& type ) { m_type = type; }
 
   public:
     /** Get the function value at a given position p
