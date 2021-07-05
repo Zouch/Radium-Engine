@@ -2,14 +2,17 @@
 #include <Core/Asset/VolumeData.hpp>
 #include <Core/Geometry/Volume.hpp>
 #include <Core/Math/Math.hpp>
+#include <Core/Utils/Log.hpp>
 #include <IO/VolumesLoader/VolumeLoader.hpp>
 #include <catch2/catch.hpp>
 
 TEST_CASE( "IO/VolumesLoader", "[IO]" ) {
     using namespace Ra::Core;
-    using namespace Ra::IO;
     using namespace Ra::Core::Asset;
     using namespace Ra::Core::Geometry;
+    using namespace Ra::Core::Utils;
+    using namespace Ra::IO;
+
 
     VolumeLoader loader;
 
@@ -45,6 +48,7 @@ TEST_CASE( "IO/VolumesLoader", "[IO]" ) {
         REQUIRE( loadedFile == nullptr );
     }
     SECTION( "Loading PVM data file" ) {
+        LOG( logINFO ) << "loading data/Bucky.pvm";
         auto loadedFile = loader.loadFile( "data/Bucky.pvm" );
         REQUIRE( loadedFile != nullptr );
         auto volumeFiledata = loadedFile->getVolumeData();
@@ -68,6 +72,7 @@ TEST_CASE( "IO/VolumesLoader", "[IO]" ) {
         delete loadedFile;
     }
     SECTION( "Loading PVM data file" ) {
+        LOG( logINFO ) << "loading data/Lobster.pvm";
         auto loadedFile = loader.loadFile( "data/Lobster.pvm" );
         REQUIRE( loadedFile != nullptr );
         auto volumeFiledata = loadedFile->getVolumeData();
