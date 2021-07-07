@@ -54,6 +54,7 @@ class RA_CORE_API BlinnPhongMaterialData : public MaterialData
     bool m_hasTexShininess;
     bool m_hasTexNormal;
     bool m_hasTexOpacity;
+    bool m_diffuseFromMesh;
 };
 
 } // namespace Asset

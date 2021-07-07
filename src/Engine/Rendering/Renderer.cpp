@@ -231,6 +231,7 @@ Renderer::PickingResult Renderer::doPickingNow( const PickingQuery& query,
     return result;
 } // namespace Engine
 
+// TODO : make the doc use this method as a snippet (see doc/developer/rendering.md - l 11 to 40)
 void Renderer::render( const Data::ViewingParameters& data ) {
     CORE_ASSERT( RadiumEngine::getInstance() != nullptr, "Engine is not initialized." );
 
@@ -264,9 +265,10 @@ void Renderer::render( const Data::ViewingParameters& data ) {
     m_lastFramePickingQueries = m_pickingQueries;
     m_pickingQueries.clear();
 
-    updateStepInternal( data );
-
     // 4. Do the rendering.
+    // 4.1 update Renderer internal state
+    updateStepInternal( data );
+    // 4.2 render the scene
     renderInternal( data );
     m_timerData.mainRenderEnd = Core::Utils::Clock::now();
 

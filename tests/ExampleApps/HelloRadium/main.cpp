@@ -3,6 +3,7 @@
 #include <Gui/RadiumWindow/SimpleWindowFactory.hpp>
 
 // include the Engine/entity/component interface
+#include <Core/Asset/BlinnPhongMaterialData.hpp>
 #include <Core/Geometry/MeshPrimitives.hpp>
 #include <Engine/Scene/EntityManager.hpp>
 #include <Engine/Scene/GeometryComponent.hpp>
@@ -26,13 +27,22 @@ int main( int argc, char* argv[] ) {
         Ra::Core::Vector4Array {cube.vertices().size(), Ra::Core::Utils::Color::Green()} );
     //! [Colorize the Cube]
 
+    //! [Creating the Material]
+    Ra::Core::Asset::BlinnPhongMaterialData mat( "simpleBlinnPhong" );
+    // set the specular color to Cyan
+    mat.m_specular    = Ra::Core::Utils::Color::Cyan();
+    mat.m_hasSpecular = true;
+    // diffuse is taken from mesh attribute,
+    mat.m_diffuseFromMesh = true;
+    //! [Creating the Material]
+
     //! [Create the engine entity for the cube]
     auto e = app.m_engine->getEntityManager()->createEntity( "Green cube" );
     //! [Create the engine entity for the cube]
 
     //! [Create a geometry component with the cube]
     auto c =
-        new Ra::Engine::Scene::TriangleMeshComponent( "Cube Mesh", e, std::move( cube ), nullptr );
+        new Ra::Engine::Scene::TriangleMeshComponent( "Cube Mesh", e, std::move( cube ), &mat );
     //! [Create a geometry component with the cube]
 
     //! [Register the entity/component association to the geometry system ]
