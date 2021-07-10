@@ -135,14 +135,18 @@ Ra::Core::Asset::FileData* VolumeLoader::loadPvmFile( const std::string& filenam
                                      &comment );
     if ( volumeData )
     {
-        LOG( logINFO ) << "VolumeLoader : \n\tpvm (The Volume Library) file " << filename
-                       << " \n\twidth = " << width << " \n\theight = " << height
-                       << " \n\tdepth = " << depth << " \n\tbyte per voxel = " << bytePerVoxel
-                       << " \n\tscalex = " << scalex << " \n\tscaley = " << scaley
-                       << " \n\tscalez = " << scalez << " \n\tdescription = " << description
-                       << " \n\tcourtesy = " << courtesy << " \n\tparameter = " << parameter
-                       << " \n\tcomment = " << comment << '\n';
-
+        {
+            unsigned char empty[1] {'\0'};
+            LOG( logINFO ) << "VolumeLoader : \n\tpvm (The Volume Library) file " << filename
+                           << " \n\twidth = " << width << " \n\theight = " << height
+                           << " \n\tdepth = " << depth << " \n\tbyte per voxel = " << bytePerVoxel
+                           << " \n\tscalex = " << scalex << " \n\tscaley = " << scaley
+                           << " \n\tscalez = " << scalez
+                           << " \n\tdescription = " << ( description ? description : empty )
+                           << " \n\tcourtesy = " << ( courtesy ? courtesy : empty )
+                           << " \n\tparameter = " << ( parameter ? parameter : empty )
+                           << " \n\tcomment = " << ( comment ? comment : empty ) << '\n';
+        }
         auto fillRadiumVolume = []( auto container, auto densityData ) {
             std::generate( container->data().begin(), container->data().end(), [&densityData]() {
                 auto d = *densityData++;
