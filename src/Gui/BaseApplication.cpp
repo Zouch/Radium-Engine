@@ -32,7 +32,9 @@
 #ifdef IO_USE_ASSIMP
 #    include <IO/AssimpLoader/AssimpFileLoader.hpp>
 #endif
-
+#ifdef IO_HANDLE_VOLUMES
+#    include <IO/VolumesLoader/VolumeLoader.hpp>
+#endif
 #include <QCommandLineParser>
 #include <QDir>
 #include <QMenuBar>
@@ -348,7 +350,9 @@ void BaseApplication::initialize( const WindowFactory& factory ) {
     m_engine->registerFileLoader(
         std::shared_ptr<FileLoaderInterface>( new IO::AssimpFileLoader() ) );
 #endif
-
+#ifdef IO_HANDLE_VOLUMES
+    m_engine->registerFileLoader( std::shared_ptr<FileLoaderInterface>( new IO::VolumeLoader() ) );
+#endif
     // Allow derived application to add custom plugins and services
     addApplicationExtension();
 

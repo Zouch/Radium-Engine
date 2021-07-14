@@ -8,6 +8,7 @@ project( ${ra_io_target}
 option( RADIUM_IO_DEPRECATED  "Provide depricated loaders (to be removed without notice)" ON )
 option( RADIUM_IO_ASSIMP  "Provide loaders based on Assimp library" ON )
 option( RADIUM_IO_TINYPLY "Provide loaders based on TinyPly library" ON )
+option( RADIUM_IO_VOLUMES "Provide loaders for volume from The Volume Library (http://schorsch.efi.fh-nuernberg.de/data/volume/)" ON )
 
 include( filelistIO )
 
@@ -34,7 +35,9 @@ if( RADIUM_IO_TINYPLY )
     find_package(tinyply REQUIRED NO_DEFAULT_PATH )
     set_target_properties( ${ra_io_target} PROPERTIES IO_TINYPLY ${RADIUM_IO_TINYPLY})
 endif( RADIUM_IO_TINYPLY )
-
+if( RADIUM_IO_VOLUMES )
+    set_target_properties( ${ra_io_target} PROPERTIES IO_VOLUMES ${RADIUM_IO_VOLUMES})
+endif( RADIUM_IO_VOLUMES )
 if (RADIUM_IO_ASSIMP)
     if (MSVC)
         if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")

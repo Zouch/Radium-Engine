@@ -59,6 +59,8 @@ void main() {
 
     // compute the light information in canonical space
     Light l = transformLight( light, material.modelToDensity * world2model );
+    l.color *= 100; // TODO understand why this is necessary : check units and physical properties
+                    // of the volume
     switch ( light.type )
     {
     case 0:

@@ -65,3 +65,15 @@ list(APPEND io_headers
     TinyPlyLoader/TinyPlyFileLoader.hpp
 )
 endif( RADIUM_IO_TINYPLY )
+
+if( RADIUM_IO_VOLUMES )
+list(APPEND io_sources
+    VolumesLoader/pvmutils.cpp
+    VolumesLoader/VolumeLoader.cpp
+)
+
+list(APPEND io_headers
+    VolumesLoader/pvmutils.hpp
+    VolumesLoader/VolumeLoader.hpp
+)
+endif( RADIUM_IO_VOLUMES )

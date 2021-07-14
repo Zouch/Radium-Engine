@@ -26,6 +26,7 @@ add_executable(unittests
     Core/topomesh.cpp
     Engine/signalmanager.cpp
     Gui/keymapping.cpp
+    IO/volumeloader.cpp
     )
 
 target_compile_definitions(unittests PRIVATE UNIT_TESTS) # add -DUNIT_TESTS define
