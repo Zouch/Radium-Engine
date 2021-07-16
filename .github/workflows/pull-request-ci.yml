@@ -37,9 +37,12 @@ jobs:
         uses: jurplel/install-qt-action@v2
         with:
           cached: ${{ steps.cache-qt.outputs.cache-hit }}
-      - name: Install dep
+      - name: Install dep Linux
         if: runner.os == 'Linux'
         run: sudo apt-get install -y libglfw3-dev
+      - name: Install dep MacOS
+        if: runner.os == 'macOS'
+        run: brew install glfw
       - name: Prepare directories
         run: |
           mkdir -p install/
