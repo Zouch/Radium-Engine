@@ -43,6 +43,21 @@ jobs:
       - name: Install dep MacOS
         if: runner.os == 'macOS'
         run: brew install glfw
+      - name: Install dep windows checkout
+        if: runner.os == 'windows'
+        uses: actions/checkout@v2
+        with:
+          repository: glfw/glfw
+          ref: 3.3.4
+          path: glfw
+      - name: Install dep windows Config/Build shared library
+        if: runner.os == 'windows'
+        run: |
+          mkdir $GITHUB_WORKSPACE/glfw_install/
+          cmake -S glfw -B glfw/build-shared -G "Visual Studio 16 2019" -D BUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$GITHUB_WORKSPACE/glfw_install/
+          cmake --build glfw/build-shared --parallel --config Release
+          cmake --build glfw/build-shared --target install --config Release
+          echo "glfw-path=-Dglfw3_DIR=\$GITHUB_WORKSPACE/glfw_install/lib/cmake/glfw3/" >> $GITHUB_ENV
       - name: Prepare directories
         run: |
           mkdir -p install/
@@ -69,7 +84,7 @@ jobs:
       - name: Configure Radium
         run: |
           cd build/Radium-Engine
-          cmake ../../src/Radium-Engine -GNinja -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../../install/ -DCMAKE_EXECUTE_PROCESS_COMMAND_ECHO=STDOUT -DRADIUM_UPDATE_VERSION=OFF -DRADIUM_EXTERNAL_CMAKE_INSTALL_MESSAGE=LAZY -DRADIUM_INSTALL_DOC=OFF -DRADIUM_ENABLE_TESTING=ON -DEigen3_DIR=${{env.ext-dir}}/share/eigen3/cmake/ -DOpenMesh_DIR=${{env.ext-dir}}/share/OpenMesh/cmake/ -Dcpplocate_DIR=${{env.ext-dir}}/share/cpplocate/ -Dglm_DIR=${{env.ext-dir}}/lib/cmake/glm/ -Dglbinding_DIR=${{env.ext-dir}}/share/glbinding/ -Dglobjects_DIR=${{env.ext-dir}}/share/globjects/ -Dstb_DIR=${{env.ext-dir}}/include/stb/ -Dassimp_DIR=${{env.ext-dir}}/lib/cmake/assimp-5.0/ -Dtinyply_DIR=${{env.ext-dir}}/lib/cmake/tinyply/
+          cmake ../../src/Radium-Engine -GNinja -DCMAKE_CXX_COMPILER=${{ matrix.config.cxx }} -DCMAKE_C_COMPILER=${{ matrix.config.cc }} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../../install/ -DCMAKE_EXECUTE_PROCESS_COMMAND_ECHO=STDOUT -DRADIUM_UPDATE_VERSION=OFF -DRADIUM_EXTERNAL_CMAKE_INSTALL_MESSAGE=LAZY -DRADIUM_INSTALL_DOC=OFF -DRADIUM_ENABLE_TESTING=ON -DEigen3_DIR=${{env.ext-dir}}/share/eigen3/cmake/ -DOpenMesh_DIR=${{env.ext-dir}}/share/OpenMesh/cmake/ -Dcpplocate_DIR=${{env.ext-dir}}/share/cpplocate/ -Dglm_DIR=${{env.ext-dir}}/lib/cmake/glm/ -Dglbinding_DIR=${{env.ext-dir}}/share/glbinding/ -Dglobjects_DIR=${{env.ext-dir}}/share/globjects/ -Dstb_DIR=${{env.ext-dir}}/include/stb/ -Dassimp_DIR=${{env.ext-dir}}/lib/cmake/assimp-5.0/ -Dtinyply_DIR=${{env.ext-dir}}/lib/cmake/tinyply/ ${{env.glfw-path}}
       - name: Build Radium
         run: |
           cd build/Radium-Engine
