@@ -16,8 +16,8 @@ set(indent_string "${indent_string}--")
 add_custom_target( CoreExternals )
 
 if (NOT DEFINED Eigen3_DIR)
-    CheckExternalsPrerequisite()
-    StatusMessage("" "eigen3" "remote git")
+    check_externals_prerequisite()
+    status_message("" "eigen3" "remote git")
 
     ExternalProject_Add(Eigen3
         GIT_REPOSITORY https://gitlab.com/libeigen/eigen.git
@@ -33,13 +33,13 @@ if (NOT DEFINED Eigen3_DIR)
         )
     add_dependencies( CoreExternals Eigen3 )
 else ()
-    StatusMessage("" "eigen3" ${Eigen3_DIR})
+    status_message("" "eigen3" ${Eigen3_DIR})
 endif ()
 
 
 if (NOT DEFINED OpenMesh_DIR)
-    CheckExternalsPrerequisite()
-    StatusMessage("" "OpenMesh" "remote git")
+    check_externals_prerequisite()
+    status_message("" "OpenMesh" "remote git")
     # I found some problems when generating xcode project for OpenMesh: the libXXX.dylib link to
     # libXXX.Major.minor.dylib (eg libOpenMesh.2.1.dylib) is not generated and the script failed.
     # Need to generate this link manually.
@@ -57,12 +57,12 @@ if (NOT DEFINED OpenMesh_DIR)
         )
     add_dependencies( CoreExternals OpenMesh )
 else()
-    StatusMessage("" "OpenMesh" ${OpenMesh_DIR})
+    status_message("" "OpenMesh" ${OpenMesh_DIR})
 endif()
 
 if (NOT DEFINED cpplocate_DIR OR NOT cpplocate_DIR)
-    CheckExternalsPrerequisite()
-    StatusMessage("" "cpplocate" "remote git")
+    check_externals_prerequisite()
+    status_message("" "cpplocate" "remote git")
     ExternalProject_Add(cpplocate
         GIT_REPOSITORY https://github.com/cginternals/cpplocate.git
         GIT_TAG tags/v2.2.0
@@ -78,5 +78,5 @@ if (NOT DEFINED cpplocate_DIR OR NOT cpplocate_DIR)
         )
     add_dependencies( CoreExternals cpplocate )
 else()
-    StatusMessage("" "cpplocate" ${cpplocate_DIR})
+    status_message("" "cpplocate" ${cpplocate_DIR})
 endif()

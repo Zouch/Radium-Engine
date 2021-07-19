@@ -39,7 +39,7 @@ populate_local_dependencies(NAME "Eigen3_DIR")
 populate_local_dependencies(NAME "OpenMesh_DIR")
 populate_local_dependencies(NAME "cpplocate_DIR")
 
-addExternalFolder(Core ${RADIUM_EXTERNAL_DIR}/Core ${LocalDependencies})
+add_external_folder(Core ${RADIUM_EXTERNAL_DIR}/Core ${LocalDependencies})
 
 find_package(Eigen3 3.3
     REQUIRED

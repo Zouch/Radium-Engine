@@ -1,6 +1,6 @@
 
 add_custom_target( update )
-ExternalDownloadNowGit(Catch2
+external_download_now_git(Catch2
     https://github.com/catchorg/Catch2.git
     v2.12.4)
 

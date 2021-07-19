@@ -22,7 +22,7 @@ add_library(
 populate_local_dependencies(NAME "assimp_DIR")
 populate_local_dependencies(NAME "tinyply_DIR")
 
-addExternalFolder( IO ${RADIUM_EXTERNAL_DIR}/IO
+add_external_folder( IO ${RADIUM_EXTERNAL_DIR}/IO
     -DRADIUM_IO_ASSIMP=${RADIUM_IO_ASSIMP}
     -DRADIUM_IO_TINYPLY=${RADIUM_IO_TINYPLY}  ${LocalDependencies})
 

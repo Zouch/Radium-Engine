@@ -26,7 +26,7 @@ add_executable(CoreExampleApp
 target_link_libraries(CoreExampleApp PUBLIC Radium::Core)
 configure_radium_app(NAME CoreExampleApp)
 add_dependencies(${PROJECT_NAME} CoreExampleApp)
-addRunAndDebugTargets(CoreExampleApp)
+add_run_and_debug_targets(CoreExampleApp)
 
 find_package(Qt5 COMPONENTS Core Widgets OpenGL Xml REQUIRED)
 find_package(OpenGL REQUIRED)
@@ -41,7 +41,7 @@ target_link_libraries(HelloRadium PUBLIC
 add_dependencies(${PROJECT_NAME} HelloRadium)
 message(STATUS "Installing HelloRadium into ${CMAKE_INSTALL_PREFIX}")
 configure_radium_app(NAME HelloRadium)
-addRunAndDebugTargets(HelloRadium)
+add_run_and_debug_targets(HelloRadium)
 
 add_executable(SimpleSimulationApp MACOSX_BUNDLE
     SimpleSimulationApp/main.cpp)
@@ -53,7 +53,7 @@ target_link_libraries(SimpleSimulationApp PUBLIC
 add_dependencies(${PROJECT_NAME} SimpleSimulationApp)
 message(STATUS "Installing SimpleSimulationApp into ${CMAKE_INSTALL_PREFIX}")
 configure_radium_app(NAME SimpleSimulationApp)
-addRunAndDebugTargets(SimpleSimluationApp)
+add_run_and_debug_targets(SimpleSimluationApp)
 
 add_executable(DrawPrimitivesDemo MACOSX_BUNDLE
     DrawPrimitivesApp/main.cpp
@@ -74,7 +74,7 @@ endif ()
 add_dependencies(${PROJECT_NAME} DrawPrimitivesDemo)
 message(STATUS "Installing DrawPrimitivesDemo into ${CMAKE_INSTALL_PREFIX}")
 configure_radium_app(NAME DrawPrimitivesDemo RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/DrawPrimitivesApp/Assets"  PREFIX "DrawPrimitivesApp")
-addRunAndDebugTargets(DrawPrimitiveDemo)
+add_run_and_debug_targets(DrawPrimitiveDemo)
 
 add_executable(SimpleAnimationApp MACOSX_BUNDLE
     SimpleAnimationApp/main.cpp)
@@ -86,7 +86,7 @@ target_link_libraries(SimpleAnimationApp PUBLIC
 add_dependencies(${PROJECT_NAME} SimpleAnimationApp)
 message(STATUS "Installing SimpleAnimationApp into ${CMAKE_INSTALL_PREFIX}")
 configure_radium_app(NAME SimpleAnimationApp)
-addRunAndDebugTargets(SimpleAnimationApp)
+add_run_and_debug_targets(SimpleAnimationApp)
 
 add_executable(RawShaderMaterial MACOSX_BUNDLE
     RawShaderMaterial/main.cpp)
@@ -97,7 +97,7 @@ target_link_libraries(RawShaderMaterial PUBLIC
 add_dependencies(${PROJECT_NAME} RawShaderMaterial)
 message(STATUS "Installing RawShaderMaterial into ${CMAKE_INSTALL_PREFIX}")
 configure_radium_app(NAME RawShaderMaterial)
-addRunAndDebugTargets(RawShaderMaterial)
+add_run_and_debug_targets(RawShaderMaterial)
 
 add_executable(CustomCameraManipulator MACOSX_BUNDLE
 CustomCameraManipulator/main.cpp)
@@ -108,7 +108,7 @@ target_link_libraries(CustomCameraManipulator PUBLIC
 add_dependencies(${PROJECT_NAME} CustomCameraManipulator)
 message(STATUS "Installing CustomCameraManipulator into ${CMAKE_INSTALL_PREFIX}")
 configure_radium_app(NAME CustomCameraManipulator)
-addRunAndDebugTargets(CustomCameraManipulator)
+add_run_and_debug_targets(CustomCameraManipulator)
 
 add_subdirectory(PickingDemoApp)
 add_subdirectory(KeyEventDemoApp)

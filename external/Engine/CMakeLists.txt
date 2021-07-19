@@ -26,8 +26,8 @@ set(indent_string "${indent_string}--")
 add_custom_target( EngineExternals )
 
 if (NOT DEFINED glm_DIR)
-    CheckExternalsPrerequisite()
-    StatusMessage("[EngineExternal]" "glm" "remote git")
+    check_externals_prerequisite()
+    status_message("[EngineExternal]" "glm" "remote git")
     ExternalProject_Add( glm
         GIT_REPOSITORY https://github.com/g-truc/glm.git
         GIT_TAG 0.9.9.5
@@ -47,13 +47,13 @@ if (NOT DEFINED glm_DIR)
 else()
     #because other might depends on it, but it's already done, define a dummy target
     add_custom_target(glm)
-    StatusMessage("" "glm" "${glm_DIR}")
+    status_message("" "glm" "${glm_DIR}")
 endif()
 
 
 if (NOT DEFINED glbinding_DIR)
-    CheckExternalsPrerequisite()
-    StatusMessage("[EngineExternal]" "glbinding" "remote git")
+    check_externals_prerequisite()
+    status_message("[EngineExternal]" "glbinding" "remote git")
     ExternalProject_Add(glbinding
         GIT_REPOSITORY https://github.com/cginternals/glbinding.git
         GIT_TAG 663e19cf1ae6a5fa1acfb1bd952fc43f647ca79c
@@ -74,7 +74,7 @@ if (NOT DEFINED glbinding_DIR)
     add_dependencies( EngineExternals glbinding )
 else()
     add_custom_target(glbinding)
-    StatusMessage("" "glbinding"  "${glbinding_DIR}")
+    status_message("" "glbinding"  "${glbinding_DIR}")
 endif()
 
 if (NOT DEFINED Eigen3_DIR)
@@ -90,8 +90,8 @@ if (NOT DEFINED globjects_DIR)
     add_dependency_if_compiled(globjects-dep glbinding)
     add_dependency_if_compiled(globjects-dep glm)
 
-    CheckExternalsPrerequisite()
-    StatusMessage("" "globjects" "remote git")
+    check_externals_prerequisite()
+    status_message("" "globjects" "remote git")
     ExternalProject_Add(globjects
         GIT_REPOSITORY https://github.com/dlyr/globjects.git
         GIT_TAG 11c559a07d9e310abb2f53725fd47cfaf538f8b1
@@ -113,12 +113,12 @@ if (NOT DEFINED globjects_DIR)
     set(globjects_DIR ${CMAKE_INSTALL_PREFIX}/share/globjects)
     add_dependencies( EngineExternals globjects )
 else()
-    StatusMessage("" "globjects" "${globjects_DIR}")
+    status_message("" "globjects" "${globjects_DIR}")
 endif()
 
 if (NOT DEFINED stb_DIR)
-    CheckExternalsPrerequisite()
-    StatusMessage("" "stb" "remote git")
+    check_externals_prerequisite()
+    status_message("" "stb" "remote git")
     ExternalProject_Add( stb
         GIT_REPOSITORY https://github.com/nothings/stb.git
         GIT_TAG 1034f5e5c4809ea0a7f4387e0cd37c5184de3cdd
@@ -132,7 +132,7 @@ if (NOT DEFINED stb_DIR)
         )
     add_dependencies( EngineExternals stb )
 else()
-    StatusMessage("" "stb" "${stb_DIR}")
+    status_message("" "stb" "${stb_DIR}")
     message(STATUS  "Installing stb_image.h to ${CMAKE_INSTALL_PREFIX}/include")
     file(COPY ${stb_DIR}/stb_image.h DESTINATION  ${CMAKE_INSTALL_PREFIX}/include/stb/)
     file(COPY ${stb_DIR}/stb_image_write.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include/stb/)

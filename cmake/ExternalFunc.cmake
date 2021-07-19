@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.12)
 
 include(ExternalInclude)
 
-macro(addExternalFolder NAME FOLDER )
+macro(add_external_folder NAME FOLDER )
     # External resources/repositories are downloaded and built at configuration stage
-    message(STATUS "[addExternalFolder] process ${NAME} ${FOLDER}")
+    message(STATUS "[add_external_folder] process ${NAME} ${FOLDER}")
     list(APPEND CMAKE_MESSAGE_INDENT "[External] ")
 
     #Working directory relative to binary dir, to shorten folder name see issue 598
@@ -113,6 +113,6 @@ macro(addExternalFolder NAME FOLDER )
         share/
     )
     list(REMOVE_AT CMAKE_MESSAGE_INDENT -1)
-    message(STATUS "[addExternalFolder] end process ${NAME} ${FOLDER}")
+    message(STATUS "[add_external_folder] end process ${NAME} ${FOLDER}")
 
 endmacro()

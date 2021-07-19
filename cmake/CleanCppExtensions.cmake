@@ -2,7 +2,7 @@
 find_program(GDB_PATH gdb)
 
 # Adds -run and -dbg targets
-macro(addRunAndDebugTargets TARGET)
+macro(add_run_and_debug_targets TARGET)
     add_custom_target(run_${TARGET}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
@@ -23,14 +23,14 @@ endmacro()
 # Usefull for adding header only libraries
 # Example usage:
 #
-#     ExternalHeaderOnly_Add("Catch"
+#     external_header_only_add("Catch"
 #         "https://github.com/catchorg/Catch2.git" "origin/master" "single_include/catch2")
 #
 # Use with:
 #     target_link_libraries(unittests Catch)
 # This will add the INCLUDE_FOLDER_PATH to the `unittests` target.
 
-macro(ExternalHeaderOnly_Add LIBNAME REPOSITORY GIT_TAG INCLUDE_FOLDER_PATH)
+macro(external_header_only_add LIBNAME REPOSITORY GIT_TAG INCLUDE_FOLDER_PATH)
     ExternalProject_Add(
         ${LIBNAME}_download
         PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}
@@ -65,11 +65,11 @@ endmacro()
 # ${LIBNAME}_update target into general update target.
 # Example usage:
 #
-#   ExternalDownloadNowGit(cpr https://github.com/finkandreas/cpr.git origin/master)
+#   external_download_now_git(cpr https://github.com/finkandreas/cpr.git origin/master)
 #   add_subdirectory(${cpr_SOURCE_DIR})
 #
 
-macro(ExternalDownloadNowGit LIBNAME REPOSITORY GIT_TAG)
+macro(external_download_now_git LIBNAME REPOSITORY GIT_TAG)
 
     set(${LIBNAME}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}/src/${LIBNAME}_download/)
 
@@ -104,8 +104,8 @@ endmacro()
 #------------------------------------------------------------------------------
 # Other MISC targets - formating, static analysis
 # format, cppcheck, tidy
-macro(addMiscTargets)
-    list(APPEND CMAKE_MESSAGE_INDENT "[addMiscTargets] ")
+macro(add_misc_targets)
+    list(APPEND CMAKE_MESSAGE_INDENT "[add_misc_targets] ")
 
     file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.cc *.c)
     file(GLOB_RECURSE ALL_HEADER_FILES *.h *.hpp)

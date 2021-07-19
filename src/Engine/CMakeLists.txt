@@ -30,7 +30,7 @@ populate_local_dependencies(NAME "glbinding_DIR")
 populate_local_dependencies(NAME "globjects_DIR")
 populate_local_dependencies(NAME "stb_DIR")
 
-addExternalFolder(Engine ${RADIUM_EXTERNAL_DIR}/Engine ${LocalDependencies})
+add_external_folder(Engine ${RADIUM_EXTERNAL_DIR}/Engine ${LocalDependencies})
 
 find_package(glbinding REQUIRED NO_DEFAULT_PATH )
 find_package(globjects REQUIRED NO_DEFAULT_PATH )

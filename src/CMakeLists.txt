@@ -120,7 +120,7 @@ endif()
 
 # Using macro from cmake/cleanCpppExtensions.cpp included on the top
 # Provides exampleApp-run and exampleApp-dbg
-#addRunAndDebugTargets(exampleApp)
+#add_run_and_debug_targets(exampleApp)
 
 # short convenience target from cmake/cleanCpppExtensions.cpp
 #add_custom_target(run DEPENDS exampleApp-run)
@@ -194,6 +194,6 @@ endif(MINGW)
 
 # Adds misc targets: format, cppcheck, tidy, see cmake/CleanCppExtensions.cmake
 set( FORMAT_STYLE_FILENAME ${RADIUM_SRC_DIR}/scripts/clang-format )
-addMiscTargets()
+add_misc_targets()
 
 
