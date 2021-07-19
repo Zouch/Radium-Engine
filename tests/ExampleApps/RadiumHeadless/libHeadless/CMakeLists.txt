@@ -27,7 +27,9 @@ message(STATUS "Configuring library ${PROJECT_NAME}::${libName}")
 # Radium components : IO is not mandatory and should be removed once verified
 if (NOT IN_RADIUM_BUILD_TREE)
     find_package(Radium REQUIRED Core Engine IO)
+    set(DEFAULT_COMPILE_OPTIONS)
 endif()
+
 find_package(glfw3 3.3 REQUIRED)
 
 set(CLI11_headers
@@ -74,6 +76,14 @@ target_link_libraries(${libName} PUBLIC Radium::Core Radium::Engine Radium::IO P
 
 target_compile_definitions(${libName} PRIVATE ${libName}_EXPORTS)
 
+target_compile_options(${libName}
+    PRIVATE
+
+    PUBLIC
+    ${DEFAULT_COMPILE_OPTIONS}
+
+    INTERFACE
+)
 
 configure_radium_library(
     TARGET ${libName}

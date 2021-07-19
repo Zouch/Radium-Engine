@@ -36,7 +36,6 @@ target_link_libraries(${PROJECT_NAME}
     RadiumHeadless::Headless
 )
 
-
 if (USE_RADIUM_ASSIMP)
     if (IN_RADIUM_BUILD_TREE)
         set(USE_ASSIMP ${RADIUM_IO_ASSIMP})
@@ -50,6 +49,15 @@ if (USE_RADIUM_ASSIMP)
         message(STATUS "Assimp loader from Radium::IO not detected")
     endif()
 endif()
+
+target_compile_options(${PROJECT_NAME}
+    PRIVATE
+
+    PUBLIC
+    ${DEFAULT_COMPILE_OPTIONS}
+
+    INTERFACE
+)
 
 configure_radium_app(
     NAME ${PROJECT_NAME}
