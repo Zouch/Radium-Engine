@@ -71,14 +71,13 @@ bool OpenGLContext::isValid() const {
 
 std::string OpenGLContext::getInfo() const {
     std::stringstream infoText;
+    using ContextInfo = glbinding::aux::ContextInfo;
     makeCurrent();
     infoText << "*** OffScreen OpenGL context ***" << std::endl;
-    infoText << "Renderer (glbinding) : " << glbinding::aux::ContextInfo::renderer() << std::endl;
-    infoText << "Vendor   (glbinding) : " << glbinding::aux::ContextInfo::vendor() << std::endl;
-    infoText << "OpenGL   (glbinding) : " << glbinding::aux::ContextInfo::version().toString()
-             << std::endl;
-    infoText << "GLSL                 : "
-             << gl::glGetString( gl::GLenum( GL_SHADING_LANGUAGE_VERSION ) ) << std::endl;
+    infoText << "Renderer (glbinding) : " << ContextInfo::renderer() << "\n";
+    infoText << "Vendor   (glbinding) : " << ContextInfo::vendor() << "\n";
+    infoText << "OpenGL   (glbinding) : " << ContextInfo::version().toString() << "\n";
+    infoText << "GLSL                 : " << gl::glGetString( GL_SHADING_LANGUAGE_VERSION ) << "\n";
     doneCurrent();
 
     return infoText.str();
