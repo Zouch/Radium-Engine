@@ -3,11 +3,11 @@
 # https://cmake.org/cmake/help/latest/command/add_test.html
 list(APPEND CMAKE_MESSAGE_INDENT "[Tests] ")
 
-# Adds convenience methods, see cmake/cleanCppExtensions.cmake
-include(cleanCppExtensions)
+# Adds convenience methods, see cmake/CleanCppExtensions.cmake
+include(CleanCppExtensions)
 
-# Creates options to turn on sanitizers, see cmake/sanitizers.cmake
-include(sanitizers)
+# Creates options to turn on Sanitizers, see cmake/Sanitizers.cmake
+include(Sanitizers)
 
 # Enable helpfull warnings and C++17 for all files
 if(MSVC)

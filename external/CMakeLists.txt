@@ -20,7 +20,7 @@ else()
   list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../cmake)
 
   # Check compiler version
-  include(compilerVersion)
+  include(CompilerVersion)
 
   # Changing the default value for CMAKE_BUILD_PARALLEL_LEVEL
   if(NOT DEFINED ENV{CMAKE_BUILD_PARALLEL_LEVEL})

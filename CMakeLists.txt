@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Note: keep the project name lower case only for easy linux packaging support
 project (radiumproject VERSION 1.0.0)
 
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/compilerVersion.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CompilerVersion.cmake)
 
 set(VERSION_TYPE "beta" CACHE STRING "version type" FORCE)
 site_name(VERSION_HOST) # read hostname to VERSION_HOST
@@ -61,7 +61,7 @@ endif()
 # We can use include() and find_package() for our scripts in there
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-include(messageFunc)
+include(MessageFunc)
 messageTitle(" ${PROJECT_NAME} Project configuration ")
 messageInfo("Externals will be built with $ENV{CMAKE_BUILD_PARALLEL_LEVEL} core(s)")
 
@@ -81,11 +81,11 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # and for other tools.
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-# Configure rpath, see cmake/rpath.cmake
-include(rpath)
+# Configure RPath, see cmake/RPath.cmake
+include(RPath)
 
-# Use gold linker to speed up linking time, see cmake/useGoldLinker.cmake
-include(useGoldLinker)
+# Use gold linker to speed up linking time, see cmake/UseGoldLinker.cmake
+include(UseGoldLinker)
 
 # Helpful option enable build profiling to identify slowly compiling files
 option(MEASURE_ALL "When enabled all commands will be passed through time command" OFF)
@@ -147,7 +147,7 @@ messageEnd()
 set(ENABLE_COVERAGE "")
 mark_as_advanced(ENABLE_COVERAGE)
 if(RADIUM_ENABLE_COVERAGE)
-    include(coverageFunc)
+    include(CoverageFunc)
     #sets ENABLE_COVERAGE to ON if ok
     setup_coverage()
     
@@ -157,9 +157,9 @@ endif(RADIUM_ENABLE_COVERAGE)
 
 #------------------------------------------------------------------------------
 # Dependency management utilities
-include(externalFunc)
+include(ExternalFunc)
 # Installation utilities
-include(radium_setup_functions)
+include(RadiumSetupFunctions)
 
 # Documentation build
 add_subdirectory(doc)

@@ -1,8 +1,8 @@
-# Adds convenience methods, see cmake/cleanCppExtensions.cmake
-include(cleanCppExtensions)
+# Adds convenience methods, see cmake/CleanCppExtensions.cmake
+include(CleanCppExtensions)
 
-# Creates options to turn on sanitizers, see cmake/sanitizers.cmake
-include(sanitizers)
+# Creates options to turn on Sanitizers, see cmake/Sanitizers.cmake
+include(Sanitizers)
 
 #------------------------------------------------------------------------------
 # Compilation option
@@ -72,7 +72,7 @@ file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/RadiumConfigTemplate.in "")
 
 # Fill the RadiumConfigTemplate.in
 
-cat(../cmake/compilerVersion.cmake ${CMAKE_CURRENT_BINARY_DIR}/RadiumConfigTemplate.in)
+cat(../cmake/CompilerVersion.cmake ${CMAKE_CURRENT_BINARY_DIR}/RadiumConfigTemplate.in)
 cat(../cmake/Config.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/RadiumConfigTemplate.in)
 #-----------------------------------------------------------------------------------
 # Generate cmake package
@@ -84,7 +84,7 @@ configure_radium_package(
 #install general scripts
 install(
     FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../cmake/radium_setup_functions.cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../cmake/RadiumSetupFunctions.cmake"
     DESTINATION
         ${ConfigPackageLocation}
 )
@@ -204,7 +204,7 @@ endif(MINGW)
 #------------------------------------------------------------------------------
 # Other MISC targets
 
-# Adds misc targets: format, cppcheck, tidy, see cmake/cleanCppExtensions.cmake
+# Adds misc targets: format, cppcheck, tidy, see cmake/CleanCppExtensions.cmake
 set( FORMAT_STYLE_FILENAME ${RADIUM_SRC_DIR}/scripts/clang-format )
 addMiscTargets()
 

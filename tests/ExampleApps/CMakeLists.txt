@@ -19,7 +19,7 @@ if (MSVC OR MSVC_IDE OR MINGW)
     add_imported_dir(FROM Qt5::Core TO QtDlls_location)
 endif()
 
-include(radium_setup_functions)
+include(RadiumSetupFunctions)
 
 add_executable(CoreExampleApp
     CoreExampleApp/main.cpp)
