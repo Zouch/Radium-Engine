@@ -3,10 +3,12 @@
 #include <glbinding-aux/ContextInfo.h>
 #include <glbinding-aux/types_to_string.h>
 #include <glbinding/Binding.h>
+#include <glbinding/Version.h>
+#include <glbinding/glbinding.h>
+#include <globjects/globjects.h>
 
 // Do not import namespace to prevent glbinding/QTOpenGL collision
 #include <glbinding/gl/gl.h>
-#include <globjects/globjects.h>
 
 #include <GLFW/glfw3.h>
 
@@ -67,8 +69,7 @@ std::string OpenGLContext::getInfo() const {
     infoText << "OpenGL   (glbinding) : " << glbinding::aux::ContextInfo::version().toString()
              << std::endl;
     infoText << "GLSL                 : "
-             << gl::glGetString( gl::GLenum( gl::GLenum( GL_SHADING_LANGUAGE_VERSION ) ) )
-             << std::endl;
+             << gl::glGetString( gl::GLenum( GL_SHADING_LANGUAGE_VERSION ) ) << std::endl;
     doneCurrent();
 
     return infoText.str();
