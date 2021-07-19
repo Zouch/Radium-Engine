@@ -38,9 +38,13 @@ find_package(Eigen3 REQUIRED  NO_DEFAULT_PATH )
 
 #This one should be extracted directly from external project properties.
 target_compile_definitions(${ra_engine_target}
-        PUBLIC
-        GLOBJECTS_USE_EIGEN
-)
+    PUBLIC
+    GLOBJECTS_USE_EIGEN
+    )
+target_compile_options(${ra_engine_target}
+    PUBLIC
+    ${RA_GLBINDINGS_COMPILE_OPTIONS}
+    )
 
 target_include_directories(${ra_engine_target} PUBLIC
     $<BUILD_INTERFACE:${GLBINDING_INCLUDE_DIR}>
