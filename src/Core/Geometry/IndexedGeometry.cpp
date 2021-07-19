@@ -252,7 +252,7 @@ void MultiIndexedGeometry::deepClear() {
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 
-std::size_t MultiIndexedGeometry::KeyHash::operator()( const LayerKeyType& k ) const {
+std::size_t MultiIndexedGeometry::LayerKeyHash::operator()( const LayerKeyType& k ) const {
     // Mix semantic collection into a single identifier string
     std::ostringstream stream;
     std::copy( k.first.begin(), k.first.end(), std::ostream_iterator<std::string>( stream, "" ) );

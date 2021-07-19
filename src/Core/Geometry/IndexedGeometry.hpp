@@ -373,17 +373,21 @@ class RA_CORE_API MultiIndexedGeometry : public AttribArrayGeometry, public Util
 
     /// Note: we cannot store unique_ptr here has unordered_map needs its
     /// elements to be copy-constructible
-    using EntryType = std::pair<bool, GeometryIndexLayerBase*>;
-    struct RA_CORE_API KeyHash {
+    using LayerEntryType = std::pair<bool, GeometryIndexLayerBase*>;
+
+  public:
+    /// Hash function for layer keys
+    struct RA_CORE_API LayerKeyHash {
         std::size_t operator()( const LayerKeyType& k ) const;
     };
 
+  private:
     /// Collection of pairs <lockStatus, Indices>
     /// \note There is no natural ordering for these elements, thus
     /// we need an unordered_map. In contrast to map, transparent hashing
     /// require c++20, so we need to implement them explicitely here
     /// https://en.cppreference.com/w/cpp/container/unordered_map/find
-    std::unordered_map<LayerKeyType, EntryType, KeyHash> m_indices;
+    std::unordered_map<LayerKeyType, LayerEntryType, LayerKeyHash> m_indices;
 };
 
 struct RA_CORE_API PointCloudIndexLayer : public GeometryIndexLayer<Vector1ui> {
