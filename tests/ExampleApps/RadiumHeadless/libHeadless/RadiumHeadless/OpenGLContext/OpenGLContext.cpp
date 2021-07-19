@@ -1,18 +1,27 @@
 #include "OpenGLContext.hpp"
 
-#include <glbinding-aux/ContextInfo.h>
-#include <glbinding-aux/types_to_string.h>
-#include <glbinding/Binding.h>
-#include <glbinding/Version.h>
-#include <glbinding/glbinding.h>
-#include <globjects/globjects.h>
-
-// Do not import namespace to prevent glbinding/QTOpenGL collision
-#include <glbinding/gl/gl.h>
-
 #include <GLFW/glfw3.h>
 
+#include <glbinding/AbstractFunction.h>
+#include <glbinding/Binding.h>
+#include <glbinding/CallbackMask.h>
+#include <glbinding/FunctionCall.h>
+#include <glbinding/Version.h>
+#include <glbinding/glbinding.h>
+
+#include <glbinding/gl/gl.h>
+
+#include <glbinding-aux/ContextInfo.h>
+#include <glbinding-aux/Meta.h>
+#include <glbinding-aux/ValidVersions.h>
+#include <glbinding-aux/types_to_string.h>
+
+#include <globjects/globjects.h>
+
 #include <iostream>
+
+using namespace gl;
+using namespace glbinding;
 
 static void error( int errnum, const char* errmsg ) {
     globjects::critical() << errnum << ": " << errmsg << std::endl;
@@ -27,7 +36,7 @@ OpenGLContext::OpenGLContext( const std::array<int, 2>& size ) {
         glfwWindowHint( GLFW_VISIBLE, false );
         glfwWindowHint( GLFW_CONTEXT_VERSION_MAJOR, 4 );
         glfwWindowHint( GLFW_CONTEXT_VERSION_MINOR, 1 );
-        glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE );
+        glfwWindowHint( GLFW_OPENGL_FORWARD_COMPAT, true );
         glfwWindowHint( GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE );
         m_offscreenContext =
             glfwCreateWindow( size[0], size[1], "Radium CommandLine Context", nullptr, nullptr );

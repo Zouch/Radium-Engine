@@ -74,7 +74,7 @@ target_include_directories(${libName} PRIVATE
 
 target_link_libraries(${libName} PUBLIC Radium::Core Radium::Engine Radium::IO PRIVATE glfw)
 
-target_compile_definitions(${libName} PRIVATE ${libName}_EXPORTS)
+target_compile_definitions(${libName} PRIVATE ${libName}_EXPORTS  GLFW_INCLUDE_NONE)
 
 target_compile_options(${libName}
     PRIVATE
