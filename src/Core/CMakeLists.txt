@@ -81,7 +81,7 @@ if (${RADIUM_QUIET})
 endif ()
 
 message(STATUS "Configuring library ${ra_core_target} with standard settings")
-configureTargetWithDefaultRaSettings(${ra_core_target})
+configure_radium_target(${ra_core_target})
 configure_radium_library(
     TARGET ${ra_core_target}
     FILES "${core_headers};${core_inlines}"

@@ -26,18 +26,6 @@ find_package(OpenMP QUIET)
 include(CMakePackageConfigHelpers)
 set(ConfigPackageLocation lib/cmake/Radium)
 
-#------------------------------------------------------------------------------
-# By using macro to add common dependencies you can avoid repetition when you have
-# multiple binaries.
-# Use with `configureTargetWithDefaultRaSettings(exampleApp)`
-macro(configureTargetWithDefaultRaSettings TARGET)
-  target_include_directories(${TARGET} PUBLIC
-      $<BUILD_INTERFACE:${RADIUM_SRC_DIR}>
-      $<INSTALL_INTERFACE:include>
-      )
-  set_target_properties(${TARGET} PROPERTIES VERSION ${RADIUM_VERSION})
-endmacro()
-
 #-----------------------------------------------------------------------------------
 # Include sources
 

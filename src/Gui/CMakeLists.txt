@@ -58,7 +58,7 @@ endif ()
 target_compile_definitions(${ra_gui_target} PRIVATE "-DRA_GUI_EXPORTS")
 
 message(STATUS "Configuring library ${ra_gui_target} with standard settings")
-configureTargetWithDefaultRaSettings(${ra_gui_target})
+configure_radium_target(${ra_gui_target})
 configure_radium_library(
     TARGET ${ra_gui_target}
     FILES "${gui_headers};${gui_inlines}"

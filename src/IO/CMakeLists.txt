@@ -61,7 +61,7 @@ target_link_libraries(${ra_io_target} PUBLIC Core)
 target_compile_definitions(${ra_io_target} PRIVATE RA_IO_EXPORTS IO_USE_CAMERA_LOADER)
 
 message(STATUS "Configuring library ${ra_io_target} with standard settings")
-configureTargetWithDefaultRaSettings(${ra_io_target})
+configure_radium_target(${ra_io_target})
 configure_radium_library(
     TARGET ${ra_io_target}
     FILES "${io_headers};${io_inlines}"
