@@ -1,0 +1,35 @@
+#------------------------------------------------------------------------------------------------------------
+# manage required components
+
+set(_supported_components Headless)
+set(RadiumHeadless_FOUND True)
+
+if (NOT RadiumHeadless_FIND_COMPONENTS)
+    message(STATUS "No component requested : search for all components \(${_supported_components}\)")
+    set(RadiumHeadless_FIND_COMPONENTS ${_supported_components})
+else()
+    message(STATUS "RadiumHeadless -- requested components are : ${RadiumHeadless_FIND_COMPONENTS}")
+endif()
+
+foreach(_comp ${RadiumHeadless_FIND_COMPONENTS})
+  list(FIND _supported_components ${_comp} ${_comp}_FOUND)
+  if (${${_comp}_FOUND} EQUAL -1)
+    set(RadiumHeadless_FOUND False)
+    set(RadiumHeadless_NOT_FOUND_MESSAGE "Unsupported RadiumHeadless component: ${_comp}")
+  else()
+    set(${_comp}_FOUND True)
+  endif()
+endforeach()
+
+#------------------------------------------------------------------------------------------------------------
+include(CMakeFindDependencyMacro)
+if ( NOT Radium_FOUND)
+    find_dependency(Radium COMPONENTS Core Engine IO REQUIRED)
+endif()
+if (NOT glfw3_FOUND)
+    find_dependency(glfw3 3.3 REQUIRED)
+endif()
+
+if (Headless_FOUND)
+    include("${CMAKE_CURRENT_LIST_DIR}/HeadlessTargets.cmake" )
+endif()

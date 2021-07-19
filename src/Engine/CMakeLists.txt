@@ -68,7 +68,19 @@ install_target_resources(
     TARGET ${ra_engine_target}
     RESOURCES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Resources/Textures
     RESOURCES_INSTALL_DIR "Radium"
+    )
+
+
+target_compile_options(${ra_engine_target}
+    PRIVATE
+
+    PUBLIC
+    ${DEFAULT_COMPILE_OPTIONS}
+
+    INTERFACE
 )
+
+
 
 list(REMOVE_AT CMAKE_MESSAGE_INDENT -1)
 
