@@ -205,32 +205,6 @@ class RA_ENGINE_API VaoIndices
     size_t m_numElements { 0 };
 };
 
-/// This class handles an attrib array displayable on gpu only, without core
-/// geometry. Use only when you don't need to access the cpu geometry again, or
-/// when you need to specify special indices.
-template <typename I>
-class IndexedAttribArrayDisplayable : public AttribArrayDisplayable, public VaoIndices
-{
-    using IndexType          = I;
-    using IndexContainerType = Ra::Core::AlignedStdVector<IndexType>;
-
-    template <typename T>
-    inline void addAttrib( const std::string& name,
-                           const typename Ra::Core::Utils::Attrib<T>::Container& data );
-    template <typename T>
-    inline void addAttrib( const std::string& name,
-                           const typename Ra::Core ::Utils::Attrib<T>::Container&& data );
-    inline void updateGL() override;
-
-    inline void render( const ShaderProgram* prog ) override;
-
-  protected:
-    /// assume m_vao is bound.
-    inline void autoVertexAttribPointer( const ShaderProgram* prog );
-    IndexContainerType m_cpu_indices;
-    AttribManager m_attribManager;
-};
-
 /// Template class to manage the Displayable aspect of a Core Geomertry, such as TriangleMesh.
 template <typename T>
 class CoreGeometryDisplayable : public AttribArrayDisplayable
