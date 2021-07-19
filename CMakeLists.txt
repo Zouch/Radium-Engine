@@ -9,15 +9,9 @@ endif()
 set(CMAKE_DISABLE_SOURCE_CHANGES ON)
 set(CMAKE_DISABLE_IN_SOURCE_BUILD ON)
 
-# Enable helpfull warnings and C++17 for all files
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
 # Project setup, versioning stuff here, change when changing the version
 # Note: keep the project name lower case only for easy linux packaging support
 project (radiumproject VERSION 1.0.0)
-
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CompilerVersion.cmake)
 
 set(VERSION_TYPE "beta" CACHE STRING "version type" FORCE)
 site_name(VERSION_HOST) # read hostname to VERSION_HOST
@@ -25,6 +19,9 @@ set(VERSION_HOST "${VERSION_HOST}" CACHE STRING "host of build" FORCE)
 
 set(RADIUM_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 set(RADIUM_VERSION_MAJOR ${PROJECT_VERSION_MAJOR})
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CompilerVersion.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CompilerOptions.cmake)
 
 option(RADIUM_ENABLE_TESTING          "Enable testing. Tests are automatically built with target all, run with target check or test" ON)
 option(RADIUM_ENABLE_COVERAGE         "Enable coverage, gcc only. Experimental, need ENABLE_TESTING" OFF)

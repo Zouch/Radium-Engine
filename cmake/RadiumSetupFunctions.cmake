@@ -965,16 +965,55 @@ function(add_imported_dir)
              list(REMOVE_DUPLICATES ${ARG_TO})
              message(NOTICE "New value of ${ARG_TO} is ${${ARG_TO}} ( ${tmp} )" )
              set(${ARG_TO} ${${ARG_TO}} PARENT_SCOPE)
-        endif()
-    endif ()
-endfunction()
+         endif()
+     endif ()
+ endfunction()
 
 
-#------------------------------------------------------------------------------
-macro(configure_radium_target TARGET)
-  target_include_directories(${TARGET} PUBLIC
-      $<BUILD_INTERFACE:${RADIUM_SRC_DIR}>
-      $<INSTALL_INTERFACE:include>
-      )
-  set_target_properties(${TARGET} PROPERTIES VERSION ${RADIUM_VERSION})
-endmacro()
+ #------------------------------------------------------------------------------
+ macro(configure_radium_target TARGET)
+     target_include_directories(${TARGET} PUBLIC
+         $<BUILD_INTERFACE:${RADIUM_SRC_DIR}>
+         $<INSTALL_INTERFACE:include>
+         )
+
+     set_target_properties(${TARGET}
+         PROPERTIES
+         ${RA_DEFAULT_PROJECT_OPTIONS}
+         )
+
+     target_include_directories(${TARGET}
+         PRIVATE
+         PUBLIC
+         ${RA_DEFAULT_INCLUDE_DIRECTORIES}
+         INTERFACE
+         )
+
+     target_link_libraries(${TARGET}
+         PRIVATE
+         PUBLIC
+         ${RA_DEFAULT_LIBRARIES}
+         INTERFACE
+         )
+
+     target_compile_definitions(${TARGET}
+         PRIVATE
+         PUBLIC
+         ${RA_DEFAULT_COMPILE_DEFINITIONS}
+         INTERFACE
+         )
+
+     target_compile_options(${TARGET}
+         PRIVATE
+         PUBLIC
+         ${RA_DEFAULT_COMPILE_OPTIONS}
+         INTERFACE
+         )
+
+     target_link_libraries(${TARGET}
+         PRIVATE
+         PUBLIC
+         ${RA_DEFAULT_LINKER_OPTIONS}
+         INTERFACE
+         )
+ endmacro()
