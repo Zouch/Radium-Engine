@@ -2,7 +2,7 @@
 #include <array>
 #include <string>
 
-class GLFWwindow;
+struct GLFWwindow;
 
 /**
  * This class defines GLFW based OpenGL Context.
