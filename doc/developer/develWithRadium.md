@@ -3,7 +3,20 @@
 
 # Radium libraries
 Direct contributions to master are closed.
-Please submit your pull request.
+We defer merge to master after our radium based projects (public or private) CI tests.
+To this end, please select release_candidate as a base branch of your pull requests.
+
+# Pre commit hook
+
+We provide a configuration file for [pre-commit](https://pre-commit.com/). Please install and use it, e.g.
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+This hook will check several formatting convention and cleanup your files' style on each commit. If some checks fail,
+it might have update automatically your code (hence just add again the modified file to your commit) or needs manual intervention.
+These script are also added as CI github check (to show any problems in case you have troubles to install the hook script).
 
 # Radium test suite
 ## Preliminaries
