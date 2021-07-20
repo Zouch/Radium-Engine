@@ -50,8 +50,7 @@ class DemoWindow : public Ra::Gui::SimpleWindow
             "DEMO_COLORRESET", "Key_O", "", "", "false", [this]( QKeyEvent* event ) {
                 this->colorreset( event );
             } );
-        if ( DEMO_COLORUP.isInvalid() || DEMO_COLORDOWN.isInvalid() )
-        {
+        if ( DEMO_COLORUP.isInvalid() || DEMO_COLORDOWN.isInvalid() ) {
             LOG( Ra::Core::Utils::logERROR ) << "Error : invalid context or actions for custom"
                                              << "Color Up [" << DEMO_COLORUP
                                              << "], "

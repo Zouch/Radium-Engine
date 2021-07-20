@@ -22,8 +22,7 @@ using namespace Core::Utils; // log
 // The two following methods are independent of any ShaderProgram object.
 // Fixed : made them local function to remove dependency on openGL.h for the class header
 GLenum getTypeAsGLEnum( ShaderType type ) {
-    switch ( type )
-    {
+    switch ( type ) {
     case ShaderType_VERTEX:
         return GL_VERTEX_SHADER;
     case ShaderType_FRAGMENT:
@@ -48,8 +47,7 @@ GLenum getTypeAsGLEnum( ShaderType type ) {
 }
 
 ShaderType getGLenumAsType( GLenum type ) {
-    switch ( type )
-    {
+    switch ( type ) {
     case GL_VERTEX_SHADER:
         return ShaderType_VERTEX;
     case GL_FRAGMENT_SHADER:
@@ -87,10 +85,12 @@ ShaderProgram::~ShaderProgram() {
     // first delete shader objects (before program and source) since it refer to
     // them during delete
     // See ~Shader (setSource(nullptr)
-    for ( auto& s : m_shaderObjects )
-    { s.second.reset( nullptr ); }
-    for ( auto& s : m_shaderSources )
-    { s.reset( nullptr ); }
+    for ( auto& s : m_shaderObjects ) {
+        s.second.reset( nullptr );
+    }
+    for ( auto& s : m_shaderSources ) {
+        s.reset( nullptr );
+    }
     m_program.reset( nullptr );
 }
 
@@ -101,8 +101,7 @@ void ShaderProgram::loadShader( ShaderType type,
                                 bool fromFile,
                                 const std::string& version ) {
 #ifdef OS_MACOS
-    if ( type == ShaderType_COMPUTE )
-    {
+    if ( type == ShaderType_COMPUTE ) {
         LOG( logERROR ) << "No compute shader on OsX !";
         return;
     }
@@ -114,8 +113,7 @@ void ShaderProgram::loadShader( ShaderType type,
 
     // header string that contains #version and pre-declarations ...
     std::string shaderHeader;
-    if ( type == ShaderType_VERTEX )
-    {
+    if ( type == ShaderType_VERTEX ) {
         shaderHeader = std::string( version + "\n\n"
                                               "out gl_PerVertex {\n"
                                               "    vec4 gl_Position;\n"
@@ -123,8 +121,9 @@ void ShaderProgram::loadShader( ShaderType type,
                                               "    float gl_ClipDistance[];\n"
                                               "};\n\n" );
     }
-    else
-    { shaderHeader = std::string( version + "\n\n" ); }
+    else {
+        shaderHeader = std::string( version + "\n\n" );
+    }
 
     // Add properties at the beginning of the file.
     shaderHeader = std::accumulate(
@@ -139,18 +138,19 @@ void ShaderProgram::loadShader( ShaderType type,
         shaderHeader,
         [type]( std::string a, const std::pair<std::string, ShaderType>& b ) -> std::string {
             if ( b.second == type ) { return std::move( a ) + b.first + std::string( "\n" ); }
-            else
-            { return a; }
+            else {
+                return a;
+            }
         } );
 
     std::unique_ptr<globjects::StaticStringSource> fullsource { nullptr };
-    if ( fromFile )
-    {
+    if ( fromFile ) {
         auto loadedSource = globjects::Shader::sourceFromFile( name );
         fullsource = globjects::Shader::sourceFromString( shaderHeader + loadedSource->string() );
     }
-    else
-    { fullsource = globjects::Shader::sourceFromString( shaderHeader + name ); }
+    else {
+        fullsource = globjects::Shader::sourceFromString( shaderHeader + name );
+    }
 
     // Radium V2 : allow to define global replacement per renderer, shader, rendertechnique ...
     auto shaderSource = globjects::Shader::applyGlobalReplacements( fullsource.get() );
@@ -196,10 +196,8 @@ void ShaderProgram::load( const ShaderConfiguration& shaderConfig ) {
                      " is incomplete (e.g. misses vertex or fragment shader)." )
                        .c_str() );
 
-    for ( size_t i = 0; i < ShaderType_COUNT; ++i )
-    {
-        if ( !m_configuration.m_shaders[i].first.empty() )
-        {
+    for ( size_t i = 0; i < ShaderType_COUNT; ++i ) {
+        if ( !m_configuration.m_shaders[i].first.empty() ) {
             loadShader( ShaderType( i ),
                         m_configuration.m_shaders[i].first,
                         m_configuration.getProperties(),
@@ -215,8 +213,7 @@ void ShaderProgram::load( const ShaderConfiguration& shaderConfig ) {
 void ShaderProgram::link() {
     m_program = globjects::Program::create();
 
-    for ( unsigned int i = 0; i < ShaderType_COUNT; ++i )
-    {
+    for ( unsigned int i = 0; i < ShaderType_COUNT; ++i ) {
         if ( m_shaderObjects[i].second ) { m_program->attach( m_shaderObjects[i].second.get() ); }
     }
 
@@ -228,8 +225,7 @@ void ShaderProgram::link() {
     auto total  = GLuint( m_program->get( GL_ACTIVE_UNIFORMS ) );
     textureUnits.clear();
 
-    for ( GLuint i = 0; i < total; ++i )
-    {
+    for ( GLuint i = 0; i < total; ++i ) {
         auto name = m_program->getActiveUniformName( i );
         auto type = m_program->getActiveUniform( i, GL_UNIFORM_TYPE );
 
@@ -255,8 +251,7 @@ void ShaderProgram::link() {
              type == GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE ||
              type == GL_SAMPLER_2D_MULTISAMPLE_ARRAY ||
              type == GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY ||
-             type == GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY )
-        {
+             type == GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY ) {
             auto location      = m_program->getUniformLocation( name );
             textureUnits[name] = TextureBinding( texUnit++, location );
         }
@@ -277,10 +272,8 @@ void ShaderProgram::unbind() const {
 }
 
 void ShaderProgram::reload() {
-    for ( auto& s : m_shaderObjects )
-    {
-        if ( s.second != nullptr )
-        {
+    for ( auto& s : m_shaderObjects ) {
+        if ( s.second != nullptr ) {
             if ( s.first ) { LOG( logDEBUG ) << "Reloading shader " << s.second->name(); }
 
             m_program->detach( s.second.get() );
@@ -348,8 +341,7 @@ void ShaderProgram::setUniform( const char* name, Texture* tex, int texUnit ) co
 
 void ShaderProgram::setUniformTexture( const char* name, Texture* tex ) const {
     auto itr = textureUnits.find( std::string( name ) );
-    if ( itr != textureUnits.end() )
-    {
+    if ( itr != textureUnits.end() ) {
         tex->bind( itr->second.m_texUnit );
         m_program->setUniform( itr->second.m_location, itr->second.m_texUnit );
     }
@@ -379,22 +371,18 @@ std::string ShaderProgram::preprocessIncludes( const std::string& name,
     // source: https://www.fluentcpp.com/2017/04/21/how-to-split-a-string-in-c/
     std::istringstream iss( shader );
     std::string codeline;
-    while ( std::getline( iss, codeline, '\n' ) )
-    {
+    while ( std::getline( iss, codeline, '\n' ) ) {
         std::smatch match;
-        if ( std::regex_search( codeline, match, reg ) )
-        {
+        if ( std::regex_search( codeline, match, reg ) ) {
             // Radium V2 : for composable shaders, use the includePaths set elsewhere.
             auto includeNameString =
                 globjects::NamedString::getFromRegistry( std::string( "/" ) + match[1].str() );
-            if ( includeNameString != nullptr )
-            {
+            if ( includeNameString != nullptr ) {
 
                 codeline =
                     preprocessIncludes( match[1].str(), includeNameString->string(), level + 1, 0 );
             }
-            else
-            {
+            else {
                 LOG( logWARNING ) << "Cannot open included file " << match[1].str() << " at line"
                                   << nline << " of file " << name << ". Ignored.";
                 continue;
@@ -425,8 +413,7 @@ std::string ShaderProgram::preprocessIncludes( const std::string& name,
     }
 
     // Build final shader string
-    for ( const auto& l : finalStrings )
-    {
+    for ( const auto& l : finalStrings ) {
         result.append( l );
         result.append( "\n" );
     }

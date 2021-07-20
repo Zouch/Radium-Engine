@@ -35,8 +35,7 @@ inline const char* glErrorString( gl::GLenum err ) {
     using namespace gl45core;
     using namespace gl45ext;
     using namespace gl;
-    switch ( err )
-    {
+    switch ( err ) {
     case GL_INVALID_ENUM:
         return " Invalid enum : An unacceptable value is specified for an enumerated argument. The "
                "offending command is ignored and has no other side effect than to set the error "
@@ -76,8 +75,7 @@ inline const char* glErrorString( gl::GLenum err ) {
         x;                                                                                       \
         {                                                                                        \
             gl::GLenum err = glGetError();                                                       \
-            if ( err != gl::GL_NO_ERROR )                                                        \
-            {                                                                                    \
+            if ( err != gl::GL_NO_ERROR ) {                                                      \
                 const char* errBuf = glErrorString( err );                                       \
                 LOG( Ra::Core::Utils::logERROR )                                                 \
                     << "OpenGL error (" << __FILE__ << ":" << __LINE__ << ", " << STRINGIFY( x ) \
@@ -91,8 +89,7 @@ inline const char* glErrorString( gl::GLenum err ) {
 #    define GL_CHECK_ERROR                                                                   \
         {                                                                                    \
             gl::GLenum err = glGetError();                                                   \
-            if ( err != gl::GL_NO_ERROR )                                                    \
-            {                                                                                \
+            if ( err != gl::GL_NO_ERROR ) {                                                  \
                 const char* errBuf = glErrorString( err );                                   \
                 LOG( Ra::Core::Utils::logERROR )                                             \
                     << "OpenGL error (" << __FILE__ << ":" << __LINE__                       \

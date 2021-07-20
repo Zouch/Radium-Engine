@@ -15,8 +15,7 @@ namespace Geometry {
 
 AdjacencyMatrix uniformAdjacency( const uint point_size, const AlignedStdVector<Vector3ui>& T ) {
     AdjacencyMatrix A( point_size, point_size );
-    for ( const auto& t : T )
-    {
+    for ( const auto& t : T ) {
         uint i             = t( 0 );
         uint j             = t( 1 );
         uint k             = t( 2 );
@@ -30,8 +29,7 @@ AdjacencyMatrix uniformAdjacency( const uint point_size, const AlignedStdVector<
 AdjacencyMatrix uniformAdjacency( const VectorArray<Vector3>& p,
                                   const AlignedStdVector<Vector3ui>& T ) {
     AdjacencyMatrix A( p.size(), p.size() );
-    for ( const auto& t : T )
-    {
+    for ( const auto& t : T ) {
         uint i             = t( 0 );
         uint j             = t( 1 );
         uint k             = t( 2 );
@@ -47,8 +45,7 @@ void uniformAdjacency( const VectorArray<Vector3>& p,
                        AdjacencyMatrix& Adj ) {
     Adj.resize( p.size(), p.size() );
 #pragma omp parallel for
-    for ( int n = 0; n < int( T.size() ); ++n )
-    {
+    for ( int n = 0; n < int( T.size() ); ++n ) {
         const Vector3ui& t = T[n];
         const uint i       = t( 0 );
         const uint j       = t( 1 );
@@ -67,8 +64,7 @@ TVAdj triangleUniformAdjacency( const VectorArray<Vector3>& p,
     const uint p_size = p.size();
     const uint t_size = T.size();
     TVAdj A( t_size, p_size );
-    for ( uint t = 0; t < t_size; ++t )
-    {
+    for ( uint t = 0; t < t_size; ++t ) {
         const uint i       = T[t]( 0 );
         const uint j       = T[t]( 1 );
         const uint k       = T[t]( 2 );
@@ -84,8 +80,7 @@ AdjacencyMatrix cotangentWeightAdjacency( const VectorArray<Vector3>& p,
     AdjacencyMatrix A( p.size(), p.size() );
     std::vector<Eigen::Triplet<Scalar>> triplets( T.size() * 6 );
 #pragma omp parallel for
-    for ( int t_ = 0; t_ < int( T.size() ); ++t_ )
-    {
+    for ( int t_ = 0; t_ < int( T.size() ); ++t_ ) {
         const auto& t        = T[t_];
         uint i               = t( 0 );
         uint j               = t( 1 );
@@ -114,8 +109,9 @@ AdjacencyMatrix cotangentWeightAdjacency( const VectorArray<Vector3>& p,
 DegreeMatrix adjacencyDegree( const AdjacencyMatrix& A ) {
     DegreeMatrix D( A.rows(), A.cols() );
     D.reserve( A.rows() );
-    for ( int i = 0; i < D.diagonal().size(); ++i )
-    { D.coeffRef( i, i ) = A.row( i ).sum(); }
+    for ( int i = 0; i < D.diagonal().size(); ++i ) {
+        D.coeffRef( i, i ) = A.row( i ).sum();
+    }
     return D;
 }
 

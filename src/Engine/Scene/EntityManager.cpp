@@ -34,17 +34,14 @@ Entity* EntityManager::createEntity( const std::string& name ) {
     ent->setIndex( idx );
 
     std::string entityName = name;
-    if ( name.empty() )
-    {
+    if ( name.empty() ) {
         entityName = "Entity_" + std::to_string( idx.getValue() );
         ent->rename( entityName );
     }
-    else
-    {
+    else {
         int i           = 1;
         bool mustRename = false;
-        while ( entityExists( entityName ) )
-        {
+        while ( entityExists( entityName ) ) {
             LOG( logWARNING ) << "Entity `" << entityName << "` already exists";
             entityName = name + "_" + std::to_string( i++ );
             mustRename = true;
@@ -97,8 +94,7 @@ std::vector<Entity*> EntityManager::getEntities() const {
 
 Entity* EntityManager::getEntity( const std::string& name ) const {
     auto idx = m_entitiesName.find( name );
-    if ( idx == m_entitiesName.end() )
-    {
+    if ( idx == m_entitiesName.end() ) {
         LOG( logDEBUG ) << "Trying to access an invalid entity (named: " + name + ")";
         return nullptr;
     }
@@ -106,17 +102,20 @@ Entity* EntityManager::getEntity( const std::string& name ) const {
 }
 
 void EntityManager::swapBuffers() {
-    for ( auto& e : m_entities )
-    { e->swapTransformBuffers(); }
+    for ( auto& e : m_entities ) {
+        e->swapTransformBuffers();
+    }
 }
 
 void EntityManager::deleteEntities() {
     std::vector<Core::Utils::Index> indices;
     indices.reserve( m_entities.size() - 1 );
-    for ( size_t i = 1; i < m_entities.size(); ++i )
-    { indices.push_back( m_entities.index( i ) ); }
-    for ( const auto& idx : indices )
-    { removeEntity( idx ); }
+    for ( size_t i = 1; i < m_entities.size(); ++i ) {
+        indices.push_back( m_entities.index( i ) );
+    }
+    for ( const auto& idx : indices ) {
+        removeEntity( idx );
+    }
 }
 } // namespace Scene
 } // namespace Engine

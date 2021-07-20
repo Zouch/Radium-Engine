@@ -27,7 +27,8 @@ TEST_CASE( "Core/Geometry/Polyline", "[Core][Core/Geometry][Polyline]" ) {
         REQUIRE( p.f( -10_ra ).isApprox( p.f( 0_ra ) ) );
         REQUIRE( p.f( 10_ra ).isApprox( p.f( 1_ra ) ) );
 
-        for ( const auto& x : v4 )
-        { REQUIRE( Math::areApproxEqual( p.distance( x ), 0_ra ) ); }
+        for ( const auto& x : v4 ) {
+            REQUIRE( Math::areApproxEqual( p.distance( x ), 0_ra ) );
+        }
     }
 }

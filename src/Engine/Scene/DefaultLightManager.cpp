@@ -28,10 +28,8 @@ void DefaultLightStorage::add( const Scene::Light* li ) {
 
 void DefaultLightStorage::remove( const Scene::Light* li ) {
     auto range = m_lights.equal_range( li->getType() );
-    for ( auto i = range.first; i != range.second; ++i )
-    {
-        if ( i->second == li )
-        {
+    for ( auto i = range.first; i != range.second; ++i ) {
+        if ( i->second == li ) {
             m_lights.erase( i );
             break;
         }

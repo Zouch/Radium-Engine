@@ -30,8 +30,7 @@ CameraManager::CameraManager() {
 
 void CameraManager::initialize() {
 
-    if ( count() > 0 )
-    {
+    if ( count() > 0 ) {
         LOG( logDEBUG ) << "CameraManager seems to be already initialized, do nothing.";
         return;
     }
@@ -39,8 +38,7 @@ void CameraManager::initialize() {
 
 void CameraManager::activate( Core::Utils::Index index ) {
 
-    if ( index.isInvalid() || index > count() )
-    {
+    if ( index.isInvalid() || index > count() ) {
         LOG( logDEBUG ) << "Try to activate camera with an invalid/out of bound index. Ignored.";
         return;
     }
@@ -53,8 +51,7 @@ void CameraManager::activate( Core::Utils::Index index ) {
 }
 
 Ra::Core::Utils::Index CameraManager::getCameraIndex( const CameraComponent* cam ) {
-    for ( size_t i = 0; i < m_data->size(); ++i )
-    {
+    for ( size_t i = 0; i < m_data->size(); ++i ) {
         if ( cam == ( *m_data )[i] ) return i;
     }
     return {};
@@ -76,12 +73,10 @@ void CameraManager::generateTasks( Core::TaskQueue* taskQueue,
     };
 
     // only update visible components.
-    for ( size_t i = 0; i < m_data->size(); ++i )
-    {
+    for ( size_t i = 0; i < m_data->size(); ++i ) {
         auto comp = ( *m_data )[i];
         auto ro   = comp->getRenderObject();
-        if ( ro->isVisible() )
-        {
+        if ( ro->isVisible() ) {
             auto updater      = new RoUpdater();
             updater->m_camera = comp;
             taskQueue->registerTask( updater );
@@ -93,8 +88,7 @@ void CameraManager::handleAssetLoading( Entity* entity, const FileData* filedata
     std::vector<Camera*> cameraData = filedata->getCameraData();
     uint id                         = 0;
     uint cpt                        = 0;
-    for ( const auto& data : cameraData )
-    {
+    for ( const auto& data : cameraData ) {
         std::string componentName = "CAMERA_" + entity->getName() + std::to_string( id++ );
         auto comp                 = new CameraComponent( entity, componentName, 100, 100 );
         *( comp->getCamera() )    = *data;
@@ -116,10 +110,10 @@ void CameraManager::unregisterComponent( const Entity* entity, Component* compon
 }
 
 void CameraManager::unregisterAllComponents( const Entity* entity ) {
-    for ( const auto& comp : this->m_components )
-    {
-        if ( comp.first == entity )
-        { m_data->remove( reinterpret_cast<CameraComponent*>( comp.second ) ); }
+    for ( const auto& comp : this->m_components ) {
+        if ( comp.first == entity ) {
+            m_data->remove( reinterpret_cast<CameraComponent*>( comp.second ) );
+        }
     }
     System::unregisterAllComponents( entity );
 }

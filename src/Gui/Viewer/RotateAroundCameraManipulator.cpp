@@ -18,8 +18,7 @@ void RotateAroundCameraManipulator::configureKeyMapping_impl() {
     auto keyMappingManager = Gui::KeyMappingManager::getInstance();
 
     KeyMapping::setContext( KeyMappingManager::getInstance()->getContext( "CameraContext" ) );
-    if ( KeyMapping::getContext().isInvalid() )
-    {
+    if ( KeyMapping::getContext().isInvalid() ) {
         LOG( logINFO )
             << "CameraContext not defined (maybe the configuration file do not contains it)";
         LOG( logERROR ) << "CameraContext all keymapping invalid !";
@@ -74,8 +73,7 @@ bool RotateAroundCameraManipulator::handleMouseMoveEvent(
     m_lastMouseX = event->pos().x();
     m_lastMouseY = event->pos().y();
 
-    if ( m_light != nullptr )
-    {
+    if ( m_light != nullptr ) {
         m_light->setPosition( m_camera->getPosition() );
         m_light->setDirection( m_camera->getDirection() );
     }
@@ -87,13 +85,11 @@ bool RotateAroundCameraManipulator::handleKeyPressEvent(
     QKeyEvent* event,
     const Ra::Gui::KeyMappingManager::KeyMappingAction& action ) {
 
-    if ( action == ROTATEAROUND_ALIGN_WITH_CLOSEST_AXIS )
-    {
+    if ( action == ROTATEAROUND_ALIGN_WITH_CLOSEST_AXIS ) {
         alignOnClosestAxis();
         return true;
     }
-    else if ( action == ROTATEAROUND_SET_PIVOT )
-    {
+    else if ( action == ROTATEAROUND_SET_PIVOT ) {
         setPivotFromPixel( m_lastMouseX, m_lastMouseY );
         return true;
     }
@@ -124,8 +120,7 @@ void RotateAroundCameraManipulator::alignOnClosestAxis() {
     auto updateMaxAndAxis =
         []( Ra::Core::Vector3 ref, Ra::Core::Vector3 axis, Ra::Core::Vector3& out, Scalar& max ) {
             Scalar d = ref.dot( axis );
-            if ( d > max )
-            {
+            if ( d > max ) {
                 max = d;
                 out = axis;
             }
@@ -133,22 +128,23 @@ void RotateAroundCameraManipulator::alignOnClosestAxis() {
 
     Scalar max            = 0_ra;
     Ra::Core::Vector3 ref = m_camera->getDirection();
-    for ( auto axis : std::vector<Ra::Core::Vector3> { -x, x, -y, y, -z, z } )
-    { updateMaxAndAxis( ref, axis, newDirection, max ); }
+    for ( auto axis : std::vector<Ra::Core::Vector3> { -x, x, -y, y, -z, z } ) {
+        updateMaxAndAxis( ref, axis, newDirection, max );
+    }
     m_camera->setDirection( newDirection );
 
     max = 0_ra;
     ref = m_camera->getUpVector();
-    for ( auto axis : std::vector<Ra::Core::Vector3> { -x, x, -y, y, -z, z } )
-    { updateMaxAndAxis( ref, axis, newUpVector, max ); }
+    for ( auto axis : std::vector<Ra::Core::Vector3> { -x, x, -y, y, -z, z } ) {
+        updateMaxAndAxis( ref, axis, newUpVector, max );
+    }
     m_camera->setUpVector( newUpVector );
 
     Ra::Core::Vector3 newPivot = m_camera->getFrame() * pivotInCamSpace;
     Ra::Core::Vector3 trans    = m_pivot - newPivot;
     m_camera->setPosition( m_camera->getPosition() + trans );
 
-    if ( m_light != nullptr )
-    {
+    if ( m_light != nullptr ) {
         m_light->setPosition( m_camera->getPosition() );
         m_light->setDirection( m_camera->getDirection() );
     }
@@ -188,8 +184,7 @@ RotateAroundCameraManipulator::deformedBallQuaternion( Scalar x, Scalar y, Scala
     // Should be divided by the projectOnBall size, but it is 1.0
     Ra::Core::Vector3 axis = p2.cross( p1 );
 
-    if ( axis.norm() > 10_ra * Ra::Core::Math::machineEps )
-    {
+    if ( axis.norm() > 10_ra * Ra::Core::Math::machineEps ) {
         const Scalar angle =
             5.0_ra *
             std::asin( std::sqrt( axis.squaredNorm() / p1.squaredNorm() / p2.squaredNorm() ) );

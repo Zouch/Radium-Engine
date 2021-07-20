@@ -42,8 +42,7 @@ KeyMappingDummy
     Dummy::configureKeyMapping_impl() {
 
     KeyMapping::setContext( Gui::KeyMappingManager::getInstance()->getContext( "DummyContext" ) );
-    if ( Dummy::getContext().isInvalid() )
-    {
+    if ( Dummy::getContext().isInvalid() ) {
         LOG( Ra::Core::Utils::logINFO )
             << "DummyContext not defined (maybe the configuration file do not contains it)";
         return;

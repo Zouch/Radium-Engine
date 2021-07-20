@@ -164,8 +164,7 @@ template <class T, class... Handle>
 void AttribManager::copyAttributes( const AttribManager& m,
                                     const AttribHandle<T>& attr,
                                     Handle... attribs ) {
-    if ( m.isValid( attr ) )
-    {
+    if ( m.isValid( attr ) ) {
         // get attrib to copy
         auto& a = m.getAttrib( attr );
         // add new attrib
@@ -191,8 +190,7 @@ template <typename T>
 inline AttribHandle<T> AttribManager::findAttrib( const std::string& name ) const {
     auto c = m_attribsIndex.find( name );
     AttribHandle<T> handle;
-    if ( c != m_attribsIndex.end() )
-    {
+    if ( c != m_attribsIndex.end() ) {
         handle.m_idx  = c->second;
         handle.m_name = c->first;
     }
@@ -252,13 +250,11 @@ AttribHandle<T> AttribManager::addAttrib( const std::string& name ) {
     // look for a free slot
     auto it = std::find_if(
         m_attribs.begin(), m_attribs.end(), []( const auto& attr ) { return !attr; } );
-    if ( it != m_attribs.end() )
-    {
+    if ( it != m_attribs.end() ) {
         it->swap( attrib );
         h.m_idx = std::distance( m_attribs.begin(), it );
     }
-    else
-    {
+    else {
         m_attribs.push_back( std::move( attrib ) );
         h.m_idx = m_attribs.size() - 1;
     }
@@ -273,8 +269,7 @@ AttribHandle<T> AttribManager::addAttrib( const std::string& name ) {
 template <typename T>
 void AttribManager::removeAttrib( AttribHandle<T>& h ) {
     auto c = m_attribsIndex.find( h.m_name );
-    if ( c != m_attribsIndex.end() )
-    {
+    if ( c != m_attribsIndex.end() ) {
         Index idx = c->second;
         m_attribs[idx].reset( nullptr );
         m_attribsIndex.erase( c );

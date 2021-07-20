@@ -53,14 +53,12 @@ void SurfaceMeshComponent<CoreMeshType>::finalizeROFromGeometry(
     // The technique for rendering this component
     std::shared_ptr<Data::Material> roMaterial;
     // First extract the material from asset or create a default one
-    if ( data != nullptr )
-    {
+    if ( data != nullptr ) {
         auto converter = Data::EngineMaterialConverters::getMaterialConverter( data->getType() );
         auto mat       = converter.second( data );
         roMaterial.reset( mat );
     }
-    else
-    {
+    else {
         auto mat             = new Data::BlinnPhongMaterial( m_contentName + "_DefaultBPMaterial" );
         mat->m_renderAsSplat = m_displayMesh->getNumFaces() == 0;
         mat->m_perVertexColor = m_displayMesh->getCoreGeometry().hasAttrib(

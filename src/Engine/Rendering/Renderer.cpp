@@ -190,8 +190,7 @@ Renderer::PickingResult Renderer::doPickingNow( const PickingQuery& query,
     CORE_ASSERT( RadiumEngine::getInstance() != nullptr, "Engine is not initialized." );
     // skip query if out of window (can occur when picking while moving outside)
     if ( query.m_screenCoords.x() < 0 || query.m_screenCoords.x() > m_width - 1 ||
-         query.m_screenCoords.y() < 0 || query.m_screenCoords.y() > m_height - 1 )
-    {
+         query.m_screenCoords.y() < 0 || query.m_screenCoords.y() > m_height - 1 ) {
         // return empty result
         return {};
     }
@@ -244,8 +243,7 @@ Renderer::PickingResult Renderer::doPickingNow( const PickingQuery& query,
 
     //////////////////////////////////////////////////////////////////////////
 
-    if ( m_drawDebug )
-    {
+    if ( m_drawDebug ) {
         // Then draw debug objects
         GL_ASSERT( glClearBufferfv( GL_DEPTH, 0, &clearDepth ) );
         renderForPicking( renderData, m_pickingShaders, m_debugRenderObjectsPicking );
@@ -258,16 +256,13 @@ Renderer::PickingResult Renderer::doPickingNow( const PickingQuery& query,
     // these have a different way to compute the transform matrices
     // FIXME (florian): find a way to use renderForPicking()!
     GL_ASSERT( glClearBufferfv( GL_DEPTH, 0, &clearDepth ) );
-    for ( uint i = 0; i < m_pickingShaders.size(); ++i )
-    {
+    for ( uint i = 0; i < m_pickingShaders.size(); ++i ) {
         m_pickingShaders[i]->bind();
         m_pickingShaders[i]->setUniform( "transform.proj", renderData.projMatrix );
         m_pickingShaders[i]->setUniform( "transform.view", renderData.viewMatrix );
 
-        for ( const auto& ro : m_uiRenderObjectsPicking[i] )
-        {
-            if ( ro->isVisible() && ro->isPickable() )
-            {
+        for ( const auto& ro : m_uiRenderObjectsPicking[i] ) {
+            if ( ro->isVisible() && ro->isPickable() ) {
                 m_pickingShaders[i]->setUniform( "objectId", ro->getIndex().getValue() );
 
                 Core::Matrix4 M  = ro->getTransformAsMatrix();
@@ -383,14 +378,18 @@ void Renderer::saveExternalFBOInternal() {
 }
 
 void Renderer::updateRenderObjectsInternal( const Data::ViewingParameters& /*renderData*/ ) {
-    for ( auto& ro : m_fancyRenderObjects )
-    { ro->updateGL(); }
-    for ( auto& ro : m_xrayRenderObjects )
-    { ro->updateGL(); }
-    for ( auto& ro : m_debugRenderObjects )
-    { ro->updateGL(); }
-    for ( auto& ro : m_uiRenderObjects )
-    { ro->updateGL(); }
+    for ( auto& ro : m_fancyRenderObjects ) {
+        ro->updateGL();
+    }
+    for ( auto& ro : m_xrayRenderObjects ) {
+        ro->updateGL();
+    }
+    for ( auto& ro : m_debugRenderObjects ) {
+        ro->updateGL();
+    }
+    for ( auto& ro : m_uiRenderObjects ) {
+        ro->updateGL();
+    }
 }
 
 void Renderer::feedRenderQueuesInternal( const Data::ViewingParameters& /*renderData*/ ) {
@@ -404,37 +403,34 @@ void Renderer::feedRenderQueuesInternal( const Data::ViewingParameters& /*render
     m_renderObjectManager->getRenderObjectsByType( m_debugRenderObjects, RenderObjectType::Debug );
     m_renderObjectManager->getRenderObjectsByType( m_uiRenderObjects, RenderObjectType::UI );
 
-    for ( auto it = m_fancyRenderObjects.begin(); it != m_fancyRenderObjects.end(); )
-    {
-        if ( ( *it )->isXRay() )
-        {
+    for ( auto it = m_fancyRenderObjects.begin(); it != m_fancyRenderObjects.end(); ) {
+        if ( ( *it )->isXRay() ) {
             m_xrayRenderObjects.push_back( *it );
             it = m_fancyRenderObjects.erase( it );
         }
-        else
-        { ++it; }
+        else {
+            ++it;
+        }
     }
 
-    for ( auto it = m_debugRenderObjects.begin(); it != m_debugRenderObjects.end(); )
-    {
-        if ( ( *it )->isXRay() )
-        {
+    for ( auto it = m_debugRenderObjects.begin(); it != m_debugRenderObjects.end(); ) {
+        if ( ( *it )->isXRay() ) {
             m_xrayRenderObjects.push_back( *it );
             it = m_debugRenderObjects.erase( it );
         }
-        else
-        { ++it; }
+        else {
+            ++it;
+        }
     }
 
-    for ( auto it = m_uiRenderObjects.begin(); it != m_uiRenderObjects.end(); )
-    {
-        if ( ( *it )->isXRay() )
-        {
+    for ( auto it = m_uiRenderObjects.begin(); it != m_uiRenderObjects.end(); ) {
+        if ( ( *it )->isXRay() ) {
             m_xrayRenderObjects.push_back( *it );
             it = m_uiRenderObjects.erase( it );
         }
-        else
-        { ++it; }
+        else {
+            ++it;
+        }
     }
 }
 
@@ -442,12 +438,12 @@ void Renderer::feedRenderQueuesInternal( const Data::ViewingParameters& /*render
 void Renderer::splitRQ( const std::vector<RenderObjectPtr>& renderQueue,
                         std::array<std::vector<RenderObjectPtr>, 4>& renderQueuePicking ) {
     // clean renderQueuePicking
-    for ( auto& q : renderQueuePicking )
-    { q.clear(); }
+    for ( auto& q : renderQueuePicking ) {
+        q.clear();
+    }
 
     // fill renderQueuePicking from renderQueue
-    for ( auto& roPtr : renderQueue )
-    {
+    for ( auto& roPtr : renderQueue ) {
         auto mode = roPtr->getMesh()->pickingRenderMode();
         if ( mode != Data::Displayable::NO_PICKING )
             renderQueuePicking[size_t( mode )].push_back( roPtr );
@@ -466,15 +462,12 @@ void Renderer::renderForPicking(
     const Data::ViewingParameters& renderData,
     const std::array<const Data::ShaderProgram*, 4>& pickingShaders,
     const std::array<std::vector<RenderObjectPtr>, 4>& renderQueuePicking ) {
-    for ( uint i = 0; i < pickingShaders.size(); ++i )
-    {
+    for ( uint i = 0; i < pickingShaders.size(); ++i ) {
         pickingShaders[i]->bind();
         pickingShaders[i]->setUniform( "transform.proj", renderData.projMatrix );
         pickingShaders[i]->setUniform( "transform.view", renderData.viewMatrix );
-        for ( const auto& ro : renderQueuePicking[i] )
-        {
-            if ( ro->isVisible() && ro->isPickable() )
-            {
+        for ( const auto& ro : renderQueuePicking[i] ) {
+            if ( ro->isVisible() && ro->isPickable() ) {
                 pickingShaders[i]->setUniform( "objectId", ro->getIndex().getValue() );
                 Core::Matrix4 M = ro->getTransformAsMatrix();
                 Core::Matrix4 N = M.inverse().transpose();
@@ -498,16 +491,13 @@ void Renderer::doPicking( const Data::ViewingParameters& renderData ) {
     GL_ASSERT( glReadBuffer( GL_COLOR_ATTACHMENT0 ) );
 
     int pick[4];
-    for ( const PickingQuery& query : m_pickingQueries )
-    {
+    for ( const PickingQuery& query : m_pickingQueries ) {
         PickingResult result;
         // fill picking result according to picking mode
-        if ( query.m_mode < C_VERTEX )
-        {
+        if ( query.m_mode < C_VERTEX ) {
             // skip query if out of window (can occur when picking while moving outside)
             if ( query.m_screenCoords.x() < 0 || query.m_screenCoords.x() > m_width - 1 ||
-                 query.m_screenCoords.y() < 0 || query.m_screenCoords.y() > m_height - 1 )
-            {
+                 query.m_screenCoords.y() < 0 || query.m_screenCoords.y() > m_height - 1 ) {
                 // this qurey has an empty result
                 m_pickingResults.push_back( {} );
                 continue;
@@ -522,21 +512,19 @@ void Renderer::doPicking( const Data::ViewingParameters& renderData ) {
             result.setRoIdx( pick[0] ); // RO idx
             result.addIndex( { pick[2], pick[1], pick[3] } );
         }
-        else
-        {
+        else {
             // select the results for the RO with the most representatives
             // (or first to come if same amount)
             std::map<int, PickingResult> resultPerRO;
-            for ( auto i = -m_brushRadius; i <= m_brushRadius; i += 3 )
-            {
+            for ( auto i = -m_brushRadius; i <= m_brushRadius; i += 3 ) {
                 auto h = std::round( std::sqrt( m_brushRadius * m_brushRadius - i * i ) );
-                for ( auto j = -h; j <= +h; j += 3 )
-                {
+                for ( auto j = -h; j <= +h; j += 3 ) {
                     const int x = query.m_screenCoords.x() + i;
                     const int y = query.m_screenCoords.y() - j;
                     // skip query if out of window (can occur when picking while moving outside)
-                    if ( x < 0 || x > int( m_width ) - 1 || y < 0 || y > int( m_height ) - 1 )
-                    { continue; }
+                    if ( x < 0 || x > int( m_width ) - 1 || y < 0 || y > int( m_height ) - 1 ) {
+                        continue;
+                    }
                     GL_ASSERT( glReadPixels( x, y, 1, 1, GL_RGBA_INTEGER, GL_INT, pick ) );
                     resultPerRO[pick[0]].setRoIdx( pick[0] );
                     resultPerRO[pick[0]].addIndex( { pick[2], pick[1], pick[3] } );
@@ -578,8 +566,7 @@ void Renderer::preparePicking( const Data::ViewingParameters& renderData ) {
 
     renderForPicking( renderData, m_pickingShaders, m_fancyRenderObjectsPicking );
 
-    if ( m_drawDebug )
-    {
+    if ( m_drawDebug ) {
         // Then draw debug objects
         GL_ASSERT( glClearBufferfv( GL_DEPTH, 0, &clearDepth ) );
         renderForPicking( renderData, m_pickingShaders, m_debugRenderObjectsPicking );
@@ -593,16 +580,13 @@ void Renderer::preparePicking( const Data::ViewingParameters& renderData ) {
     // these have a different way to compute the transform matrices
     // FIXME (florian): find a way to use renderForPicking()!
     GL_ASSERT( glClearBufferfv( GL_DEPTH, 0, &clearDepth ) );
-    for ( uint i = 0; i < m_pickingShaders.size(); ++i )
-    {
+    for ( uint i = 0; i < m_pickingShaders.size(); ++i ) {
         m_pickingShaders[i]->bind();
         m_pickingShaders[i]->setUniform( "transform.proj", renderData.projMatrix );
         m_pickingShaders[i]->setUniform( "transform.view", renderData.viewMatrix );
 
-        for ( const auto& ro : m_uiRenderObjectsPicking[i] )
-        {
-            if ( ro->isVisible() && ro->isPickable() )
-            {
+        for ( const auto& ro : m_uiRenderObjectsPicking[i] ) {
+            if ( ro->isVisible() && ro->isPickable() ) {
                 m_pickingShaders[i]->setUniform( "objectId", ro->getIndex().getValue() );
 
                 Core::Matrix4 M  = ro->getTransformAsMatrix();
@@ -649,8 +633,7 @@ void Renderer::drawScreenInternal() {
         GL_ASSERT( glDepthFunc( GL_LESS ) );
     }
     // draw brush circle if enabled
-    if ( m_brushRadius > 0 )
-    {
+    if ( m_brushRadius > 0 ) {
         GL_ASSERT( glDisable( GL_BLEND ) );
         GL_ASSERT( glDisable( GL_DEPTH_TEST ) );
         auto shader = m_shaderProgramManager->getShaderProgram( "CircleBrush" );
@@ -665,25 +648,28 @@ void Renderer::drawScreenInternal() {
 }
 
 void Renderer::notifyRenderObjectsRenderingInternal() {
-    for ( auto& ro : m_fancyRenderObjects )
-    { ro->hasBeenRenderedOnce(); }
+    for ( auto& ro : m_fancyRenderObjects ) {
+        ro->hasBeenRenderedOnce();
+    }
 
-    for ( auto& ro : m_debugRenderObjects )
-    { ro->hasBeenRenderedOnce(); }
+    for ( auto& ro : m_debugRenderObjects ) {
+        ro->hasBeenRenderedOnce();
+    }
 
-    for ( auto& ro : m_xrayRenderObjects )
-    { ro->hasBeenRenderedOnce(); }
+    for ( auto& ro : m_xrayRenderObjects ) {
+        ro->hasBeenRenderedOnce();
+    }
 
-    for ( auto& ro : m_uiRenderObjects )
-    { ro->hasBeenRenderedOnce(); }
+    for ( auto& ro : m_uiRenderObjects ) {
+        ro->hasBeenRenderedOnce();
+    }
 }
 
 void Renderer::resize( uint w, uint h ) {
     // never init zero sized texture/fbo since fbo do not consider them as complete
     // not initilialized ? init texture
     // then only init if size is different than current
-    if ( ( w != 0 && h != 0 ) && ( !m_initialized || ( w != m_width || h != m_height ) ) )
-    {
+    if ( ( w != 0 && h != 0 ) && ( !m_initialized || ( w != m_width || h != m_height ) ) ) {
         m_width  = w;
         m_height = h;
         m_depthTexture->resize( m_width, m_height );
@@ -693,8 +679,7 @@ void Renderer::resize( uint w, uint h ) {
         m_pickingFbo->bind();
         m_pickingFbo->attachTexture( GL_DEPTH_ATTACHMENT, m_depthTexture->texture() );
         m_pickingFbo->attachTexture( GL_COLOR_ATTACHMENT0, m_pickingTexture->texture() );
-        if ( m_pickingFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE )
-        {
+        if ( m_pickingFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE ) {
             LOG( logERROR ) << "File " << __FILE__ << "(" << __LINE__ << ") Picking FBO Error "
                             << m_pickingFbo->checkStatus();
         }
@@ -706,10 +691,12 @@ void Renderer::resize( uint w, uint h ) {
 }
 
 void Renderer::displayTexture( const std::string& texName ) {
-    if ( m_secondaryTextures.find( texName ) != m_secondaryTextures.end() )
-    { m_displayedTexture = m_secondaryTextures[texName]; }
-    else
-    { m_displayedTexture = m_fancyTexture.get(); }
+    if ( m_secondaryTextures.find( texName ) != m_secondaryTextures.end() ) {
+        m_displayedTexture = m_secondaryTextures[texName];
+    }
+    else {
+        m_displayedTexture = m_fancyTexture.get();
+    }
 }
 
 std::vector<std::string> Renderer::getAvailableTextures() const {
@@ -738,10 +725,8 @@ std::unique_ptr<uchar[]> Renderer::grabFrame( size_t& w, size_t& h ) const {
 
     // Now we must convert the floats to RGB while flipping the image updisde down.
     auto writtenPixels = std::unique_ptr<uchar[]>( new uchar[tex->width() * tex->height() * 4] );
-    for ( uint j = 0; j < tex->height(); ++j )
-    {
-        for ( uint i = 0; i < tex->width(); ++i )
-        {
+    for ( uint j = 0; j < tex->height(); ++j ) {
+        for ( uint i = 0; i < tex->width(); ++i ) {
             auto in = 4 * ( j * tex->width() + i ); // Index in the texture buffer
             auto ou = 4 * ( ( tex->height() - 1 - j ) * tex->width() +
                             i ); // Index in the final image (note the j flipping).
@@ -776,10 +761,10 @@ bool Renderer::hasLight() const {
 int Renderer::buildAllRenderTechniques() const {
     std::vector<RenderObjectPtr> renderObjects;
     m_renderObjectManager->getRenderObjectsByType( renderObjects, RenderObjectType::Geometry );
-    if ( renderObjects.size() > 0 )
-    {
-        for ( auto& ro : renderObjects )
-        { buildRenderTechnique( ro.get() ); }
+    if ( renderObjects.size() > 0 ) {
+        for ( auto& ro : renderObjects ) {
+            buildRenderTechnique( ro.get() );
+        }
     }
     return 0;
 }

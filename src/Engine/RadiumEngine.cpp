@@ -43,8 +43,7 @@ RadiumEngine::~RadiumEngine() = default;
 void RadiumEngine::initialize() {
     LOG( logINFO ) << "*** Radium Engine ***";
     auto resourceDir { Core::Resources::getRadiumResourcesPath() };
-    if ( !resourceDir )
-    {
+    if ( !resourceDir ) {
         LOG( logWARNING )
             << "Default Radium resources dir not found. Setting resources path to \".\"";
         resourceDir = { "." };
@@ -144,8 +143,9 @@ void RadiumEngine::cleanup() {
 
     m_loadedFile.reset();
 
-    for ( auto& system : m_systems )
-    { system.second.reset(); }
+    for ( auto& system : m_systems ) {
+        system.second.reset();
+    }
 
     Scene::ComponentMessenger::destroyInstance();
 
@@ -160,21 +160,20 @@ void RadiumEngine::endFrameSync() {
 void RadiumEngine::getTasks( Core::TaskQueue* taskQueue, Scalar dt ) {
     static uint frameCounter = 0;
 
-    if ( m_timeData.m_play || m_timeData.m_singleStep )
-    {
+    if ( m_timeData.m_play || m_timeData.m_singleStep ) {
         m_timeData.updateTime( dt );
         m_timeData.m_singleStep = false;
     }
 
     FrameInfo frameInfo {
         m_timeData.m_time, m_timeData.m_realTime ? dt : m_timeData.m_dt, frameCounter++ };
-    for ( auto& syst : m_systems )
-    { syst.second->generateTasks( taskQueue, frameInfo ); }
+    for ( auto& syst : m_systems ) {
+        syst.second->generateTasks( taskQueue, frameInfo );
+    }
 }
 
 bool RadiumEngine::registerSystem( const std::string& name, Scene::System* system, int priority ) {
-    if ( findSystem( name ) != m_systems.end() )
-    {
+    if ( findSystem( name ) != m_systems.end() ) {
         LOG( logWARNING ) << "Try to add system " << name.c_str()
                           << " multiple time. Keep the already registered one.";
         return false;
@@ -199,26 +198,21 @@ Data::Displayable* RadiumEngine::getMesh( const std::string& entityName,
                                           const std::string& roName ) const {
 
     // 1) Get entity
-    if ( m_entityManager->entityExists( entityName ) )
-    {
+    if ( m_entityManager->entityExists( entityName ) ) {
         auto e = m_entityManager->getEntity( entityName );
 
         // 2) Get component
         const auto c = e->getComponent( componentName );
 
-        if ( c != nullptr && !c->m_renderObjects.empty() )
-        {
+        if ( c != nullptr && !c->m_renderObjects.empty() ) {
             // 3) Get RO
-            if ( roName.empty() )
-            {
+            if ( roName.empty() ) {
                 return m_renderObjectManager->getRenderObject( c->m_renderObjects.front() )
                     ->getMesh()
                     .get();
             }
-            else
-            {
-                for ( const auto& idx : c->m_renderObjects )
-                {
+            else {
+                for ( const auto& idx : c->m_renderObjects ) {
                     const auto& ro = m_renderObjectManager->getRenderObject( idx );
                     if ( ro->getName() == roName ) { return ro->getMesh().get(); }
                 }
@@ -233,21 +227,17 @@ bool RadiumEngine::loadFile( const std::string& filename ) {
 
     std::string extension = Core::Utils::getFileExt( filename );
 
-    for ( auto& l : m_fileLoaders )
-    {
-        if ( l->handleFileExtension( extension ) )
-        {
+    for ( auto& l : m_fileLoaders ) {
+        if ( l->handleFileExtension( extension ) ) {
             FileData* data = l->loadFile( filename );
-            if ( data != nullptr )
-            {
+            if ( data != nullptr ) {
                 m_loadedFile.reset( data );
                 break;
             }
         }
     }
 
-    if ( m_loadedFile == nullptr )
-    {
+    if ( m_loadedFile == nullptr ) {
         LOG( logERROR ) << "There is no loader to handle \"" << extension
                         << "\" extension ! File can't be loaded.";
 
@@ -258,16 +248,16 @@ bool RadiumEngine::loadFile( const std::string& filename ) {
 
     Scene::Entity* entity = m_entityManager->createEntity( entityName );
 
-    for ( auto& system : m_systems )
-    { system.second->handleAssetLoading( entity, m_loadedFile.get() ); }
-
-    if ( !entity->getComponents().empty() )
-    {
-        for ( auto& comp : entity->getComponents() )
-        { comp->initialize(); }
+    for ( auto& system : m_systems ) {
+        system.second->handleAssetLoading( entity, m_loadedFile.get() );
     }
-    else
-    {
+
+    if ( !entity->getComponents().empty() ) {
+        for ( auto& comp : entity->getComponents() ) {
+            comp->initialize();
+        }
+    }
+    else {
         LOG( logWARNING ) << "File \"" << filename << "\" has no usable data. Deleting entity...";
         m_entityManager->removeEntity( entity );
     }
@@ -334,8 +324,7 @@ Core::Aabb RadiumEngine::computeSceneAabb() const {
 
     const auto& systemEntity = Scene::SystemEntity::getInstance();
     auto entities            = m_entityManager->getEntities();
-    for ( const auto& entity : entities )
-    {
+    for ( const auto& entity : entities ) {
         if ( entity != systemEntity ) aabb.extend( entity->computeAabb() );
     }
     return aabb;
@@ -353,10 +342,10 @@ void RadiumEngine::pushFboAndViewport() {
 }
 
 void RadiumEngine::popFboAndViewport() {
-    if ( m_fboAndViewportStack.empty() )
-    { LOG( logERROR ) << "RadiumEngine: try to pop from an empty Fbo and Viewport stack\n"; }
-    else
-    {
+    if ( m_fboAndViewportStack.empty() ) {
+        LOG( logERROR ) << "RadiumEngine: try to pop from an empty Fbo and Viewport stack\n";
+    }
+    else {
         auto b = m_fboAndViewportStack.top();
 
         glViewport( b.m_viewport[0], b.m_viewport[1], b.m_viewport[2], b.m_viewport[3] );
@@ -435,18 +424,17 @@ void RadiumEngine::TimeData::updateTime( Scalar dt ) {
     dt += m_realTime ? dt : m_dt;
     // update the time w.r.t. the time flow policy
     if ( m_forwardBackward && m_isBackward ) { m_time -= dt; }
-    else
-    { m_time += dt; }
+    else {
+        m_time += dt;
+    }
     // special case: empty time window => forever mode
-    if ( m_endTime < 0 || m_startTime >= m_endTime )
-    {
+    if ( m_endTime < 0 || m_startTime >= m_endTime ) {
         // just run forever
         m_isBackward = false;
         return;
     }
     // special case: m_time before time window
-    if ( m_time < m_startTime )
-    {
+    if ( m_time < m_startTime ) {
         // reset whatever the mode
         m_time = m_startTime;
         // and go forward from now on
@@ -454,8 +442,7 @@ void RadiumEngine::TimeData::updateTime( Scalar dt ) {
         return;
     }
     // special case: m_time after time window in loop mode
-    if ( !m_forwardBackward && m_time > m_endTime )
-    {
+    if ( !m_forwardBackward && m_time > m_endTime ) {
         // compute the overload of time
         dt = Scalar( fmod( double( m_time - m_startTime ), double( m_endTime - m_startTime ) ) );
         // loop around, applying the overload of time
@@ -463,12 +450,15 @@ void RadiumEngine::TimeData::updateTime( Scalar dt ) {
         return;
     }
     // special case: m_time after time window in forward-backward mode
-    if ( m_forwardBackward && m_time > m_endTime )
-    {
+    if ( m_forwardBackward && m_time > m_endTime ) {
         if ( !m_isBackward ) // start backwards
-        { m_time = 2 * m_endTime - m_time; }
+        {
+            m_time = 2 * m_endTime - m_time;
+        }
         else // restart backward from the end of the time window
-        { m_time = m_endTime; }
+        {
+            m_time = m_endTime;
+        }
         m_isBackward = true;
         return;
     }

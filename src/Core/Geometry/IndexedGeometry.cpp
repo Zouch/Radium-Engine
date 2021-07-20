@@ -57,28 +57,24 @@ void MultiIndexedGeometry::checkConsistency() const {
 
 bool MultiIndexedGeometry::append( const MultiIndexedGeometry& other ) {
     bool dataHasBeenCopied = false;
-    for ( const auto& [key, value] : other.m_indices )
-    {
+    for ( const auto& [key, value] : other.m_indices ) {
         auto it = m_indices.find( key );
         if ( it == m_indices.end() ) // copy entire layer
         {
             m_indices[key]    = value;
             dataHasBeenCopied = true;
         }
-        else
-        {
+        else {
             // try to append to an existing layer: should always work
             if ( it->second.second->append( *( value.second ) ) ) { dataHasBeenCopied = true; }
-            else
-            {
+            else {
                 CORE_ASSERT( false,
                              "Inconsistency: layers with different semantics shares the same key" );
             }
         }
     }
 
-    if ( dataHasBeenCopied )
-    {
+    if ( dataHasBeenCopied ) {
         invalidateAabb();
         notify();
     }
@@ -89,16 +85,14 @@ bool MultiIndexedGeometry::append( const MultiIndexedGeometry& other ) {
 //////////////////////////////////////////////////////////////////////
 
 bool MultiIndexedGeometry::containsLayer( const LayerSemantic& semanticName ) const {
-    for ( const auto& [key, value] : m_indices )
-    {
+    for ( const auto& [key, value] : m_indices ) {
         if ( key.first.find( semanticName ) != key.first.end() ) return true;
     }
     return false;
 }
 
 bool MultiIndexedGeometry::containsLayer( const LayerSemanticCollection& semantics ) const {
-    for ( const auto& [key, value] : m_indices )
-    {
+    for ( const auto& [key, value] : m_indices ) {
         if ( key.first == semantics ) return true;
     }
     return false;
@@ -109,8 +103,7 @@ bool MultiIndexedGeometry::containsLayer( const LayerSemanticCollection& semanti
 
 size_t MultiIndexedGeometry::countLayers( const LayerSemantic& semanticName ) const {
     size_t c = 0;
-    for ( const auto& [key, value] : m_indices )
-    {
+    for ( const auto& [key, value] : m_indices ) {
         if ( key.first.find( semanticName ) != key.first.end() ) ++c;
     }
     return c;
@@ -118,8 +111,7 @@ size_t MultiIndexedGeometry::countLayers( const LayerSemantic& semanticName ) co
 
 size_t MultiIndexedGeometry::countLayers( const LayerSemanticCollection& semantics ) const {
     size_t c = 0;
-    for ( const auto& [key, value] : m_indices )
-    {
+    for ( const auto& [key, value] : m_indices ) {
         if ( key.first == semantics ) ++c;
     }
     return c;
@@ -130,8 +122,7 @@ size_t MultiIndexedGeometry::countLayers( const LayerSemanticCollection& semanti
 
 std::pair<MultiIndexedGeometry::LayerKeyType, const GeometryIndexLayerBase&>
 MultiIndexedGeometry::getFirstLayerOccurrence( const LayerSemantic& semanticName ) const {
-    for ( const auto& [key, value] : m_indices )
-    {
+    for ( const auto& [key, value] : m_indices ) {
         if ( key.first.find( semanticName ) != key.first.end() ) return { key, *( value.second ) };
     }
     throw std::out_of_range( "Layer entry not found" );
@@ -139,8 +130,7 @@ MultiIndexedGeometry::getFirstLayerOccurrence( const LayerSemantic& semanticName
 
 std::pair<MultiIndexedGeometry::LayerKeyType, const GeometryIndexLayerBase&>
 MultiIndexedGeometry::getFirstLayerOccurrence( const LayerSemanticCollection& semantics ) const {
-    for ( const auto& [key, value] : m_indices )
-    {
+    for ( const auto& [key, value] : m_indices ) {
         if ( key.first == semantics ) return { key, *( value.second ) };
     }
     throw std::out_of_range( "Layer entry not found" );
@@ -151,10 +141,8 @@ MultiIndexedGeometry::getFirstLayerOccurrence( const LayerSemanticCollection& se
 
 std::pair<MultiIndexedGeometry::LayerKeyType, GeometryIndexLayerBase&>
 MultiIndexedGeometry::getFirstLayerOccurrenceWithLock( const LayerSemantic& semanticName ) {
-    for ( auto& [key, value] : m_indices )
-    {
-        if ( key.first.find( semanticName ) != key.first.end() )
-        {
+    for ( auto& [key, value] : m_indices ) {
+        if ( key.first.find( semanticName ) != key.first.end() ) {
             CORE_ASSERT( !value.first, "try to get already locked layer" );
             value.first = true;
             return { key, *( value.second ) };
@@ -165,10 +153,8 @@ MultiIndexedGeometry::getFirstLayerOccurrenceWithLock( const LayerSemantic& sema
 
 std::pair<MultiIndexedGeometry::LayerKeyType, GeometryIndexLayerBase&>
 MultiIndexedGeometry::getFirstLayerOccurrenceWithLock( const LayerSemanticCollection& semantics ) {
-    for ( auto& [key, value] : m_indices )
-    {
-        if ( key.first == semantics )
-        {
+    for ( auto& [key, value] : m_indices ) {
+        if ( key.first == semantics ) {
             CORE_ASSERT( !value.first, "try to get already locked layer" );
             value.first = true;
             return { key, *( value.second ) };
@@ -188,10 +174,8 @@ GeometryIndexLayerBase& MultiIndexedGeometry::getLayerWithLock( const LayerKeyTy
 //////////////////////////////////////////////////////////////////////
 
 void MultiIndexedGeometry::unlockFirstLayerOccurrence( const LayerSemantic& semanticName ) {
-    for ( auto& [key, value] : m_indices )
-    {
-        if ( key.first.find( semanticName ) != key.first.end() )
-        {
+    for ( auto& [key, value] : m_indices ) {
+        if ( key.first.find( semanticName ) != key.first.end() ) {
             CORE_ASSERT( value.first, "try to release unlocked layer" );
             value.first = false;
             notify();
@@ -202,10 +186,8 @@ void MultiIndexedGeometry::unlockFirstLayerOccurrence( const LayerSemantic& sema
 }
 
 void MultiIndexedGeometry::unlockFirstLayerOccurrence( const LayerSemanticCollection& semantics ) {
-    for ( auto& [key, value] : m_indices )
-    {
-        if ( key.first == semantics )
-        {
+    for ( auto& [key, value] : m_indices ) {
+        if ( key.first == semantics ) {
             CORE_ASSERT( value.first, "try to release unlocked layer" );
             value.first = false;
             notify();

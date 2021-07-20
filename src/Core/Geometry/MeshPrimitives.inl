@@ -21,11 +21,9 @@ TriangleMesh makeParametricSphere( Scalar radius, const Utils::optional<Utils::C
     normals.reserve( 2 + slices * ( stacks - 1 ) );
     indices.reserve( 2 * slices * ( stacks - 1 ) );
 
-    for ( uint u = 0; u < slices; ++u )
-    {
+    for ( uint u = 0; u < slices; ++u ) {
         const Scalar theta = Scalar( 2 * u ) * Core::Math::Pi / Scalar( slices );
-        for ( uint v = 1; v < stacks; ++v )
-        {
+        for ( uint v = 1; v < stacks; ++v ) {
             // Regular vertices on the sphere.
             const Scalar phi = Scalar( v ) * Core::Math::Pi / Scalar( stacks );
             vertices.push_back( Vector3( radius * std::cos( theta ) * std::sin( phi ),
@@ -34,8 +32,7 @@ TriangleMesh makeParametricSphere( Scalar radius, const Utils::optional<Utils::C
             normals.push_back( vertices.back().normalized() );
 
             // Regular triangles
-            if ( v > 1 )
-            {
+            if ( v > 1 ) {
                 const uint nextSlice = ( ( u + 1 ) % slices ) * ( stacks - 1 );
                 const uint baseSlice = u * ( stacks - 1 );
                 indices.push_back(
@@ -58,8 +55,7 @@ TriangleMesh makeParametricSphere( Scalar radius, const Utils::optional<Utils::C
     result.setNormals( std::move( normals ) );
 
     // Add the polar caps triangles.
-    for ( uint u = 0; u < slices; ++u )
-    {
+    for ( uint u = 0; u < slices; ++u ) {
         const uint nextSlice = ( ( u + 1 ) % slices ) * ( stacks - 1 );
         const uint baseSlice = u * ( stacks - 1 );
         indices.push_back( Vector3ui( northPoleIdx, baseSlice, nextSlice ) );
@@ -87,13 +83,11 @@ TriangleMesh makeParametricTorus( Scalar majorRadius,
     normals.reserve( V * V );
     indices.reserve( 2 * U * V );
 
-    for ( uint iu = 0; iu < U; ++iu )
-    {
+    for ( uint iu = 0; iu < U; ++iu ) {
         Scalar u = Scalar( iu ) * Core::Math::PiMul2 / Scalar( U );
         Core::Vector3 circleCenter( majorRadius * std::cos( u ), majorRadius * std::sin( u ), 0.f );
 
-        for ( uint iv = 0; iv < V; ++iv )
-        {
+        for ( uint iv = 0; iv < V; ++iv ) {
             Scalar v = Scalar( iv ) * Core::Math::PiMul2 / Scalar( V );
 
             Core::Vector3 vertex( ( majorRadius + minorRadius * std::cos( v ) ) * std::cos( u ),

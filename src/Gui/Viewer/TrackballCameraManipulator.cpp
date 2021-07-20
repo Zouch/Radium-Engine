@@ -31,8 +31,7 @@ KeyMappingCamera
 void TrackballCameraManipulator::configureKeyMapping_impl() {
 
     KeyMapping::setContext( KeyMappingManager::getInstance()->getContext( "CameraContext" ) );
-    if ( KeyMapping::getContext().isInvalid() )
-    {
+    if ( KeyMapping::getContext().isInvalid() ) {
         LOG( logINFO )
             << "CameraContext not defined (maybe the configuration file do not contains it)";
         LOG( logERROR ) << "CameraContext all keymapping invalide !";
@@ -71,8 +70,7 @@ void TrackballCameraManipulator::resetCamera() {
     updatePhiTheta();
 
     ///\todo get rid of these light stuff
-    if ( m_light != nullptr )
-    {
+    if ( m_light != nullptr ) {
         m_light->setPosition( m_camera->getPosition() );
         m_light->setDirection( m_camera->getDirection() );
     }
@@ -88,8 +86,7 @@ void TrackballCameraManipulator::updateCamera() {
 
     updatePhiTheta();
 
-    if ( m_light != nullptr )
-    {
+    if ( m_light != nullptr ) {
         m_light->setPosition( m_camera->getPosition() );
         m_light->setDirection( m_camera->getDirection() );
     }
@@ -146,8 +143,7 @@ bool TrackballCameraManipulator::handleMouseMoveEvent( QMouseEvent* event,
     m_lastMouseX = event->pos().x();
     m_lastMouseY = event->pos().y();
 
-    if ( m_light != nullptr )
-    {
+    if ( m_light != nullptr ) {
         m_light->setPosition( m_camera->getPosition() );
         m_light->setDirection( m_camera->getDirection() );
     }
@@ -170,21 +166,18 @@ bool TrackballCameraManipulator::handleWheelEvent( QWheelEvent* event,
     auto action = KeyMappingManager::getInstance()->getAction(
         KeyMapping::getContext(), buttons, modifiers, key, true );
 
-    if ( action == TRACKBALLCAMERA_MOVE_FORWARD )
-    {
+    if ( action == TRACKBALLCAMERA_MOVE_FORWARD ) {
         handleCameraMoveForward(
             ( event->angleDelta().y() * 0.01_ra + event->angleDelta().x() * 0.01_ra ) *
             m_wheelSpeedModifier );
     }
-    else if ( action == TRACKBALLCAMERA_ZOOM )
-    {
+    else if ( action == TRACKBALLCAMERA_ZOOM ) {
         handleCameraZoom(
             ( event->angleDelta().y() * 0.01_ra + event->angleDelta().x() * 0.01_ra ) *
             m_wheelSpeedModifier );
     }
 
-    if ( m_light != nullptr )
-    {
+    if ( m_light != nullptr ) {
         m_light->setPosition( m_camera->getPosition() );
         m_light->setDirection( m_camera->getDirection() );
     }
@@ -198,26 +191,24 @@ bool TrackballCameraManipulator::handleKeyPressEvent(
 
     static bool quick = false;
     using ProjType    = Ra::Core::Asset::Camera::ProjType;
-    if ( action == TRACKBALLCAMERA_PROJ_MODE )
-    {
+    if ( action == TRACKBALLCAMERA_PROJ_MODE ) {
         m_camera->setType( m_camera->getType() == ProjType::ORTHOGRAPHIC ? ProjType::PERSPECTIVE
                                                                          : ProjType::ORTHOGRAPHIC );
         return true;
     }
-    else if ( action == CAMERA_TOGGLE_QUICK )
-    {
+    else if ( action == CAMERA_TOGGLE_QUICK ) {
         quick = !quick;
         if ( quick ) { m_quickCameraModifier = 10.0_ra; }
-        else
-        { m_quickCameraModifier = 1.0_ra; }
+        else {
+            m_quickCameraModifier = 1.0_ra;
+        }
     }
 
     return false;
 }
 
 void TrackballCameraManipulator::setCameraPosition( const Core::Vector3& position ) {
-    if ( position == m_referenceFrame.translation() )
-    {
+    if ( position == m_referenceFrame.translation() ) {
         QMessageBox::warning( nullptr, "Error", "Position cannot be set to target point" );
         return;
     }
@@ -226,16 +217,14 @@ void TrackballCameraManipulator::setCameraPosition( const Core::Vector3& positio
 
     updatePhiTheta();
 
-    if ( m_light != nullptr )
-    {
+    if ( m_light != nullptr ) {
         m_light->setPosition( m_camera->getPosition() );
         m_light->setDirection( m_camera->getDirection() );
     }
 }
 
 void TrackballCameraManipulator::setCameraTarget( const Core::Vector3& target ) {
-    if ( m_camera->getPosition() == m_referenceFrame.translation() )
-    {
+    if ( m_camera->getPosition() == m_referenceFrame.translation() ) {
         QMessageBox::warning( nullptr, "Error", "Target cannot be set to current camera position" );
         return;
     }
@@ -272,8 +261,7 @@ void TrackballCameraManipulator::fitScene( const Core::Aabb& aabb ) {
 
     updatePhiTheta();
 
-    if ( m_light != nullptr )
-    {
+    if ( m_light != nullptr ) {
         m_light->setPosition( m_camera->getPosition() );
         m_light->setDirection( m_camera->getDirection() );
     }
@@ -369,14 +357,14 @@ void TrackballCameraManipulator::updatePhiTheta() {
     // unlikely to have z and x to 0, unless direction is perfectly aligned with
     // m_referenceFrame.z() in this case phi is given by the relative orientation of right/up in the
     // z/x plane of m_reference frame.
-    if ( UNLIKELY( areApproxEqual( R.z(), 0_ra ) && areApproxEqual( R.x(), 0_ra ) ) )
-    {
+    if ( UNLIKELY( areApproxEqual( R.z(), 0_ra ) && areApproxEqual( R.x(), 0_ra ) ) ) {
         Scalar fx = m_referenceFrame.matrix().block<3, 1>( 0, 2 ).dot( m_camera->getRightVector() );
         Scalar fy = m_referenceFrame.matrix().block<3, 1>( 0, 2 ).dot( m_camera->getUpVector() );
         m_phi     = std::atan2( fx, fy );
     }
-    else
-    { m_phi = std::atan2( R.x(), R.z() ); }
+    else {
+        m_phi = std::atan2( R.x(), R.z() );
+    }
 
     // no need to clamp, atan2 is by def \in [-pi,pi]
     // acos in [0, pi]
@@ -395,8 +383,7 @@ void TrackballCameraManipulator::clampThetaPhi() {
 bool TrackballCameraManipulator::checkIntegrity( const std::string& mess ) const {
     Core::Vector3 c = m_camera->getPosition() + m_distFromCenter * m_camera->getDirection();
     Scalar d        = ( m_referenceFrame.translation() - c ).norm();
-    if ( d > 0.001_ra )
-    {
+    if ( d > 0.001_ra ) {
         LOG( logWARNING ) << "TrackballCameraManipulator Integrity problem : " << mess;
         LOG( logWARNING ) << "\t Position  " << m_camera->getPosition().transpose();
         LOG( logWARNING ) << "\t Ref       "

@@ -39,8 +39,7 @@ inline TopologicalMesh::TopologicalMesh( const TriangleMesh& triMesh,
         [&triMesh, this, &vprop_float, &vprop_vec2, &vprop_vec3, &vprop_vec4]( const auto& attr ) {
             // skip builtin attribs
             if ( attr->getName() != std::string( "in_position" ) &&
-                 attr->getName() != std::string( "in_normal" ) )
-            {
+                 attr->getName() != std::string( "in_normal" ) ) {
                 if ( attr->isFloat() )
                     addAttribPairToTopo( triMesh, attr, vprop_float, m_floatPph );
                 else if ( attr->isVector2() )
@@ -61,33 +60,30 @@ inline TopologicalMesh::TopologicalMesh( const TriangleMesh& triMesh,
     command.initialize( triMesh );
 
     const bool hasNormals = !triMesh.normals().empty();
-    if ( !hasNormals )
-    {
+    if ( !hasNormals ) {
         release_face_normals();
         release_vertex_normals();
         release_halfedge_normals();
     }
-    for ( unsigned int i = 0; i < num_triangles; i++ )
-    {
+    for ( unsigned int i = 0; i < num_triangles; i++ ) {
         std::vector<TopologicalMesh::VertexHandle> face_vhandles( 3 );
         std::vector<TopologicalMesh::Normal> face_normals( 3 );
         std::vector<unsigned int> face_vertexIndex( 3 );
         const auto& triangle = triMesh.getIndices()[i];
-        for ( size_t j = 0; j < 3; ++j )
-        {
+        for ( size_t j = 0; j < 3; ++j ) {
             unsigned int inMeshVertexIndex = triangle[j];
             const Vector3& p               = triMesh.vertices()[inMeshVertexIndex];
 
             typename VertexMap::iterator vtr = vertexHandles.find( p );
 
             TopologicalMesh::VertexHandle vh;
-            if ( vtr == vertexHandles.end() )
-            {
+            if ( vtr == vertexHandles.end() ) {
                 vh = add_vertex( p );
                 vertexHandles.insert( vtr, typename VertexMap::value_type( p, vh ) );
             }
-            else
-            { vh = vtr->second; }
+            else {
+                vh = vtr->second;
+            }
 
             face_vhandles[j]    = vh;
             face_vertexIndex[j] = inMeshVertexIndex;
@@ -100,10 +96,8 @@ inline TopologicalMesh::TopologicalMesh( const TriangleMesh& triMesh,
         if ( face_vhandles.size() > 2 ) fh = add_face( face_vhandles );
         // x-----------------------------------------------------------------------------------x
 
-        if ( fh.is_valid() )
-        {
-            for ( size_t vindex = 0; vindex < face_vhandles.size(); vindex++ )
-            {
+        if ( fh.is_valid() ) {
+            for ( size_t vindex = 0; vindex < face_vhandles.size(); vindex++ ) {
                 TopologicalMesh::HalfedgeHandle heh = halfedge_handle( face_vhandles[vindex], fh );
                 if ( hasNormals ) set_normal( heh, face_normals[vindex] );
                 property( m_inputTriangleMeshIndexPph, heh ) = face_vertexIndex[vindex];
@@ -113,8 +107,9 @@ inline TopologicalMesh::TopologicalMesh( const TriangleMesh& triMesh,
                 copyAttribToTopo( triMesh, vprop_vec4, heh, face_vertexIndex[vindex] );
             }
         }
-        else
-        { command.process( face_vhandles ); }
+        else {
+            command.process( face_vhandles );
+        }
         face_vhandles.clear();
         face_normals.clear();
         face_vertexIndex.clear();
@@ -131,15 +126,13 @@ void TopologicalMesh::addAttribPairToTopo( const TriangleMesh& triMesh,
                                            std::vector<TopologicalMesh::PropPair<T>>& vprop,
                                            std::vector<OpenMesh::HPropHandleT<T>>& pph ) {
     AttribHandle<T> h = triMesh.getAttribHandle<T>( attr->getName() );
-    if ( attr->getSize() == triMesh.vertices().size() )
-    {
+    if ( attr->getSize() == triMesh.vertices().size() ) {
         OpenMesh::HPropHandleT<T> oh;
         this->add_property( oh, attr->getName() );
         vprop.push_back( std::make_pair( h, oh ) );
         pph.push_back( oh );
     }
-    else
-    {
+    else {
         LOG( logWARNING ) << "[TopologicalMesh] Skip badly sized attribute " << attr->getName()
                           << ".";
     }
@@ -150,15 +143,15 @@ void TopologicalMesh::copyAttribToTopo( const TriangleMesh& triMesh,
                                         const std::vector<PropPair<T>>& vprop,
                                         TopologicalMesh::HalfedgeHandle heh,
                                         unsigned int vindex ) {
-    for ( auto pp : vprop )
-    { this->property( pp.second, heh ) = triMesh.getAttrib( pp.first ).data()[vindex]; }
+    for ( auto pp : vprop ) {
+        this->property( pp.second, heh ) = triMesh.getAttrib( pp.first ).data()[vindex];
+    }
 }
 
 inline const TopologicalMesh::Normal& TopologicalMesh::normal( VertexHandle vh,
                                                                FaceHandle fh ) const {
     // find halfedge that point to vh and member of fh
-    if ( !has_halfedge_normals() )
-    {
+    if ( !has_halfedge_normals() ) {
         LOG( logERROR ) << "TopologicalMesh has no normals, return dummy ref to  (0,0,0)";
         static TopologicalMesh::Normal dummy { 0_ra, 0_ra, 0_ra };
         return dummy;
@@ -167,8 +160,7 @@ inline const TopologicalMesh::Normal& TopologicalMesh::normal( VertexHandle vh,
 }
 
 inline void TopologicalMesh::set_normal( VertexHandle vh, FaceHandle fh, const Normal& n ) {
-    if ( !has_halfedge_normals() )
-    {
+    if ( !has_halfedge_normals() ) {
         LOG( logERROR ) << "TopologicalMesh has no normals, nothing set";
         return;
     }
@@ -177,19 +169,18 @@ inline void TopologicalMesh::set_normal( VertexHandle vh, FaceHandle fh, const N
 }
 
 inline void TopologicalMesh::propagate_normal_to_halfedges( VertexHandle vh ) {
-    if ( !has_halfedge_normals() )
-    {
+    if ( !has_halfedge_normals() ) {
         LOG( logERROR ) << "TopologicalMesh has no normals, nothing set";
         return;
     }
-    for ( VertexIHalfedgeIter vih_it = vih_iter( vh ); vih_it.is_valid(); ++vih_it )
-    { set_normal( *vih_it, normal( vh ) ); }
+    for ( VertexIHalfedgeIter vih_it = vih_iter( vh ); vih_it.is_valid(); ++vih_it ) {
+        set_normal( *vih_it, normal( vh ) );
+    }
 }
 
 inline TopologicalMesh::HalfedgeHandle TopologicalMesh::halfedge_handle( VertexHandle vh,
                                                                          FaceHandle fh ) const {
-    for ( ConstVertexIHalfedgeIter vih_it = cvih_iter( vh ); vih_it.is_valid(); ++vih_it )
-    {
+    for ( ConstVertexIHalfedgeIter vih_it = cvih_iter( vh ); vih_it.is_valid(); ++vih_it ) {
         if ( face_handle( *vih_it ) == fh ) { return *vih_it; }
     }
     CORE_ASSERT( false, "vh is not a vertex of face fh" );
@@ -227,8 +218,7 @@ TopologicalMesh::getVector4PropsHandles() const {
 }
 
 inline void TopologicalMesh::createNormalPropOnFaces( OpenMesh::FPropHandleT<Normal>& fProp ) {
-    if ( !has_halfedge_normals() )
-    {
+    if ( !has_halfedge_normals() ) {
         LOG( logERROR ) << "TopologicalMesh has no normals, nothing set";
         return;
     }
@@ -241,8 +231,7 @@ inline void TopologicalMesh::clearProp( OpenMesh::FPropHandleT<Normal>& fProp ) 
 }
 
 inline void TopologicalMesh::copyNormal( HalfedgeHandle input_heh, HalfedgeHandle copy_heh ) {
-    if ( !has_halfedge_normals() )
-    {
+    if ( !has_halfedge_normals() ) {
         LOG( logERROR ) << "TopologicalMesh has no normals, nothing set";
         return;
     }
@@ -253,8 +242,7 @@ inline void TopologicalMesh::copyNormal( HalfedgeHandle input_heh, HalfedgeHandl
 inline void TopologicalMesh::copyNormalFromFace( FaceHandle fh,
                                                  HalfedgeHandle heh,
                                                  OpenMesh::FPropHandleT<Normal> fProp ) {
-    if ( !has_halfedge_normals() )
-    {
+    if ( !has_halfedge_normals() ) {
         LOG( logERROR ) << "TopologicalMesh has no normals, nothing set";
         return;
     }
@@ -273,8 +261,7 @@ inline void TopologicalMesh::interpolateNormal( HalfedgeHandle in_a,
 
 inline void TopologicalMesh::interpolateNormalOnFaces( FaceHandle fh,
                                                        OpenMesh::FPropHandleT<Normal> fProp ) {
-    if ( !has_halfedge_normals() )
-    {
+    if ( !has_halfedge_normals() ) {
         LOG( logERROR ) << "TopologicalMesh has no normals, nothing set";
         return;
     }
@@ -286,8 +273,7 @@ inline void TopologicalMesh::interpolateNormalOnFaces( FaceHandle fh,
     heh                   = next_halfedge_handle( heh );
 
     // sum others
-    for ( size_t i = 1; i < valence( fh ); ++i )
-    {
+    for ( size_t i = 1; i < valence( fh ); ++i ) {
         property( fProp, fh ) += property( nph, heh );
         heh = next_halfedge_handle( heh );
     }
@@ -300,8 +286,7 @@ template <typename T>
 void TopologicalMesh::createPropsOnFaces( const std::vector<OpenMesh::HPropHandleT<T>>& input,
                                           std::vector<OpenMesh::FPropHandleT<T>>& output ) {
     output.reserve( input.size() );
-    for ( const auto& oh : input )
-    {
+    for ( const auto& oh : input ) {
         OpenMesh::FPropHandleT<T> oh_;
         add_property( oh_, property( oh ).name() + "_subdiv_copy_F" );
         output.push_back( oh_ );
@@ -310,8 +295,9 @@ void TopologicalMesh::createPropsOnFaces( const std::vector<OpenMesh::HPropHandl
 
 template <typename T>
 void TopologicalMesh::clearProps( std::vector<OpenMesh::FPropHandleT<T>>& props ) {
-    for ( auto& oh : props )
-    { remove_property( oh ); }
+    for ( auto& oh : props ) {
+        remove_property( oh );
+    }
     props.clear();
 }
 
@@ -319,8 +305,9 @@ template <typename T>
 void TopologicalMesh::copyProps( HalfedgeHandle input_heh,
                                  HalfedgeHandle copy_heh,
                                  const std::vector<OpenMesh::HPropHandleT<T>>& props ) {
-    for ( const auto& oh : props )
-    { property( oh, copy_heh ) = property( oh, input_heh ); }
+    for ( const auto& oh : props ) {
+        property( oh, copy_heh ) = property( oh, input_heh );
+    }
 }
 
 template <typename T>
@@ -328,8 +315,7 @@ void TopologicalMesh::copyPropsFromFace( FaceHandle fh,
                                          HalfedgeHandle heh,
                                          const std::vector<OpenMesh::FPropHandleT<T>>& fProps,
                                          const std::vector<OpenMesh::HPropHandleT<T>>& hProps ) {
-    for ( uint i = 0; i < fProps.size(); ++i )
-    {
+    for ( uint i = 0; i < fProps.size(); ++i ) {
         auto hp             = hProps[i];
         auto fp             = fProps[i];
         property( hp, heh ) = property( fp, fh );
@@ -343,8 +329,9 @@ void TopologicalMesh::interpolateProps( HalfedgeHandle in_a,
                                         Scalar f,
                                         const std::vector<OpenMesh::HPropHandleT<T>>& props ) {
     // interpolate properties
-    for ( const auto& oh : props )
-    { property( oh, out ) = ( 1 - f ) * property( oh, in_a ) + f * property( oh, in_b ); }
+    for ( const auto& oh : props ) {
+        property( oh, out ) = ( 1 - f ) * property( oh, in_a ) + f * property( oh, in_b );
+    }
 }
 
 template <typename T>
@@ -356,18 +343,15 @@ void TopologicalMesh::interpolatePropsOnFaces(
     const size_t v = valence( fh );
 
     // init sum to first
-    for ( size_t j = 0; j < fProps.size(); ++j )
-    {
+    for ( size_t j = 0; j < fProps.size(); ++j ) {
         auto hp            = hProps[j];
         auto fp            = fProps[j];
         property( fp, fh ) = property( hp, heh );
     }
     heh = next_halfedge_handle( heh );
     // sum others
-    for ( size_t i = 1; i < v; ++i )
-    {
-        for ( size_t j = 0; j < fProps.size(); ++j )
-        {
+    for ( size_t i = 1; i < v; ++i ) {
+        for ( size_t j = 0; j < fProps.size(); ++j ) {
             auto hp = hProps[j];
             auto fp = fProps[j];
             property( fp, fh ) += property( hp, heh );
@@ -375,8 +359,7 @@ void TopologicalMesh::interpolatePropsOnFaces(
         heh = next_halfedge_handle( heh );
     }
     // normalize
-    for ( size_t j = 0; j < fProps.size(); ++j )
-    {
+    for ( size_t j = 0; j < fProps.size(); ++j ) {
         auto fp            = fProps[j];
         property( fp, fh ) = property( fp, fh ) / v;
     }

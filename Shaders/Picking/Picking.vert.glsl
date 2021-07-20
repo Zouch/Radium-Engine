@@ -12,8 +12,7 @@ layout( location = 2 ) out vec3 out_eye;
 
 void main() {
     mat4 mvp;
-    if ( drawFixedSize > 0 )
-    {
+    if ( drawFixedSize > 0 ) {
         // distance to camera
         mat4 modelView = transform.view * transform.model;
         float d        = length( modelView[3].xyz );
@@ -22,8 +21,9 @@ void main() {
         mat4 model     = transform.model * scale;
         mvp            = transform.proj * transform.view * model;
     }
-    else
-    { mvp = transform.proj * transform.view * transform.model; }
+    else {
+        mvp = transform.proj * transform.view * transform.model;
+    }
 
     gl_Position = mvp * vec4( in_position, 1.0 );
 

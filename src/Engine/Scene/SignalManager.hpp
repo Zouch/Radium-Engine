@@ -92,8 +92,7 @@ class RA_ENGINE_API SignalManager
     /// Helper function to notify observers
     template <typename... TArgs>
     void notify( const Ra::Core::Utils::Observable<TArgs...>& o, TArgs... args ) const {
-        if ( m_isOn )
-        {
+        if ( m_isOn ) {
             std::lock_guard<std::mutex> lock( m_mutex );
             o.notify( args... );
         }

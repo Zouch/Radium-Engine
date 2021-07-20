@@ -7,16 +7,14 @@ namespace Ra::Gui {
 TimelineSlider::TimelineSlider( QWidget* parent ) : QLabel( parent ) {}
 
 void TimelineSlider::mousePressEvent( QMouseEvent* event ) {
-    if ( event->button() == Qt::LeftButton )
-    {
+    if ( event->button() == Qt::LeftButton ) {
         m_clicked = true;
         emit slide( event->x() );
     }
 }
 
 void TimelineSlider::mouseReleaseEvent( QMouseEvent* event ) {
-    if ( event->button() == Qt::LeftButton )
-    {
+    if ( event->button() == Qt::LeftButton ) {
         setStyleSheet( "background-color: gray" );
 
         m_clicked = false;

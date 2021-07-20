@@ -22,28 +22,24 @@ void AssimpCameraDataLoader::loadData( const aiScene* scene,
                                        std::vector<std::unique_ptr<Camera>>& data ) {
     data.clear();
 
-    if ( scene == nullptr )
-    {
+    if ( scene == nullptr ) {
         LOG( logDEBUG ) << "AssimpCameraDataLoader : scene is nullptr.";
         return;
     }
 
-    if ( !sceneHasCamera( scene ) )
-    {
+    if ( !sceneHasCamera( scene ) ) {
         LOG( logDEBUG ) << "AssimpCameraDataLoader : scene has no Cameras.";
         return;
     }
 
-    if ( m_verbose )
-    {
+    if ( m_verbose ) {
         LOG( logINFO ) << "File contains Camera.";
         LOG( logINFO ) << "Camera Loading begin...";
     }
 
     uint CameraSize = sceneCameraSize( scene );
     data.reserve( CameraSize );
-    for ( uint CameraId = 0; CameraId < CameraSize; ++CameraId )
-    {
+    for ( uint CameraId = 0; CameraId < CameraSize; ++CameraId ) {
         Camera* camera = new Camera();
         loadCameraData( scene, *( scene->mCameras[CameraId] ), *camera );
         ///\todo process camera name to feed component name
@@ -114,8 +110,7 @@ Core::Matrix4 AssimpCameraDataLoader::loadCameraFrame( const aiScene* scene,
     Core::Matrix4 frame;
     frame.setIdentity();
 
-    while ( node != nullptr )
-    {
+    while ( node != nullptr ) {
         frame = Core::Matrix4::NullaryExpr(
                     [&node]( int i, int j ) { return node->mTransformation[i][j]; } ) *
                 frame;

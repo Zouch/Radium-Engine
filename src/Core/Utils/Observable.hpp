@@ -44,8 +44,9 @@ class Observable
 
     /// explicit copy of all attached observers the \p other Observable
     void copyObserversTo( Observable& other ) const {
-        for ( const auto& o : m_observers )
-        { other.attach( o.second ); }
+        for ( const auto& o : m_observers ) {
+            other.attach( o.second );
+        }
     }
 
     /// Attach an \p observer that will be call on subsecant call to notify()

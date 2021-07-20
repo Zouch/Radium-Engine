@@ -19,17 +19,16 @@ inline bool FileManager<DATA, Binary>::load( const std::string& filename,
     addLogEntry( "Loading start..." );
     std::ifstream file(
         filename, std::ios_base::in | ( Binary ? std::ios_base::binary : std::ios_base::in ) );
-    if ( !( status = file.is_open() ) )
-    {
+    if ( !( status = file.is_open() ) ) {
         addLogWarningEntry(
             "Error occurred while opening the file. Trying to see if extension is missing..." );
         file.open( filename + "." + fileExtension(),
                    std::ios_base::in | ( Binary ? std::ios_base::binary : std::ios_base::in ) );
-        if ( !( status = file.is_open() ) )
-        { addLogErrorEntry( "Error occured while opening the file. HINT: FILENAME IS WRONG." ); }
+        if ( !( status = file.is_open() ) ) {
+            addLogErrorEntry( "Error occured while opening the file. HINT: FILENAME IS WRONG." );
+        }
     }
-    if ( status )
-    {
+    if ( status ) {
         addLogEntry( "File opened successfully." );
         addLogEntry( "Starting to import the data." );
         status = importData( file, data );
@@ -56,10 +55,10 @@ inline bool FileManager<DATA, Binary>::save( const std::string& filename,
     std::ofstream file( filename + "." + fileExtension(),
                         std::ios_base::out | std::ios_base::trunc |
                             ( Binary ? std::ios_base::binary : std::ios_base::out ) );
-    if ( !( status = file.is_open() ) )
-    { addLogErrorEntry( "Error occured while opening the file." ); }
-    if ( status )
-    {
+    if ( !( status = file.is_open() ) ) {
+        addLogErrorEntry( "Error occured while opening the file." );
+    }
+    if ( status ) {
         addLogEntry( "File opened successfully." );
         addLogEntry( "Starting to export the data..." );
         status = exportData( file, data );
@@ -99,22 +98,18 @@ inline void FileManager<DATA, Binary>::addLogErrorEntry( const std::string& text
 template <typename DATA, bool Binary>
 inline void FileManager<DATA, Binary>::addLogEntry( const std::string& text,
                                                     const LogEntryType type ) {
-    switch ( type )
-    {
+    switch ( type ) {
     case LogEntry_Normal: {
         m_log += text;
-    }
-    break;
+    } break;
 
     case LogEntry_Warning: {
         m_log += "\n--- LogEntry_Warning : " + text + " ---\n";
-    }
-    break;
+    } break;
 
     case LogEntry_Error: {
         m_log += "\n### LogEntry_Error : " + text + " ###\n";
-    }
-    break;
+    } break;
 
     default:
         break;

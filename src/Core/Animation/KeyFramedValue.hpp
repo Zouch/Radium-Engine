@@ -85,8 +85,9 @@ class KeyFramedValue : public KeyFramedValueBase
     inline std::vector<Scalar> getTimes() const override {
         std::vector<Scalar> times( m_keyframes.size() );
 #pragma omp parallel for
-        for ( int i = 0; i < int( m_keyframes.size() ); ++i )
-        { times[i] = m_keyframes[i].first; }
+        for ( int i = 0; i < int( m_keyframes.size() ); ++i ) {
+            times[i] = m_keyframes[i].first;
+        }
         return times;
     }
 
@@ -119,12 +120,12 @@ class KeyFramedValue : public KeyFramedValueBase
                 return a.first < b.first;
             } );
         if ( upper == m_keyframes.begin() ) { m_keyframes.insert( upper, kf ); }
-        else
-        {
+        else {
             auto lower = upper - 1;
             if ( Math::areApproxEqual( lower->first, t ) ) { lower->second = frame; }
-            else
-            { m_keyframes.insert( upper, kf ); }
+            else {
+                m_keyframes.insert( upper, kf );
+            }
         }
     }
 
@@ -151,8 +152,7 @@ class KeyFramedValue : public KeyFramedValueBase
      */
     inline void moveKeyFrame( size_t i, const Scalar& t ) override {
         KeyFrame kf = m_keyframes[i];
-        if ( !Ra::Core::Math::areApproxEqual( kf.first, t ) )
-        {
+        if ( !Ra::Core::Math::areApproxEqual( kf.first, t ) ) {
             removeKeyFrame( i );
             insertKeyFrame( t, kf.second );
         }
@@ -184,8 +184,7 @@ class KeyFramedValue : public KeyFramedValueBase
         // before first
         if ( t < m_keyframes.begin()->first ) { return { 0, 0, 0_ra }; }
         // after last
-        if ( t > m_keyframes.rbegin()->first )
-        {
+        if ( t > m_keyframes.rbegin()->first ) {
             const size_t i = m_keyframes.size() - 1;
             return { i, i, 0_ra };
         }
@@ -200,8 +199,7 @@ class KeyFramedValue : public KeyFramedValueBase
         // here upper > begin() since before first case is already taken into account.
         auto lower = upper;
         --lower;
-        if ( Math::areApproxEqual( lower->first, t ) )
-        {
+        if ( Math::areApproxEqual( lower->first, t ) ) {
             const size_t i = std::distance( m_keyframes.begin(), lower );
             return { i, i, 0_ra };
         }

@@ -13,8 +13,7 @@ void TimelineTimeScale::setScrollArea( TimelineScrollArea* scrollArea ) {
 }
 
 void TimelineTimeScale::paintEvent( QPaintEvent* event ) {
-    if ( m_scrollArea == nullptr )
-    {
+    if ( m_scrollArea == nullptr ) {
         QFrame::paintEvent( event );
         return;
     }
@@ -25,8 +24,7 @@ void TimelineTimeScale::paintEvent( QPaintEvent* event ) {
     painter.drawText( 0, 11, "sec" );
     Scalar pixPerSec = m_scrollArea->getPixPerSec();
     Scalar step      = m_scrollArea->getStep();
-    for ( int i = 1; i < m_scrollArea->getNbInterval(); i++ )
-    {
+    for ( int i = 1; i < m_scrollArea->getNbInterval(); i++ ) {
         int x        = int( pixPerSec * step * i );
         QString time = QString::number( double( ( i - 1 ) * step ) );
         int dec      = time.size() * 6 / 2;

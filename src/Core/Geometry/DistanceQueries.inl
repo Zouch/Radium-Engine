@@ -80,8 +80,7 @@ inline RA_CORE_API PointToTriangleOutput pointToTriSq( const Vector3& q,
 
     // Closest point is A. (zone 1)
     const bool m1 = d1 <= 0 && d2 <= 0;
-    if ( m1 )
-    {
+    if ( m1 ) {
         output.meshPoint       = a;
         output.distanceSquared = aq.squaredNorm();
         output.flags           = FlagsInternal::HIT_A;
@@ -94,8 +93,7 @@ inline RA_CORE_API PointToTriangleOutput pointToTriSq( const Vector3& q,
 
     // Closest point is B (zone 2)
     const bool m2 = d3 >= 0 && d4 <= d3;
-    if ( m2 )
-    {
+    if ( m2 ) {
         output.meshPoint       = b;
         output.distanceSquared = bq.squaredNorm();
         output.flags           = FlagsInternal::HIT_B;
@@ -108,8 +106,7 @@ inline RA_CORE_API PointToTriangleOutput pointToTriSq( const Vector3& q,
 
     // Closest point is C (zone 3)
     const bool m3 = ( d6 >= 0 && d5 <= d6 );
-    if ( m3 )
-    {
+    if ( m3 ) {
         output.meshPoint       = c;
         output.distanceSquared = cq.squaredNorm();
         output.flags           = FlagsInternal::HIT_C;
@@ -121,8 +118,7 @@ inline RA_CORE_API PointToTriangleOutput pointToTriSq( const Vector3& q,
 
     // Closest point is on AB (zone 4)
     const bool m4 = vc <= 0 && d1 >= 0 && d3 <= 0;
-    if ( m4 )
-    {
+    if ( m4 ) {
         output.meshPoint       = a + v1 * ab;
         output.distanceSquared = ( output.meshPoint - q ).squaredNorm();
         output.flags           = FlagsInternal::HIT_AB;
@@ -134,8 +130,7 @@ inline RA_CORE_API PointToTriangleOutput pointToTriSq( const Vector3& q,
 
     // Closest point is on AC (zone 5)
     const bool m5 = vb <= 0 && d2 >= 0 && d6 <= 0;
-    if ( m5 )
-    {
+    if ( m5 ) {
         output.meshPoint       = a + w1 * ac;
         output.distanceSquared = ( output.meshPoint - q ).squaredNorm();
         output.flags           = FlagsInternal::HIT_CA;
@@ -147,8 +142,7 @@ inline RA_CORE_API PointToTriangleOutput pointToTriSq( const Vector3& q,
 
     // Closest point is on BC (zone 6)
     const bool m6 = va <= 0 && ( d4 - d3 ) >= 0 && ( d5 - d6 ) >= 0;
-    if ( m6 )
-    {
+    if ( m6 ) {
         output.meshPoint       = b + w2 * ( c - b );
         output.distanceSquared = ( output.meshPoint - q ).squaredNorm();
         output.flags           = FlagsInternal::HIT_BC;
@@ -184,38 +178,32 @@ inline RA_CORE_API LineToSegmentOutput lineToSegSq( const Vector3& lineOrigin,
     Scalar b0    = diff.dot( lineDirection );
     Scalar s0, s1;
 
-    if ( std::abs( a01 ) < (Scalar)1 )
-    {
+    if ( std::abs( a01 ) < (Scalar)1 ) {
         // The line and the segment are not parallel
         Scalar det    = (Scalar)1 - a01 * a01;
         Scalar extDet = segExtent * det;
         Scalar b1     = -diff.dot( segDirection );
         s1            = a01 * b0 - b1;
 
-        if ( s1 >= -extDet )
-        {
-            if ( s1 <= extDet )
-            {
+        if ( s1 >= -extDet ) {
+            if ( s1 <= extDet ) {
                 // 2 interior points are closest, one on the line and one on the segment
                 s0 = ( a01 * b1 - b0 ) / det;
                 s1 /= det;
             }
-            else
-            {
+            else {
                 // The endpoint e1 of the segment and an interior point of the line are closest
                 s1 = segExtent;
                 s0 = -( a01 * s1 + b0 );
             }
         }
-        else
-        {
+        else {
             // The endpoint e0 of the segment and an interior point of the line are closest
             s1 = -segExtent;
             s0 = -( a01 * s1 + b0 );
         }
     }
-    else
-    {
+    else {
         // The line and the segment are parallel
         // We choose the closest pair so that one point is at the segment origin
         s1 = (Scalar)0;
@@ -247,18 +235,19 @@ inline RA_CORE_API LineToTriangleOutput lineToTriSq( const Vector3& lineOrigin,
     Vector3 normal = edge0.cross( edge1 );
     normal.normalize();
     Scalar nd = normal.dot( lineDirection );
-    if ( std::abs( nd ) > (Scalar)0 )
-    {
+    if ( std::abs( nd ) > (Scalar)0 ) {
         // The line intersects the plane of the triangle or the triangle itself
         // (if the intersection point isn't needed, it possible to use the boolean function
         // vsTriangle of RayCast.hpp)
         Vector3 diff = lineOrigin - v[0];
         Vector3 basis[3]; // {D, U, V}
         basis[0] = lineDirection;
-        if ( std::abs( basis[0][0] ) > std::abs( basis[0][1] ) )
-        { basis[1] = { -basis[0][2], (Scalar)0, basis[0][0] }; }
-        else
-        { basis[1] = { (Scalar)0, basis[0][2], -basis[0][1] }; }
+        if ( std::abs( basis[0][0] ) > std::abs( basis[0][1] ) ) {
+            basis[1] = { -basis[0][2], (Scalar)0, basis[0][0] };
+        }
+        else {
+            basis[1] = { (Scalar)0, basis[0][2], -basis[0][1] };
+        }
         basis[2] = basis[0].cross( basis[1] );
         // Orthonormalize basis
         // Normalize basis[0]
@@ -284,8 +273,7 @@ inline RA_CORE_API LineToTriangleOutput lineToTriSq( const Vector3& lineOrigin,
         Scalar b2 = ( UdE0 * VdDiff - VdE0 * UdDiff ) * invDet;
         Scalar b0 = (Scalar)1 - b1 - b2;
 
-        if ( b0 >= (Scalar)0 && b1 >= (Scalar)0 && b2 >= (Scalar)0 )
-        {
+        if ( b0 >= (Scalar)0 && b1 >= (Scalar)0 && b2 >= (Scalar)0 ) {
             // The line intersects the triangle itself
             // Distance between the origin of the line and the intersection point with the triangle
             Scalar DdE0          = lineDirection.dot( edge0 );
@@ -313,8 +301,7 @@ inline RA_CORE_API LineToTriangleOutput lineToTriSq( const Vector3& lineOrigin,
     // the triangle, so we compare the line to all 3 edges of the triangle.
     output.distance    = std::numeric_limits<Scalar>::max();
     output.sqrDistance = std::numeric_limits<Scalar>::max();
-    for ( int i0 = 2, i1 = 0; i1 < 3; i0 = i1++ )
-    {
+    for ( int i0 = 2, i1 = 0; i1 < 3; i0 = i1++ ) {
         Vector3 segCenter    = ( (Scalar)0.5 ) * ( v[i0] + v[i1] );
         Vector3 segDirection = v[i1] - v[i0];
         Scalar segExtent     = ( (Scalar)0.5 ) * std::sqrt( segDirection.dot( segDirection ) );
@@ -322,8 +309,7 @@ inline RA_CORE_API LineToTriangleOutput lineToTriSq( const Vector3& lineOrigin,
         // Distance line-segment is computed
         LineToSegmentOutput lsOutput =
             lineToSegSq( lineOrigin, lineDirection, segCenter, segDirection, segExtent );
-        if ( lsOutput.sqrDistance < output.sqrDistance )
-        {
+        if ( lsOutput.sqrDistance < output.sqrDistance ) {
             output.sqrDistance   = lsOutput.sqrDistance;
             output.distance      = lsOutput.distance;
             output.lineParameter = lsOutput.parameter[0];
@@ -352,11 +338,9 @@ inline RA_CORE_API SegmentToTriangleOutput segmentToTriSq( const Vector3& segCen
     // Distance line-triangle is computed
     LineToTriangleOutput ltOutput = lineToTriSq( segCenter, segDirection, v );
 
-    if ( ltOutput.lineParameter >= -segExtent )
-    {
+    if ( ltOutput.lineParameter >= -segExtent ) {
         // The closest point on the line is on the segment or at its right
-        if ( ltOutput.lineParameter <= segExtent )
-        {
+        if ( ltOutput.lineParameter <= segExtent ) {
             // The closest point on the line is on the segment
             // The segment intersects the triangle
             output.distance             = ltOutput.distance;
@@ -368,8 +352,7 @@ inline RA_CORE_API SegmentToTriangleOutput segmentToTriSq( const Vector3& segCen
             output.closestPoint[0]      = ltOutput.closestPoint[0];
             output.closestPoint[1]      = ltOutput.closestPoint[1];
         }
-        else
-        {
+        else {
             // The closest point on the line is at the segment's right
             // We compute the distance between the right endpoint of the segment and the triangle
             Vector3 point                  = segCenter + segExtent * segDirection;
@@ -381,8 +364,7 @@ inline RA_CORE_API SegmentToTriangleOutput segmentToTriSq( const Vector3& segCen
             output.closestPoint[1]         = ptOutput.meshPoint;
         }
     }
-    else
-    {
+    else {
         // The closest point on the line is at the segment's left
         // We compute the distance between the left endpoint of the segment and the triangle
         Vector3 point                  = segCenter - segExtent * segDirection;
@@ -404,15 +386,13 @@ inline RA_CORE_API TriangleToTriangleOutput triangleToTriSq( const Vector3 v1[3]
     output.sqrDistance = std::numeric_limits<Scalar>::max();
 
     // We compute the closest distance between v1's edges and v2.
-    for ( int i0 = 2, i1 = 0; i1 < 3; i0 = i1++ )
-    {
+    for ( int i0 = 2, i1 = 0; i1 < 3; i0 = i1++ ) {
         Vector3 segCenter    = ( (Scalar)0.5 ) * ( v1[i0] + v1[i1] );
         Vector3 segDirection = v1[i1] - v1[i0];
         Scalar segExtent     = ( (Scalar)0.5 ) * std::sqrt( segDirection.dot( segDirection ) );
 
         stOutput = segmentToTriSq( segCenter, segDirection, segExtent, v2 );
-        if ( stOutput.sqrDistance < output.sqrDistance )
-        {
+        if ( stOutput.sqrDistance < output.sqrDistance ) {
             output.sqrDistance = stOutput.sqrDistance;
             output.distance    = stOutput.distance;
             output.triangleParameter1[i0] =
@@ -428,15 +408,13 @@ inline RA_CORE_API TriangleToTriangleOutput triangleToTriSq( const Vector3 v1[3]
     }
 
     // We compute the closest distance between v2's edges and v1.
-    for ( int i0 = 2, i1 = 0; i1 < 3; i0 = i1++ )
-    {
+    for ( int i0 = 2, i1 = 0; i1 < 3; i0 = i1++ ) {
         Vector3 segCenter    = ( (Scalar)0.5 ) * ( v2[i0] + v2[i1] );
         Vector3 segDirection = v2[i1] - v2[i0];
         Scalar segExtent     = ( (Scalar)0.5 ) * std::sqrt( segDirection.dot( segDirection ) );
 
         stOutput = segmentToTriSq( segCenter, segDirection, segExtent, v1 );
-        if ( stOutput.sqrDistance < output.sqrDistance )
-        {
+        if ( stOutput.sqrDistance < output.sqrDistance ) {
             output.sqrDistance           = stOutput.sqrDistance;
             output.distance              = stOutput.distance;
             output.triangleParameter1[0] = stOutput.triangleParameter[0];

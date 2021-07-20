@@ -57,10 +57,8 @@ void SkeletonBasedAnimationUI::selectionChanged( const Engine::Scene::ItemEntry&
     ui->tabWidget->setEnabled( false );
     ui->m_skinning->setEnabled( false );
     if ( m_selection.m_entity == nullptr ) { return; }
-    for ( auto& comp : m_selection.m_entity->getComponents() )
-    {
-        if ( auto curSkel = dynamic_cast<Engine::Scene::SkeletonComponent*>( comp.get() ) )
-        {
+    for ( auto& comp : m_selection.m_entity->getComponents() ) {
+        if ( auto curSkel = dynamic_cast<Engine::Scene::SkeletonComponent*>( comp.get() ) ) {
             // register current Skeleton component
             m_currentSkeleton = curSkel;
             // update the ui accordingly
@@ -71,8 +69,9 @@ void SkeletonBasedAnimationUI::selectionChanged( const Engine::Scene::ItemEntry&
             ui->m_pingPong->setChecked( m_currentSkeleton->isPingPong() );
             ui->m_currentAnimation->blockSignals( true );
             ui->m_currentAnimation->clear();
-            for ( size_t i = 0; i < m_currentSkeleton->getAnimationCount(); ++i )
-            { ui->m_currentAnimation->addItem( "#" + QString::number( i ) ); }
+            for ( size_t i = 0; i < m_currentSkeleton->getAnimationCount(); ++i ) {
+                ui->m_currentAnimation->addItem( "#" + QString::number( i ) );
+            }
             ui->m_currentAnimation->blockSignals( false );
             ui->m_currentAnimation->setCurrentIndex( int( m_currentSkeleton->getAnimationId() ) );
             ui->m_xray->setChecked( m_currentSkeleton->isXray() );
@@ -80,8 +79,7 @@ void SkeletonBasedAnimationUI::selectionChanged( const Engine::Scene::ItemEntry&
             ui->m_manipulation->setCurrentIndex(
                 int( m_currentSkeleton->getManipulationScheme() ) );
         }
-        if ( auto skinComp = dynamic_cast<Engine::Scene::SkinningComponent*>( comp.get() ) )
-        {
+        if ( auto skinComp = dynamic_cast<Engine::Scene::SkinningComponent*>( comp.get() ) ) {
             // register the current skinning component
             m_currentSkinnings.emplace_back( skinComp );
             // update the ui accordingly
@@ -104,14 +102,13 @@ void SkeletonBasedAnimationUI::selectionChanged( const Engine::Scene::ItemEntry&
     }
 
     // deal with bone selection for weights display
-    if ( m_currentSkeleton != nullptr )
-    {
+    if ( m_currentSkeleton != nullptr ) {
         auto BM   = *m_currentSkeleton->getBoneRO2idx();
         auto b_it = BM.find( m_selection.m_roIndex );
-        if ( b_it != BM.end() )
-        {
-            for ( auto skin : m_currentSkinnings )
-            { skin->setWeightBone( b_it->second ); }
+        if ( b_it != BM.end() ) {
+            for ( auto skin : m_currentSkinnings ) {
+                skin->setWeightBone( b_it->second );
+            }
         }
     }
 
@@ -123,8 +120,7 @@ int SkeletonBasedAnimationUI::getActionNb() {
 }
 
 QAction* SkeletonBasedAnimationUI::getAction( int i ) {
-    switch ( i )
-    {
+    switch ( i ) {
     case 0:
         return ui->actionXray;
     case 1:
@@ -154,13 +150,11 @@ void SkeletonBasedAnimationUI::postLoadFile( Engine::Scene::Entity* entity ) {
         entity->getComponents().begin(), entity->getComponents().end(), []( const auto& cmpt ) {
             return ( dynamic_cast<Ra::Engine::Scene::SkeletonComponent*>( cmpt.get() ) != nullptr );
         } );
-    if ( c != entity->getComponents().end() )
-    {
+    if ( c != entity->getComponents().end() ) {
         auto skel           = static_cast<Ra::Engine::Scene::SkeletonComponent*>( ( *c ).get() );
         auto& anim          = skel->getAnimation( skel->getAnimationId() );
         const auto& boneMap = skel->getBoneRO2idx();
-        for ( size_t j = 0; j < anim.size(); ++j )
-        {
+        for ( size_t j = 0; j < anim.size(); ++j ) {
             auto it = std::find_if(
                 boneMap->begin(), boneMap->end(), [j]( const auto& b ) { return b.second == j; } );
             if ( it == boneMap->end() ) { continue; } // end bone
@@ -179,10 +173,8 @@ void SkeletonBasedAnimationUI::postLoadFile( Engine::Scene::Entity* entity ) {
     // update the timeline display interval to the bounding interval of all anims
     Scalar startTime = std::numeric_limits<Scalar>::max();
     Scalar endTime   = 0;
-    for ( const auto& animComp : entity->getComponents() )
-    {
-        if ( auto skel = dynamic_cast<Ra::Engine::Scene::SkeletonComponent*>( animComp.get() ) )
-        {
+    for ( const auto& animComp : entity->getComponents() ) {
+        if ( auto skel = dynamic_cast<Ra::Engine::Scene::SkeletonComponent*>( animComp.get() ) ) {
             auto [s, e] = skel->getAnimationTimeInterval();
             startTime   = std::min( startTime, s );
             endTime     = std::max( endTime, e );
@@ -222,8 +214,7 @@ void SkeletonBasedAnimationUI::on_m_currentAnimation_currentIndexChanged( int in
     auto& anim          = m_currentSkeleton->getAnimation( uint( index ) );
     const auto& boneMap = m_currentSkeleton->getBoneRO2idx();
     auto skel           = m_currentSkeleton->getSkeleton();
-    for ( size_t j = 0; j < anim.size(); ++j )
-    {
+    for ( size_t j = 0; j < anim.size(); ++j ) {
         auto it = std::find_if(
             boneMap->begin(), boneMap->end(), [j]( const auto& b ) { return b.second == j; } );
         if ( it == boneMap->end() ) { continue; } // end bone
@@ -280,11 +271,9 @@ void SkeletonBasedAnimationUI::on_m_loadAnim_clicked() {
     size_t n;
     Scalar t;
     Ra::Core::Transform T;
-    for ( auto& bAnim : anim )
-    {
+    for ( auto& bAnim : anim ) {
         file.read( reinterpret_cast<char*>( &n ), sizeof( n ) );
-        for ( size_t i = 0; i < n; ++i )
-        {
+        for ( size_t i = 0; i < n; ++i ) {
             file.read( reinterpret_cast<char*>( &t ), sizeof( t ) );
             file.read( reinterpret_cast<char*>( &T ), sizeof( T ) );
             bAnim.insertKeyFrame( t, T );
@@ -312,12 +301,10 @@ void SkeletonBasedAnimationUI::on_m_saveAnim_clicked() {
     std::ofstream file( path.toStdString(), std::ios::trunc | std::ios::binary );
     // Todo: deal with anim timestep when used
     size_t n;
-    for ( const auto& bAnim : anim )
-    {
+    for ( const auto& bAnim : anim ) {
         n = bAnim.size();
         file.write( reinterpret_cast<const char*>( &n ), sizeof( n ) );
-        for ( const auto t : bAnim.getTimes() )
-        {
+        for ( const auto t : bAnim.getTimes() ) {
             file.write( reinterpret_cast<const char*>( &t ), sizeof( t ) );
             auto kf = bAnim.at( t, linearInterpolate<Ra::Core::Transform> );
             file.write( reinterpret_cast<const char*>( &kf ), sizeof( kf ) );
@@ -344,10 +331,10 @@ void SkeletonBasedAnimationUI::on_m_skinningMethod_currentIndexChanged( int newT
     CORE_ASSERT( newType >= 0 && newType < 5, "Invalid Skinning Type" );
     using SkinningType = Engine::Scene::SkinningComponent::SkinningType;
     auto type          = SkinningType( newType );
-    for ( auto skin : m_currentSkinnings )
-    { skin->setSkinningType( type ); }
-    switch ( type )
-    {
+    for ( auto skin : m_currentSkinnings ) {
+        skin->setSkinningType( type );
+    }
+    switch ( type ) {
     case SkinningType::LBS: {
         on_actionLBS_triggered();
         break;
@@ -375,20 +362,23 @@ void SkeletonBasedAnimationUI::on_m_skinningMethod_currentIndexChanged( int newT
 }
 
 void SkeletonBasedAnimationUI::on_m_showWeights_toggled( bool checked ) {
-    for ( auto skin : m_currentSkinnings )
-    { skin->showWeights( checked ); }
+    for ( auto skin : m_currentSkinnings ) {
+        skin->showWeights( checked );
+    }
     askForUpdate();
 }
 
 void SkeletonBasedAnimationUI::on_m_weightsType_currentIndexChanged( int newType ) {
-    for ( auto skin : m_currentSkinnings )
-    { skin->showWeightsType( Engine::Scene::SkinningComponent::WeightType( newType ) ); }
+    for ( auto skin : m_currentSkinnings ) {
+        skin->showWeightsType( Engine::Scene::SkinningComponent::WeightType( newType ) );
+    }
     askForUpdate();
 }
 
 void SkeletonBasedAnimationUI::on_m_normalSkinning_currentIndexChanged( int newType ) {
-    for ( auto skin : m_currentSkinnings )
-    { skin->setNormalSkinning( Engine::Scene::SkinningComponent::NormalSkinning( newType ) ); }
+    for ( auto skin : m_currentSkinnings ) {
+        skin->setNormalSkinning( Engine::Scene::SkinningComponent::NormalSkinning( newType ) );
+    }
     askForUpdate();
 }
 

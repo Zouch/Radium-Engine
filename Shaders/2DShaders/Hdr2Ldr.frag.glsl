@@ -7,8 +7,9 @@ uniform sampler2D screenTexture;
 // from sRGB color space specification
 float tosRGB( float c ) {
     if ( c <= 0.0031308 ) { return 12.92 * c; }
-    else
-    { return 1.055 * pow( c, 1. / 2.4 ) - 0.055; }
+    else {
+        return 1.055 * pow( c, 1. / 2.4 ) - 0.055;
+    }
 }
 void main() {
     vec2 size  = vec2( textureSize( screenTexture, 0 ) );

@@ -33,8 +33,7 @@ std::string OFFFileManager::fileExtension() const {
 bool OFFFileManager::importData( std::istream& file, Geometry::TriangleMesh& data ) {
     std::string h;
     file >> h;
-    if ( h != header() )
-    {
+    if ( h != header() ) {
         addLogErrorEntry( "HEADER IS NOT CORRECT." );
         return false;
     }
@@ -49,25 +48,23 @@ bool OFFFileManager::importData( std::istream& file, Geometry::TriangleMesh& dat
     indices.resize( f_size );
 
     // Vertices
-    for ( uint i = 0; i < v_size; ++i )
-    {
+    for ( uint i = 0; i < v_size; ++i ) {
         Vector3 v;
         file >> v[0] >> v[1] >> v[2];
         vertices[i] = v;
     }
 
     // Edge
-    for ( uint i = 0; i < e_size; ++i )
-    { break; }
+    for ( uint i = 0; i < e_size; ++i ) {
+        break;
+    }
 
     // Triangle
-    for ( uint i = 0; i < f_size; ++i )
-    {
+    for ( uint i = 0; i < f_size; ++i ) {
         uint side;
         Vector3ui f;
         file >> side;
-        if ( side == 3 )
-        {
+        if ( side == 3 ) {
             file >> f[0] >> f[1] >> f[2];
             indices.push_back( f );
         }
@@ -84,8 +81,7 @@ bool OFFFileManager::exportData( std::ostream& file, const Geometry::TriangleMes
     const uint f_size   = data.getIndices().size();
     const uint e_size   = 0;
 
-    if ( v_size == 0 )
-    {
+    if ( v_size == 0 ) {
         addLogErrorEntry( "NO VERTICES PRESENT." );
         return false;
     }
@@ -95,15 +91,13 @@ bool OFFFileManager::exportData( std::ostream& file, const Geometry::TriangleMes
                std::to_string( e_size ) + "\n";
 
     // Vertices
-    for ( const auto& v : data.vertices() )
-    {
+    for ( const auto& v : data.vertices() ) {
         content += std::to_string( v[0] ) + " " + std::to_string( v[1] ) + " " +
                    std::to_string( v[2] ) + "\n";
     }
 
     // Triangle
-    for ( const auto& f : data.getIndices() )
-    {
+    for ( const auto& f : data.getIndices() ) {
         content += "3 " + std::to_string( f[0] ) + " " + std::to_string( f[1] ) + " " +
                    std::to_string( f[2] ) + "\n";
     }

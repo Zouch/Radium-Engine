@@ -41,8 +41,9 @@ inline void AnimationData::setHandleData( const std::vector<HandleAnimation>& fr
     const uint size = frameList.size();
     m_keyFrame.resize( size );
 #pragma omp parallel for
-    for ( int i = 0; i < int( size ); ++i )
-    { m_keyFrame[i] = frameList[i]; }
+    for ( int i = 0; i < int( size ); ++i ) {
+        m_keyFrame[i] = frameList[i];
+    }
 }
 
 inline void AnimationData::displayInfo() const {

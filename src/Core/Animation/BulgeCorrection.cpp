@@ -22,10 +22,8 @@ void bulgeCorrection( const Vector3Array& restMesh,
     CORE_ASSERT( ( restMesh.size() == currMesh.size() ), " Meshes don't match " );
     const uint n = restMesh.size();
 #pragma omp parallel for
-    for ( int i = 0; i < int( n ); ++i )
-    {
-        if ( restData.m_dv[i] < currData.m_dv[i] )
-        {
+    for ( int i = 0; i < int( n ); ++i ) {
+        if ( restData.m_dv[i] < currData.m_dv[i] ) {
             const Vector3 dir   = currMesh[i] - currData.m_prj[i];
             const Scalar factor = std::sqrt( restData.m_dv[i] / currData.m_dv[i] );
             currMesh[i]         = currData.m_prj[i] + ( factor * dir );
@@ -41,15 +39,15 @@ void findCorrectionData( const Vector3Array& mesh,
     const uint n = mesh.size();
     data.resize( n );
 #pragma omp parallel for
-    for ( int i = 0; i < int( n ); ++i )
-    {
+    for ( int i = 0; i < int( n ); ++i ) {
         Vector3 start;
         Vector3 end;
         const auto& child = graph.children()[wID[i]];
         start             = pose[wID[i]].translation();
         end.setZero();
-        for ( const auto& c : child )
-        { end += pose[c].translation(); }
+        for ( const auto& c : child ) {
+            end += pose[c].translation();
+        }
         Vector3 seg   = end - start;
         data.m_prj[i] = start + Geometry::projectOnSegment( mesh[i], start, seg ) * seg;
         data.m_dv[i]  = ( mesh[i] - data.m_prj[i] ).squaredNorm();

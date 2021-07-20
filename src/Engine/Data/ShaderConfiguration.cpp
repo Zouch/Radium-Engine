@@ -22,16 +22,20 @@ std::ostream& operator<<( std::ostream& stream, const ShaderConfiguration& confi
 
     stream << " -- shader configuration [" << config.m_name << "]\n";
 
-    for ( const auto& s : config.m_shaders )
-    { stream << " shaders  [" << s.first << " " << s.second << " ]\n"; }
+    for ( const auto& s : config.m_shaders ) {
+        stream << " shaders  [" << s.first << " " << s.second << " ]\n";
+    }
 
-    for ( const auto& s : config.m_properties )
-    { stream << "props  [" << s << "]\n"; }
+    for ( const auto& s : config.m_properties ) {
+        stream << "props  [" << s << "]\n";
+    }
 
-    for ( const auto& s : config.m_includes )
-    { stream << "inc  [" << s.first << "]\n"; }
-    for ( const auto& s : config.m_named_strings )
-    { stream << "props  [" << s.first << "]\n"; }
+    for ( const auto& s : config.m_includes ) {
+        stream << "inc  [" << s.first << "]\n";
+    }
+    for ( const auto& s : config.m_named_strings ) {
+        stream << "props  [" << s.first << "]\n";
+    }
     return stream;
 }
 
@@ -63,8 +67,9 @@ void ShaderConfiguration::addProperty( const std::string& prop ) {
 }
 
 void ShaderConfiguration::addProperties( const std::list<std::string>& props ) {
-    for ( const auto& prop : props )
-    { m_properties.insert( "#define " + prop ); }
+    for ( const auto& prop : props ) {
+        m_properties.insert( "#define " + prop );
+    }
 }
 
 void ShaderConfiguration::removeProperty( const std::string& prop ) {
@@ -76,8 +81,9 @@ void ShaderConfiguration::addInclude( const std::string& incl, ShaderType type )
 }
 
 void ShaderConfiguration::addIncludes( const std::list<std::string>& incls, ShaderType type ) {
-    for ( const auto& incl : incls )
-    { m_includes.emplace_back( "#include " + incl, type ); }
+    for ( const auto& incl : incls ) {
+        m_includes.emplace_back( "#include " + incl, type );
+    }
 }
 
 void ShaderConfiguration::removeInclude( const std::string& incl, ShaderType type ) {
@@ -99,20 +105,15 @@ bool ShaderConfiguration::isComplete() const {
 bool ShaderConfiguration::operator<( const ShaderConfiguration& o ) const {
     bool res = false;
 
-    for ( size_t i = 0; i < ShaderType_COUNT; ++i )
-    {
+    for ( size_t i = 0; i < ShaderType_COUNT; ++i ) {
         if ( m_shaders[i] != o.m_shaders[i] ) { return m_shaders[i] < o.m_shaders[i]; }
     }
 
-    if ( m_properties.size() == o.m_properties.size() )
-    {
-        if ( m_properties.empty() )
-        {
-            if ( m_includes.size() == o.m_includes.size() )
-            {
+    if ( m_properties.size() == o.m_properties.size() ) {
+        if ( m_properties.empty() ) {
+            if ( m_includes.size() == o.m_includes.size() ) {
                 if ( m_includes.empty() ) { res = false; }
-                else
-                {
+                else {
                     auto lit = m_includes.begin();
                     auto rit = o.m_includes.begin();
 
@@ -120,13 +121,13 @@ bool ShaderConfiguration::operator<( const ShaderConfiguration& o ) const {
                         ;
 
                     if ( lit == m_includes.end() ) { res = false; }
-                    else
-                    { res = *lit < *rit; }
+                    else {
+                        res = *lit < *rit;
+                    }
                 }
             }
         }
-        else
-        {
+        else {
             auto lit = m_properties.begin();
             auto rit = o.m_properties.begin();
 
@@ -134,12 +135,14 @@ bool ShaderConfiguration::operator<( const ShaderConfiguration& o ) const {
                 ;
 
             if ( lit == m_properties.end() ) { res = false; }
-            else
-            { res = *lit < *rit; }
+            else {
+                res = *lit < *rit;
+            }
         }
     }
-    else
-    { res = m_properties.size() < o.m_properties.size(); }
+    else {
+        res = m_properties.size() < o.m_properties.size();
+    }
 
     return res;
 }

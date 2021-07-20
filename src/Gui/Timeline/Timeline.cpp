@@ -107,24 +107,19 @@ Timeline::Timeline( QWidget* parent ) : QDialog( parent ), ui( new Ui::Timeline 
 
 void Timeline::detachFromEngine() {
     // Lifetime of Timeline (as a gui object) is hard to predict. Check all pointer and properties.
-    if ( auto engine = Ra::Engine::RadiumEngine::getInstance() )
-    {
-        if ( auto signalManager = engine->getSignalManager() )
-        {
-            if ( m_entityAddObserverId != -1 )
-            {
+    if ( auto engine = Ra::Engine::RadiumEngine::getInstance() ) {
+        if ( auto signalManager = engine->getSignalManager() ) {
+            if ( m_entityAddObserverId != -1 ) {
                 auto& obs = signalManager->getEntityCreatedNotifier();
                 obs.detach( m_entityAddObserverId );
                 m_entityAddObserverId = -1;
             }
-            if ( m_entityRemoveObserverId != -1 )
-            {
+            if ( m_entityRemoveObserverId != -1 ) {
                 auto& obs = signalManager->getEntityDestroyedNotifier();
                 obs.detach( m_entityRemoveObserverId );
                 m_entityRemoveObserverId = -1;
             }
-            if ( m_roAddObserverId )
-            {
+            if ( m_roAddObserverId ) {
                 auto& obs = signalManager->getRenderObjectCreatedNotifier();
                 obs.detach( m_roAddObserverId );
                 m_roAddObserverId = -1;
@@ -158,32 +153,31 @@ void Timeline::selectionChanged( const Ra::Engine::Scene::ItemEntry& ent ) {
     auto registerFrames = [this]( const Ra::Core::Animation::KeyFramedValueController& frame,
                                   const std::string& prefix ) {
         ui->comboBox_attribute->addItem( QString( ( prefix + frame.m_name ).c_str() ) );
-        if ( ui->comboBox_attribute->count() == 1 )
-        {
+        if ( ui->comboBox_attribute->count() == 1 ) {
             const auto times = frame.m_value->getTimes();
-            for ( const auto& t : times )
-            { ui->frame_selector->onAddingKeyFrame( t, false ); }
+            for ( const auto& t : times ) {
+                ui->frame_selector->onAddingKeyFrame( t, false );
+            }
             m_current = frame;
         }
     };
     // checks if the given keyframedvalue map contains the given key.
     // if so, registers all keyframedvalues with the given prefix.
-#define REGISTER_KEYFRAMED_VALUES( map, key, prefix )       \
-    {                                                       \
-        auto it = map.find( key );                          \
-        if ( it != map.end() )                              \
-        {                                                   \
-            for ( const auto& keyFramedValue : it->second ) \
-            { registerFrames( keyFramedValue, prefix ); }   \
-        }                                                   \
+#define REGISTER_KEYFRAMED_VALUES( map, key, prefix )         \
+    {                                                         \
+        auto it = map.find( key );                            \
+        if ( it != map.end() ) {                              \
+            for ( const auto& keyFramedValue : it->second ) { \
+                registerFrames( keyFramedValue, prefix );     \
+            }                                                 \
+        }                                                     \
     }
     // register keyframes for the Entity
     if ( ent.m_entity == nullptr ) { return; }
     const std::string& entityName = ent.m_entity->getName();
     REGISTER_KEYFRAMED_VALUES( m_entityKeyFrames, ent.m_entity, entityName + "::" );
     // register keyframes for the Component
-    if ( ent.m_component == nullptr )
-    {
+    if ( ent.m_component == nullptr ) {
         enableUI( ui->comboBox_attribute->count() > 0 );
         return;
     }
@@ -191,8 +185,7 @@ void Timeline::selectionChanged( const Ra::Engine::Scene::ItemEntry& ent ) {
     REGISTER_KEYFRAMED_VALUES(
         m_componentKeyFrames, ent.m_component, entityName + "::" + compName + "::" );
     // register keyframes for the RenderObject
-    if ( ent.m_roIndex == Ra::Core::Utils::Index::Invalid() )
-    {
+    if ( ent.m_roIndex == Ra::Core::Utils::Index::Invalid() ) {
         enableUI( ui->comboBox_attribute->count() > 0 );
         return;
     }
@@ -203,8 +196,7 @@ void Timeline::selectionChanged( const Ra::Engine::Scene::ItemEntry& ent ) {
                                ent.m_roIndex,
                                entityName + "::" + compName + "::" + roName + "::" );
 #undef REGISTER_KEYFRAMED_VALUES
-    if ( ui->comboBox_attribute->count() > 0 )
-    {
+    if ( ui->comboBox_attribute->count() > 0 ) {
         enableUI( true );
         ui->comboBox_attribute->setCurrentIndex( 0 );
     }
@@ -218,8 +210,7 @@ void Timeline::registerKeyFramedValue(
     auto it      = std::find_if( values.begin(), values.end(), [&name]( const auto& frame ) {
         return frame.m_name == name;
     } );
-    if ( it != values.end() )
-    {
+    if ( it != values.end() ) {
         LOG( logWARNING ) << "[Timeline] Already existing KeyFramedValue: " << name
                           << "\" on Entity \"" << ent->getName() << "\". Will not register."
                           << std::endl;
@@ -245,8 +236,7 @@ void Timeline::registerKeyFramedValue(
     auto it      = std::find_if( values.begin(), values.end(), [name]( const auto& frame ) {
         return frame.m_name == name;
     } );
-    if ( it != values.end() )
-    {
+    if ( it != values.end() ) {
         LOG( logWARNING ) << "[Timeline] Already existing KeyFramedValue: \"" << name
                           << "\" on Component \"" << comp->getName() << "\". Will not register."
                           << std::endl;
@@ -273,8 +263,7 @@ void Timeline::registerKeyFramedValue(
     auto it      = std::find_if( values.begin(), values.end(), [&name]( const auto& frame ) {
         return frame.m_name == name;
     } );
-    if ( it != values.end() )
-    {
+    if ( it != values.end() ) {
         LOG( logWARNING ) << "[Timeline] Already existing KeyFramedValue: " << name
                           << "\" on RenderObject \"" << roIdx << "\". Will not register."
                           << std::endl;
@@ -332,10 +321,10 @@ void Timeline::on_pingPong_toggled( bool checked ) {
 
 void Timeline::updateKeyFrames( Scalar time ) {
     auto update = [time]( auto& keyFrames ) {
-        for ( auto& KF : keyFrames )
-        {
-            for ( auto& kf : KF.second )
-            { kf.updateKeyFrame( time ); }
+        for ( auto& KF : keyFrames ) {
+            for ( auto& kf : KF.second ) {
+                kf.updateKeyFrame( time );
+            }
         }
     };
     update( m_entityKeyFrames );
@@ -348,24 +337,20 @@ void Timeline::onClearKeyFrames() {
 }
 
 void Timeline::onAddingKeyFrame( Scalar time ) {
-    if ( m_current.m_value )
-    {
+    if ( m_current.m_value ) {
         m_current.insertKeyFrame( time );
         emit keyFrameAdded( time );
     }
 }
 
 void Timeline::onRemovingKeyFrame( size_t i ) {
-    if ( m_current.m_value )
-    {
+    if ( m_current.m_value ) {
         const Scalar time = m_current.m_value->getTimes()[i];
-        if ( m_current.m_value->removeKeyFrame( i ) )
-        {
+        if ( m_current.m_value->removeKeyFrame( i ) ) {
             m_current.updateKeyFrame( time );
             emit keyFrameDeleted( i );
         }
-        else
-        {
+        else {
             LOG( logWARNING ) << "[Timeline] Error: Cannot remove keyFrame at "
                               << Scalar( ui->m_cursorSpin->value() );
         }
@@ -373,8 +358,7 @@ void Timeline::onRemovingKeyFrame( size_t i ) {
 }
 
 void Timeline::onChangingKeyFrame( size_t i ) {
-    if ( m_current.m_value )
-    {
+    if ( m_current.m_value ) {
         Scalar time = m_current.m_value->getTimes()[i];
         m_current.insertKeyFrame( time );
         emit keyFrameChanged( i );
@@ -382,10 +366,8 @@ void Timeline::onChangingKeyFrame( size_t i ) {
 }
 
 void Timeline::onMovingKeyFrame( size_t i, Scalar time1 ) {
-    if ( m_current.m_value )
-    {
-        if ( !Ra::Core::Math::areApproxEqual( m_current.m_value->getTimes()[i], time1 ) )
-        {
+    if ( m_current.m_value ) {
+        if ( !Ra::Core::Math::areApproxEqual( m_current.m_value->getTimes()[i], time1 ) ) {
             m_current.m_value->moveKeyFrame( i, time1 );
             m_current.updateKeyFrame( time1 );
             emit keyFrameMoved( i, time1 );
@@ -394,22 +376,18 @@ void Timeline::onMovingKeyFrame( size_t i, Scalar time1 ) {
 }
 
 void Timeline::onMovingKeyFrames( size_t first, Scalar offset ) {
-    if ( m_current.m_value )
-    {
+    if ( m_current.m_value ) {
         auto times        = m_current.m_value->getTimes();
         const Scalar time = times[first];
-        if ( offset < 0 )
-        {
-            for ( int i = 0; i < int( times.size() ); ++i )
-            {
+        if ( offset < 0 ) {
+            for ( int i = 0; i < int( times.size() ); ++i ) {
                 const Scalar t = times[i];
                 if ( t >= time ) { m_current.m_value->moveKeyFrame( i, t + offset ); }
             }
         }
         else // go from the end to ensure we do not mess up keyframes
         {
-            for ( int i = times.size() - 1; i >= 0; --i )
-            {
+            for ( int i = times.size() - 1; i >= 0; --i ) {
                 const Scalar t = times[i];
                 if ( t >= time ) { m_current.m_value->moveKeyFrame( i, t + offset ); }
             }
@@ -453,8 +431,7 @@ void Timeline::on_comboBox_attribute_currentIndexChanged( const QString& arg1 ) 
         list = keyFramedValues->second;                                        \
     }
 
-    switch ( names.size() )
-    {
+    switch ( names.size() ) {
     case 2: {
         const std::string entityName = names.at( 0 ).toStdString();
         const std::string frameName  = names.at( 1 ).toStdString();
@@ -463,8 +440,7 @@ void Timeline::on_comboBox_attribute_currentIndexChanged( const QString& arg1 ) 
         };
         GET_KEYFRAMEDVALUE_LIST( m_entityKeyFrames, lambda );
         GET_KEYFRAMEDVALUE( list, frameName );
-    }
-    break;
+    } break;
     case 3: {
         const std::string compName  = names.at( 1 ).toStdString();
         const std::string frameName = names.at( 2 ).toStdString();
@@ -473,8 +449,7 @@ void Timeline::on_comboBox_attribute_currentIndexChanged( const QString& arg1 ) 
         };
         GET_KEYFRAMEDVALUE_LIST( m_componentKeyFrames, lambda );
         GET_KEYFRAMEDVALUE( list, frameName );
-    }
-    break;
+    } break;
     case 4: {
         const QStringList fullRoName = names.at( 2 ).split( '_' );
         bool ok;
@@ -484,8 +459,7 @@ void Timeline::on_comboBox_attribute_currentIndexChanged( const QString& arg1 ) 
         const std::string frameName = names.at( 3 ).toStdString();
         GET_KEYFRAMEDVALUE_LIST( m_renderObjectKeyFrames, lambda );
         GET_KEYFRAMEDVALUE( list, frameName );
-    }
-    break;
+    } break;
     default:
         LOG_AND_RETURN;
     }
@@ -495,8 +469,9 @@ void Timeline::on_comboBox_attribute_currentIndexChanged( const QString& arg1 ) 
 
     // update ui
     const auto times = m_current.m_value->getTimes();
-    for ( const auto& t : times )
-    { ui->frame_selector->onAddingKeyFrame( t, false ); }
+    for ( const auto& t : times ) {
+        ui->frame_selector->onAddingKeyFrame( t, false );
+    }
 }
 
 void Timeline::on_pushButton_editAttribute_clicked() {
@@ -505,8 +480,7 @@ void Timeline::on_pushButton_editAttribute_clicked() {
 
 void Timeline::on_toolButton_help_clicked() {
     static bool is_showing = false;
-    if ( !is_showing )
-    {
+    if ( !is_showing ) {
         HelpDialog* dialog = new HelpDialog( this );
         dialog->show();
         is_showing = true;

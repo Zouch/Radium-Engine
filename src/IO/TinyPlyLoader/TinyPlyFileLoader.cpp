@@ -57,8 +57,7 @@ inline std::vector<uint8_t> read_file_binary( const std::string& pathToFile ) {
     std::ifstream file( pathToFile, std::ios::binary );
     std::vector<uint8_t> fileBufferBytes;
 
-    if ( file.is_open() )
-    {
+    if ( file.is_open() ) {
         file.seekg( 0, std::ios::end );
         size_t sizeBytes = file.tellg();
         file.seekg( 0, std::ios::beg );
@@ -81,8 +80,9 @@ void copyArrayToContainer( const uint8_t* buffer,
                            size_t count ) {
     auto data = reinterpret_cast<const DataType*>( buffer );
     container.reserve( count );
-    for ( size_t i = 0; i < count; ++i )
-    { container.emplace_back( data[i] ); }
+    for ( size_t i = 0; i < count; ++i ) {
+        container.emplace_back( data[i] );
+    }
 }
 
 template <typename DataType>
@@ -91,25 +91,22 @@ void copyArrayToContainer( const uint8_t* buffer,
                            size_t count ) {
     auto data = reinterpret_cast<const DataType*>( buffer );
     container.reserve( count );
-    for ( size_t i = 0; i < count; ++i )
-    { container.emplace_back( data[i * 3 + 0], data[i * 3 + 1], data[i * 3 + 2] ); }
+    for ( size_t i = 0; i < count; ++i ) {
+        container.emplace_back( data[i * 3 + 0], data[i * 3 + 1], data[i * 3 + 2] );
+    }
 }
 
 template <typename ContainerType>
 void copyBufferToContainer( const std::shared_ptr<tinyply::PlyData>& buffer,
                             ContainerType& container ) {
-    if ( buffer && buffer->count != 0 )
-    {
-        switch ( buffer->t )
-        {
+    if ( buffer && buffer->count != 0 ) {
+        switch ( buffer->t ) {
         case tinyply::Type::FLOAT32: {
             copyArrayToContainer<float>( buffer->buffer.get(), container, buffer->count );
-        }
-        break;
+        } break;
         case tinyply::Type::FLOAT64: {
             copyArrayToContainer<double>( buffer->buffer.get(), container, buffer->count );
-        }
-        break;
+        } break;
         default:
             LOG( logWARNING ) << "[TinyPLY] copyBufferToContainer - unsupported buffer type ..."
                               << tinyply::PropertyTable[buffer->t].str;
@@ -126,16 +123,15 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
     // For most files < 1gb, pre-loading the entire file upfront and wrapping it into a
     // stream is a net win for parsing speed, about 40% faster.
     const bool preload_into_memory = true;
-    if ( preload_into_memory )
-    {
+    if ( preload_into_memory ) {
         byte_buffer = read_file_binary( filename );
         file_stream.reset( new memory_stream( (char*)byte_buffer.data(), byte_buffer.size() ) );
     }
-    else
-    { file_stream.reset( new std::ifstream( filename, std::ios::binary ) ); }
+    else {
+        file_stream.reset( new std::ifstream( filename, std::ios::binary ) );
+    }
 
-    if ( !file_stream || file_stream->fail() )
-    {
+    if ( !file_stream || file_stream->fail() ) {
         LOG( logINFO ) << "[TinyPLY] Could not open file [" << filename << "] Aborting"
                        << std::endl;
         return nullptr;
@@ -148,8 +144,7 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
     auto elements = file.get_elements();
     if ( std::any_of( elements.begin(), elements.end(), []( const auto& e ) -> bool {
              return e.name == "face" && e.size != 0;
-         } ) )
-    {
+         } ) ) {
         // Mesh found. Let the other loaders handle it
         LOG( logINFO ) << "[TinyPLY] Faces found. Aborting" << std::endl;
         return nullptr;
@@ -159,21 +154,18 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
     FileData* fileData = new FileData( filename );
     fileData->setVerbose( true );
 
-    if ( !fileData->isInitialized() )
-    {
+    if ( !fileData->isInitialized() ) {
         delete fileData;
         LOG( logINFO ) << "[TinyPLY] Filedata cannot be initialized...";
         return nullptr;
     }
 
-    if ( fileData->isVerbose() )
-    {
+    if ( fileData->isVerbose() ) {
         LOG( logINFO ) << "[TinyPLY] File Loading begin...";
         LOG( logINFO ) << "....................................................................";
         for ( auto c : file.get_comments() )
             LOG( logINFO ) << "Comment: " << c;
-        for ( auto e : file.get_elements() )
-        {
+        for ( auto e : file.get_elements() ) {
             LOG( logINFO ) << "element - " << e.name << " (" << e.size << ")";
             for ( auto p : e.properties )
                 LOG( logINFO ) << "\tproperty - " << p.name << " ("
@@ -185,10 +177,10 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
     auto initBuffer = [&file]( const std::string& elementKey,
                                const std::vector<std::string> propertyKeys ) {
         std::shared_ptr<tinyply::PlyData> ret;
-        try
-        { ret = file.request_properties_from_element( elementKey, propertyKeys ); }
-        catch ( const std::exception& e )
-        {
+        try {
+            ret = file.request_properties_from_element( elementKey, propertyKeys );
+        }
+        catch ( const std::exception& e ) {
             ret = nullptr;
             LOG( logINFO ) << "[TinyPLY] " << e.what();
         }
@@ -206,8 +198,7 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
     /// request for vertex position
     auto vertBuffer { initBuffer( "vertex", { "x", "y", "z" } ) };
     // if there is no vertex prop, or their count is 0, then quit.
-    if ( !vertBuffer || vertBuffer->count == 0 )
-    {
+    if ( !vertBuffer || vertBuffer->count == 0 ) {
         delete fileData;
         LOG( logINFO ) << "[TinyPLY] No vertex found";
         return nullptr;
@@ -222,15 +213,13 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
     std::vector<std::pair<std::string, std::shared_ptr<tinyply::PlyData>>> allAttributes;
     const std::set<std::string> usedAttributes {
         "x", "y", "z", "nx", "ny", "nz", "alpha", "red", "green", "blue" };
-    for ( const auto& e : file.get_elements() )
-    {
-        if ( e.name == "vertex" )
-        {
-            for ( const auto& p : e.properties )
-            {
+    for ( const auto& e : file.get_elements() ) {
+        if ( e.name == "vertex" ) {
+            for ( const auto& p : e.properties ) {
                 bool exists = usedAttributes.find( p.name ) != usedAttributes.end();
-                if ( !exists )
-                { allAttributes.emplace_back( p.name, initBuffer( "vertex", { p.name } ) ); }
+                if ( !exists ) {
+                    allAttributes.emplace_back( p.name, initBuffer( "vertex", { p.name } ) );
+                }
             }
             break;
         }
@@ -243,28 +232,23 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
     copyBufferToContainer( normalBuffer, geometry->getNormals() );
 
     size_t colorCount = colorBuffer ? colorBuffer->count : 0;
-    if ( colorCount != 0 )
-    {
+    if ( colorCount != 0 ) {
         auto& container = geometry->getColors();
         container.reserve( colorCount );
 
-        if ( alphaBuffer && alphaBuffer->count == colorCount )
-        {
+        if ( alphaBuffer && alphaBuffer->count == colorCount ) {
             uint8_t* al     = alphaBuffer->buffer.get();
             uint8_t* colors = colorBuffer->buffer.get();
-            for ( size_t i = 0; i < colorCount; ++i, al++, colors += 3 )
-            {
+            for ( size_t i = 0; i < colorCount; ++i, al++, colors += 3 ) {
                 container.emplace_back( Scalar( colors[0] ) / 255_ra,
                                         Scalar( colors[1] ) / 255_ra,
                                         Scalar( colors[2] ) / 255_ra,
                                         Scalar( *al ) / 255_ra );
             }
         }
-        else
-        {
+        else {
             uint8_t* colors = colorBuffer->buffer.get();
-            for ( size_t i = 0; i < colorCount; ++i, colors += 3 )
-            {
+            for ( size_t i = 0; i < colorCount; ++i, colors += 3 ) {
                 container.emplace_back( Scalar( colors[0] ) / 255_ra,
                                         Scalar( colors[1] ) / 255_ra,
                                         Scalar( colors[2] ) / 255_ra,
@@ -275,12 +259,10 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
 
     //// Save other attributes
     auto& attribManager = geometry->getAttribManager();
-    for ( const auto& a : allAttributes )
-    {
+    for ( const auto& a : allAttributes ) {
         // For now manage scalar properties only
         /// @todo, when all vertex attribs are managed through the attrib manager, add here
-        if ( a.second->isList )
-        {
+        if ( a.second->isList ) {
             LOG( logWARNING ) << "[TinyPLY] unmanaged vector attribute " << a.first;
             continue;
         }
@@ -302,8 +284,7 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
 
     fileData->m_loadingTime = ( std::clock() - startTime ) / Scalar( CLOCKS_PER_SEC );
 
-    if ( fileData->isVerbose() )
-    {
+    if ( fileData->isVerbose() ) {
         LOG( logINFO ) << "[TinyPLY] File Loading end.";
         fileData->displayInfo();
     }

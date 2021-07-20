@@ -24,13 +24,15 @@ inline void
 Spline<D, K>::setCtrlPoints( const Core::VectorArray<typename Spline<D, K>::Vector>& points ) {
     m_points = points;
     m_vecs.resize( points.size() - 1, Vector::Zero() );
-    for ( uint i = 0; i < m_vecs.size(); ++i )
-    { m_vecs[i] = m_points[i + 1] - m_points[i]; }
+    for ( uint i = 0; i < m_vecs.size(); ++i ) {
+        m_vecs[i] = m_points[i + 1] - m_points[i];
+    }
     setNodalVector();
     assertSplines();
 
-    for ( uint i = 0; i < m_vecs.size(); ++i )
-    { m_vecs[i] /= m_node[K + i] - m_node[i + 1]; }
+    for ( uint i = 0; i < m_vecs.size(); ++i ) {
+        m_vecs[i] /= m_node[K + i] - m_node[i + 1];
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -79,8 +81,7 @@ inline void Spline<D, K>::assertSplines() const {
 
 template <uint D, uint K>
 inline void Spline<D, K>::setNodalVector() {
-    switch ( m_type )
-    {
+    switch ( m_type ) {
     case OPEN_UNIFORM:
         setNodeToOpenUniform();
         break;
@@ -98,8 +99,9 @@ inline void Spline<D, K>::setNodeToUniform() {
     m_node.resize( K + n + 1 );
 
     Scalar step = 1.f / Scalar( n - K + 2 );
-    for ( uint i = 0; i < m_node.size(); ++i )
-    { m_node[i] = Scalar( i ) * step - step * ( Scalar )( K - 1 ); }
+    for ( uint i = 0; i < m_node.size(); ++i ) {
+        m_node[i] = Scalar( i ) * step - step * ( Scalar )( K - 1 );
+    }
 }
 
 // -----------------------------------------------------------------------------
@@ -109,13 +111,12 @@ inline void Spline<D, K>::setNodeToOpenUniform() {
     m_node.resize( K + m_points.size() );
 
     uint acc = 1;
-    for ( uint i = 0; i < m_node.size(); ++i )
-    {
+    for ( uint i = 0; i < m_node.size(); ++i ) {
         if ( i < K ) { m_node[i] = 0.f; }
-        else if ( i >= ( m_points.size() + 1 ) )
-        { m_node[i] = 1.f; }
-        else
-        {
+        else if ( i >= ( m_points.size() + 1 ) ) {
+            m_node[i] = 1.f;
+        }
+        else {
             m_node[i] = Scalar( acc ) / Scalar( m_points.size() + 1 - K );
             acc++;
         }
@@ -135,17 +136,20 @@ inline typename Spline<D, K>::Vector Spline<D, K>::eval( Scalar u,
     uint dec = 0;
     // TODO: better search with dichotomy ?
     // TODO: check for overflow
-    while ( u > node[dec + k + off] )
-    { dec++; }
+    while ( u > node[dec + k + off] ) {
+        dec++;
+    }
 
     // TODO: use buffers in attributes for better performances ?
     Core::VectorArray<Vector> pOut( k, Vector::Zero() );
-    for ( uint i = dec, j = 0; i < ( dec + k ); ++i, ++j )
-    { pOut[j] = points[i]; }
+    for ( uint i = dec, j = 0; i < ( dec + k ); ++i, ++j ) {
+        pOut[j] = points[i];
+    }
 
     std::vector<Scalar> nodeOut( k + k - 2, Scalar( 0 ) );
-    for ( uint i = ( dec + 1 ), j = 0; i < ( dec + k + k - 1 ); ++i, ++j )
-    { nodeOut[j] = node[i + off]; }
+    for ( uint i = ( dec + 1 ), j = 0; i < ( dec + k + k - 1 ); ++i, ++j ) {
+        nodeOut[j] = node[i + off];
+    }
     return evalRec( u, pOut, nodeOut, k );
 }
 
@@ -161,8 +165,7 @@ inline typename Spline<D, K>::Vector Spline<D, K>::evalRec( Scalar u,
     // TODO: use buffers in attributes for better performances ?
     Core::VectorArray<Vector> pOut( k - 1, Vector::Zero() );
 
-    for ( uint i = 0; i < ( k - 1 ); ++i )
-    {
+    for ( uint i = 0; i < ( k - 1 ); ++i ) {
         const Scalar n0 = node[i + k - 1];
         const Scalar n1 = node[i];
         const Scalar f0 = ( n0 - u ) / ( n0 - n1 );
@@ -173,8 +176,9 @@ inline typename Spline<D, K>::Vector Spline<D, K>::evalRec( Scalar u,
 
     std::vector<Scalar> nodeOut( node.size() - 2 );
 
-    for ( uint i = 1; i < node.size() - 1; ++i )
-    { nodeOut[i - 1] = node[i]; }
+    for ( uint i = 1; i < node.size() - 1; ++i ) {
+        nodeOut[i - 1] = node[i];
+    }
     return evalRec( u, pOut, nodeOut, k - 1 );
 }
 } // namespace Geometry

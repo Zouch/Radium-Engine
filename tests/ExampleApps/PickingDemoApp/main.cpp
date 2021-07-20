@@ -60,24 +60,24 @@ class DemoWindow : public Ra::Gui::SimpleWindow
     //      pickResults.m_vertexIdx  : the nearest vertex in the triangle(0, 1 or 2)
     //      pickResults.m_edgeIdx    : the nearest edge in the triangle
     void handlePicking( const Ra::Engine::Rendering::Renderer::PickingResult& pickingResult ) {
-        if ( m_isTracking )
-        {
+        if ( m_isTracking ) {
             LOG( logINFO ) << "Circle selection mode : ";
             // Access to the selection buffer within the circle
             auto& pickResults = getViewer()->getRenderer()->getPickingResults();
             // Not sure why, sometimes, we have several pickingResults ...
             LOG( logINFO ) << "Selected objects (" << pickResults.size() << ") : ";
             std::ostringstream ss;
-            for ( const auto& pr : pickResults )
-            { ss << pr.getRoIdx() << ' '; }
+            for ( const auto& pr : pickResults ) {
+                ss << pr.getRoIdx() << ' ';
+            }
             LOG( logINFO ) << ss.str();
 
             LOG( logINFO ) << "Selection buffers  (" << pickResults.size() << ") : ";
-            for ( const auto& pr : pickResults )
-            { processPickResult( pr ); }
+            for ( const auto& pr : pickResults ) {
+                processPickResult( pr );
+            }
         }
-        else
-        {
+        else {
             LOG( logINFO ) << "Single selection mode : ";
             // Access only the pixel from the selection buffer below the mouse
             processPickResult( pickingResult );
@@ -143,8 +143,7 @@ int main( int argc, char* argv[] ) {
     app.initialize( DemoWindowFactory() );
     //! [Initializing the application]
 
-    if ( argc < 2 )
-    {
+    if ( argc < 2 ) {
         // Create a scene when called without input file
         addDummyScene( app );
     }

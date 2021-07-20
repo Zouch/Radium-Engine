@@ -23,8 +23,7 @@ Gizmo::Gizmo( Engine::Scene::Component* c,
               Mode mode ) :
     m_worldTo( worldTo ), m_transform( t ), m_comp( c ), m_mode( mode ) {
     using namespace Core::Utils;
-    if ( !s_material[0] )
-    {
+    if ( !s_material[0] ) {
         auto mat      = Core::make_shared<Engine::Data::PlainMaterial>( "GizmoRedMaterial" );
         mat->m_color  = Color::Red();
         s_material[0] = mat;
@@ -38,13 +37,15 @@ Gizmo::Gizmo( Engine::Scene::Component* c,
 }
 
 Gizmo::~Gizmo() {
-    for ( auto ro : m_ros )
-    { m_comp->removeRenderObject( ro->getIndex() ); }
+    for ( auto ro : m_ros ) {
+        m_comp->removeRenderObject( ro->getIndex() );
+    }
 }
 
 void Gizmo::show( bool on ) {
-    for ( auto ro : m_ros )
-    { ro->setVisible( on ); }
+    for ( auto ro : m_ros ) {
+        ro->setVisible( on );
+    }
 }
 
 bool Gizmo::findPointOnAxis( const Core::Asset::Camera& cam,

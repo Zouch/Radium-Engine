@@ -26,8 +26,7 @@ RawShaderMaterial::~RawShaderMaterial() {
 std::string RawShaderMaterial::computeKey() {
     // Hash the shader source to obtain identification keys
     auto content = std::to_string( std::size_t( this ) );
-    for ( const auto& p : m_shaders )
-    {
+    for ( const auto& p : m_shaders ) {
         content += p.second;
         content += std::to_string( std::size_t( this ) );
     }
@@ -39,8 +38,9 @@ void RawShaderMaterial::registerDefaultTechnique() {
     // The configuration key/name is the hash of shader sources
     // The same configuration will be used as z-prepass config and opaque pass config.
     Data::ShaderConfiguration myConfig { m_materialKey };
-    for ( const auto& p : m_shaders )
-    { myConfig.addShaderSource( p.first, p.second ); }
+    for ( const auto& p : m_shaders ) {
+        myConfig.addShaderSource( p.first, p.second );
+    }
     Data::ShaderConfigurationFactory::addConfiguration( myConfig );
     // Register the technique builder for the custom material
     // For now, as we can't change the material name, always use the key of the initial

@@ -32,8 +32,7 @@ AttribArrayDisplayable::AttribArrayDisplayable( const std::string& name,
 
 size_t Mesh::getNumFaces() const {
     ///\todo fix this once we have explicit triangle fan and strip management.
-    switch ( getRenderMode() )
-    {
+    switch ( getRenderMode() ) {
     case MeshRenderMode::RM_TRIANGLE_STRIP:
         [[fallthrough]];
     case MeshRenderMode::RM_TRIANGLE_FAN:
@@ -53,8 +52,7 @@ void Mesh::loadGeometry( const Core::Vector3Array& vertices, const std::vector<u
 
     auto nIdx = indices.size();
 
-    if ( indices.empty() )
-    {
+    if ( indices.empty() ) {
         m_numElements = vertices.size();
         setRenderMode( RM_POINTS );
     }
@@ -69,8 +67,7 @@ void Mesh::loadGeometry( const Core::Vector3Array& vertices, const std::vector<u
     CORE_ASSERT( m_renderMode != GL_LINES_ADJACENCY || nIdx % 4 == 0,
                  "There should be 4 indices per line adjacency" );
     Core::Geometry::TriangleMesh::IndexContainerType mindices;
-    for ( uint i = 0; i < indices.size(); i = i + 3 )
-    {
+    for ( uint i = 0; i < indices.size(); i = i + 3 ) {
         // We store all indices in order. This means that for lines we have
         // (L00, L01, L10), (L11, L20, L21) etc. We fill the missing by wrapping around indices.
         mindices.push_back( { indices[i], indices[( i + 1 ) % nIdx], indices[( i + 2 ) % nIdx] } );
@@ -85,8 +82,7 @@ void Mesh::loadGeometry( const Core::Vector3Array& vertices, const std::vector<u
 }
 
 void AttribArrayDisplayable::updatePickingRenderMode() {
-    switch ( getRenderMode() )
-    {
+    switch ( getRenderMode() ) {
     case AttribArrayDisplayable::RM_POINTS: {
         Displayable::m_pickingRenderMode = PKM_POINTS;
         break;
@@ -122,8 +118,7 @@ void AttribArrayDisplayable::updatePickingRenderMode() {
 
 void AttribArrayDisplayable::setDirty( const std::string& name ) {
     auto itr = m_handleToBuffer.find( name );
-    if ( itr == m_handleToBuffer.end() )
-    {
+    if ( itr == m_handleToBuffer.end() ) {
         m_handleToBuffer[name] = m_dataDirty.size();
         m_dataDirty.push_back( true );
         m_vbos.emplace_back( nullptr );
@@ -135,8 +130,7 @@ void AttribArrayDisplayable::setDirty( const std::string& name ) {
 }
 
 void AttribArrayDisplayable::setDirty( unsigned int index ) {
-    if ( index < m_dataDirty.size() )
-    {
+    if ( index < m_dataDirty.size() ) {
         m_dataDirty[index] = true;
         m_isDirty          = true;
     }
@@ -145,8 +139,7 @@ void AttribArrayDisplayable::setDirty( unsigned int index ) {
 void AttribArrayDisplayable::setDirty( const AttribArrayDisplayable::MeshData& type ) {
     auto name = getAttribName( type );
     auto itr  = m_handleToBuffer.find( name );
-    if ( itr == m_handleToBuffer.end() )
-    {
+    if ( itr == m_handleToBuffer.end() ) {
         m_handleToBuffer[name] = m_dataDirty.size();
         m_dataDirty.push_back( true );
         m_vbos.emplace_back( nullptr );
@@ -158,8 +151,7 @@ void AttribArrayDisplayable::setDirty( const AttribArrayDisplayable::MeshData& t
 }
 
 void PointCloud::render( const ShaderProgram* prog ) {
-    if ( m_vao )
-    {
+    if ( m_vao ) {
         autoVertexAttribPointer( prog );
         m_vao->bind();
         m_vao->drawArrays(

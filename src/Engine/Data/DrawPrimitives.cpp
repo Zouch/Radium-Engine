@@ -111,8 +111,7 @@ AttribArrayDisplayablePtr Triangle( const Core::Vector3& a,
                                     const Core::Vector3& c,
                                     const Core::Utils::Color& color,
                                     bool fill ) {
-    if ( fill )
-    {
+    if ( fill ) {
         Geometry::TriangleMesh geom;
         geom.setVertices( { a, b, c } );
         geom.setIndices( { { 0, 1, 2 } } );
@@ -120,8 +119,7 @@ AttribArrayDisplayablePtr Triangle( const Core::Vector3& a,
                         Core::Vector4Array { geom.vertices().size(), color } );
         return make_shared<Mesh>( "Triangle Primitive", std::move( geom ) );
     }
-    else
-    {
+    else {
         Geometry::LineMesh geom;
         geom.setVertices( { a, b, c } );
         geom.setIndices( { { 0, 1 }, { 1, 2 }, { 2, 0 } } );
@@ -145,8 +143,7 @@ MeshPtr QuadStrip( const Core::Vector3& a,
     vertices[1]     = B + x;
     indices[0]      = 0;
     indices[1]      = 1;
-    for ( uint i = 0; i < quads; ++i )
-    {
+    for ( uint i = 0; i < quads; ++i ) {
         B += y;
         vertices[2 * i + 2] = B;
         vertices[2 * i + 3] = B + x;
@@ -185,8 +182,7 @@ LineMeshPtr Circle( const Core::Vector3& center,
     vertices[0] = center + radius * ( std::cos( theta ) * xPlane + std::sin( theta ) * yPlane );
     theta += thetaInc;
 
-    for ( uint i = 1; i <= segments; ++i )
-    {
+    for ( uint i = 1; i <= segments; ++i ) {
         vertices[i] = center + radius * ( std::cos( theta ) * xPlane + std::sin( theta ) * yPlane );
         indices[i - 1] = { i - 1, i };
         theta += thetaInc;
@@ -222,8 +218,7 @@ LineMeshPtr CircleArc( const Core::Vector3& center,
     vertices[0] = center + radius * ( std::cos( theta ) * xPlane + std::sin( theta ) * yPlane );
     theta += thetaInc;
 
-    for ( uint i = 1; i <= segments; ++i )
-    {
+    for ( uint i = 1; i <= segments; ++i ) {
         vertices[i] = center + radius * ( std::cos( theta ) * xPlane + std::sin( theta ) * yPlane );
         indices[i - 1] = { i - 1, i };
 
@@ -314,8 +309,7 @@ MeshPtr Disk( const Core::Vector3& center,
 
     vertices[0] = center;
     indices[0]  = 0;
-    for ( uint i = 1; i < seg; ++i )
-    {
+    for ( uint i = 1; i < seg; ++i ) {
         vertices[i] = center + radius * ( std::cos( theta ) * xPlane + std::sin( theta ) * yPlane );
         indices[i]  = i;
 
@@ -427,8 +421,7 @@ MeshPtr Grid( const Core::Vector3& center,
     const Core::Vector3 startPosY { center - halfWidth * y };
     const Core::Vector3 endPosY { center + halfWidth * y };
     Core::Vector3 currentPosX { startPosX };
-    for ( uint i = 0; i < res + 1; ++i )
-    {
+    for ( uint i = 0; i < res + 1; ++i ) {
         vertices.push_back( startPosY + currentPosX );
         vertices.push_back( endPosY + currentPosX );
         indices.push_back( uint( vertices.size() ) - 2 );
@@ -437,8 +430,7 @@ MeshPtr Grid( const Core::Vector3& center,
     }
 
     Core::Vector3 currentPosY = startPosY;
-    for ( uint i = 0; i < res + 1; ++i )
-    {
+    for ( uint i = 0; i < res + 1; ++i ) {
         vertices.push_back( startPosX + currentPosY );
         vertices.push_back( endPosX + currentPosY );
         indices.push_back( uint( vertices.size() ) - 2 );
@@ -458,8 +450,9 @@ MeshPtr Grid( const Core::Vector3& center,
 MeshPtr AABB( const Core::Aabb& aabb, const Core::Utils::Color& color ) {
     Core::Vector3Array vertices( 8 );
 
-    for ( uint i = 0; i < 8; ++i )
-    { vertices[i] = aabb.corner( static_cast<Core::Aabb::CornerType>( i ) ); }
+    for ( uint i = 0; i < 8; ++i ) {
+        vertices[i] = aabb.corner( static_cast<Core::Aabb::CornerType>( i ) );
+    }
 
     std::vector<uint> indices = {
         0, 1, 1, 3, 3, 2, 2, 0, // Floor
@@ -479,8 +472,9 @@ MeshPtr AABB( const Core::Aabb& aabb, const Core::Utils::Color& color ) {
 MeshPtr OBB( const Obb& obb, const Core::Utils::Color& color ) {
     Core::Vector3Array vertices( 8 );
 
-    for ( uint i = 0; i < 8; ++i )
-    { vertices[i] = obb.worldCorner( i ); }
+    for ( uint i = 0; i < 8; ++i ) {
+        vertices[i] = obb.worldCorner( i );
+    }
 
     std::vector<uint> indices = {
         0, 1, 1, 3, 3, 2, 2, 0, // Floor
@@ -508,14 +502,12 @@ MeshPtr Spline( const Core::Geometry::Spline<3, 3>& spline,
     indices.reserve( pointCount * 2 - 2 );
 
     Scalar dt = Scalar( 1 ) / Scalar( pointCount - 1 );
-    for ( uint i = 0; i < pointCount; ++i )
-    {
+    for ( uint i = 0; i < pointCount; ++i ) {
         Scalar t = dt * i;
         vertices.push_back( spline.f( t ) );
     }
 
-    for ( uint i = 0; i < pointCount - 1; ++i )
-    {
+    for ( uint i = 0; i < pointCount - 1; ++i ) {
         indices.push_back( i );
         indices.push_back( i + 1 );
     }
@@ -534,15 +526,16 @@ MeshPtr LineStrip( const Core::Vector3Array& vertices, const Core::Vector4Array&
     std::vector<uint> indices( vertices.size() );
     std::iota( indices.begin(), indices.end(), 0 );
     auto r = ( vertices.size() % 3 );
-    if ( r != 0 )
-    {
-        for ( ; r < 3; ++r )
-        { indices.push_back( vertices.size() - 1 ); }
+    if ( r != 0 ) {
+        for ( ; r < 3; ++r ) {
+            indices.push_back( vertices.size() - 1 );
+        }
     }
     MeshPtr mesh( new Mesh( "Line Strip Primitive", Mesh::RM_LINE_STRIP ) );
     mesh->loadGeometry( vertices, indices );
-    if ( colors.size() > 0 )
-    { mesh->getCoreGeometry().addAttrib( Mesh::getAttribName( Mesh::VERTEX_COLOR ), colors ); }
+    if ( colors.size() > 0 ) {
+        mesh->getCoreGeometry().addAttrib( Mesh::getAttribName( Mesh::VERTEX_COLOR ), colors );
+    }
     return mesh;
 }
 } // namespace DrawPrimitives

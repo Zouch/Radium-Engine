@@ -46,8 +46,7 @@ GeometryIndexLayer<T>::collection() const {
 
 template <typename T>
 inline bool GeometryIndexLayer<T>::append( const GeometryIndexLayerBase& other ) {
-    if ( shareSemantic( other ) )
-    {
+    if ( shareSemantic( other ) ) {
         const auto& othercasted = static_cast<const GeometryIndexLayer<T>&>( other );
         m_collection.insert(
             m_collection.end(), othercasted.collection().begin(), othercasted.collection().end() );
@@ -58,8 +57,7 @@ inline bool GeometryIndexLayer<T>::append( const GeometryIndexLayerBase& other )
 
 template <typename T>
 inline bool GeometryIndexLayer<T>::operator==( const GeometryIndexLayerBase& other ) const {
-    if ( shareSemantic( other ) )
-    {
+    if ( shareSemantic( other ) ) {
         const auto& othercasted = static_cast<const GeometryIndexLayer<T>&>( other );
         return othercasted.collection() == m_collection;
     }

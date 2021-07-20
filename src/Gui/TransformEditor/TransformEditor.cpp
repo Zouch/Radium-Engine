@@ -11,12 +11,13 @@ void TransformEditor::setEditable( const Engine::Scene::ItemEntry& ent ) {
 }
 
 void TransformEditor::getTransform() {
-    if ( canEdit() )
-    {
-        if ( m_currentEdit.isEntityNode() )
-        { m_transform = m_currentEdit.m_entity->getTransform(); }
-        else if ( m_currentEdit.isComponentNode() || m_currentEdit.isRoNode() )
-        { m_transform = m_currentEdit.m_component->getTransform( m_currentEdit.m_roIndex ); }
+    if ( canEdit() ) {
+        if ( m_currentEdit.isEntityNode() ) {
+            m_transform = m_currentEdit.m_entity->getTransform();
+        }
+        else if ( m_currentEdit.isComponentNode() || m_currentEdit.isRoNode() ) {
+            m_transform = m_currentEdit.m_component->getTransform( m_currentEdit.m_roIndex );
+        }
     }
 }
 
@@ -27,11 +28,11 @@ bool TransformEditor::canEdit() const {
 }
 
 void TransformEditor::setTransform( const Ra::Core::Transform& tr ) {
-    if ( canEdit() )
-    {
+    if ( canEdit() ) {
         if ( m_currentEdit.isEntityNode() ) { m_currentEdit.m_entity->setTransform( tr ); }
-        else
-        { m_currentEdit.m_component->setTransform( m_currentEdit.m_roIndex, tr ); }
+        else {
+            m_currentEdit.m_component->setTransform( m_currentEdit.m_roIndex, tr );
+        }
     }
 }
 

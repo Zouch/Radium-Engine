@@ -30,15 +30,15 @@ void VolumetricMaterial::updateRenderingParameters() {
     m_renderParameters.addParameter( "material.sigma_s", m_sigma_s );
     m_renderParameters.addParameter( "material.g", m_g );
     m_renderParameters.addParameter( "material.scale", m_scale );
-    if ( m_stepsize < 0 )
-    {
+    if ( m_stepsize < 0 ) {
         auto dim = std::sqrt( Scalar( m_texture->width() * m_texture->width() +
                                       m_texture->height() * m_texture->height() +
                                       m_texture->depth() * m_texture->depth() ) );
         m_renderParameters.addParameter( "material.stepsize", 1._ra / dim );
     }
-    else
-    { m_renderParameters.addParameter( "material.stepsize", m_stepsize ); }
+    else {
+        m_renderParameters.addParameter( "material.stepsize", m_stepsize );
+    }
     m_renderParameters.addParameter( "material.density", m_texture );
     m_renderParameters.addParameter( "material.modelToDensity", m_modelToMedium.matrix() );
 }

@@ -18,8 +18,7 @@ SelectionManager::SelectionManager( ItemModel* model, QObject* parent ) :
 
 bool SelectionManager::isSelected( const ItemEntry& ent ) const {
     QModelIndex idx = itemModel()->findEntryIndex( ent );
-    if ( idx.isValid() )
-    {
+    if ( idx.isValid() ) {
         const auto& pos = std::find( selectedIndexes().begin(), selectedIndexes().end(), idx );
         return ( pos != selectedIndexes().end() );
     }
@@ -29,8 +28,7 @@ bool SelectionManager::isSelected( const ItemEntry& ent ) const {
 std::vector<ItemEntry> SelectionManager::selectedEntries() const {
     std::vector<ItemEntry> result;
     result.reserve( uint( selectedIndexes().size() ) );
-    for ( const auto& idx : selectedIndexes() )
-    {
+    for ( const auto& idx : selectedIndexes() ) {
         result.push_back( itemModel()->getEntry( idx ) );
         CORE_ASSERT( result.back().isValid(), "Invalid entry in selection" );
     }
@@ -50,8 +48,7 @@ void SelectionManager::select( const ItemEntry& ent, QItemSelectionModel::Select
 void SelectionManager::setCurrentEntry( const ItemEntry& ent,
                                         QItemSelectionModel::SelectionFlags command ) {
     QModelIndex idx = itemModel()->findEntryIndex( ent );
-    if ( idx.isValid() )
-    {
+    if ( idx.isValid() ) {
         QItemSelectionModel::setCurrentIndex( idx, command );
         emit currentChanged( idx, idx );
     }
@@ -63,8 +60,9 @@ void SelectionManager::onModelRebuilt() {
 
 void SelectionManager::printSelection() const {
     LOG( logDEBUG ) << "Selected entries : ";
-    for ( const auto& ent : selectedEntries() )
-    { LOG( logDEBUG ) << getEntryName( Ra::Engine::RadiumEngine::getInstance(), ent ); }
+    for ( const auto& ent : selectedEntries() ) {
+        LOG( logDEBUG ) << getEntryName( Ra::Engine::RadiumEngine::getInstance(), ent );
+    }
     LOG( logDEBUG ) << "Current : "
                     << getEntryName( Ra::Engine::RadiumEngine::getInstance(), currentItem() );
 }

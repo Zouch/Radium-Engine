@@ -87,8 +87,7 @@ class RA_CORE_API LoopSubdivider
             //              1
             // alpha(n) = ---- * (40 - ( 3 + 2 cos( 2 Pi / n ) )^2 )
             //             64
-            if ( ++m_valence )
-            {
+            if ( ++m_valence ) {
                 double inv_v = 1.0 / double( m_valence );
                 double t     = ( 3.0 + 2.0 * std::cos( 2.0 * Math::Pi * inv_v ) );
                 double alpha = ( 40.0 - t * t ) / 64.0;

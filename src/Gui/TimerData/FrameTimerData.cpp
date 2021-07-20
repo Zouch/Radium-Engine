@@ -17,8 +17,7 @@ void FrameTimerData::print( std::ostream& ostream ) const {
         ostream << "\ttasks: " << taStart << " " << taEnd << " " << taEnd - taStart << "\n";
         ostream << "\t{"
                 << "\n";
-        for ( const auto& tData : taskData )
-        {
+        for ( const auto& tData : taskData ) {
             long tadaStart = Ra::Core::Utils::getIntervalMicro( frameStart, tData.start );
             long tadaEnd   = Ra::Core::Utils::getIntervalMicro( frameStart, tData.end );
             ostream << "\t\t" << tData.taskName << "(" << tData.threadId << "): " << tadaStart

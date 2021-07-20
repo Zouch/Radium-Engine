@@ -37,8 +37,7 @@ WindowQt::WindowQt( QScreen* screen ) :
     m_context = std::make_unique<QOpenGLContext>( this );
     m_context->setFormat( QSurfaceFormat::defaultFormat() );
 
-    if ( !m_context->create() )
-    {
+    if ( !m_context->create() ) {
         LOG( logINFO ) << "Could not create OpenGL context.";
         QApplication::quit();
     }
@@ -63,20 +62,21 @@ QOpenGLContext* WindowQt::context() {
 }
 
 void WindowQt::makeCurrent() {
-    if ( QOpenGLContext::currentContext() != m_context.get() )
-    {
+    if ( QOpenGLContext::currentContext() != m_context.get() ) {
         m_context->makeCurrent( this );
         // reset counter (in case another viewer has broken our context activation counter)
         m_contextActivationCount = 0;
     }
-    else
-    { ++m_contextActivationCount; }
+    else {
+        ++m_contextActivationCount;
+    }
 }
 
 void WindowQt::doneCurrent() {
     if ( m_contextActivationCount == 0 ) { m_context->doneCurrent(); }
-    else
-    { --m_contextActivationCount; }
+    else {
+        --m_contextActivationCount;
+    }
 }
 
 void WindowQt::resizeEvent( QResizeEvent* event ) {
@@ -88,8 +88,7 @@ void WindowQt::exposeEvent( QExposeEvent* ) {
 }
 
 void WindowQt::initialize() {
-    if ( !m_glInitialized.load() )
-    {
+    if ( !m_glInitialized.load() ) {
         makeCurrent();
         initializeGL();
         doneCurrent();
@@ -104,8 +103,7 @@ void WindowQt::resizeInternal( QResizeEvent* event ) {
 #ifdef OS_MACOS
     // Ugly patch since Qt seems buggy on this point on macos, raise two resize call the first time.
     if ( event->size().width() < minimumSize().width() ||
-         event->size().height() < minimumSize().height() )
-    {
+         event->size().height() < minimumSize().height() ) {
         QSize size { std::max( event->size().width(), minimumSize().width() ),
                      std::max( event->size().height(), minimumSize().height() ) };
         QResizeEvent* patchEvent = new QResizeEvent( size, event->oldSize() );
@@ -152,8 +150,7 @@ bool WindowQt::initializeGL() {
 }
 
 void WindowQt::cleanupGL() {
-    if ( m_glInitialized.load() )
-    {
+    if ( m_glInitialized.load() ) {
         makeCurrent();
 
         deinitializeGL();

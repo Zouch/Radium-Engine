@@ -142,13 +142,11 @@ class RA_ENGINE_API AttribArrayDisplayable : public Displayable
         explicit AttribObserver( AttribArrayDisplayable* displayable, int idx ) :
             m_displayable( displayable ), m_idx( idx ) {}
         void operator()() {
-            if ( m_idx < int( m_displayable->m_dataDirty.size() ) )
-            {
+            if ( m_idx < int( m_displayable->m_dataDirty.size() ) ) {
                 m_displayable->m_dataDirty[m_idx] = true;
                 m_displayable->m_isDirty          = true;
             }
-            else
-            {
+            else {
                 /// \todo Should never be here
                 LOG( logDEBUG ) << "Invalid dirty bit notified on " << m_displayable->getName();
             }
@@ -474,8 +472,7 @@ CoreMeshType createCoreMeshFromGeometryData( const Ra::Core::Asset::GeometryData
     std::copy(
         data->getVertices().begin(), data->getVertices().end(), std::back_inserter( vertices ) );
 
-    if ( data->hasNormals() )
-    {
+    if ( data->hasNormals() ) {
         normals.reserve( data->getVerticesSize() );
         std::copy(
             data->getNormals().begin(), data->getNormals().end(), std::back_inserter( normals ) );
@@ -488,26 +485,24 @@ CoreMeshType createCoreMeshFromGeometryData( const Ra::Core::Asset::GeometryData
     mesh.setNormals( std::move( normals ) );
 
     // \todo remove when data will handle all the attributes in a coherent way.
-    if ( data->hasTangents() )
-    {
+    if ( data->hasTangents() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_TANGENT ),
                         data->getTangents() );
     }
 
-    if ( data->hasBiTangents() )
-    {
+    if ( data->hasBiTangents() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_BITANGENT ),
                         data->getBiTangents() );
     }
 
-    if ( data->hasTextureCoordinates() )
-    {
+    if ( data->hasTextureCoordinates() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_TEXCOORD ),
                         data->getTexCoords() );
     }
 
-    if ( data->hasColors() )
-    { mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_COLOR ), data->getColors() ); }
+    if ( data->hasColors() ) {
+        mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_COLOR ), data->getColors() );
+    }
 
     // add custom attribs
     // only attributs not handled before are handled by data->getAttribManager()

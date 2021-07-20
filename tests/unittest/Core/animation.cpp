@@ -68,8 +68,9 @@ TEST_CASE( "Core/Animation/KeyFramedValue", "[Core][Core/Animation][KeyFramedVal
     };
 
     auto checkSorting = []( auto& lkf ) {
-        for ( size_t i = 1; i < lkf.size(); ++i )
-        { REQUIRE( lkf[i - 1].first < lkf[i].first ); }
+        for ( size_t i = 1; i < lkf.size(); ++i ) {
+            REQUIRE( lkf[i - 1].first < lkf[i].first );
+        }
     };
 
     SECTION( "Test keyframe manipulation" ) {
@@ -223,8 +224,7 @@ TEST_CASE( "Core/Animation/KeyFramedValue", "[Core][Core/Animation][KeyFramedVal
         REQUIRE( Math::areApproxEqual( kf.at( kf[0].first - 1, linearInterpolate<Scalar> ),
                                        kf[0].second ) );
         // Evaluating at keyframe time should give keyframe value
-        for ( size_t i = 0; i < kf.size(); ++i )
-        {
+        for ( size_t i = 0; i < kf.size(); ++i ) {
             REQUIRE( Math::areApproxEqual( kf.at( kf[i].first, linearInterpolate<Scalar> ),
                                            kf[i].second ) );
         }

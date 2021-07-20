@@ -88,8 +88,7 @@ TEST_CASE( "Core/Geometry/IndexedGeometry", "[Core][Core/Geometry][IndexedGeomet
     // Check layer keys iterator: we should traverse all keys
     REQUIRE( keys.size() != 0 );
     //! [Iterating over layer keys]
-    for ( const auto& k : geo.layerKeys() )
-    {
+    for ( const auto& k : geo.layerKeys() ) {
         REQUIRE( keys.erase( k ) == 1 );
         REQUIRE( geo.countLayers( k ) == 1 );
     }
@@ -232,15 +231,13 @@ TEST_CASE( "Core/Geometry/IndexedGeometry/Attributes", "[Core][Core/Geometry][In
         [&cpt, &attribM2_1, &attribM2_2, &attrMgr]( Ra::Core::Utils::AttribBase* b ) {
             cpt++;
             // 3 since we want to skip position and normals
-            if ( cpt == 3 )
-            {
+            if ( cpt == 3 ) {
                 auto& t        = b->cast<Vector3>();
                 const void* p1 = t.dataPtr();
                 const void* p2 = attribM2_1.dataPtr();
                 REQUIRE( p1 == p2 );
             }
-            if ( cpt == 4 )
-            {
+            if ( cpt == 4 ) {
                 // const to check const cast;
                 const Ra::Core::Utils::AttribBase* cb   = b;
                 const Ra::Core::Utils::Attrib<float>& t = cb->cast<float>();
@@ -298,8 +295,7 @@ TEST_CASE( "Core/Geometry/IndexedGeometry/CopyAllAttributes",
     auto& buf3    = attrib3.getDataWithLock();
 
     buf3.reserve( 3 );
-    for ( int val = 1; val <= 3; ++val )
-    {
+    for ( int val = 1; val <= 3; ++val ) {
         Vector5 v;
         v << val, val, val, val, val;
         buf3.push_back( v );

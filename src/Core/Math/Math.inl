@@ -25,8 +25,9 @@ inline T ipow( const T& x, uint exp ) {
     if ( exp == 1 ) { return x; }
     T p = ipow( x, exp / 2 );
     if ( ( exp % 2 ) == 0 ) { return p * p; }
-    else
-    { return p * p * x; }
+    else {
+        return p * p * x;
+    }
 }
 
 /// This helper class is needed because C++ doesn't support function template

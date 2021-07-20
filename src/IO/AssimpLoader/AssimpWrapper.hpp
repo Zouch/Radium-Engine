@@ -26,10 +26,10 @@ inline Core::Quaternion assimpToCore( const aiQuaternion& q ) {
 
 inline Core::Transform assimpToCore( const aiMatrix4x4& M ) {
     Core::Matrix4 m( Core::Matrix4::Identity() );
-    for ( uint i = 0; i < 4; ++i )
-    {
-        for ( uint j = 0; j < 4; ++j )
-        { m( i, j ) = M[i][j]; }
+    for ( uint i = 0; i < 4; ++i ) {
+        for ( uint j = 0; j < 4; ++j ) {
+            m( i, j ) = M[i][j];
+        }
     }
     return Core::Transform( m );
 }
@@ -63,8 +63,9 @@ inline std::string assimpToCore( const aiString& string ) {
 
 inline Core::VectorNi assimpToCore( const uint* index, const uint size ) {
     Core::VectorNi v( size );
-    for ( uint i = 0; i < size; ++i )
-    { v[i] = index[i]; }
+    for ( uint i = 0; i < size; ++i ) {
+        v[i] = index[i];
+    }
 
     return v;
 }

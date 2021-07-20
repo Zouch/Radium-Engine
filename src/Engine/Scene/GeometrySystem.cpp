@@ -22,12 +22,10 @@ void GeometrySystem::handleAssetLoading( Entity* entity,
 
     uint id = 0;
 
-    for ( const auto& data : geomData )
-    {
+    for ( const auto& data : geomData ) {
         Component* comp { nullptr };
         std::string componentName = "GEOM_" + entity->getName() + std::to_string( id++ );
-        switch ( data->getType() )
-        {
+        switch ( data->getType() ) {
 
         case Ra::Core::Asset::GeometryData::POINT_CLOUD:
             comp = new PointCloudComponent( componentName, entity, data );
@@ -54,8 +52,7 @@ void GeometrySystem::handleAssetLoading( Entity* entity,
 
     id = 0;
 
-    for ( const auto& data : volumeData )
-    {
+    for ( const auto& data : volumeData ) {
         std::string componentName = "VOL_" + entity->getName() + std::to_string( id++ );
         auto comp                 = new VolumeComponent( componentName, entity, data );
         registerComponent( entity, comp );

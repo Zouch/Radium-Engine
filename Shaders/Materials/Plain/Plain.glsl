@@ -35,8 +35,9 @@ vec4 getBaseColor( Material material, vec3 texCoord ) {
     if ( material.perVertexColor == 1 ) { dc.rgb = getPerVertexBaseColor().rgb; }
     if ( material.tex.hasColor == 1 ) { dc.rgb = texture( material.tex.color, texCoord.xy ).rgb; }
 
-    if ( material.tex.hasMask == 1 && texture( material.tex.mask, texCoord.xy ).r < 0.1 )
-    { dc.a = 0; }
+    if ( material.tex.hasMask == 1 && texture( material.tex.mask, texCoord.xy ).r < 0.1 ) {
+        dc.a = 0;
+    }
     return dc;
 }
 

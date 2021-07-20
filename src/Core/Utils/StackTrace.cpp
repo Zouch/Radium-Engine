@@ -13,11 +13,9 @@ std::string StackTrace( int skip ) {
     int nFrames = backtrace( callstack, nMaxFrames );
 
     std::ostringstream trace_buf;
-    for ( int i = skip; i < nFrames; i++ )
-    {
+    for ( int i = skip; i < nFrames; i++ ) {
         Dl_info info;
-        if ( dladdr( callstack[i], &info ) )
-        {
+        if ( dladdr( callstack[i], &info ) ) {
             char* demangled = nullptr;
             int status;
             demangled = abi::__cxa_demangle( info.dli_sname, NULL, 0, &status );
@@ -31,8 +29,7 @@ std::string StackTrace( int skip ) {
                       (char*)callstack[i] - (char*)info.dli_saddr );
             free( demangled );
         }
-        else
-        {
+        else {
             snprintf( buf,
                       sizeof( buf ),
                       "%-3d %*0p\n",

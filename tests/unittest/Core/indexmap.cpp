@@ -50,8 +50,7 @@ TEST_CASE( "Core/Utils/IndexMap", "[Core][Core/Utils][IndexMap]" ) {
         //////////////////////////////////////////////////
         // Test range-based for loop (relies on iterators)
         uint counter = 0;
-        for ( const Foo& f : map1 )
-        {
+        for ( const Foo& f : map1 ) {
             REQUIRE( ( f.value == 32 || f.value == 42 ) );
             ++counter;
         }
@@ -59,8 +58,7 @@ TEST_CASE( "Core/Utils/IndexMap", "[Core][Core/Utils][IndexMap]" ) {
 
         // Test non-const loop
         counter = 0;
-        for ( Foo& f : map1 )
-        {
+        for ( Foo& f : map1 ) {
             f.value = 2 * f.value;
             REQUIRE( ( f.value == 2 * 32 || f.value == 2 * 42 ) );
             ++counter;
@@ -69,8 +67,7 @@ TEST_CASE( "Core/Utils/IndexMap", "[Core][Core/Utils][IndexMap]" ) {
 
         // Test index iterators
         counter = 0;
-        for ( auto it = map1.cbegin_index(); it != map1.cend_index(); ++it )
-        {
+        for ( auto it = map1.cbegin_index(); it != map1.cend_index(); ++it ) {
             REQUIRE( ( *it == i1 || *it == i2 ) );
             ++counter;
         }
@@ -132,8 +129,7 @@ void testType() {
     T step = std::numeric_limits<T>::max() / T { 1000 };
     for ( T i = static_cast<T>( std::numeric_limits<Index::IntegerType>::max() ) + 1;
           i < static_cast<T>( std::numeric_limits<T>::max() - 2 * step );
-          i += step )
-    {
+          i += step ) {
         // Index is more than max, so it is invalid
         Index idx { i };
         REQUIRE( idx.isInvalid() );
@@ -147,8 +143,7 @@ TEST_CASE( "Core/Utils/Index/Ctor", "[Core][Core/Utils][Index]" ) {
     // testing everything is too long
     const int step = std::numeric_limits<Index::IntegerType>::max() / 1000;
     for ( Index::IntegerType i = 0; i < std::numeric_limits<Index::IntegerType>::max() - 2 * step;
-          i += step )
-    {
+          i += step ) {
         Index idx { i };
         REQUIRE( idx.isValid() );
         auto idxUl = Index { static_cast<unsigned long int>( i ) };

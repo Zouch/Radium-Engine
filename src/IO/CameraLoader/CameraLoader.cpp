@@ -26,8 +26,7 @@ bool CameraFileLoader::handleFileExtension( const std::string& extension ) const
 FileData* CameraFileLoader::loadFile( const std::string& filename ) {
     // Create the FileData
     auto fileData = new FileData( filename );
-    if ( !fileData->isInitialized() )
-    {
+    if ( !fileData->isInitialized() ) {
         delete fileData;
         LOG( logERROR ) << "[CameraLoader] Filedata cannot be initialized.";
         return nullptr;
@@ -36,8 +35,7 @@ FileData* CameraFileLoader::loadFile( const std::string& filename ) {
 
     /// Open the file
     std::ifstream ss( filename );
-    if ( !ss.is_open() )
-    {
+    if ( !ss.is_open() ) {
         delete fileData;
         LOG( logERROR ) << "[CameraLoader] Camera file " << filename << " cannot be read.";
         return nullptr;
@@ -53,15 +51,13 @@ FileData* CameraFileLoader::loadFile( const std::string& filename ) {
     bool result = !ss.fail();
     ss >> type;
     result &= !ss.fail();
-    for ( uint i = 0; i < 16; ++i )
-    {
+    for ( uint i = 0; i < 16; ++i ) {
         ss >> M[i];
         result &= !ss.fail();
     }
     ss >> fov >> znear >> zfar >> zoom >> aspect;
     result &= !ss.fail();
-    if ( !result )
-    {
+    if ( !result ) {
         delete fileData;
         LOG( logERROR ) << "[CameraLoader] Could not load camera file data: " << filename;
         return nullptr;

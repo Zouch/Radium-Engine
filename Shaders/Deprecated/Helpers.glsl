@@ -18,8 +18,7 @@ float getNs() {
 }
 
 vec3 getNormal() {
-    if ( material.tex.hasNormal == 1 )
-    {
+    if ( material.tex.hasNormal == 1 ) {
         mat3 tbn;
         vec3 binormal = normalize( cross( in_normal, in_tangent ) );
         tbn[0]        = in_tangent;
@@ -35,8 +34,7 @@ vec3 getNormal() {
 }
 
 bool toDiscard() {
-    if ( material.tex.hasAlpha == 1 )
-    {
+    if ( material.tex.hasAlpha == 1 ) {
         float alpha = texture( material.tex.alpha, in_texcoord.xy ).r;
         if ( alpha < 0.1 ) { return true; }
     }

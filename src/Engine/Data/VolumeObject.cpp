@@ -16,8 +16,7 @@ VolumeObject::VolumeObject( const std::string& name ) :
 VolumeObject::~VolumeObject() {}
 
 void VolumeObject::loadGeometry( Core::Geometry::AbstractVolume* volume, const Core::Aabb& aabb ) {
-    if ( volume != nullptr && volume->isDense() )
-    {
+    if ( volume != nullptr && volume->isDense() ) {
 
         m_mesh.loadGeometry( Core::Geometry::makeSharpBox( aabb ) );
 
@@ -77,8 +76,7 @@ void VolumeObject::loadGeometry( Core::Geometry::AbstractVolume* volume ) {
 }
 
 void VolumeObject::updateGL() {
-    if ( m_isDirty )
-    {
+    if ( m_isDirty ) {
         m_mesh.updateGL();
         GL_CHECK_ERROR;
         m_tex.initializeGL();

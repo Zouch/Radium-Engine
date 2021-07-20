@@ -19,24 +19,24 @@ vec4 getWorldSpacePosition() {
 }
 
 vec3 getWorldSpaceNormal() {
-    if ( length( in_normal.xyz ) < 0.0001 )
-    { // Spec GLSL : vector not set -> (0, 0, 0, 1)
+    if ( length( in_normal.xyz ) < 0.0001 ) { // Spec GLSL : vector not set -> (0, 0, 0, 1)
         vec3 X = dFdx( in_position );
         vec3 Y = dFdy( in_position );
         return normalize( cross( X, Y ) );
     }
-    else
-    { return normalize( in_normal ); }
+    else {
+        return normalize( in_normal );
+    }
 }
 
 #ifndef DONT_USE_INPUT_TANGENT
 vec3 getWorldSpaceTangent() {
-    if ( length( in_tangent.xyz ) < 0.0001 )
-    { // Spec GLSL : vector not set -> (0, 0, 0, 1)
+    if ( length( in_tangent.xyz ) < 0.0001 ) { // Spec GLSL : vector not set -> (0, 0, 0, 1)
         return normalize( dFdx( in_position ) );
     }
-    else
-    { return normalize( in_tangent ); }
+    else {
+        return normalize( in_tangent );
+    }
 }
 #else
 vec3 getWorldSpaceTangent() {

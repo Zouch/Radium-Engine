@@ -60,8 +60,7 @@ vec3 blinnPhongDirectional() {
 }
 
 vec3 computeLighting() {
-    switch ( light.type )
-    {
+    switch ( light.type ) {
     case 0:
         return blinnPhongDirectional();
     case 1:

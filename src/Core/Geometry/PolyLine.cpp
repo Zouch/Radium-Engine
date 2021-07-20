@@ -11,8 +11,7 @@ void PolyLine::update() {
     m_ptsDiff.reserve( m_pts.size() - 1 );
     m_lengths.reserve( m_pts.size() - 1 );
     Scalar len = 0;
-    for ( uint i = 0; i < m_pts.size() - 1; ++i )
-    {
+    for ( uint i = 0; i < m_pts.size() - 1; ++i ) {
         m_ptsDiff.push_back( m_pts[i + 1] - m_pts[i] );
         len += m_ptsDiff.back().norm();
         m_lengths.push_back( len );
@@ -31,8 +30,9 @@ void PolyLine::setPoints( const Vector3Array& pts ) {
 Scalar PolyLine::squaredDistance( const Vector3& p ) const {
     CORE_ASSERT( m_pts.size() > 1, "Line must have at least two points" );
     Scalar sqDist = std::numeric_limits<Scalar>::max();
-    for ( uint i = 0; i < m_ptsDiff.size(); ++i )
-    { sqDist = std::min( Geometry::pointToSegmentSq( p, m_pts[i], m_ptsDiff[i] ), sqDist ); }
+    for ( uint i = 0; i < m_ptsDiff.size(); ++i ) {
+        sqDist = std::min( Geometry::pointToSegmentSq( p, m_pts[i], m_ptsDiff[i] ), sqDist );
+    }
     return sqDist;
 }
 
@@ -55,14 +55,12 @@ Scalar PolyLine::project( const Vector3& p ) const {
     ts.reserve( m_ptsDiff.size() );
     ds.reserve( m_ptsDiff.size() );
 
-    for ( uint i = 0; i < m_ptsDiff.size(); ++i )
-    {
+    for ( uint i = 0; i < m_ptsDiff.size(); ++i ) {
         Scalar proj = Geometry::projectOnSegment( p, m_pts[i], m_ptsDiff[i] );
         Scalar d    = ( p - ( m_pts[i] + proj * ( m_ptsDiff[i] ) ) ).squaredNorm();
         ds.push_back( d );
         ts.push_back( proj );
-        if ( d < sqDist )
-        {
+        if ( d < sqDist ) {
             sqDist  = d;
             segment = i;
         }
@@ -70,12 +68,10 @@ Scalar PolyLine::project( const Vector3& p ) const {
 
     CORE_ASSERT( segment < m_ptsDiff.size(), "Invalid index" );
     Scalar t = ts[segment];
-    if ( t > 0 && t < 1 )
-    {
+    if ( t > 0 && t < 1 ) {
         bool prev = segment > 0 && ts[segment - 1] > 0 && ts[segment - 1] < 1;
         bool next = segment < m_ptsDiff.size() - 1 && ts[segment + 1] > 0 && ts[segment + 1] < 1;
-        if ( prev || next )
-        {
+        if ( prev || next ) {
             if ( prev && next ) { prev = ds[segment - 1] < ds[segment + 1]; }
             uint i     = prev ? segment - 1 : segment;
             Vector3 ba = -m_ptsDiff[i];
@@ -99,8 +95,7 @@ Vector3 PolyLine::f( Scalar t ) const {
     // Try to locate the segment section where f(t) belongs.
     uint i       = 0;
     Scalar lprev = 0.f;
-    while ( m_lengths[i] < param )
-    {
+    while ( m_lengths[i] < param ) {
         lprev = m_lengths[i];
         ++i;
     }
@@ -115,12 +110,10 @@ uint PolyLine::getNearestSegment( const Vector3& p ) const {
     CORE_ASSERT( m_pts.size() > 1, "Line must have at least two points" );
     Scalar sqDist = std::numeric_limits<Scalar>::max();
     uint segment  = 0;
-    for ( uint i = 0; i < m_ptsDiff.size(); ++i )
-    {
+    for ( uint i = 0; i < m_ptsDiff.size(); ++i ) {
         Scalar proj = Geometry::projectOnSegment( p, m_pts[i], m_ptsDiff[i] );
         Scalar d    = ( p - ( m_pts[i] + proj * ( m_ptsDiff[i] ) ) ).squaredNorm();
-        if ( d < sqDist )
-        {
+        if ( d < sqDist ) {
             sqDist  = d;
             segment = i;
         }

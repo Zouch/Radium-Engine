@@ -15,8 +15,9 @@ using namespace Core::Utils; // log
 TextureManager::TextureManager() = default;
 
 TextureManager::~TextureManager() {
-    for ( auto& tex : m_textures )
-    { delete tex.second; }
+    for ( auto& tex : m_textures ) {
+        delete tex.second;
+    }
     m_textures.clear();
     m_pendingTextures.clear();
     m_pendingData.clear();
@@ -44,45 +45,38 @@ void TextureManager::loadTextureImage( TextureParameters& texParameters ) {
                                      &n,
                                      0 );
 
-    if ( !data )
-    {
+    if ( !data ) {
         LOG( logERROR ) << "Something went wrong when loading image \"" << texParameters.name
                         << "\".";
         texParameters.width = texParameters.height = 0;
         return;
     }
 
-    switch ( n )
-    {
+    switch ( n ) {
     case 1: {
         texParameters.format         = GL_RED;
         texParameters.internalFormat = GL_R8;
-    }
-    break;
+    } break;
 
     case 2: {
         // suppose it is GL_LUMINANCE_ALPHA
         texParameters.format         = GL_RG;
         texParameters.internalFormat = GL_RG8;
-    }
-    break;
+    } break;
 
     case 3: {
         texParameters.format         = GL_RGB;
         texParameters.internalFormat = GL_RGB8;
-    }
-    break;
+    } break;
 
     case 4: {
         texParameters.format         = GL_RGBA;
         texParameters.internalFormat = GL_RGBA8;
-    }
-    break;
+    } break;
     default: {
         texParameters.format         = GL_RGBA;
         texParameters.internalFormat = GL_RGBA8;
-    }
-    break;
+    } break;
     }
 
     CORE_ASSERT( data, "Data is null" );
@@ -94,16 +88,14 @@ Texture* TextureManager::loadTexture( const TextureParameters& texParameters, bo
     TextureParameters texParams = texParameters;
     // TODO : allow to keep texels in texture parameters with automatic lifetime management.
     bool mustFreeTexels = false;
-    if ( texParams.texels == nullptr )
-    {
+    if ( texParams.texels == nullptr ) {
         loadTextureImage( texParams );
         mustFreeTexels = true;
     }
     auto ret = new Texture( texParams );
     ret->initializeGL( linearize );
 
-    if ( mustFreeTexels )
-    {
+    if ( mustFreeTexels ) {
         stbi_image_free( ret->getParameters().texels );
         ret->getParameters().texels = nullptr;
     }
@@ -120,8 +112,7 @@ Texture* TextureManager::getOrLoadTexture( const TextureParameters& texParameter
     {
         // Is texture pending but registered in the manager
         auto it = m_pendingTextures.find( texParameters.name );
-        if ( it != m_pendingTextures.end() )
-        {
+        if ( it != m_pendingTextures.end() ) {
             auto pendingParams             = it->second;
             auto ret                       = loadTexture( pendingParams, linearize );
             m_textures[pendingParams.name] = ret;
@@ -139,8 +130,7 @@ Texture* TextureManager::getOrLoadTexture( const TextureParameters& texParameter
 void TextureManager::deleteTexture( const std::string& filename ) {
     auto it = m_textures.find( filename );
 
-    if ( it != m_textures.end() )
-    {
+    if ( it != m_textures.end() ) {
         delete it->second;
         m_textures.erase( it );
     }
@@ -159,8 +149,7 @@ void TextureManager::updateTextureContent( const std::string& texture, void* con
 void TextureManager::updatePendingTextures() {
     if ( m_pendingData.empty() ) { return; }
 
-    for ( auto& data : m_pendingData )
-    {
+    for ( auto& data : m_pendingData ) {
         LOG( logINFO ) << "TextureManager::updateTextures \"" << data.first << "\".";
         m_textures[data.first]->updateData( data.second );
     }

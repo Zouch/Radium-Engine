@@ -63,8 +63,7 @@ MinimalComponent::MinimalComponent( Ra::Engine::Scene::Entity* entity ) :
 void updateCellCorner( Vector3& cellCorner, const Scalar cellSize, const int nCellX, const int ) {
 
     cellCorner[0] += cellSize;
-    if ( cellCorner[0] > cellSize * ( ( 2 * nCellX - 1 ) / 4_ra ) )
-    {
+    if ( cellCorner[0] > cellSize * ( ( 2 * nCellX - 1 ) / 4_ra ) ) {
         cellCorner[0] = -nCellX * cellSize / 2_ra;
         cellCorner[2] += cellSize;
     }
@@ -104,8 +103,7 @@ void MinimalComponent::initialize() {
     uint numberOfSphere = 32;
 
     //// GRID ////
-    if ( ENABLE_GRID )
-    {
+    if ( ENABLE_GRID ) {
 
         auto gridPrimitive = DrawPrimitives::Grid( Vector3::Zero(),
                                                    Vector3::UnitX(),
@@ -122,8 +120,7 @@ void MinimalComponent::initialize() {
     }
 
     //// CUBES ////
-    if ( ENABLE_CUBES )
-    {
+    if ( ENABLE_CUBES ) {
         std::shared_ptr<Mesh> cube1( new Mesh( "Cube" ) );
         auto coord = cellSize / 8_ra;
         cube1->loadGeometry( Geometry::makeSharpBox( Vector3 { coord, coord, coord } ) );
@@ -153,8 +150,7 @@ void MinimalComponent::initialize() {
         addRenderObject( renderObject2 );
     }
     //// POINTS ////
-    if ( ENABLE_POINTS )
-    {
+    if ( ENABLE_POINTS ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -167,8 +163,7 @@ void MinimalComponent::initialize() {
         testpoint->setMaterial( plainMaterial );
         addRenderObject( testpoint );
 
-        for ( int i = 0; i < 10; ++i )
-        {
+        for ( int i = 0; i < 10; ++i ) {
             Vector3 randomVec { cellCorner + offsetVec +
                                 Vector3 { dis015( gen ), dis015( gen ), dis015( gen ) } };
             Color randomCol { dis01( gen ), dis01( gen ), dis01( gen ) };
@@ -183,8 +178,7 @@ void MinimalComponent::initialize() {
         }
     }
     //// LINES ////
-    if ( ENABLE_LINES )
-    {
+    if ( ENABLE_LINES ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         auto testline = RenderObject::createRenderObject(
@@ -198,8 +192,7 @@ void MinimalComponent::initialize() {
         testline->setMaterial( plainMaterial );
         addRenderObject( testline );
 
-        for ( int i = 0; i < 20; ++i )
-        {
+        for ( int i = 0; i < 20; ++i ) {
             Vector3 randomVec1 { cellCorner + offsetVec +
                                  Vector3 { dis015( gen ), dis015( gen ), dis015( gen ) } };
             Vector3 randomVec2 { cellCorner + offsetVec +
@@ -217,8 +210,7 @@ void MinimalComponent::initialize() {
         }
     }
     //// VECTOR ////
-    if ( ENABLE_VECTORS )
-    {
+    if ( ENABLE_VECTORS ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -232,8 +224,7 @@ void MinimalComponent::initialize() {
         testvector->setMaterial( plainMaterial );
         addRenderObject( testvector );
 
-        for ( int i = 0; i < 10; ++i )
-        {
+        for ( int i = 0; i < 10; ++i ) {
             Vector3 randomVec1 { cellCorner + offsetVec +
                                  Vector3 { dis015( gen ), dis015( gen ), dis015( gen ) } };
             Vector3 randomVec2 { cellCorner + offsetVec +
@@ -252,8 +243,7 @@ void MinimalComponent::initialize() {
         }
     }
 
-    if ( ENABLE_RAYS )
-    {
+    if ( ENABLE_RAYS ) {
         /// RAY ////
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
@@ -270,8 +260,7 @@ void MinimalComponent::initialize() {
     }
 
     //// TRIANGLES ////
-    if ( ENABLE_TRIANGLES )
-    {
+    if ( ENABLE_TRIANGLES ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -304,8 +293,7 @@ void MinimalComponent::initialize() {
         triangle2->setMaterial( plainMaterial );
         addRenderObject( triangle2 );
 
-        for ( int i = 0; i < 10; ++i )
-        {
+        for ( int i = 0; i < 10; ++i ) {
             auto triwire = RenderObject::createRenderObject(
                 "test_triangle_wire",
                 this,
@@ -337,8 +325,7 @@ void MinimalComponent::initialize() {
     */
 
     //// CIRCLE ////
-    if ( ENABLE_CIRCLES )
-    {
+    if ( ENABLE_CIRCLES ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         {
@@ -356,8 +343,7 @@ void MinimalComponent::initialize() {
             addRenderObject( circle );
         }
         for ( uint j = 0; j < circleGridSize; ++j )
-            for ( uint i = 0; i < circleGridSize; ++i )
-            {
+            for ( uint i = 0; i < circleGridSize; ++i ) {
                 Vector3 circleCenter {
                     cellCorner + offsetVec +
                     Vector3 { Scalar( j ) / circleGridSize * ( cellSize - 2 * offset ),
@@ -385,8 +371,7 @@ void MinimalComponent::initialize() {
             }
     }
     //// CIRCLE ARC ////
-    if ( ENABLE_ARCS )
-    {
+    if ( ENABLE_ARCS ) {
         {
             auto arc = RenderObject::createRenderObject(
                 "test_circle",
@@ -402,10 +387,8 @@ void MinimalComponent::initialize() {
             arc->setMaterial( plainMaterial );
             addRenderObject( arc );
         }
-        for ( uint j = 0; j < circleGridSize; ++j )
-        {
-            for ( uint i = 0; i < circleGridSize; ++i )
-            {
+        for ( uint j = 0; j < circleGridSize; ++j ) {
+            for ( uint i = 0; i < circleGridSize; ++i ) {
                 Vector3 circleCenter {
                     cellCorner + offsetVec +
                     Vector3 { Scalar( j ) / circleGridSize * ( cellSize - 2 * offset ),
@@ -436,8 +419,7 @@ void MinimalComponent::initialize() {
     }
     //// SPHERE /////
 
-    if ( ENABLE_SPHERES )
-    {
+    if ( ENABLE_SPHERES ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         {
@@ -451,8 +433,7 @@ void MinimalComponent::initialize() {
             addRenderObject( sphere );
         }
         numberOfSphere = 32;
-        for ( uint i = 0; i < numberOfSphere; ++i )
-        {
+        for ( uint i = 0; i < numberOfSphere; ++i ) {
             Scalar angle { Scalar( i ) / Scalar( numberOfSphere ) * 7_ra };
             Scalar ratio { Scalar( i ) / Scalar( numberOfSphere - 1 ) };
             Vector3 center { cellCorner +
@@ -504,8 +485,7 @@ void MinimalComponent::initialize() {
         }
     }
     //// CAPSULE ////
-    if ( ENABLE_CAPSULES )
-    {
+    if ( ENABLE_CAPSULES ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -521,8 +501,7 @@ void MinimalComponent::initialize() {
     }
 
     //// DISK ////
-    if ( ENABLE_DISKS )
-    {
+    if ( ENABLE_DISKS ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -541,8 +520,7 @@ void MinimalComponent::initialize() {
     }
 
     /// NORMAL
-    if ( ENABLE_NORMALS )
-    {
+    if ( ENABLE_NORMALS ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -601,8 +579,7 @@ void MinimalComponent::initialize() {
                    );*/
 
     //// PolyMesh ////
-    if ( ENABLE_POLYS )
-    {
+    if ( ENABLE_POLYS ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -669,8 +646,7 @@ void MinimalComponent::initialize() {
         addRenderObject( renderObject2 );
     }
 
-    if ( ENABLE_LOGO )
-    {
+    if ( ENABLE_LOGO ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -682,15 +658,12 @@ void MinimalComponent::initialize() {
         std::string filename = *rp + "/DrawPrimitivesApp/Assets/radium-logo.dae";
         data                 = l.loadFile( filename );
 #endif
-        if ( data != nullptr )
-        {
+        if ( data != nullptr ) {
             auto geomData = data->getGeometryData();
 
-            for ( const auto& gd : geomData )
-            {
+            for ( const auto& gd : geomData ) {
                 std::shared_ptr<AttribArrayDisplayable> mesh { nullptr };
-                switch ( gd->getType() )
-                {
+                switch ( gd->getType() ) {
                 case Ra::Core::Asset::GeometryData::TRI_MESH:
                     mesh = std::shared_ptr<Mesh> {
                         createMeshFromGeometryData<Geometry::TriangleMesh>( "logo", gd ) };
@@ -708,15 +681,13 @@ void MinimalComponent::initialize() {
                 const Core::Asset::MaterialData* md =
                     gd->hasMaterial() ? &( gd->getMaterial() ) : nullptr;
                 // First extract the material from asset or create a default one
-                if ( md != nullptr )
-                {
+                if ( md != nullptr ) {
                     auto converter =
                         Data::EngineMaterialConverters::getMaterialConverter( md->getType() );
                     auto mat = converter.second( md );
                     roMaterial.reset( mat );
                 }
-                else
-                {
+                else {
                     auto mat             = new Data::BlinnPhongMaterial( "_DefaultBPMaterial" );
                     mat->m_renderAsSplat = mesh->getNumFaces() == 0;
                     roMaterial.reset( mat );
@@ -762,8 +733,9 @@ void MinimalComponent::initialize() {
         { 21_ra, 21_ra, 21_ra, 1_ra }, { 22_ra, 22_ra, 22_ra, 1_ra }, { 23_ra, 23_ra, 23_ra, 1_ra },
     };
 
-    for ( auto& c : colors1 )
-    { c = colorBoost * Vector4 { dis01( gen ), dis01( gen ), dis01( gen ), 1_ra }; }
+    for ( auto& c : colors1 ) {
+        c = colorBoost * Vector4 { dis01( gen ), dis01( gen ), dis01( gen ), 1_ra };
+    }
 
     Vector3uArray indices1 { { 0, 2, 1 },
                              { 0, 3, 2 },
@@ -789,8 +761,7 @@ void MinimalComponent::initialize() {
                              { 16, 23, 13 } };
 
     Vector4Array colors2 { 24, Color::White() };
-    for ( const auto& face : indices2 )
-    {
+    for ( const auto& face : indices2 ) {
         colors2[face[0]] = colors1[face[0]];
         colors2[face[1]] = colors1[face[0]];
         colors2[face[2]] = colors1[face[0]];
@@ -800,14 +771,12 @@ void MinimalComponent::initialize() {
     std::vector<int> topFaceIndices { 1, 3, 5, 6 };
     std::vector<int> bottomFaceIndices { 0, 2, 4, 7 };
 
-    for ( const auto& faceIndex : topFaceIndices )
-    {
+    for ( const auto& faceIndex : topFaceIndices ) {
         colors3[indices2[faceIndex][0]] = colors1[0];
         colors3[indices2[faceIndex][1]] = colors1[0];
         colors3[indices2[faceIndex][2]] = colors1[0];
     }
-    for ( const auto& faceIndex : bottomFaceIndices )
-    {
+    for ( const auto& faceIndex : bottomFaceIndices ) {
         colors3[indices2[faceIndex][0]] = colors1[1];
         colors3[indices2[faceIndex][1]] = colors1[1];
         colors3[indices2[faceIndex][2]] = colors1[1];
@@ -834,10 +803,10 @@ void MinimalComponent::initialize() {
                                                           // 7
                                                           { 22, 23 } };
 
-    for ( size_t i = 0; i < splitContinuousWedges.size(); ++i )
-    {
-        for ( const auto& widx : splitContinuousWedges[i] )
-        { colors4[widx] = colors1[i]; }
+    for ( size_t i = 0; i < splitContinuousWedges.size(); ++i ) {
+        for ( const auto& widx : splitContinuousWedges[i] ) {
+            colors4[widx] = colors1[i];
+        }
     }
 
     auto findHalfedge = []( TopologicalMesh& topo,
@@ -845,12 +814,10 @@ void MinimalComponent::initialize() {
                             const Vector3& to ) -> optional<TopologicalMesh::HalfedgeHandle> {
         bool found;
         TopologicalMesh::HalfedgeHandle he;
-        for ( auto he_iter = topo.halfedges_begin(); he_iter != topo.halfedges_end(); ++he_iter )
-        {
+        for ( auto he_iter = topo.halfedges_begin(); he_iter != topo.halfedges_end(); ++he_iter ) {
 
             if ( topo.point( topo.to_vertex_handle( he_iter ) ) == to &&
-                 topo.point( topo.from_vertex_handle( he_iter ) ) == from )
-            {
+                 topo.point( topo.from_vertex_handle( he_iter ) ) == from ) {
                 found = true;
                 he    = *he_iter;
             }
@@ -873,8 +840,7 @@ void MinimalComponent::initialize() {
         addRenderObject( renderObject2 );
     };
 
-    if ( ENABLE_COLLAPSE )
-    {
+    if ( ENABLE_COLLAPSE ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -967,8 +933,7 @@ void MinimalComponent::initialize() {
         addMergeScene( pos, points2, colors2, indices4, points1[5], points1[2] );
     }
 
-    if ( ENABLE_SPLIT )
-    {
+    if ( ENABLE_SPLIT ) {
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
         updateCellCorner( cellCorner, cellSize, nCellX, nCellY );
 
@@ -996,10 +961,8 @@ void MinimalComponent::initialize() {
 
                 addMesh( pos, topo );
 
-                for ( int i = 0; i < 2; ++i )
-                {
-                    for ( auto f : { 0.25_ra, 0.5_ra, 0.75_ra } )
-                    {
+                for ( int i = 0; i < 2; ++i ) {
+                    for ( auto f : { 0.25_ra, 0.5_ra, 0.75_ra } ) {
                         pos += up;
                         topo      = TopologicalMesh { mesh };
                         optHe     = findHalfedge( topo, from, to );

@@ -39,8 +39,9 @@ class CameraManipulator2D : public Ra::Gui::TrackballCameraManipulator
             false );
 
         // ignore rotate
-        if ( m_currentAction == TRACKBALLCAMERA_ROTATE )
-        { m_currentAction = Ra::Core::Utils::Index::Invalid(); }
+        if ( m_currentAction == TRACKBALLCAMERA_ROTATE ) {
+            m_currentAction = Ra::Core::Utils::Index::Invalid();
+        }
 
         return m_currentAction.isValid();
     }

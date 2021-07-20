@@ -13,8 +13,7 @@ TEST_CASE( "Core/Math/Algebra", "[Core][Core/Math][Algebra]" ) {
                             { 0.f, -1.42f, -5.3e5f },
                             { 0.9999f, 1.99999f, -1.000001f } };
 
-        for ( uint i = 0; i < 3; ++i )
-        {
+        for ( uint i = 0; i < 3; ++i ) {
             const Vector3& v = tests[i];
             Vector3 fl( std::floor( v.x() ), std::floor( v.y() ), std::floor( v.z() ) );
             Vector3 ce( std::ceil( v.x() ), std::ceil( v.y() ), std::ceil( v.z() ) );

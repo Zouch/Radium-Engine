@@ -11,11 +11,9 @@ void System::registerComponent( const Entity* ent, Component* component ) {
     // Perform checks on debug
 #if defined( DEBUG )
     CORE_ASSERT( component->getEntity() == ent, "Component does not belong to entity" );
-    for ( const auto& pair : m_components )
-    {
+    for ( const auto& pair : m_components ) {
         CORE_ASSERT( pair.second != component, "Component already registered" );
-        if ( pair.first == ent )
-        {
+        if ( pair.first == ent ) {
             CORE_ASSERT( pair.second->getName() != component->getName(),
                          "A component with the same name is already associated with this entity" );
         }
@@ -44,14 +42,14 @@ void System::unregisterAllComponents( const Entity* entity ) {
     while ( ( pos = std::find_if(
                   m_components.begin(), m_components.end(), [entity]( const auto& pair ) {
                       return pair.first == entity;
-                  } ) ) != m_components.end() )
-    { m_components.erase( pos ); }
+                  } ) ) != m_components.end() ) {
+        m_components.erase( pos );
+    }
 }
 
 std::vector<Component*> System::getEntityComponents( const Entity* entity ) {
     std::vector<Component*> comps;
-    for ( const auto& ec : m_components )
-    {
+    for ( const auto& ec : m_components ) {
         if ( ec.first == entity ) { comps.push_back( ec.second ); }
     }
     return comps;

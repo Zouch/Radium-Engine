@@ -42,10 +42,12 @@ void Camera::setDirection( const Core::Vector3& direction ) {
 
     // Special case if two directions are exactly opposites we constrain.
     // to rotate around the up vector.
-    if ( c.isApprox( Core::Vector3::Zero() ) && d < 0.0 )
-    { T.rotate( Core::AngleAxis( Core::Math::Pi, getUpVector() ) ); }
-    else
-    { T.rotate( Core::Quaternion::FromTwoVectors( d0, d1 ) ); }
+    if ( c.isApprox( Core::Vector3::Zero() ) && d < 0.0 ) {
+        T.rotate( Core::AngleAxis( Core::Math::Pi, getUpVector() ) );
+    }
+    else {
+        T.rotate( Core::Quaternion::FromTwoVectors( d0, d1 ) );
+    }
     applyTransform( T );
 }
 
@@ -66,20 +68,17 @@ void Camera::applyTransform( const Core::Transform& T ) {
 }
 
 void Camera::updateProjMatrix() {
-    switch ( m_projType )
-    {
+    switch ( m_projType ) {
     case ProjType::ORTHOGRAPHIC: {
         const Scalar r = m_xmag * m_zoomFactor;
         const Scalar t = m_ymag * m_zoomFactor / m_aspect;
         m_projMatrix   = ortho( -r, r, -t, t, m_zNear, m_zFar );
-    }
-    break;
+    } break;
 
     case ProjType::PERSPECTIVE: {
         Scalar fov   = std::clamp( m_zoomFactor * m_fov, 0.001_ra, Math::Pi - 0.1_ra );
         m_projMatrix = perspective( m_aspect, fov, m_zNear, m_zFar );
-    }
-    break;
+    } break;
 
     default:
         break;

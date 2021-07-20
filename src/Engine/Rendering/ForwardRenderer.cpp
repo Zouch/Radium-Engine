@@ -58,8 +58,7 @@ void ForwardRenderer::initializeInternal() {
     Ra::Engine::RadiumEngine::getInstance()->registerSystem( "DefaultLightManager", lightManager );
     m_lightmanagers.push_back( lightManager );
 
-    if ( !DebugRender::getInstance() )
-    {
+    if ( !DebugRender::getInstance() ) {
         DebugRender::createInstance();
         DebugRender::getInstance()->initialize();
     }
@@ -152,24 +151,21 @@ void ForwardRenderer::updateStepInternal( const Data::ViewingParameters& renderD
 
     m_transparentRenderObjects.clear();
     m_volumetricRenderObjects.clear();
-    for ( auto it = m_fancyRenderObjects.begin(); it != m_fancyRenderObjects.end(); )
-    {
-        if ( ( *it )->isTransparent() )
-        {
+    for ( auto it = m_fancyRenderObjects.begin(); it != m_fancyRenderObjects.end(); ) {
+        if ( ( *it )->isTransparent() ) {
             m_transparentRenderObjects.push_back( *it );
             it = m_fancyRenderObjects.erase( it );
         }
-        else
-        {
+        else {
             auto material = ( *it )->getMaterial();
             if ( material &&
-                 material->getMaterialAspect() == Data::Material::MaterialAspect::MAT_DENSITY )
-            {
+                 material->getMaterialAspect() == Data::Material::MaterialAspect::MAT_DENSITY ) {
                 m_volumetricRenderObjects.push_back( *it );
                 it = m_fancyRenderObjects.erase( it );
             }
-            else
-            { ++it; }
+            else {
+                ++it;
+            }
         }
     }
     m_fancyTransparentCount = m_transparentRenderObjects.size();
@@ -183,11 +179,9 @@ template <typename IndexContainerType>
 void computeIndices( Core::Geometry::LineMesh::IndexContainerType& indices,
                      IndexContainerType& other ) {
 
-    for ( const auto& index : other )
-    {
+    for ( const auto& index : other ) {
         auto s = index.size();
-        for ( unsigned int i = 0; i < s; ++i )
-        {
+        for ( unsigned int i = 0; i < s; ++i ) {
             int i1 = index[i];
             int i2 = index[( i + 1 ) % s];
             if ( i1 > i2 ) std::swap( i1, i2 );
@@ -243,8 +237,7 @@ void setupLineMesh( std::shared_ptr<Data::LineMesh>& disp, CoreGeometry& core ) 
 
     lines.setVertices( core.vertices() );
     computeIndices( indices, core.getIndices() );
-    if ( indices.size() > 0 )
-    {
+    if ( indices.size() > 0 ) {
         lines.setIndices( std::move( indices ) );
         disp =
             Ra::Core::make_shared<Data::LineMesh>( std::string( "wireframe" ), std::move( lines ) );
@@ -257,8 +250,9 @@ void setupLineMesh( std::shared_ptr<Data::LineMesh>& disp, CoreGeometry& core ) 
 
         core.attach( IndicesUpdater( disp, core ) );
     }
-    else
-    { disp.reset(); }
+    else {
+        disp.reset();
+    }
 }
 
 void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData ) {
@@ -270,15 +264,15 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
     GL_ASSERT( glColorMask( 1, 1, 1, 1 ) );
 
     GL_ASSERT( glDrawBuffers( 4, buffers ) );
-    if ( m_wireframe )
-    {
+    if ( m_wireframe ) {
         ///\todo make offset relative to wireframe line width
         glEnable( GL_POLYGON_OFFSET_FILL );
         glPolygonOffset( 1.f, 3.f );
         //    GL_ASSERT( glDepthRange( 0.001, 1.0 ) );
     }
-    else
-    { glDisable( GL_POLYGON_OFFSET_FILL ); }
+    else {
+        glDisable( GL_POLYGON_OFFSET_FILL );
+    }
     static const auto clearZeros = Core::Utils::Color::Black().cast<GL_SCALAR_PLAIN>().eval();
     static const auto clearOnes  = Core::Utils::Color::White().cast<GL_SCALAR_PLAIN>().eval();
     static const float clearDepth { 1.0f };
@@ -299,14 +293,16 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
     // Set in RenderParam the configuration about ambiant lighting (instead of hard constant
     // direclty in shaders)
     Data::RenderParameters zprepassParams;
-    for ( const auto& ro : m_fancyRenderObjects )
-    { ro->render( zprepassParams, renderData, DefaultRenderingPasses::Z_PREPASS ); }
+    for ( const auto& ro : m_fancyRenderObjects ) {
+        ro->render( zprepassParams, renderData, DefaultRenderingPasses::Z_PREPASS );
+    }
     // Transparent objects are rendered in the Z-prepass, but only their fully opaque fragments
     // (if any) might influence the z-buffer.
     // Rendering transparent objects assuming that they
     // discard all their non-opaque fragments
-    for ( const auto& ro : m_transparentRenderObjects )
-    { ro->render( zprepassParams, renderData, DefaultRenderingPasses::Z_PREPASS ); }
+    for ( const auto& ro : m_transparentRenderObjects ) {
+        ro->render( zprepassParams, renderData, DefaultRenderingPasses::Z_PREPASS );
+    }
     // Volumetric objects are not rendered in the Z-prepass
 
     // Opaque Lighting pass
@@ -321,35 +317,31 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
     // Radium V2 : this render loop might be greatly improved by inverting light and objects
     // loop.
     // Make shaders bounded only once, minimize full stats-changes, ...
-    if ( m_lightmanagers[0]->count() > 0 )
-    {
+    if ( m_lightmanagers[0]->count() > 0 ) {
         // for ( const auto& l : m_lights )
-        for ( size_t i = 0; i < m_lightmanagers[0]->count(); ++i )
-        {
+        for ( size_t i = 0; i < m_lightmanagers[0]->count(); ++i ) {
             const auto l = m_lightmanagers[0]->getLight( i );
             Data::RenderParameters lightingpassParams;
             l->getRenderParameters( lightingpassParams );
 
-            for ( const auto& ro : m_fancyRenderObjects )
-            {
+            for ( const auto& ro : m_fancyRenderObjects ) {
                 ro->render(
                     lightingpassParams, renderData, DefaultRenderingPasses::LIGHTING_OPAQUE );
             }
             // Rendering transparent objects assuming that they discard all their non-opaque
             // fragments
-            for ( const auto& ro : m_transparentRenderObjects )
-            {
+            for ( const auto& ro : m_transparentRenderObjects ) {
                 ro->render(
                     lightingpassParams, renderData, DefaultRenderingPasses::LIGHTING_OPAQUE );
             }
         }
     }
-    else
-    { LOG( logINFO ) << "Opaque : no light sources, unable to render"; }
+    else {
+        LOG( logINFO ) << "Opaque : no light sources, unable to render";
+    }
 
     // Transparency (blending) pass
-    if ( !m_transparentRenderObjects.empty() )
-    {
+    if ( !m_transparentRenderObjects.empty() ) {
         m_fbo->unbind();
 
         m_oitFbo->bind();
@@ -365,25 +357,23 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
         GL_ASSERT( glBlendFunci( 0, GL_ONE, GL_ONE ) );
         GL_ASSERT( glBlendFunci( 1, GL_ZERO, GL_ONE_MINUS_SRC_ALPHA ) );
 
-        if ( m_lightmanagers[0]->count() > 0 )
-        {
+        if ( m_lightmanagers[0]->count() > 0 ) {
             // for ( const auto& l : m_lights )
-            for ( size_t i = 0; i < m_lightmanagers[0]->count(); ++i )
-            {
+            for ( size_t i = 0; i < m_lightmanagers[0]->count(); ++i ) {
                 const auto l = m_lightmanagers[0]->getLight( i );
                 Data::RenderParameters trasparencypassParams;
                 l->getRenderParameters( trasparencypassParams );
 
-                for ( const auto& ro : m_transparentRenderObjects )
-                {
+                for ( const auto& ro : m_transparentRenderObjects ) {
                     ro->render( trasparencypassParams,
                                 renderData,
                                 DefaultRenderingPasses::LIGHTING_TRANSPARENT );
                 }
             }
         }
-        else
-        { LOG( logINFO ) << "Transparent : no light sources, unable to render"; }
+        else {
+            LOG( logINFO ) << "Transparent : no light sources, unable to render";
+        }
 
         m_oitFbo->unbind();
 
@@ -406,24 +396,23 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
     // Z-test is enabled but z-write must be disable to allow access to the z-buffer in the
     // shader.
     // This pass render in its own FBO and copy the result to the main colortexture
-    if ( !m_volumetricRenderObjects.empty() )
-    {
+    if ( !m_volumetricRenderObjects.empty() ) {
         m_volumeFbo->bind();
         GL_ASSERT( glDrawBuffers( 1, buffers ) );
         auto alpha = Core::Utils::Color::Alpha().cast<GL_SCALAR_PLAIN>().eval();
         GL_ASSERT( glClearBufferfv( GL_COLOR, 0, alpha.data() ) );
         GL_ASSERT( glDisable( GL_BLEND ) );
         // for ( const auto& l : m_lights )
-        for ( size_t i = 0; i < m_lightmanagers[0]->count(); ++i )
-        {
+        for ( size_t i = 0; i < m_lightmanagers[0]->count(); ++i ) {
             const auto l = m_lightmanagers[0]->getLight( i );
             Data::RenderParameters passParams;
             l->getRenderParameters( passParams );
             passParams.addParameter( "imageColor", m_textures[RendererTextures_HDR].get() );
             passParams.addParameter( "imageDepth", m_textures[RendererTextures_Depth].get() );
 
-            for ( const auto& ro : m_volumetricRenderObjects )
-            { ro->render( passParams, renderData, DefaultRenderingPasses::LIGHTING_VOLUMETRIC ); }
+            for ( const auto& ro : m_volumetricRenderObjects ) {
+                ro->render( passParams, renderData, DefaultRenderingPasses::LIGHTING_VOLUMETRIC );
+            }
         }
         m_volumeFbo->unbind();
 
@@ -441,8 +430,7 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
         GL_ASSERT( glEnable( GL_DEPTH_TEST ) );
     }
 
-    if ( m_wireframe )
-    {
+    if ( m_wireframe ) {
 
         m_fbo->bind();
 
@@ -457,8 +445,7 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
             std::shared_ptr<Data::Displayable> wro;
 
             WireMap::iterator it = m_wireframes.find( ro.get() );
-            if ( it == m_wireframes.end() )
-            {
+            if ( it == m_wireframes.end() ) {
                 std::shared_ptr<Data::LineMesh> disp;
 
                 using trimesh = Ra::Engine::Data::IndexedGeometry<Ra::Core::Geometry::TriangleMesh>;
@@ -470,8 +457,9 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
 
                 auto processLineMesh = []( auto cm, std::shared_ptr<Data::LineMesh>& lm ) {
                     if ( cm->getRenderMode() ==
-                         Data::AttribArrayDisplayable::MeshRenderMode::RM_TRIANGLES )
-                    { setupLineMesh( lm, cm->getCoreGeometry() ); }
+                         Data::AttribArrayDisplayable::MeshRenderMode::RM_TRIANGLES ) {
+                        setupLineMesh( lm, cm->getCoreGeometry() );
+                    }
                 };
                 if ( tm ) { processLineMesh( tm, disp ); }
                 if ( tp ) { processLineMesh( tp, disp ); }
@@ -479,17 +467,16 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
                 m_wireframes[ro.get()] = disp;
                 wro                    = disp;
             }
-            else
-            { wro = it->second; }
+            else {
+                wro = it->second;
+            }
 
             const Data::ShaderProgram* shader =
                 m_shaderProgramManager->getShaderProgram( "Wireframe" );
 
-            if ( shader && wro )
-            {
+            if ( shader && wro ) {
                 shader->bind();
-                if ( ro->isVisible() )
-                {
+                if ( ro->isVisible() ) {
                     wro->updateGL();
 
                     Core::Matrix4 modelMatrix = ro->getTransformAsMatrix();
@@ -504,10 +491,12 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
             }
         };
 
-        for ( const auto& ro : m_fancyRenderObjects )
-        { drawWireframe( ro ); }
-        for ( const auto& ro : m_transparentRenderObjects )
-        { drawWireframe( ro ); }
+        for ( const auto& ro : m_fancyRenderObjects ) {
+            drawWireframe( ro );
+        }
+        for ( const auto& ro : m_transparentRenderObjects ) {
+            drawWireframe( ro );
+        }
     }
 
     // Restore state
@@ -518,8 +507,7 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
 
 // Draw debug stuff, do not overwrite depth map but do depth testing
 void ForwardRenderer::debugInternal( const Data::ViewingParameters& renderData ) {
-    if ( m_drawDebug )
-    {
+    if ( m_drawDebug ) {
         m_postprocessFbo->bind();
         GL_ASSERT( glDisable( GL_BLEND ) );
         GL_ASSERT( glEnable( GL_DEPTH_TEST ) );
@@ -528,8 +516,9 @@ void ForwardRenderer::debugInternal( const Data::ViewingParameters& renderData )
 
         glDrawBuffers( 1, buffers );
 
-        for ( const auto& ro : m_debugRenderObjects )
-        { ro->render( Data::RenderParameters {}, renderData ); }
+        for ( const auto& ro : m_debugRenderObjects ) {
+            ro->render( Data::RenderParameters {}, renderData );
+        }
 
         DebugRender::getInstance()->render( renderData.viewMatrix, renderData.projMatrix );
 
@@ -543,8 +532,7 @@ void ForwardRenderer::debugInternal( const Data::ViewingParameters& renderData )
         xrayLightParams.addParameter( "light.color", Ra::Core::Utils::Color::Grey( 5.0 ) );
         xrayLightParams.addParameter( "light.type", Scene::Light::LightType::DIRECTIONAL );
         xrayLightParams.addParameter( "light.directional.direction", Core::Vector3( 0, -1, 0 ) );
-        for ( const auto& ro : m_xrayRenderObjects )
-        {
+        for ( const auto& ro : m_xrayRenderObjects ) {
             if ( ro->isVisible() ) { ro->render( xrayLightParams, renderData ); }
         }
         m_uiXrayFbo->unbind();
@@ -561,10 +549,8 @@ void ForwardRenderer::uiInternal( const Data::ViewingParameters& renderData ) {
     GL_ASSERT( glEnable( GL_DEPTH_TEST ) );
     GL_ASSERT( glDepthFunc( GL_LESS ) );
     GL_ASSERT( glClear( GL_DEPTH_BUFFER_BIT ) );
-    for ( const auto& ro : m_uiRenderObjects )
-    {
-        if ( ro->isVisible() )
-        {
+    for ( const auto& ro : m_uiRenderObjects ) {
+        if ( ro->isVisible() ) {
             auto shader = ro->getRenderTechnique()->getShader();
 
             // bind data
@@ -633,16 +619,16 @@ void ForwardRenderer::resizeInternal() {
     m_fbo->attachTexture( GL_COLOR_ATTACHMENT1, m_textures[RendererTextures_Normal]->texture() );
     m_fbo->attachTexture( GL_COLOR_ATTACHMENT2, m_textures[RendererTextures_Diffuse]->texture() );
     m_fbo->attachTexture( GL_COLOR_ATTACHMENT3, m_textures[RendererTextures_Specular]->texture() );
-    if ( m_fbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE )
-    { LOG( logERROR ) << "FBO Error (ForwardRenderer::m_fbo): " << m_fbo->checkStatus(); }
+    if ( m_fbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE ) {
+        LOG( logERROR ) << "FBO Error (ForwardRenderer::m_fbo): " << m_fbo->checkStatus();
+    }
 
     m_volumeFbo->bind();
     m_volumeFbo->attachTexture( GL_DEPTH_ATTACHMENT,
                                 m_textures[RendererTextures_Depth]->texture() );
     m_volumeFbo->attachTexture( GL_COLOR_ATTACHMENT0,
                                 m_textures[RendererTextures_Volume]->texture() );
-    if ( m_volumeFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE )
-    {
+    if ( m_volumeFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE ) {
         LOG( logERROR ) << "FBO Error (ForwardRenderer::m_volumeFbo) : "
                         << m_volumeFbo->checkStatus();
     }
@@ -653,15 +639,15 @@ void ForwardRenderer::resizeInternal() {
                              m_textures[RendererTextures_OITAccum]->texture() );
     m_oitFbo->attachTexture( GL_COLOR_ATTACHMENT1,
                              m_textures[RendererTextures_OITRevealage]->texture() );
-    if ( m_oitFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE )
-    { LOG( logERROR ) << "FBO Error (ForwardRenderer::m_oitFbo) : " << m_oitFbo->checkStatus(); }
+    if ( m_oitFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE ) {
+        LOG( logERROR ) << "FBO Error (ForwardRenderer::m_oitFbo) : " << m_oitFbo->checkStatus();
+    }
 
     m_postprocessFbo->bind();
     m_postprocessFbo->attachTexture( GL_DEPTH_ATTACHMENT,
                                      m_textures[RendererTextures_Depth]->texture() );
     m_postprocessFbo->attachTexture( GL_COLOR_ATTACHMENT0, m_fancyTexture->texture() );
-    if ( m_postprocessFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE )
-    {
+    if ( m_postprocessFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE ) {
         LOG( logERROR ) << "FBO Error (ForwardRenderer::m_postprocessFbo) : "
                         << m_postprocessFbo->checkStatus();
     }
@@ -673,8 +659,7 @@ void ForwardRenderer::resizeInternal() {
     m_uiXrayFbo->bind();
     m_uiXrayFbo->attachTexture( GL_DEPTH_ATTACHMENT, Renderer::m_depthTexture->texture() );
     m_uiXrayFbo->attachTexture( GL_COLOR_ATTACHMENT0, m_fancyTexture->texture() );
-    if ( m_uiXrayFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE )
-    {
+    if ( m_uiXrayFbo->checkStatus() != GL_FRAMEBUFFER_COMPLETE ) {
         LOG( logERROR ) << "FBO Error (ForwardRenderer::m_uiXrayFbo) : "
                         << m_uiXrayFbo->checkStatus();
     }
@@ -713,8 +698,7 @@ class PointCloudParameterProvider : public Data::ShaderParameterProvider
  */
 bool ForwardRenderer::buildRenderTechnique( RenderObject* ro ) const {
     auto material = ro->getMaterial();
-    if ( !material )
-    {
+    if ( !material ) {
         LOG( logWARNING ) << "ForwardRenderer : no material found when building RenderTechnique"
                           << " - adding red Lambertian material";
         auto defMat     = new Data::LambertianMaterial( "ForwardRenderer::Default material" );
@@ -735,14 +719,11 @@ bool ForwardRenderer::buildRenderTechnique( RenderObject* ro ) const {
      * components could add specific properties to a rendertechnique
      * TODO : see PR Draft and gist subShaderBlob
      */
-    if ( RenderedGeometry && RenderedGeometry->getNumFaces() == 0 )
-    {
+    if ( RenderedGeometry && RenderedGeometry->getNumFaces() == 0 ) {
         auto pointCloud = dynamic_cast<Scene::PointCloudComponent*>( ro->getComponent() );
-        if ( pointCloud )
-        {
+        if ( pointCloud ) {
             auto addGeomShader = [&rt]( Core::Utils::Index pass ) {
-                if ( rt->hasConfiguration( pass ) )
-                {
+                if ( rt->hasConfiguration( pass ) ) {
                     Data::ShaderConfiguration config = rt->getConfiguration( pass );
                     config.addShader( Data::ShaderType_GEOMETRY,
                                       RadiumEngine::getInstance()->getResourcesDir() +
@@ -758,11 +739,11 @@ bool ForwardRenderer::buildRenderTechnique( RenderObject* ro ) const {
             auto pr = std::make_shared<PointCloudParameterProvider>( material, pointCloud );
             rt->setParametersProvider( pr );
         }
-        else
-        { rt->setParametersProvider( material ); }
+        else {
+            rt->setParametersProvider( material );
+        }
     }
-    else
-    {
+    else {
         // make the material the parameter provider for the technique
         rt->setParametersProvider( material );
     }

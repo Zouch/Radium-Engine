@@ -12,8 +12,7 @@ bool CatmullClarkSubdivider::prepare( deprecated::TopologicalMesh& mesh ) {
     mesh.createAllPropsOnFaces(
         m_normalPropF, m_floatPropsF, m_vec2PropsF, m_vec3PropsF, m_vec4PropsF );
     mesh.add_property( m_hV );
-    for ( uint i = 0; i < mesh.n_halfedges(); ++i )
-    {
+    for ( uint i = 0; i < mesh.n_halfedges(); ++i ) {
         auto h = mesh.halfedge_handle( i );
         if ( !mesh.is_boundary( h ) ) { mesh.property( m_hV, h ) = mesh.to_vertex_handle( h ); }
     }
@@ -49,14 +48,12 @@ bool CatmullClarkSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
     m_newEdgePropOps.resize( n );
     m_newFacePropOps.resize( n );
     // Do n subdivisions
-    for ( size_t iter = 0; iter < n; ++iter )
-    {
+    for ( size_t iter = 0; iter < n; ++iter ) {
         // Compute face centroid
         const size_t NV = mesh.n_vertices();
         m_newFaceVertexOps[iter].reserve( mesh.n_faces() );
 #pragma omp parallel for
-        for ( int i = 0; i < int( mesh.n_faces() ); ++i )
-        {
+        for ( int i = 0; i < int( mesh.n_faces() ); ++i ) {
             const auto& fh = mesh.face_handle( i );
             // compute centroid
             deprecated::TopologicalMesh::Point centroid;
@@ -70,8 +67,7 @@ bool CatmullClarkSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
             const Scalar inv_v = 1.f / v;
             std::vector<V_OP> ops( v );
             auto heh = mesh.halfedge_handle( fh );
-            for ( uint j = 0; j < v; ++j )
-            {
+            for ( uint j = 0; j < v; ++j ) {
                 ops[j] = V_OP( inv_v, mesh.to_vertex_handle( heh ) );
                 heh    = mesh.next_halfedge_handle( heh );
             }
@@ -85,28 +81,24 @@ bool CatmullClarkSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
         // Compute position for new (edge-) vertices and store them in the edge property
         m_newEdgeVertexOps[iter].reserve( mesh.n_edges() );
 #pragma omp parallel for
-        for ( int i = 0; i < int( mesh.n_edges() ); ++i )
-        {
+        for ( int i = 0; i < int( mesh.n_edges() ); ++i ) {
             const auto& eh = mesh.edge_handle( i );
             compute_midpoint( mesh, eh, update_points, iter );
         }
 
         // position updates activated?
-        if ( update_points )
-        {
+        if ( update_points ) {
             // compute new positions for old vertices
             m_oldVertexOps[iter].reserve( NV );
 #pragma omp parallel for
-            for ( int i = 0; i < int( NV ); ++i )
-            {
+            for ( int i = 0; i < int( NV ); ++i ) {
                 const auto& vh = mesh.vertex_handle( i );
                 update_vertex( mesh, vh, iter );
             }
 
             // Commit changes in geometry
 #pragma omp parallel for
-            for ( int i = 0; i < int( NV ); ++i )
-            {
+            for ( int i = 0; i < int( NV ); ++i ) {
                 const auto& vh = mesh.vertex_handle( i );
                 mesh.set_point( vh, mesh.property( m_vpPos, vh ) );
             }
@@ -116,16 +108,18 @@ bool CatmullClarkSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
         // Attention! Creating new edges, hence make sure the loop ends correctly.
         auto e_end = mesh.edges_end();
         m_newEdgePropOps[iter].reserve( 3 * mesh.n_edges() );
-        for ( auto e_itr = mesh.edges_begin(); e_itr != e_end; ++e_itr )
-        { split_edge( mesh, *e_itr, iter ); }
+        for ( auto e_itr = mesh.edges_begin(); e_itr != e_end; ++e_itr ) {
+            split_edge( mesh, *e_itr, iter );
+        }
         m_newEdgePropOps[iter].shrink_to_fit();
 
         // Commit changes in topology and reconsitute consistency
         // Attention! Creating new faces, hence make sure the loop ends correctly.
         auto f_end = mesh.faces_end();
         m_newFacePropOps[iter].reserve( 2 * 4 * mesh.n_faces() );
-        for ( auto f_itr = mesh.faces_begin(); f_itr != f_end; ++f_itr )
-        { split_face( mesh, *f_itr, iter ); }
+        for ( auto f_itr = mesh.faces_begin(); f_itr != f_end; ++f_itr ) {
+            split_face( mesh, *f_itr, iter );
+        }
         m_newFacePropOps[iter].shrink_to_fit();
 
         CORE_ASSERT( OpenMesh::Utils::MeshCheckerT<deprecated::TopologicalMesh>( mesh ).check(),
@@ -139,8 +133,7 @@ bool CatmullClarkSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
     m_triangulationPropOps.reserve( 2 * mesh.n_faces() );
     // triangulate resulting quads
     auto f_end = mesh.faces_end();
-    for ( auto f_itr = mesh.faces_begin(); f_itr != f_end; ++f_itr )
-    {
+    for ( auto f_itr = mesh.faces_begin(); f_itr != f_end; ++f_itr ) {
         // get all needed halfedges
         auto heh1 = mesh.halfedge_handle( *f_itr );
         auto heh2 = mesh.next_halfedge_handle( heh1 );
@@ -210,8 +203,7 @@ void CatmullClarkSubdivider::split_face( deprecated::TopologicalMesh& mesh,
     std::vector<P_OP> p_ops( valence );
     p_ops[0] = { inv_val, hh };
 
-    for ( size_t i = 1; i < valence; i++ )
-    {
+    for ( size_t i = 1; i < valence; i++ ) {
         // go to next mid-edge vertex
         auto hnext = mesh.next_halfedge_handle( hh );
         auto hnew  = mesh.new_edge( mesh.to_vertex_handle( hnext ), vh );
@@ -250,8 +242,9 @@ void CatmullClarkSubdivider::split_face( deprecated::TopologicalMesh& mesh,
     mesh.set_halfedge_handle( vh, hold );
 
     // deal with property operations on centroid
-    for ( auto vh_iter = mesh.vih_iter( vh ); vh_iter.is_valid(); ++vh_iter )
-    { m_newFacePropOps[iter].push_back( { *vh_iter, p_ops } ); }
+    for ( auto vh_iter = mesh.vih_iter( vh ); vh_iter.is_valid(); ++vh_iter ) {
+        m_newFacePropOps[iter].push_back( { *vh_iter, p_ops } );
+    }
 }
 
 void CatmullClarkSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
@@ -273,15 +266,13 @@ void CatmullClarkSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
     vh = mesh.property( m_epH, eh );
 
     // Re-link mesh entities
-    if ( mesh.is_boundary( eh ) )
-    {
+    if ( mesh.is_boundary( eh ) ) {
         // spin around vh1
         for ( t_heh = heh; mesh.next_halfedge_handle( t_heh ) != opp_heh;
               t_heh = mesh.opposite_halfedge_handle( mesh.next_halfedge_handle( t_heh ) ) )
             ;
     }
-    else
-    {
+    else {
         // spin inside opp_heh's face
         for ( t_heh = mesh.next_halfedge_handle( opp_heh );
               mesh.next_halfedge_handle( t_heh ) != opp_heh;
@@ -298,8 +289,7 @@ void CatmullClarkSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
     mesh.set_next_halfedge_handle( heh, new_heh );
     mesh.set_next_halfedge_handle( opp_new_heh, opp_heh );
 
-    if ( mesh.face_handle( opp_heh ).is_valid() )
-    {
+    if ( mesh.face_handle( opp_heh ).is_valid() ) {
         mesh.set_face_handle( opp_new_heh, mesh.face_handle( opp_heh ) );
         mesh.set_halfedge_handle( mesh.face_handle( opp_new_heh ), opp_new_heh );
 
@@ -308,8 +298,7 @@ void CatmullClarkSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
         m_newEdgePropOps[iter].push_back( { opp_new_heh, { { 0.5, t_heh }, { 0.5, opp_heh } } } );
     }
 
-    if ( mesh.face_handle( heh ).is_valid() )
-    {
+    if ( mesh.face_handle( heh ).is_valid() ) {
         mesh.set_face_handle( new_heh, mesh.face_handle( heh ) );
         mesh.set_halfedge_handle( mesh.face_handle( heh ), heh );
 
@@ -344,8 +333,7 @@ void CatmullClarkSubdivider::compute_midpoint( deprecated::TopologicalMesh& mesh
 
     // boundary edge: just average vertex positions
     // this yields the [1/2 1/2] mask
-    if ( mesh.is_boundary( eh ) || !update_points )
-    {
+    if ( mesh.is_boundary( eh ) || !update_points ) {
         pos *= 0.5;
         // register operations
         ops.resize( 2 );
@@ -388,16 +376,13 @@ void CatmullClarkSubdivider::update_vertex( deprecated::TopologicalMesh& mesh,
     // see "A Factored Approach to Subdivision Surfaces"
     // http://faculty.cs.tamu.edu/schaefer/research/tutorial.pdf
     // and http://www.cs.utah.edu/~lacewell/subdeval
-    if ( mesh.is_boundary( vh ) )
-    {
+    if ( mesh.is_boundary( vh ) ) {
         pos = mesh.point( vh );
         ops.resize( 3 );
         ops[0] = V_OP( 1.f / 3.f, vh );
         int i  = 1;
-        for ( auto ve_itr = mesh.ve_iter( vh ); ve_itr.is_valid(); ++ve_itr )
-        {
-            if ( mesh.is_boundary( *ve_itr ) )
-            {
+        for ( auto ve_itr = mesh.ve_iter( vh ); ve_itr.is_valid(); ++ve_itr ) {
+            if ( mesh.is_boundary( *ve_itr ) ) {
                 pos += mesh.point( mesh.property( m_epH, *ve_itr ) );
                 ops[i++] = V_OP( 1.f / 3.f, mesh.property( m_epH, *ve_itr ) );
             }
@@ -418,16 +403,14 @@ void CatmullClarkSubdivider::update_vertex( deprecated::TopologicalMesh& mesh,
         ops.resize( valence * 2 + 1 );
 
         int i = 0;
-        for ( auto voh_it = mesh.voh_iter( vh ); voh_it.is_valid(); ++voh_it )
-        {
+        for ( auto voh_it = mesh.voh_iter( vh ); voh_it.is_valid(); ++voh_it ) {
             pos += mesh.point( mesh.to_vertex_handle( *voh_it ) );
             ops[i++] = V_OP( inv_v2, mesh.to_vertex_handle( *voh_it ) );
         }
         pos *= inv_v2;
 
         deprecated::TopologicalMesh::Point Q( 0, 0, 0 );
-        for ( auto vf_itr = mesh.vf_iter( vh ); vf_itr.is_valid(); ++vf_itr )
-        {
+        for ( auto vf_itr = mesh.vf_iter( vh ); vf_itr.is_valid(); ++vf_itr ) {
             Q += mesh.point( mesh.property( m_fpH, *vf_itr ) );
             ops[i++] = V_OP( inv_v2, mesh.property( m_fpH, *vf_itr ) );
         }
@@ -454,8 +437,7 @@ void CatmullClarkSubdivider::recompute( const Vector3Array& newCoarseVertices,
     auto inTriIndexProp = mesh.getInputTriangleMeshIndexPropHandle();
     auto hNormalProp    = mesh.halfedge_normals_pph();
 #pragma omp parallel for
-    for ( int i = 0; i < int( mesh.n_halfedges() ); ++i )
-    {
+    for ( int i = 0; i < int( mesh.n_halfedges() ); ++i ) {
         auto h = mesh.halfedge_handle( i );
         // set position on coarse mesh vertices
         auto vh = mesh.property( m_hV, h );
@@ -467,84 +449,82 @@ void CatmullClarkSubdivider::recompute( const Vector3Array& newCoarseVertices,
         }
     }
     // for each subdiv step
-    for ( int i = 0; i < int( m_oldVertexOps.size() ); ++i )
-    {
+    for ( int i = 0; i < int( m_oldVertexOps.size() ); ++i ) {
         // reapply newFaceVertexOps
 #pragma omp parallel for
-        for ( int j = 0; j < int( m_newFaceVertexOps[i].size() ); ++j )
-        {
+        for ( int j = 0; j < int( m_newFaceVertexOps[i].size() ); ++j ) {
             Ra::Core::Vector3 pos( 0, 0, 0 );
             const auto& ops = m_newFaceVertexOps[i][j];
-            for ( const auto& op : ops.second )
-            { pos += op.first * mesh.point( op.second ); }
+            for ( const auto& op : ops.second ) {
+                pos += op.first * mesh.point( op.second );
+            }
             mesh.set_point( ops.first, pos );
         }
         // reapply newEdgeVertexOps
 #pragma omp parallel for
-        for ( int j = 0; j < int( m_newEdgeVertexOps[i].size() ); ++j )
-        {
+        for ( int j = 0; j < int( m_newEdgeVertexOps[i].size() ); ++j ) {
             Ra::Core::Vector3 pos( 0, 0, 0 );
             const auto& ops = m_newEdgeVertexOps[i][j];
-            for ( const auto& op : ops.second )
-            { pos += op.first * mesh.point( op.second ); }
+            for ( const auto& op : ops.second ) {
+                pos += op.first * mesh.point( op.second );
+            }
             mesh.set_point( ops.first, pos );
         }
         // reapply oldVertexOps
         std::vector<Ra::Core::Vector3> pos( m_oldVertexOps[i].size() );
 #pragma omp parallel for
-        for ( int j = 0; j < int( m_oldVertexOps[i].size() ); ++j )
-        {
+        for ( int j = 0; j < int( m_oldVertexOps[i].size() ); ++j ) {
             pos[j]          = Ra::Core::Vector3( 0, 0, 0 );
             const auto& ops = m_oldVertexOps[i][j];
-            for ( const auto& op : ops.second )
-            { pos[j] += op.first * mesh.point( op.second ); }
+            for ( const auto& op : ops.second ) {
+                pos[j] += op.first * mesh.point( op.second );
+            }
         }
         // then commit pos for old vertices
 #pragma omp parallel for schedule( static )
-        for ( int j = 0; j < int( m_oldVertexOps[i].size() ); ++j )
-        { mesh.set_point( m_oldVertexOps[i][j].first, pos[j] ); }
+        for ( int j = 0; j < int( m_oldVertexOps[i].size() ); ++j ) {
+            mesh.set_point( m_oldVertexOps[i][j].first, pos[j] );
+        }
         // deal with normal on edges centers (other non-static properties can be updated the same
         // way)
         // This loop should not be parallelized!
-        for ( int j = 0; j < int( m_newEdgePropOps[i].size() ); ++j )
-        {
+        for ( int j = 0; j < int( m_newEdgePropOps[i].size() ); ++j ) {
             Ra::Core::Vector3 nor( 0, 0, 0 );
             const auto& ops = m_newEdgePropOps[i][j];
-            for ( const auto& op : ops.second )
-            { nor += op.first * mesh.property( hNormalProp, op.second ); }
+            for ( const auto& op : ops.second ) {
+                nor += op.first * mesh.property( hNormalProp, op.second );
+            }
             mesh.property( hNormalProp, ops.first ) = nor.normalized();
         }
         // deal with normal on faces centers (other non-static properties can be updated the same
         // way)
 #pragma omp parallel for
-        for ( int j = 0; j < int( m_newFacePropOps[i].size() ); ++j )
-        {
+        for ( int j = 0; j < int( m_newFacePropOps[i].size() ); ++j ) {
             Ra::Core::Vector3 nor( 0, 0, 0 );
             const auto& ops = m_newFacePropOps[i][j];
-            for ( const auto& op : ops.second )
-            { nor += op.first * mesh.property( hNormalProp, op.second ); }
+            for ( const auto& op : ops.second ) {
+                nor += op.first * mesh.property( hNormalProp, op.second );
+            }
             mesh.property( hNormalProp, ops.first ) = nor.normalized();
         }
     }
     // deal with normals from triangulation (other non-static properties can be updated the same
     // way)
 #pragma omp parallel for
-    for ( int j = 0; j < int( m_triangulationPropOps.size() ); ++j )
-    {
+    for ( int j = 0; j < int( m_triangulationPropOps.size() ); ++j ) {
         Ra::Core::Vector3 nor( 0, 0, 0 );
         const auto& ops = m_triangulationPropOps[j];
-        for ( const auto& op : ops.second )
-        { nor += op.first * mesh.property( hNormalProp, op.second ); }
+        for ( const auto& op : ops.second ) {
+            nor += op.first * mesh.property( hNormalProp, op.second );
+        }
         mesh.property( hNormalProp, ops.first ) = nor.normalized();
     }
     // update subdivided TriangleMesh vertices and normals
     auto outTriIndexProp = mesh.getOutputTriangleMeshIndexPropHandle();
 #pragma omp parallel for
-    for ( int i = 0; i < int( mesh.n_halfedges() ); ++i )
-    {
+    for ( int i = 0; i < int( mesh.n_halfedges() ); ++i ) {
         auto h = mesh.halfedge_handle( i );
-        if ( !mesh.is_boundary( h ) )
-        {
+        if ( !mesh.is_boundary( h ) ) {
             auto idx               = mesh.property( outTriIndexProp, h );
             newSubdivVertices[idx] = mesh.point( mesh.to_vertex_handle( h ) );
             newSubdivNormals[idx]  = mesh.property( hNormalProp, h );

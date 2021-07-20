@@ -19,29 +19,28 @@ void SimpleMaterial::updateRenderingParameters() {
     m_renderParameters.addParameter( "material.color", m_color );
     m_renderParameters.addParameter( "material.perVertexColor", m_perVertexColor );
     Texture* tex = getTexture( SimpleMaterial::TextureSemantic::TEX_COLOR );
-    if ( tex != nullptr )
-    {
+    if ( tex != nullptr ) {
         m_renderParameters.addParameter( "material.tex.color", tex );
         m_renderParameters.addParameter( "material.tex.hasColor", 1 );
     }
-    else
-    { m_renderParameters.addParameter( "material.tex.hasColor", 0 ); }
+    else {
+        m_renderParameters.addParameter( "material.tex.hasColor", 0 );
+    }
     tex = getTexture( SimpleMaterial::TextureSemantic::TEX_MASK );
-    if ( tex != nullptr )
-    {
+    if ( tex != nullptr ) {
         m_renderParameters.addParameter( "material.tex.mask", tex );
         m_renderParameters.addParameter( "material.tex.hasMask", 1 );
     }
-    else
-    { m_renderParameters.addParameter( "material.tex.hasMask", 0 ); }
+    else {
+        m_renderParameters.addParameter( "material.tex.hasMask", 0 );
+    }
 }
 
 void SimpleMaterial::updateGL() {
     if ( !m_isDirty ) { return; }
     // Load textures
     Data::TextureManager* texManager = RadiumEngine::getInstance()->getTextureManager();
-    for ( const auto& tex : m_pendingTextures )
-    {
+    for ( const auto& tex : m_pendingTextures ) {
         // ask to convert color textures from sRGB to Linear RGB
         bool tolinear         = ( tex.first == TextureSemantic::TEX_COLOR );
         auto texture          = texManager->getOrLoadTexture( tex.second, tolinear );

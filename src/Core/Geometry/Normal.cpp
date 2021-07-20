@@ -20,8 +20,7 @@ void uniformNormal( const VectorArray<Vector3>& p,
     normal.clear();
     normal.resize( N, Vector3::Zero() );
 
-    for ( const auto& t : T )
-    {
+    for ( const auto& t : T ) {
         const uint i       = t( 0 );
         const uint j       = t( 1 );
         const uint k       = t( 2 );
@@ -33,8 +32,7 @@ void uniformNormal( const VectorArray<Vector3>& p,
     }
 
 #pragma omp parallel for
-    for ( int i = 0; i < int( N ); ++i )
-    {
+    for ( int i = 0; i < int( N ); ++i ) {
         if ( !normal[i].isApprox( Vector3::Zero() ) ) { normal[i].normalize(); }
     }
 
@@ -47,8 +45,7 @@ Vector3 localUniformNormal( const uint ii,
                             const AlignedStdVector<Vector3ui>& T,
                             const Sparse& adj ) {
     Vector3 normal = Vector3::Zero();
-    for ( Sparse::InnerIterator it( adj, ii ); it; ++it )
-    {
+    for ( Sparse::InnerIterator it( adj, ii ); it; ++it ) {
         const size_t t = it.row();
         const uint i   = T[t]( 0 );
         const uint j   = T[t]( 1 );
@@ -64,8 +61,7 @@ void angleWeightedNormal( const VectorArray<Vector3>& p,
     const size_t N = p.size();
     normal.clear();
     normal.resize( N, Vector3::Zero() );
-    for ( const auto& t : T )
-    {
+    for ( const auto& t : T ) {
         uint i               = t( 0 );
         uint j               = t( 1 );
         uint k               = t( 2 );
@@ -77,8 +73,9 @@ void angleWeightedNormal( const VectorArray<Vector3>& p,
         normal[j] += theta_j * triN;
         normal[k] += theta_k * triN;
     }
-    for ( auto& n : normal )
-    { n.normalize(); }
+    for ( auto& n : normal ) {
+        n.normalize();
+    }
 }
 
 void areaWeightedNormal( const VectorArray<Vector3>& p,
@@ -87,8 +84,7 @@ void areaWeightedNormal( const VectorArray<Vector3>& p,
     const size_t N = p.size();
     normal.clear();
     normal.resize( N, Vector3::Zero() );
-    for ( const auto& t : T )
-    {
+    for ( const auto& t : T ) {
         uint i             = t( 0 );
         uint j             = t( 1 );
         uint k             = t( 2 );
@@ -98,8 +94,9 @@ void areaWeightedNormal( const VectorArray<Vector3>& p,
         normal[j] += triN;
         normal[k] += triN;
     }
-    for ( auto& n : normal )
-    { n.normalize(); }
+    for ( auto& n : normal ) {
+        n.normalize();
+    }
 }
 
 ////////////////
@@ -112,8 +109,7 @@ Vector3 uniformNormal( const Vector3& v, const VectorArray<Vector3>& one_ring ) 
     size_t N = one_ring.size();
     Utils::CircularIndex i;
     i.setSize( N );
-    for ( uint j = 0; j < N; ++j )
-    {
+    for ( uint j = 0; j < N; ++j ) {
         i.setValue( j );
         normal += triangleNormal( v, one_ring[i], one_ring[i - 1] );
     }
@@ -127,8 +123,7 @@ Vector3 angleWeightedNormal( const Vector3& v, const VectorArray<Vector3>& one_r
     size_t N = one_ring.size();
     Utils::CircularIndex i;
     i.setSize( N );
-    for ( uint j = 0; j < N; ++j )
-    {
+    for ( uint j = 0; j < N; ++j ) {
         i.setValue( j );
         Scalar theta = Math::angle( ( one_ring[i] - v ), ( one_ring[i - 1] - v ) );
         normal += theta * triangleNormal( v, one_ring[i], one_ring[i - 1] );
@@ -143,8 +138,7 @@ Vector3 areaWeightedNormal( const Vector3& v, const VectorArray<Vector3>& one_ri
     size_t N = one_ring.size();
     Utils::CircularIndex i;
     i.setSize( N );
-    for ( uint j = 0; j < N; ++j )
-    {
+    for ( uint j = 0; j < N; ++j ) {
         i.setValue( j );
         Scalar area = triangleArea( v, one_ring[i], one_ring[i - 1] );
         normal += area * triangleNormal( v, one_ring[i], one_ring[i - 1] );

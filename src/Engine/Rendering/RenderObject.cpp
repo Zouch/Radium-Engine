@@ -34,8 +34,9 @@ RenderObject::RenderObject( const std::string& name,
     m_hasLifetime { lifetime > 0 } {}
 
 RenderObject::~RenderObject() {
-    if ( m_mesh )
-    { m_mesh->getAbstractGeometry().getAabbObservable().detach( m_aabbObserverIndex ); }
+    if ( m_mesh ) {
+        m_mesh->getAbstractGeometry().getAabbObservable().detach( m_aabbObserverIndex );
+    }
 }
 
 RenderObject* RenderObject::createRenderObject( const std::string& name,
@@ -161,12 +162,12 @@ std::shared_ptr<Data::Material> RenderObject::getMaterial() {
 
 void RenderObject::setMesh( std::shared_ptr<Data::Displayable> mesh ) {
 
-    if ( m_mesh )
-    { m_mesh->getAbstractGeometry().getAabbObservable().detach( m_aabbObserverIndex ); }
+    if ( m_mesh ) {
+        m_mesh->getAbstractGeometry().getAabbObservable().detach( m_aabbObserverIndex );
+    }
 
     m_mesh = mesh;
-    if ( m_mesh )
-    {
+    if ( m_mesh ) {
         m_aabbObserverIndex = m_mesh->getAbstractGeometry().getAabbObservable().attach(
             [this]() { this->invalidateAabb(); } );
         invalidateAabb();
@@ -190,21 +191,19 @@ Core::Matrix4 RenderObject::getTransformAsMatrix() const {
 }
 
 Core::Aabb RenderObject::computeAabb() {
-    if ( !m_isAabbValid )
-    {
+    if ( !m_isAabbValid ) {
         auto aabb = m_mesh->getAbstractGeometry().computeAabb();
-        if ( !aabb.isEmpty() )
-        {
+        if ( !aabb.isEmpty() ) {
 
             Core::Aabb result;
-            for ( int i = 0; i < 8; ++i )
-            { result.extend( getTransform() * aabb.corner( Core::Aabb::CornerType( i ) ) ); }
+            for ( int i = 0; i < 8; ++i ) {
+                result.extend( getTransform() * aabb.corner( Core::Aabb::CornerType( i ) ) );
+            }
 
             m_aabb        = result;
             m_isAabbValid = true;
         }
-        else
-        {
+        else {
             m_aabb        = aabb;
             m_isAabbValid = true;
         }
@@ -232,10 +231,10 @@ const Core::Matrix4& RenderObject::getLocalTransformAsMatrix() const {
 }
 
 void RenderObject::hasBeenRenderedOnce() {
-    if ( m_hasLifetime )
-    {
-        if ( --m_lifetime <= 0 )
-        { RadiumEngine::getInstance()->getRenderObjectManager()->renderObjectExpired( m_idx ); }
+    if ( m_hasLifetime ) {
+        if ( --m_lifetime <= 0 ) {
+            RadiumEngine::getInstance()->getRenderObjectManager()->renderObjectExpired( m_idx );
+        }
     }
 }
 
@@ -268,16 +267,16 @@ void RenderObject::render( const Data::RenderParameters& lightParams,
     // This is a hack to allow correct face culling
     // Note that this hack implies the inclusion of OpenGL.h in this file
     if ( viewParams.viewMatrix.determinant() < 0 ) { glFrontFace( GL_CW ); }
-    else
-    { glFrontFace( GL_CCW ); }
+    else {
+        glFrontFace( GL_CCW );
+    }
     m_mesh->render( shader );
 }
 
 void RenderObject::render( const Data::RenderParameters& lightParams,
                            const Data::ViewingParameters& viewParams,
                            Core::Utils::Index passId ) {
-    if ( m_visible )
-    {
+    if ( m_visible ) {
         auto shader = getRenderTechnique()->getShader( passId );
         if ( !shader ) { return; }
 
