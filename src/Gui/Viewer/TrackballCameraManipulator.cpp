@@ -260,9 +260,9 @@ void TrackballCameraManipulator::fitScene( const Core::Aabb& aabb ) {
     Scalar d       = std::max( std::max( x, y ), 0.001_ra );
 
     m_camera->setFrame( Core::Transform::Identity() );
-    Core::Vector3 camPos {aabb.center().x(), aabb.center().y(), aabb.center().z() + d};
+    Core::Vector3 camPos { aabb.center().x(), aabb.center().y(), aabb.center().z() + d };
     m_camera->setPosition( camPos );
-    Core::Vector3 camDir {aabb.center() - camPos};
+    Core::Vector3 camDir { aabb.center() - camPos };
     m_distFromCenter = camDir.norm();
     m_camera->setDirection( camDir / m_distFromCenter );
 
@@ -285,11 +285,11 @@ void TrackballCameraManipulator::handleCameraRotate( Scalar dx, Scalar dy ) {
 
     Scalar phi   = m_phi + dphi;
     Scalar theta = m_theta + dtheta;
-    Core::Vector3 dir {std::sin( phi ) * std::sin( theta ),
-                       std::cos( theta ),
-                       std::cos( phi ) * std::sin( theta )};
+    Core::Vector3 dir { std::sin( phi ) * std::sin( theta ),
+                        std::cos( theta ),
+                        std::cos( phi ) * std::sin( theta ) };
 
-    Core::Vector3 right {-dir[2], 0, dir[0]};
+    Core::Vector3 right { -dir[2], 0, dir[0] };
     right.normalize();
     if ( ( m_referenceFrame.linear().inverse() * m_camera->getRightVector() ).dot( right ) < 0 )
         right = -right;
@@ -336,7 +336,7 @@ void TrackballCameraManipulator::handleCameraPan( Scalar dx, Scalar dy ) {
 }
 
 void TrackballCameraManipulator::handleCameraMoveForward( Scalar dx, Scalar dy ) {
-    handleCameraMoveForward( Ra::Core::Math::sign( dy ) * Ra::Core::Vector2 {dx, dy}.norm() );
+    handleCameraMoveForward( Ra::Core::Math::sign( dy ) * Ra::Core::Vector2 { dx, dy }.norm() );
 }
 
 void TrackballCameraManipulator::handleCameraMoveForward( Scalar z ) {
@@ -352,7 +352,7 @@ void TrackballCameraManipulator::handleCameraMoveForward( Scalar z ) {
 }
 
 void TrackballCameraManipulator::handleCameraZoom( Scalar dx, Scalar dy ) {
-    handleCameraZoom( Ra::Core::Math::sign( dy ) * Ra::Core::Vector2 {dx, dy}.norm() );
+    handleCameraZoom( Ra::Core::Math::sign( dy ) * Ra::Core::Vector2 { dx, dy }.norm() );
 }
 
 void TrackballCameraManipulator::handleCameraZoom( Scalar z ) {

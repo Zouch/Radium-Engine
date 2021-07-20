@@ -222,7 +222,7 @@ void Viewer::startRendering( const Scalar dt ) {
             LOG( logDEBUG ) << "Unable to attach the head light!";
     }
     Engine::Data::ViewingParameters data {
-        m_camera->getCamera()->getViewMatrix(), m_camera->getCamera()->getProjMatrix(), dt};
+        m_camera->getCamera()->getViewMatrix(), m_camera->getCamera()->getProjMatrix(), dt };
     m_currentRenderer->render( data );
 }
 
@@ -457,9 +457,7 @@ bool Viewer::initializeGL() {
 
     // Initialize renderers added to the viewer before initializeGL
     for ( auto& rptr : m_pendingRenderers )
-    {
-        initializeRenderer( rptr.get() );
-    }
+    { initializeRenderer( rptr.get() ); }
     m_pendingRenderers.clear();
 
     // create the gizmo manager (Ui)
@@ -547,7 +545,7 @@ void Viewer::mousePressEvent( QMouseEvent* event ) {
     m_currentRenderer->setMousePosition( Ra::Core::Vector2( event->x(), event->y() ) );
 
     // get what's under the mouse
-    auto result       = pickAtPosition( {event->x(), height() - event->y()} );
+    auto result       = pickAtPosition( { event->x(), height() - event->y() } );
     m_depthUnderMouse = result.getDepth();
 
     handleMousePressEvent( event, result );
@@ -568,7 +566,7 @@ void Viewer::mouseMoveEvent( QMouseEvent* event ) {
 
     m_currentRenderer->setMousePosition( Ra::Core::Vector2( event->x(), event->y() ) );
 
-    auto result       = pickAtPosition( {event->x(), height() - event->y()} );
+    auto result       = pickAtPosition( { event->x(), height() - event->y() } );
     m_depthUnderMouse = result.getDepth();
 
     handleMouseMoveEvent( event, result );
@@ -611,7 +609,7 @@ Viewer::getComponentActions( const Qt::MouseButtons& buttons,
         keyMap->getAction( keyMap->getContext( "GizmoContext" ), buttons, modifiers, key, wheel );
     auto actionViewer =
         keyMap->getAction( keyMap->getContext( "ViewerContext" ), buttons, modifiers, key, wheel );
-    return {actionCamera, actionGizmo, actionViewer};
+    return { actionCamera, actionGizmo, actionViewer };
 }
 
 bool Viewer::handleKeyPressEvent( QKeyEvent* event ) {
@@ -764,7 +762,7 @@ void Viewer::handleMousePressEvent( QMouseEvent* event,
                 Engine::Rendering::Renderer::PickingQuery query = {
                     Core::Vector2( event->x(), ( height() - event->y() ) ),
                     Engine::Rendering::Renderer::PickingPurpose::MANIPULATION,
-                    pickingMode};
+                    pickingMode };
                 m_currentRenderer->addPickingRequest( query );
             }
         }
@@ -811,7 +809,7 @@ void Viewer::handleMouseMoveEvent( QMouseEvent* event,
             Engine::Rendering::Renderer::PickingQuery query = {
                 Core::Vector2( event->x(), ( height() - event->y() ) ),
                 Engine::Rendering::Renderer::PickingPurpose::MANIPULATION,
-                pickingMode};
+                pickingMode };
             m_currentRenderer->addPickingRequest( query );
         }
     }
@@ -842,10 +840,10 @@ void Viewer::handleWheelEvent( QWheelEvent* event ) {
 Ra::Engine::Rendering::Renderer::PickingResult Viewer::pickAtPosition( Core::Vector2 position ) {
     makeCurrent();
     auto result = m_currentRenderer->doPickingNow(
-        {position,
-         Engine::Rendering::Renderer::PickingPurpose::SELECTION,
-         Engine::Rendering::Renderer::RO},
-        {m_camera->getCamera()->getViewMatrix(), m_camera->getCamera()->getProjMatrix(), 0.} );
+        { position,
+          Engine::Rendering::Renderer::PickingPurpose::SELECTION,
+          Engine::Rendering::Renderer::RO },
+        { m_camera->getCamera()->getViewMatrix(), m_camera->getCamera()->getProjMatrix(), 0. } );
 
     doneCurrent();
     return result;
@@ -870,7 +868,7 @@ bool Viewer::prepareDisplay() {
 void Viewer::displayHelpDialog() {
     if ( !m_helpDialog ) { m_helpDialog.reset( new QMessageBox() ); }
     auto kmappingMngr = Gui::KeyMappingManager::getInstance();
-    std::string keyMappingHelp {"<h1> UI action mapping </h1>\n"};
+    std::string keyMappingHelp { "<h1> UI action mapping </h1>\n" };
     keyMappingHelp += kmappingMngr->getHelpText();
     keyMappingHelp += "<br/>\n";
     m_helpDialog->setText( keyMappingHelp.c_str() );
@@ -928,7 +926,7 @@ Viewer::addCustomAction( int index,
                                                      wheelString,
                                                      actionName,
                                                      false );
-    m_customKeyActions[index].insert( {actionIndex, callback} );
+    m_customKeyActions[index].insert( { actionIndex, callback } );
     return actionIndex;
 }
 

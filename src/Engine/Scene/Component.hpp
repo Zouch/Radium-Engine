@@ -102,11 +102,11 @@ class RA_ENGINE_API Component
 
   protected:
     std::string m_name {};
-    Entity* m_entity {nullptr};
-    System* m_system {nullptr};
+    Entity* m_entity { nullptr };
+    System* m_system { nullptr };
 
   private:
-    bool m_isAabbValid {false};
+    bool m_isAabbValid { false };
     Core::Aabb m_aabb;
 };
 

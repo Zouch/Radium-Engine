@@ -72,7 +72,7 @@ class RA_ENGINE_API SignalManager
     mutable std::mutex m_mutex;
 
     /// State of the signal manager
-    bool m_isOn {true};
+    bool m_isOn { true };
 
     /// Item observables
     ///@{

@@ -22,7 +22,7 @@ TinyPlyFileLoader::TinyPlyFileLoader() {}
 TinyPlyFileLoader::~TinyPlyFileLoader() {}
 
 std::vector<std::string> TinyPlyFileLoader::getFileExtensions() const {
-    return std::vector<std::string>( {"*." + plyExt} );
+    return std::vector<std::string>( { "*." + plyExt } );
 }
 
 bool TinyPlyFileLoader::handleFileExtension( const std::string& extension ) const {
@@ -31,8 +31,8 @@ bool TinyPlyFileLoader::handleFileExtension( const std::string& extension ) cons
 // from https://github.com/ddiakopoulos/tinyply/blob/master/source/example-utils.hpp
 
 struct memory_buffer : public std::streambuf {
-    char* p_start {nullptr};
-    char* p_end {nullptr};
+    char* p_start { nullptr };
+    char* p_end { nullptr };
     size_t size;
 
     memory_buffer( char const* first_elem, size_t size_ ) :
@@ -82,9 +82,7 @@ void copyArrayToContainer( const uint8_t* buffer,
     auto data = reinterpret_cast<const DataType*>( buffer );
     container.reserve( count );
     for ( size_t i = 0; i < count; ++i )
-    {
-        container.emplace_back( data[i] );
-    }
+    { container.emplace_back( data[i] ); }
 }
 
 template <typename DataType>
@@ -94,9 +92,7 @@ void copyArrayToContainer( const uint8_t* buffer,
     auto data = reinterpret_cast<const DataType*>( buffer );
     container.reserve( count );
     for ( size_t i = 0; i < count; ++i )
-    {
-        container.emplace_back( data[i * 3 + 0], data[i * 3 + 1], data[i * 3 + 2] );
-    }
+    { container.emplace_back( data[i * 3 + 0], data[i * 3 + 1], data[i * 3 + 2] ); }
 }
 
 template <typename ContainerType>
@@ -199,16 +195,16 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
         return ret;
     };
 
-    auto startTime {std::clock()};
+    auto startTime { std::clock() };
 
     // a unique name is required by the component messaging system
-    static int nameId {0};
+    static int nameId { 0 };
     auto geometry = std::make_unique<GeometryData>( "PC_" + std::to_string( ++nameId ),
                                                     GeometryData::POINT_CLOUD );
     geometry->setFrame( Core::Transform::Identity() );
 
     /// request for vertex position
-    auto vertBuffer {initBuffer( "vertex", {"x", "y", "z"} )};
+    auto vertBuffer { initBuffer( "vertex", { "x", "y", "z" } ) };
     // if there is no vertex prop, or their count is 0, then quit.
     if ( !vertBuffer || vertBuffer->count == 0 )
     {
@@ -218,14 +214,14 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
     }
     /// request for standard vertex attributes
     /// \todo merge with non standard attributes when all will be stored as Attribs in GeometryData
-    auto normalBuffer {initBuffer( "vertex", {"nx", "ny", "nz"} )};
-    auto alphaBuffer {initBuffer( "vertex", {"alpha"} )};
-    auto colorBuffer {initBuffer( "vertex", {"red", "green", "blue"} )};
+    auto normalBuffer { initBuffer( "vertex", { "nx", "ny", "nz" } ) };
+    auto alphaBuffer { initBuffer( "vertex", { "alpha" } ) };
+    auto colorBuffer { initBuffer( "vertex", { "red", "green", "blue" } ) };
 
     //// request for non standard vertex attributes
     std::vector<std::pair<std::string, std::shared_ptr<tinyply::PlyData>>> allAttributes;
     const std::set<std::string> usedAttributes {
-        "x", "y", "z", "nx", "ny", "nz", "alpha", "red", "green", "blue"};
+        "x", "y", "z", "nx", "ny", "nz", "alpha", "red", "green", "blue" };
     for ( const auto& e : file.get_elements() )
     {
         if ( e.name == "vertex" )
@@ -234,7 +230,7 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
             {
                 bool exists = usedAttributes.find( p.name ) != usedAttributes.end();
                 if ( !exists )
-                { allAttributes.emplace_back( p.name, initBuffer( "vertex", {p.name} ) ); }
+                { allAttributes.emplace_back( p.name, initBuffer( "vertex", { p.name } ) ); }
             }
             break;
         }
@@ -289,7 +285,7 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
             continue;
         }
         /// Transform attrib name to valid GLSL identifier
-        auto attribName {a.first};
+        auto attribName { a.first };
         std::replace( attribName.begin(), attribName.end(), '-', '_' );
         LOG( logINFO ) << "[TinyPLY] Adding custom attrib with name " << attribName << " (was "
                        << a.first << ")";

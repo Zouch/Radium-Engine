@@ -68,9 +68,7 @@ aiNode* findMeshNode( aiNode* node, const aiScene* scene, const aiString& meshNa
 void initMarks( const aiNode* node, std::map<std::string, bool>& flags, bool flag = false ) {
     flags[assimpToCore( node->mName )] = flag;
     for ( uint i = 0; i < node->mNumChildren; ++i )
-    {
-        initMarks( node->mChildren[i], flags, flag );
-    }
+    { initMarks( node->mChildren[i], flags, flag ); }
 }
 
 void markParents( aiNode* node,
@@ -119,9 +117,7 @@ void AssimpHandleDataLoader::loadHandleData(
         // fetch mesh name as registered by the GeometryLoader
         std::string meshName = assimpToCore( mesh->mName );
         while ( meshNames.find( meshName ) != meshNames.end() )
-        {
-            meshName.append( "_" );
-        }
+        { meshName.append( "_" ); }
         meshNames.insert( meshName );
 
         // if bound to no skeleton, skip
@@ -198,16 +194,14 @@ void AssimpHandleDataLoader::loadHandleData(
                 // if data doesn't exist, create it (bone with no weight)
                 mapBone2Data[childName].m_name = childName;
                 // register parenthood
-                edgeList.push_back( {n.first, childName} );
+                edgeList.push_back( { n.first, childName } );
             }
         }
     }
 
     // load bone frame once all are registered
     for ( auto& bone : mapBone2Data )
-    {
-        loadHandleComponentDataFrame( scene, aiString( bone.first ), bone.second );
-    }
+    { loadHandleComponentDataFrame( scene, aiString( bone.first ), bone.second ); }
 
     // find roots and leaves
     std::set<std::string> roots;
@@ -313,9 +307,7 @@ void AssimpHandleDataLoader::fillHandleData(
     data->getComponentData().push_back( mapBone2Data.at( node ) );
     // bind meshes bound to the bone
     for ( const auto& mesh : mapBone2Data.at( node ).m_weights )
-    {
-        data->addBindMesh( mesh.first );
-    }
+    { data->addBindMesh( mesh.first ); }
     // go through children
     for ( const auto& edge : edgeList )
     {
@@ -323,7 +315,7 @@ void AssimpHandleDataLoader::fillHandleData(
         {
             fillHandleData( edge.second, edgeList, mapBone2Data, nameTable, data );
             data->getEdgeData().push_back(
-                {nameTable.at( edge.first ), nameTable.at( edge.second )} );
+                { nameTable.at( edge.first ), nameTable.at( edge.second ) } );
         }
     }
 }

@@ -62,7 +62,7 @@ class RA_ENGINE_API Displayable
     virtual size_t getNumVertices() const { return 0; }
 
   protected:
-    PickingRenderMode m_pickingRenderMode {NO_PICKING};
+    PickingRenderMode m_pickingRenderMode { NO_PICKING };
 
   private:
     std::string m_name {}; /// Name of the mesh.

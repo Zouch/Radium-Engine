@@ -15,9 +15,7 @@ WeightMatrix extractWeightMatrix( const MeshWeight& weight, const uint weight_si
     for ( uint i = 0; i < weight.size(); ++i )
     {
         for ( const auto& w : weight[i] )
-        {
-            W.coeffRef( i, w.first ) = w.second;
-        }
+        { W.coeffRef( i, w.first ) = w.second; }
     }
     return W;
 }
@@ -54,9 +52,7 @@ uint getMaxWeightIndex( Eigen::Ref<const WeightMatrix> weights, const uint verte
 void getMaxWeightIndex( Eigen::Ref<const WeightMatrix> weights, std::vector<uint>& handleID ) {
     handleID.resize( weights.rows() );
     for ( int i = 0; i < weights.rows(); ++i )
-    {
-        handleID[i] = getMaxWeightIndex( weights, i );
-    }
+    { handleID[i] = getMaxWeightIndex( weights, i ); }
 }
 
 bool checkWeightMatrix( Eigen::Ref<const WeightMatrix> matrix,

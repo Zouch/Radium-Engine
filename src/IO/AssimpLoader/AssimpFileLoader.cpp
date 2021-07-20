@@ -34,9 +34,7 @@ std::vector<std::string> AssimpFileLoader::getFileExtensions() const {
     std::string ext;
     std::vector<std::string> extensions;
     while ( std::getline( iss, ext, ';' ) )
-    {
-        extensions.push_back( ext );
-    }
+    { extensions.push_back( ext ); }
     return extensions;
 }
 

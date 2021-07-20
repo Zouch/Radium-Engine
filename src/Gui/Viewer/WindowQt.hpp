@@ -96,7 +96,7 @@ class RA_GUI_API WindowQt : public QWindow
     static glbinding::ProcAddress getProcAddress( const char* name );
 
   private:
-    int m_contextActivationCount {0};
+    int m_contextActivationCount { 0 };
 };
 
 } // namespace Gui

@@ -49,9 +49,7 @@ void findCorrectionData( const Vector3Array& mesh,
         start             = pose[wID[i]].translation();
         end.setZero();
         for ( const auto& c : child )
-        {
-            end += pose[c].translation();
-        }
+        { end += pose[c].translation(); }
         Vector3 seg   = end - start;
         data.m_prj[i] = start + Geometry::projectOnSegment( mesh[i], start, seg ) * seg;
         data.m_dv[i]  = ( mesh[i] - data.m_prj[i] ).squaredNorm();

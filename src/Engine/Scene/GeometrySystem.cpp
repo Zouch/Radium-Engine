@@ -24,7 +24,7 @@ void GeometrySystem::handleAssetLoading( Entity* entity,
 
     for ( const auto& data : geomData )
     {
-        Component* comp {nullptr};
+        Component* comp { nullptr };
         std::string componentName = "GEOM_" + entity->getName() + std::to_string( id++ );
         switch ( data->getType() )
         {

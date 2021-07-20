@@ -21,7 +21,7 @@ void addConfiguration( const ShaderConfiguration& config ) {
         return;
     }
 
-    auto found = configs.insert( {config.getName(), config} );
+    auto found = configs.insert( { config.getName(), config } );
     if ( !found.second )
     {
         LOG( logDEBUG ) << "Configuration " << config.getName()

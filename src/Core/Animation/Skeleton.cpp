@@ -38,9 +38,7 @@ void Skeleton::setPose( const Pose& pose, const SpaceType MODE ) {
         {
             if ( m_graph.isRoot( i ) ) { m_modelSpace[i] = m_pose[i]; }
             for ( const auto& child : m_graph.children()[i] )
-            {
-                m_modelSpace[child] = m_modelSpace[i] * m_pose[child];
-            }
+            { m_modelSpace[child] = m_modelSpace[i] * m_pose[child]; }
         }
     }
     else
@@ -51,9 +49,7 @@ void Skeleton::setPose( const Pose& pose, const SpaceType MODE ) {
         {
             if ( m_graph.isRoot( i ) ) { m_pose[i] = m_modelSpace[i]; }
             for ( const auto& child : m_graph.children()[i] )
-            {
-                m_pose[child] = m_modelSpace[i].inverse() * m_modelSpace[child];
-            }
+            { m_pose[child] = m_modelSpace[i].inverse() * m_modelSpace[child]; }
         }
     }
 }
@@ -195,9 +191,7 @@ void Skeleton::getBonePoints( const uint i, Vector3& startOut, Vector3& endOut )
         // End point is the average of chidren start points.
         endOut = Vector3::Zero();
         for ( auto child : children )
-        {
-            endOut += m_modelSpace[child].translation();
-        }
+        { endOut += m_modelSpace[child].translation(); }
         endOut *= ( 1_ra / children.size() );
     }
 }
@@ -222,15 +216,12 @@ std::ostream& operator<<( std::ostream& os, const Skeleton& skeleton ) {
     {
         const uint id          = i;
         const std::string name = skeleton.getLabel( i );
-        const std::string type =
-            skeleton.m_graph.isRoot( i )
-                ? "ROOT"
-                : skeleton.m_graph.isJoint( i )
-                      ? "JOINT"
-                      : skeleton.m_graph.isBranch( i )
-                            ? "BRANCH"
-                            : skeleton.m_graph.isLeaf( i ) ? "LEAF" : "UNKNOWN";
-        const int pid = skeleton.m_graph.parents()[i];
+        const std::string type = skeleton.m_graph.isRoot( i )     ? "ROOT"
+                                 : skeleton.m_graph.isJoint( i )  ? "JOINT"
+                                 : skeleton.m_graph.isBranch( i ) ? "BRANCH"
+                                 : skeleton.m_graph.isLeaf( i )   ? "LEAF"
+                                                                  : "UNKNOWN";
+        const int pid          = skeleton.m_graph.parents()[i];
         const std::string pname =
             ( pid == -1 ) ? "" : ( "(" + std::to_string( pid ) + ") " + skeleton.getLabel( pid ) );
 

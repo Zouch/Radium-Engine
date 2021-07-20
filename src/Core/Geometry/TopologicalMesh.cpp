@@ -73,7 +73,7 @@ bool TopologicalMesh::isManifold( VertexHandle vh ) const {
 bool TopologicalMesh::checkIntegrity() const {
     std::vector<unsigned int> count( m_wedges.size(), 0 );
     bool ret = true;
-    for ( auto he_itr {halfedges_begin()}; he_itr != halfedges_end(); ++he_itr )
+    for ( auto he_itr { halfedges_begin() }; he_itr != halfedges_end(); ++he_itr )
     {
         auto widx = property( m_wedgeIndexPph, *he_itr );
 
@@ -108,11 +108,11 @@ bool TopologicalMesh::checkIntegrity() const {
 
     for ( int widx = 0; widx < int( m_wedges.size() ); ++widx )
     {
-        if ( m_wedges.getWedge( WedgeIndex {widx} ).getRefCount() != count[widx] )
+        if ( m_wedges.getWedge( WedgeIndex { widx } ).getRefCount() != count[widx] )
         {
             LOG( logWARNING ) << "topological mesh wedge count inconsistency, topo count [ "
                               << count[widx] << " ] != wedge count [ "
-                              << m_wedges.getWedge( WedgeIndex {widx} ).getRefCount()
+                              << m_wedges.getWedge( WedgeIndex { widx } ).getRefCount()
                               << " ] for id " << widx;
             ret = false;
         }
@@ -148,9 +148,7 @@ void TopologicalMesh::triangulate() {
         std::vector<HalfedgeHandle> old_heh;
         ConstFaceHalfedgeIter fh_itr = cfh_iter( *f_it );
         for ( ; fh_itr.is_valid(); ++fh_itr )
-        {
-            old_heh.push_back( *fh_itr );
-        }
+        { old_heh.push_back( *fh_itr ); }
         auto size = old_heh.size();
         //   if ( size <= 3 ) continue;
 
@@ -173,9 +171,7 @@ void TopologicalMesh::triangulate() {
     }
     // untag everything
     for ( auto& he : halfedges() )
-    {
-        status( he ).set_tagged( false );
-    }
+    { status( he ).set_tagged( false ); }
 }
 
 void printWedgesInfo( const Ra::Core::Geometry::TopologicalMesh& topo ) {
@@ -186,9 +182,7 @@ void printWedgesInfo( const Ra::Core::Geometry::TopologicalMesh& topo ) {
         LOG( Utils::logINFO ) << "vertex " << *itr;
         auto wedges = topo.getVertexWedges( *itr );
         for ( auto wedgeIndex : wedges )
-        {
-            LOG( Utils::logINFO ) << wedgeInfo( topo, wedgeIndex );
-        }
+        { LOG( Utils::logINFO ) << wedgeInfo( topo, wedgeIndex ); }
     }
 
     for ( auto itr = topo.halfedges_sbegin(); itr != topo.halfedges_end(); ++itr )
@@ -208,9 +202,7 @@ template <typename T>
 void copyWedgeDataToAttribContainer( AlignedStdVector<typename Attrib<T>::Container>& c,
                                      const VectorArray<T>& wd ) {
     for ( size_t i = 0; i < wd.size(); ++i )
-    {
-        c[i].push_back( wd[i] );
-    }
+    { c[i].push_back( wd[i] ); }
 }
 
 template <typename T>
@@ -243,7 +235,7 @@ TriangleMesh TopologicalMesh::toTriangleMesh() {
         m_wedges.m_vector4AttribNames.size() );
 
     /// Wedges are output vertices !
-    for ( WedgeIndex widx {0}; widx < WedgeIndex {m_wedges.size()}; ++widx )
+    for ( WedgeIndex widx { 0 }; widx < WedgeIndex { m_wedges.size() }; ++widx )
     {
         const auto& wd = m_wedges.getWedgeData( widx );
         wedgePosition.push_back( wd.m_position );
@@ -297,7 +289,7 @@ LineMesh TopologicalMesh::toLineMesh() {
         m_wedges.m_vector4AttribNames.size() );
 
     /// Wedges are output vertices !
-    for ( WedgeIndex widx {0}; widx < WedgeIndex( m_wedges.size() ); ++widx )
+    for ( WedgeIndex widx { 0 }; widx < WedgeIndex( m_wedges.size() ); ++widx )
     {
         const auto& wd = m_wedges.getWedgeData( widx );
         wedgePosition.push_back( wd.m_position );
@@ -361,7 +353,7 @@ PolyMesh TopologicalMesh::toPolyMesh() {
         m_wedges.m_vector4AttribNames.size() );
 
     /// Wedges are output vertices !
-    for ( WedgeIndex widx {0}; widx < WedgeIndex( m_wedges.size() ); ++widx )
+    for ( WedgeIndex widx { 0 }; widx < WedgeIndex( m_wedges.size() ); ++widx )
     {
         const auto& wd = m_wedges.getWedgeData( widx );
         wedgePosition.push_back( wd.m_position );
@@ -409,7 +401,7 @@ void TopologicalMesh::updateTriangleMesh( Ra::Core::Geometry::MultiIndexedGeomet
         m_wedges.m_vector4AttribNames.size() );
 
     /// Wedges are output vertices !
-    for ( WedgeIndex widx {0}; widx < WedgeIndex( m_wedges.size() ); ++widx )
+    for ( WedgeIndex widx { 0 }; widx < WedgeIndex( m_wedges.size() ); ++widx )
     {
         const auto& wd = m_wedges.getWedgeData( widx );
         wedgePosition.push_back( wd.m_position );
@@ -435,9 +427,7 @@ void TopologicalMesh::updateTriangleMeshNormals(
     }
 
     for ( unsigned int widx = 0; widx < m_wedges.size(); ++widx )
-    {
-        normals[widx] = m_wedges.getWedgeData<Normal>( widx, m_normalsIndex );
-    }
+    { normals[widx] = m_wedges.getWedgeData<Normal>( widx, m_normalsIndex ); }
 }
 
 void TopologicalMesh::updateTriangleMeshNormals( Ra::Core::Geometry::MultiIndexedGeometry& out ) {
@@ -486,9 +476,7 @@ void TopologicalMesh::updateNormals( const Ra::Core::Geometry::MultiIndexedGeome
     auto& normals = triMesh.normals();
 
     for ( size_t i = 0; i < triMesh.vertices().size(); ++i )
-    {
-        m_wedges.setWedgeAttrib<Normal>( i, m_normalsIndex, normals[i] );
-    }
+    { m_wedges.setWedgeAttrib<Normal>( i, m_normalsIndex, normals[i] ); }
 }
 
 void TopologicalMesh::updateWedgeNormals() {
@@ -513,9 +501,7 @@ void TopologicalMesh::updateWedgeNormals() {
     }
 
     for ( auto& w : m_wedges.m_data )
-    {
-        w.getWedgeData().m_vector3Attrib[m_normalsIndex] = Normal {0_ra, 0_ra, 0_ra};
-    }
+    { w.getWedgeData().m_vector3Attrib[m_normalsIndex] = Normal { 0_ra, 0_ra, 0_ra }; }
 
     for ( auto v_itr = vertices_begin(), stop = vertices_end(); v_itr != stop; ++v_itr )
     {
@@ -530,16 +516,12 @@ void TopologicalMesh::updateWedgeNormals() {
     }
 
     for ( auto& w : m_wedges.m_data )
-    {
-        w.getWedgeData().m_vector3Attrib[m_normalsIndex].normalize();
-    }
+    { w.getWedgeData().m_vector3Attrib[m_normalsIndex].normalize(); }
 }
 
 void TopologicalMesh::copyPointsPositionToWedges() {
     for ( auto& w : m_wedges.m_data )
-    {
-        w.m_wedgeData.m_position = point( w.m_wedgeData.m_vertexHandle );
-    }
+    { w.m_wedgeData.m_position = point( w.m_wedgeData.m_vertexHandle ); }
 }
 
 template <typename T>
@@ -548,9 +530,7 @@ void interpolate( const VectorArray<T>& in1,
                   VectorArray<T>& out,
                   const Scalar alpha ) {
     for ( size_t i = 0; i < in1.size(); ++i )
-    {
-        out.push_back( ( 1_ra - alpha ) * in1[i] + alpha * in2[i] );
-    }
+    { out.push_back( ( 1_ra - alpha ) * in1[i] + alpha * in2[i] ); }
 }
 
 TopologicalMesh::WedgeData
@@ -675,7 +655,7 @@ void TopologicalMesh::split_copy( EdgeHandle _eh, VertexHandle _vh ) {
     for ( VEIter ve_it = ve_iter( _vh ); ve_it.is_valid(); ++ve_it )
         copy_all_properties( _eh, *ve_it, true );
 
-    for ( auto vh : {v0, v1} )
+    for ( auto vh : { v0, v1 } )
     {
         // get the halfedge pointing from new vertex to old vertex
         const HalfedgeHandle h = find_halfedge( _vh, vh );
@@ -1035,7 +1015,7 @@ void TopologicalMesh::garbage_collection() {
     }
     for ( size_t i = 0; i < m_wedges.size(); ++i )
     {
-        CORE_ASSERT( !m_wedges.getWedge( WedgeIndex {i} ).isDeleted(),
+        CORE_ASSERT( !m_wedges.getWedge( WedgeIndex { i } ).isDeleted(),
                      "deleted wedge remains after garbage collection" );
     }
 }
@@ -1062,7 +1042,7 @@ void TopologicalMesh::delete_face( FaceHandle _fh, bool _delete_isolated_vertice
 TopologicalMesh::WedgeIndex
 TopologicalMesh::WedgeCollection::add( const TopologicalMesh::WedgeData& wd ) {
     WedgeIndex idx;
-    auto itr = std::find( m_data.begin(), m_data.end(), Wedge {wd} );
+    auto itr = std::find( m_data.begin(), m_data.end(), Wedge { wd } );
 
     if ( itr == m_data.end() )
     {

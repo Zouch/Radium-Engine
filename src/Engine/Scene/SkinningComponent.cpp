@@ -53,8 +53,8 @@ TriangleMesh triangulate( const PolyMesh& polyMesh ) {
         if ( face.size() == 3 ) { indices.push_back( face ); }
         else
         {
-            int minus {int( face.size() ) - 1};
-            int plus {0};
+            int minus { int( face.size() ) - 1 };
+            int plus { 0 };
             while ( plus + 1 < minus )
             {
                 if ( ( plus - minus ) % 2 )
@@ -104,9 +104,7 @@ void SkinningComponent::initialize() {
             Vector3Array bitangents( normals.size() );
 #pragma omp parallel for
             for ( int i = 0; i < int( normals.size() ); ++i )
-            {
-                Core::Math::getOrthogonalVectors( normals[i], tangents[i], bitangents[i] );
-            }
+            { Core::Math::getOrthogonalVectors( normals[i], tangents[i], bitangents[i] ); }
             m_refData.m_referenceMesh.addAttrib( tangentName, std::move( tangents ) );
             m_refData.m_referenceMesh.addAttrib( bitangentName, std::move( bitangents ) );
         }
@@ -118,9 +116,7 @@ void SkinningComponent::initialize() {
             Vector3Array tangents( normals.size() );
 #pragma omp parallel for
             for ( int i = 0; i < int( normals.size() ); ++i )
-            {
-                tangents[i] = bitangents[i].cross( normals[i] );
-            }
+            { tangents[i] = bitangents[i].cross( normals[i] ); }
             m_refData.m_referenceMesh.addAttrib( tangentName, std::move( tangents ) );
         }
         else if ( !m_refData.m_referenceMesh.hasAttrib( bitangentName ) )
@@ -131,12 +127,10 @@ void SkinningComponent::initialize() {
             Vector3Array bitangents( normals.size() );
 #pragma omp parallel for
             for ( int i = 0; i < int( normals.size() ); ++i )
-            {
-                bitangents[i] = normals[i].cross( tangents[i] );
-            }
+            { bitangents[i] = normals[i].cross( tangents[i] ); }
             m_refData.m_referenceMesh.addAttrib( bitangentName, std::move( bitangents ) );
         }
-        m_topoMesh = Ra::Core::Geometry::TopologicalMesh {m_refData.m_referenceMesh};
+        m_topoMesh = Ra::Core::Geometry::TopologicalMesh { m_refData.m_referenceMesh };
 
         auto ro = getRoMgr()->getRenderObject( *m_renderObjectReader() );
         // get other data
@@ -321,10 +315,10 @@ void SkinningComponent::createWeightMatrix() {
             for ( uint i = 0; i < W.size(); ++i )
             {
                 const auto& w = W[i];
-                int row {int( w.first )};
+                int row { int( w.first ) };
                 CORE_ASSERT( row < m_refData.m_weights.rows(),
                              "Weights are incompatible with mesh." );
-                triplets.push_back( {row, int( col ), w.second} );
+                triplets.push_back( { row, int( col ), w.second } );
             }
             m_refData.m_bindMatrices[col] = m_loadedBindMatrices[boneName];
         }
@@ -418,17 +412,13 @@ void SkinningComponent::showWeights( bool on ) {
         case STANDARD: {
 #pragma omp parallel for
             for ( int i = 0; i < int( size ); ++i )
-            {
-                m_weightsUV[i][0] = m_refData.m_weights.coeff( i, m_weightBone );
-            }
+            { m_weightsUV[i][0] = m_refData.m_weights.coeff( i, m_weightBone ); }
         }
         break;
         case STBS: {
 #pragma omp parallel for
             for ( int i = 0; i < int( size ); ++i )
-            {
-                m_weightsUV[i][0] = m_refData.m_weightSTBS.coeff( i, m_weightBone );
-            }
+            { m_weightsUV[i][0] = m_refData.m_weightSTBS.coeff( i, m_weightBone ); }
         }
         break;
         } // end of switch.

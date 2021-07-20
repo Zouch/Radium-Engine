@@ -16,9 +16,7 @@ Pose relativePose( const Pose& modelPose, const RestPose& restPose ) {
     Pose T( restPose.size() );
 #pragma omp parallel for
     for ( int i = 0; i < int( T.size() ); ++i )
-    {
-        T[i] = modelPose[i] * restPose[i].inverse( Eigen::Affine );
-    }
+    { T[i] = modelPose[i] * restPose[i].inverse( Eigen::Affine ); }
     return T;
 }
 
@@ -26,9 +24,7 @@ Pose applyTransformation( const Pose& pose, const AlignedStdVector<Transform>& t
     Pose T( std::min( pose.size(), transform.size() ) );
 #pragma omp parallel for
     for ( int i = 0; i < int( T.size() ); ++i )
-    {
-        T[i] = transform[i] * pose[i];
-    }
+    { T[i] = transform[i] * pose[i]; }
     return T;
 }
 
@@ -36,9 +32,7 @@ Pose applyTransformation( const Pose& pose, const Transform& transform ) {
     Pose T( pose.size() );
 #pragma omp parallel for
     for ( int i = 0; i < int( T.size() ); ++i )
-    {
-        T[i] = transform * pose[i];
-    }
+    { T[i] = transform * pose[i]; }
     return T;
 }
 
@@ -61,9 +55,7 @@ Pose interpolatePoses( const Pose& a, const Pose& b, const Scalar t ) {
 
 #pragma omp parallel for
     for ( int i = 0; i < int( size ); ++i )
-    {
-        interpolatedPose[i] = Math::linearInterpolate( a[i], b[i], t );
-    }
+    { interpolatedPose[i] = Math::linearInterpolate( a[i], b[i], t ); }
 
     return interpolatedPose;
 }

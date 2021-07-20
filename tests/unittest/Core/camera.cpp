@@ -24,7 +24,7 @@ void testProjectUnproject( const Camera& cam, const Vector3& x, const Vector2& r
     else
         REQUIRE( Math::areApproxEqual( q.norm(), 0_ra ) );
 
-    Vector3 r = cam.unProjectFromScreen( Vector2 {p.head<2>()} );
+    Vector3 r = cam.unProjectFromScreen( Vector2 { p.head<2>() } );
     std::cout << "r " << r.transpose() << "\n";
 
     Vector3 rRef = ( x - cam.getPosition() );
@@ -49,8 +49,8 @@ TEST_CASE( "Core/Camera" ) {
     REQUIRE( Math::areApproxEqual( cam->getZNear(), 0.1_ra ) );
     REQUIRE( Math::areApproxEqual( cam->getZFar(), 1000_ra ) );
 
-    Vector3 dir {1, 1, 1};
-    Vector3 pos {0, 0, 0};
+    Vector3 dir { 1, 1, 1 };
+    Vector3 pos { 0, 0, 0 };
     cam->setPosition( pos );
     cam->setDirection( dir );
 
@@ -78,7 +78,7 @@ TEST_CASE( "Core/Camera" ) {
     }
 
     SECTION( "setters" ) {
-        Ra::Core::Vector3 newDir {2, 3, 4};
+        Ra::Core::Vector3 newDir { 2, 3, 4 };
         cam->setDirection( newDir );
         REQUIRE( newDir.normalized().isApprox( cam->getDirection() ) );
         // it's still an orthonormal basis
@@ -86,7 +86,7 @@ TEST_CASE( "Core/Camera" ) {
         REQUIRE( Math::areApproxEqual( cam->getDirection().dot( cam->getRightVector() ), 0_ra ) );
         REQUIRE( Math::areApproxEqual( cam->getUpVector().dot( cam->getRightVector() ), 0_ra ) );
 
-        Ra::Core::Vector3 newPos {2, 3, 4};
+        Ra::Core::Vector3 newPos { 2, 3, 4 };
         cam->setPosition( newPos );
         REQUIRE( newPos.isApprox( cam->getPosition() ) );
 
@@ -94,7 +94,7 @@ TEST_CASE( "Core/Camera" ) {
         REQUIRE( Math::areApproxEqual( cam->getDirection().dot( cam->getRightVector() ), 0_ra ) );
         REQUIRE( Math::areApproxEqual( cam->getUpVector().dot( cam->getRightVector() ), 0_ra ) );
 
-        Ra::Core::Vector3 newUp {2, 3, 4};
+        Ra::Core::Vector3 newUp { 2, 3, 4 };
         cam->setUpVector( newUp );
         REQUIRE( newUp.normalized().isApprox( cam->getUpVector() ) );
 
@@ -156,7 +156,7 @@ TEST_CASE( "Core/Camera" ) {
     }
 
     SECTION( "fit aabb" ) {
-        Ra::Core::Aabb aabb {Ra::Core::Vector3 {3, 3, 3}, Ra::Core::Vector3 {6, 6, 6}};
+        Ra::Core::Aabb aabb { Ra::Core::Vector3 { 3, 3, 3 }, Ra::Core::Vector3 { 6, 6, 6 } };
         cam->fitZRange( aabb );
         REQUIRE(
             ( Math::areApproxEqual( cam->getZNear(), ( cam->getPosition() - aabb.min() ).norm() ) ||
@@ -169,7 +169,7 @@ TEST_CASE( "Core/Camera" ) {
             ( ( cam->getZFar() - cam->getZNear() ) > cam->m_minZRange ||
               Math::areApproxEqual( ( cam->getZFar() - cam->getZNear() ), cam->m_minZRange ) ) );
 
-        aabb = {Ra::Core::Vector3 {-1, -1, -1}, Ra::Core::Vector3 {1, 1, 1}};
+        aabb = { Ra::Core::Vector3 { -1, -1, -1 }, Ra::Core::Vector3 { 1, 1, 1 } };
         cam->fitZRange( aabb );
         REQUIRE( Math::areApproxEqual( cam->getZNear(), cam->m_minZNear ) );
         REQUIRE(
@@ -181,12 +181,12 @@ TEST_CASE( "Core/Camera" ) {
             ( ( cam->getZFar() - cam->getZNear() ) > cam->m_minZRange ||
               Math::areApproxEqual( ( cam->getZFar() - cam->getZNear() ), cam->m_minZRange ) ) );
 
-        aabb = {Ra::Core::Vector3 {-2, -1, 1}, Ra::Core::Vector3 {-4, -1, 0}};
+        aabb = { Ra::Core::Vector3 { -2, -1, 1 }, Ra::Core::Vector3 { -4, -1, 0 } };
         cam->fitZRange( aabb );
         REQUIRE( Math::areApproxEqual( cam->getZNear(), cam->m_minZNear ) );
         REQUIRE( Math::areApproxEqual( cam->getZFar(), cam->getZNear() + cam->m_minZRange ) );
 
-        aabb = {Ra::Core::Vector3 {0, -3, 0}, Ra::Core::Vector3 {1, -2, 1}};
+        aabb = { Ra::Core::Vector3 { 0, -3, 0 }, Ra::Core::Vector3 { 1, -2, 1 } };
         cam->fitZRange( aabb );
         REQUIRE( Math::areApproxEqual( cam->getZNear(), cam->m_minZNear ) );
         REQUIRE( Math::areApproxEqual( cam->getZFar(), cam->getZNear() + cam->m_minZRange ) );
@@ -206,22 +206,22 @@ TEST_CASE( "Core/Camera" ) {
 
         REQUIRE( frustum.isApprox( perspective ) );
 
-        Camera projection {10_ra, 20_ra};
+        Camera projection { 10_ra, 20_ra };
         projection.setFOV( fov );
         projection.setZNear( 1_ra );
         projection.setZFar( 10_ra );
-        projection.setPosition( {0_ra, 0_ra, 2_ra} );
-        projection.setDirection( {0_ra, 0_ra, -1_ra} );
+        projection.setPosition( { 0_ra, 0_ra, 2_ra } );
+        projection.setDirection( { 0_ra, 0_ra, -1_ra } );
         projection.updateProjMatrix();
 
-        Vector3 x {0_ra, 0_ra, 0_ra};
+        Vector3 x { 0_ra, 0_ra, 0_ra };
 
-        testProjectUnproject( projection, x, Vector2 {5_ra, 10_ra} );
-        x = {0_ra, 0_ra, -3_ra};
-        testProjectUnproject( projection, x, Vector2 {5_ra, 10_ra} );
-        x = {-std::tan( Math::Pi / 8_ra ), 2_ra * std::tan( Math::Pi / 8_ra ), 1_ra};
-        testProjectUnproject( projection, x, Vector2 {0_ra, 0_ra} );
-        x = {+std::tan( Math::Pi / 8_ra ), -2_ra * std::tan( Math::Pi / 8_ra ), 1_ra};
-        testProjectUnproject( projection, x, Vector2 {10_ra, 20_ra} );
+        testProjectUnproject( projection, x, Vector2 { 5_ra, 10_ra } );
+        x = { 0_ra, 0_ra, -3_ra };
+        testProjectUnproject( projection, x, Vector2 { 5_ra, 10_ra } );
+        x = { -std::tan( Math::Pi / 8_ra ), 2_ra * std::tan( Math::Pi / 8_ra ), 1_ra };
+        testProjectUnproject( projection, x, Vector2 { 0_ra, 0_ra } );
+        x = { +std::tan( Math::Pi / 8_ra ), -2_ra * std::tan( Math::Pi / 8_ra ), 1_ra };
+        testProjectUnproject( projection, x, Vector2 { 10_ra, 20_ra } );
     }
 }

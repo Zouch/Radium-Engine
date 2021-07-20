@@ -26,12 +26,12 @@ RenderObject::RenderObject( const std::string& name,
                             const RenderObjectType& type,
                             int lifetime ) :
     IndexedObject(),
-    m_component {comp},
-    m_name {name},
-    m_type {type},
-    m_mesh {nullptr},
-    m_lifetime {lifetime},
-    m_hasLifetime {lifetime > 0} {}
+    m_component { comp },
+    m_name { name },
+    m_type { type },
+    m_mesh { nullptr },
+    m_lifetime { lifetime },
+    m_hasLifetime { lifetime > 0 } {}
 
 RenderObject::~RenderObject() {
     if ( m_mesh )
@@ -198,9 +198,7 @@ Core::Aabb RenderObject::computeAabb() {
 
             Core::Aabb result;
             for ( int i = 0; i < 8; ++i )
-            {
-                result.extend( getTransform() * aabb.corner( Core::Aabb::CornerType( i ) ) );
-            }
+            { result.extend( getTransform() * aabb.corner( Core::Aabb::CornerType( i ) ) ); }
 
             m_aabb        = result;
             m_isAabbValid = true;

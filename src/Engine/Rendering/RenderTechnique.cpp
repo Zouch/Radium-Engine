@@ -14,9 +14,9 @@ namespace Rendering {
 
 using namespace Core::Utils; // log
 
-std::shared_ptr<Ra::Engine::Rendering::RenderTechnique> RadiumDefaultRenderTechnique {nullptr};
+std::shared_ptr<Ra::Engine::Rendering::RenderTechnique> RadiumDefaultRenderTechnique { nullptr };
 
-RenderTechnique::RenderTechnique() : m_numActivePass {0} {
+RenderTechnique::RenderTechnique() : m_numActivePass { 0 } {
     for ( auto p = Index( 0 ); p < s_maxNbPasses; ++p )
     {
         m_activePasses[p]     = PassConfiguration( Data::ShaderConfiguration(), nullptr );
@@ -25,7 +25,9 @@ RenderTechnique::RenderTechnique() : m_numActivePass {0} {
 }
 
 RenderTechnique::RenderTechnique( const RenderTechnique& o ) :
-    m_numActivePass {o.m_numActivePass}, m_dirtyBits {o.m_dirtyBits}, m_setPasses {o.m_setPasses} {
+    m_numActivePass { o.m_numActivePass },
+    m_dirtyBits { o.m_dirtyBits },
+    m_setPasses { o.m_setPasses } {
     for ( auto p = Index( 0 ); p < m_numActivePass; ++p )
     {
         if ( hasConfiguration( p ) )
@@ -133,9 +135,7 @@ RenderTechnique RenderTechnique::createDefaultRenderTechnique() {
     auto rt      = new RenderTechnique;
     auto builder = EngineRenderTechniques::getDefaultTechnique( "BlinnPhong" );
     if ( !builder.first )
-    {
-        LOG( logERROR ) << "Unable to create the default technique : is the Engine initialized ? ";
-    }
+    { LOG( logERROR ) << "Unable to create the default technique : is the Engine initialized ? "; }
     builder.second( *rt, false );
     rt->setParametersProvider( mat );
     RadiumDefaultRenderTechnique.reset( rt );
@@ -154,7 +154,7 @@ static std::map<std::string, DefaultTechniqueBuilder> EngineTechniqueRegistry;
  *  @return true if builder added, false else (e.g, a builder with the same name exists)
  */
 bool registerDefaultTechnique( const std::string& name, DefaultTechniqueBuilder builder ) {
-    auto result = EngineTechniqueRegistry.insert( {name, builder} );
+    auto result = EngineTechniqueRegistry.insert( { name, builder } );
     return result.second;
 }
 
@@ -173,7 +173,7 @@ bool removeDefaultTechnique( const std::string& name ) {
  */
 std::pair<bool, DefaultTechniqueBuilder> getDefaultTechnique( const std::string& name ) {
     auto search = EngineTechniqueRegistry.find( name );
-    if ( search != EngineTechniqueRegistry.end() ) { return {true, search->second}; }
+    if ( search != EngineTechniqueRegistry.end() ) { return { true, search->second }; }
     auto result = std::make_pair( false, [name]( RenderTechnique&, bool ) -> void {
         LOG( logERROR ) << "Undefined default technique for " << name << " !";
     } );

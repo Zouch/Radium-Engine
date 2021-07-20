@@ -100,7 +100,7 @@ class RA_ENGINE_API CameraManager : public System
 
   protected:
     /// Stores the object that stores the Cameras...
-    std::unique_ptr<CameraStorage> m_data {nullptr};
+    std::unique_ptr<CameraStorage> m_data { nullptr };
 
     /// active camera data, active camera hasn't any component just pure data.
     Ra::Core::Asset::Camera m_activeCamera;

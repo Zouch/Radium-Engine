@@ -38,8 +38,8 @@ void rotateAroundPoint( Ra::Core::Asset::Camera* cam,
     Ra::Core::Vector3 t = cam->getPosition();
     Scalar l            = ( target - t ).norm();
     Ra::Core::Transform inverseCamRotateAround;
-    Ra::Core::AngleAxis aa0 {rotation};
-    Ra::Core::AngleAxis aa1 {aa0.angle(), ( cam->getFrame().linear() * aa0.axis() ).normalized()};
+    Ra::Core::AngleAxis aa0 { rotation };
+    Ra::Core::AngleAxis aa1 { aa0.angle(), ( cam->getFrame().linear() * aa0.axis() ).normalized() };
     inverseCamRotateAround.setIdentity();
     inverseCamRotateAround.rotate( aa1 );
     cam->applyTransform( inverseCamRotateAround );
@@ -133,18 +133,14 @@ void RotateAroundCameraManipulator::alignOnClosestAxis() {
 
     Scalar max            = 0_ra;
     Ra::Core::Vector3 ref = m_camera->getDirection();
-    for ( auto axis : std::vector<Ra::Core::Vector3> {-x, x, -y, y, -z, z} )
-    {
-        updateMaxAndAxis( ref, axis, newDirection, max );
-    }
+    for ( auto axis : std::vector<Ra::Core::Vector3> { -x, x, -y, y, -z, z } )
+    { updateMaxAndAxis( ref, axis, newDirection, max ); }
     m_camera->setDirection( newDirection );
 
     max = 0_ra;
     ref = m_camera->getUpVector();
-    for ( auto axis : std::vector<Ra::Core::Vector3> {-x, x, -y, y, -z, z} )
-    {
-        updateMaxAndAxis( ref, axis, newUpVector, max );
-    }
+    for ( auto axis : std::vector<Ra::Core::Vector3> { -x, x, -y, y, -z, z } )
+    { updateMaxAndAxis( ref, axis, newUpVector, max ); }
     m_camera->setUpVector( newUpVector );
 
     Ra::Core::Vector3 newPivot = m_camera->getFrame() * pivotInCamSpace;
@@ -200,7 +196,7 @@ RotateAroundCameraManipulator::deformedBallQuaternion( Scalar x, Scalar y, Scala
         return Ra::Core::Quaternion( Ra::Core::AngleAxis( angle, axis.normalized() ) );
     }
     return Ra::Core::Quaternion {
-        Ra::Core::AngleAxis( 0_ra, Ra::Core::Vector3( 0_ra, 0_ra, 1_ra ) )};
+        Ra::Core::AngleAxis( 0_ra, Ra::Core::Vector3( 0_ra, 0_ra, 1_ra ) ) };
 }
 
 void RotateAroundCameraManipulator::handleCameraForward( Scalar z ) {

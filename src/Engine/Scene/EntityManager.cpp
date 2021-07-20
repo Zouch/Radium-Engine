@@ -17,7 +17,7 @@ EntityManager::EntityManager() {
     auto& ent = m_entities[idx];
     ent->setIndex( idx );
     CORE_ASSERT( ent.get() == SystemEntity::getInstance(), "Invalid singleton instanciation" );
-    m_entitiesName.insert( {ent->getName(), ent->getIndex()} );
+    m_entitiesName.insert( { ent->getName(), ent->getIndex() } );
     RadiumEngine::getInstance()->getSignalManager()->fireEntityCreated(
         ItemEntry( SystemEntity::getInstance() ) );
 }
@@ -52,7 +52,7 @@ Entity* EntityManager::createEntity( const std::string& name ) {
         if ( mustRename ) { ent->rename( entityName ); }
     }
 
-    m_entitiesName.insert( {ent->getName(), idx} );
+    m_entitiesName.insert( { ent->getName(), idx } );
     RadiumEngine::getInstance()->getSignalManager()->fireEntityCreated( ItemEntry( ent.get() ) );
     return ent.get();
 }
@@ -107,22 +107,16 @@ Entity* EntityManager::getEntity( const std::string& name ) const {
 
 void EntityManager::swapBuffers() {
     for ( auto& e : m_entities )
-    {
-        e->swapTransformBuffers();
-    }
+    { e->swapTransformBuffers(); }
 }
 
 void EntityManager::deleteEntities() {
     std::vector<Core::Utils::Index> indices;
     indices.reserve( m_entities.size() - 1 );
     for ( size_t i = 1; i < m_entities.size(); ++i )
-    {
-        indices.push_back( m_entities.index( i ) );
-    }
+    { indices.push_back( m_entities.index( i ) ); }
     for ( const auto& idx : indices )
-    {
-        removeEntity( idx );
-    }
+    { removeEntity( idx ); }
 }
 } // namespace Scene
 } // namespace Engine

@@ -70,9 +70,9 @@ class RA_ENGINE_API SimpleMaterial : public Material
 
   public:
     /// The base color of the material
-    Core::Utils::Color m_color {0.9, 0.9, 0.9, 1.0};
+    Core::Utils::Color m_color { 0.9, 0.9, 0.9, 1.0 };
     /// Indicates if the material will takes its base color from vertices' attributes.
-    bool m_perVertexColor {false};
+    bool m_perVertexColor { false };
 
   private:
     /**

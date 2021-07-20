@@ -12,7 +12,7 @@
 namespace Ra {
 namespace Engine {
 namespace Data {
-static const std::string materialName {"BlinnPhong"};
+static const std::string materialName { "BlinnPhong" };
 
 BlinnPhongMaterial::BlinnPhongMaterial( const std::string& instanceName ) :
     Material( instanceName, materialName, Material::MaterialAspect::MAT_OPAQUE ) {}
@@ -99,7 +99,7 @@ bool BlinnPhongMaterial::isTransparent() const {
 
 void BlinnPhongMaterial::registerMaterial() {
     // For resources access (glsl files) in a filesystem
-    auto resourcesRootDir {RadiumEngine::getInstance()->getResourcesDir()};
+    auto resourcesRootDir { RadiumEngine::getInstance()->getResourcesDir() };
     auto shaderProgramManager = RadiumEngine::getInstance()->getShaderProgramManager();
 
     // Defining the material converter

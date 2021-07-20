@@ -181,29 +181,29 @@ class RA_ENGINE_API RenderObject final : public Core::Utils::IndexedObject
     void invalidateAabb();
 
   private:
-    Core::Transform m_localTransform {Core::Transform::Identity()};
+    Core::Transform m_localTransform { Core::Transform::Identity() };
 
-    Scene::Component* m_component {nullptr};
+    Scene::Component* m_component { nullptr };
     std::string m_name {};
 
-    RenderObjectType m_type {RenderObjectType::Geometry};
-    std::shared_ptr<RenderTechnique> m_renderTechnique {nullptr};
-    std::shared_ptr<Data::Displayable> m_mesh {nullptr};
-    std::shared_ptr<Data::Material> m_material {nullptr};
+    RenderObjectType m_type { RenderObjectType::Geometry };
+    std::shared_ptr<RenderTechnique> m_renderTechnique { nullptr };
+    std::shared_ptr<Data::Displayable> m_mesh { nullptr };
+    std::shared_ptr<Data::Material> m_material { nullptr };
 
     mutable std::mutex m_updateMutex;
 
-    int m_lifetime {-1};
-    bool m_visible {true};
-    bool m_pickable {true};
-    bool m_xray {false};
-    bool m_transparent {false};
-    bool m_dirty {true};
-    bool m_hasLifetime {false};
+    int m_lifetime { -1 };
+    bool m_visible { true };
+    bool m_pickable { true };
+    bool m_xray { false };
+    bool m_transparent { false };
+    bool m_dirty { true };
+    bool m_hasLifetime { false };
 
-    bool m_isAabbValid {false};
+    bool m_isAabbValid { false };
     Core::Aabb m_aabb;
-    int m_aabbObserverIndex {-1};
+    int m_aabbObserverIndex { -1 };
 };
 
 } // namespace Rendering

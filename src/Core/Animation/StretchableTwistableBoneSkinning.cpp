@@ -138,9 +138,7 @@ DQList computeDQSTBS( const SkinningRefData& refData, const Skeleton& poseSkel )
     // Normalize all dual quats.
 #pragma omp parallel for
     for ( int i = 0; i < int( DQ.size() ); ++i )
-    {
-        DQ[i].normalize();
-    }
+    { DQ[i].normalize(); }
     return DQ;
 }
 

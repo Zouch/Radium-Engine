@@ -36,14 +36,14 @@ using namespace Core::Utils; // log
 namespace Engine {
 namespace Rendering {
 namespace {
-const GLenum buffers[] = {GL_COLOR_ATTACHMENT0,
-                          GL_COLOR_ATTACHMENT1,
-                          GL_COLOR_ATTACHMENT2,
-                          GL_COLOR_ATTACHMENT3,
-                          GL_COLOR_ATTACHMENT4,
-                          GL_COLOR_ATTACHMENT5,
-                          GL_COLOR_ATTACHMENT6,
-                          GL_COLOR_ATTACHMENT7};
+const GLenum buffers[] = { GL_COLOR_ATTACHMENT0,
+                           GL_COLOR_ATTACHMENT1,
+                           GL_COLOR_ATTACHMENT2,
+                           GL_COLOR_ATTACHMENT3,
+                           GL_COLOR_ATTACHMENT4,
+                           GL_COLOR_ATTACHMENT5,
+                           GL_COLOR_ATTACHMENT6,
+                           GL_COLOR_ATTACHMENT7 };
 }
 
 ForwardRenderer::ForwardRenderer() : Renderer() {}
@@ -67,19 +67,19 @@ void ForwardRenderer::initializeInternal() {
 
 void ForwardRenderer::initShaders() {
     /// For internal resources management in a filesystem
-    auto resourcesRootDir {RadiumEngine::getInstance()->getResourcesDir()};
+    auto resourcesRootDir { RadiumEngine::getInstance()->getResourcesDir() };
     m_shaderProgramManager->addShaderProgram(
-        {{"Hdr2Ldr"},
-         resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
-         resourcesRootDir + "Shaders/2DShaders/Hdr2Ldr.frag.glsl"} );
+        { { "Hdr2Ldr" },
+          resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
+          resourcesRootDir + "Shaders/2DShaders/Hdr2Ldr.frag.glsl" } );
     m_shaderProgramManager->addShaderProgram(
-        {{"ComposeOIT"},
-         resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
-         resourcesRootDir + "Shaders/2DShaders/ComposeOIT.frag.glsl"} );
+        { { "ComposeOIT" },
+          resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
+          resourcesRootDir + "Shaders/2DShaders/ComposeOIT.frag.glsl" } );
 
-    Data::ShaderConfiguration wireframe {{"Wireframe"},
-                                         resourcesRootDir + "Shaders/Lines/Wireframe.vert.glsl",
-                                         resourcesRootDir + "Shaders/Lines/Wireframe.frag.glsl"};
+    Data::ShaderConfiguration wireframe { { "Wireframe" },
+                                          resourcesRootDir + "Shaders/Lines/Wireframe.vert.glsl",
+                                          resourcesRootDir + "Shaders/Lines/Wireframe.frag.glsl" };
     wireframe.addShader( Data::ShaderType::ShaderType_GEOMETRY,
                          resourcesRootDir + "Shaders/Lines/Wireframe.geom.glsl" );
     m_shaderProgramManager->addShaderProgram( wireframe );
@@ -211,7 +211,7 @@ class VerticesUpdater
 {
   public:
     VerticesUpdater( std::shared_ptr<Data::LineMesh> disp, CoreGeometry& core ) :
-        m_disp {disp}, m_core {core} {};
+        m_disp { disp }, m_core { core } {};
 
     void operator()() { m_disp->getCoreGeometry().setVertices( m_core.vertices() ); }
     std::shared_ptr<Data::LineMesh> m_disp;
@@ -223,7 +223,7 @@ class IndicesUpdater
 {
   public:
     IndicesUpdater( std::shared_ptr<Data::LineMesh> disp, CoreGeometry& core ) :
-        m_disp {disp}, m_core {core} {};
+        m_disp { disp }, m_core { core } {};
 
     void operator()() {
         auto lineIndices = m_disp->getCoreGeometry().getIndicesWithLock();
@@ -281,7 +281,7 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
     { glDisable( GL_POLYGON_OFFSET_FILL ); }
     static const auto clearZeros = Core::Utils::Color::Black().cast<GL_SCALAR_PLAIN>().eval();
     static const auto clearOnes  = Core::Utils::Color::White().cast<GL_SCALAR_PLAIN>().eval();
-    static const float clearDepth {1.0f};
+    static const float clearDepth { 1.0f };
 
     ///\todo use globjects.
     auto bgColor = getBackgroundColor().cast<GL_SCALAR_PLAIN>().eval();
@@ -300,17 +300,13 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
     // direclty in shaders)
     Data::RenderParameters zprepassParams;
     for ( const auto& ro : m_fancyRenderObjects )
-    {
-        ro->render( zprepassParams, renderData, DefaultRenderingPasses::Z_PREPASS );
-    }
+    { ro->render( zprepassParams, renderData, DefaultRenderingPasses::Z_PREPASS ); }
     // Transparent objects are rendered in the Z-prepass, but only their fully opaque fragments
     // (if any) might influence the z-buffer.
     // Rendering transparent objects assuming that they
     // discard all their non-opaque fragments
     for ( const auto& ro : m_transparentRenderObjects )
-    {
-        ro->render( zprepassParams, renderData, DefaultRenderingPasses::Z_PREPASS );
-    }
+    { ro->render( zprepassParams, renderData, DefaultRenderingPasses::Z_PREPASS ); }
     // Volumetric objects are not rendered in the Z-prepass
 
     // Opaque Lighting pass
@@ -427,9 +423,7 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
             passParams.addParameter( "imageDepth", m_textures[RendererTextures_Depth].get() );
 
             for ( const auto& ro : m_volumetricRenderObjects )
-            {
-                ro->render( passParams, renderData, DefaultRenderingPasses::LIGHTING_VOLUMETRIC );
-            }
+            { ro->render( passParams, renderData, DefaultRenderingPasses::LIGHTING_VOLUMETRIC ); }
         }
         m_volumeFbo->unbind();
 
@@ -502,7 +496,7 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
                     shader->setUniform( "transform.proj", renderData.projMatrix );
                     shader->setUniform( "transform.view", renderData.viewMatrix );
                     shader->setUniform( "transform.model", modelMatrix );
-                    shader->setUniform( "viewport", Core::Vector2 {m_width, m_height} );
+                    shader->setUniform( "viewport", Core::Vector2 { m_width, m_height } );
                     wro->render( shader );
 
                     GL_CHECK_ERROR;
@@ -511,13 +505,9 @@ void ForwardRenderer::renderInternal( const Data::ViewingParameters& renderData 
         };
 
         for ( const auto& ro : m_fancyRenderObjects )
-        {
-            drawWireframe( ro );
-        }
+        { drawWireframe( ro ); }
         for ( const auto& ro : m_transparentRenderObjects )
-        {
-            drawWireframe( ro );
-        }
+        { drawWireframe( ro ); }
     }
 
     // Restore state
@@ -539,9 +529,7 @@ void ForwardRenderer::debugInternal( const Data::ViewingParameters& renderData )
         glDrawBuffers( 1, buffers );
 
         for ( const auto& ro : m_debugRenderObjects )
-        {
-            ro->render( Data::RenderParameters {}, renderData );
-        }
+        { ro->render( Data::RenderParameters {}, renderData ); }
 
         DebugRender::getInstance()->render( renderData.viewMatrix, renderData.projMatrix );
 

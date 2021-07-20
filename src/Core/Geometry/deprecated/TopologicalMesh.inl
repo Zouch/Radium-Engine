@@ -151,9 +151,7 @@ void TopologicalMesh::copyAttribToTopo( const TriangleMesh& triMesh,
                                         TopologicalMesh::HalfedgeHandle heh,
                                         unsigned int vindex ) {
     for ( auto pp : vprop )
-    {
-        this->property( pp.second, heh ) = triMesh.getAttrib( pp.first ).data()[vindex];
-    }
+    { this->property( pp.second, heh ) = triMesh.getAttrib( pp.first ).data()[vindex]; }
 }
 
 inline const TopologicalMesh::Normal& TopologicalMesh::normal( VertexHandle vh,
@@ -162,7 +160,7 @@ inline const TopologicalMesh::Normal& TopologicalMesh::normal( VertexHandle vh,
     if ( !has_halfedge_normals() )
     {
         LOG( logERROR ) << "TopologicalMesh has no normals, return dummy ref to  (0,0,0)";
-        static TopologicalMesh::Normal dummy {0_ra, 0_ra, 0_ra};
+        static TopologicalMesh::Normal dummy { 0_ra, 0_ra, 0_ra };
         return dummy;
     }
     return normal( halfedge_handle( vh, fh ) );
@@ -185,9 +183,7 @@ inline void TopologicalMesh::propagate_normal_to_halfedges( VertexHandle vh ) {
         return;
     }
     for ( VertexIHalfedgeIter vih_it = vih_iter( vh ); vih_it.is_valid(); ++vih_it )
-    {
-        set_normal( *vih_it, normal( vh ) );
-    }
+    { set_normal( *vih_it, normal( vh ) ); }
 }
 
 inline TopologicalMesh::HalfedgeHandle TopologicalMesh::halfedge_handle( VertexHandle vh,
@@ -315,9 +311,7 @@ void TopologicalMesh::createPropsOnFaces( const std::vector<OpenMesh::HPropHandl
 template <typename T>
 void TopologicalMesh::clearProps( std::vector<OpenMesh::FPropHandleT<T>>& props ) {
     for ( auto& oh : props )
-    {
-        remove_property( oh );
-    }
+    { remove_property( oh ); }
     props.clear();
 }
 
@@ -326,9 +320,7 @@ void TopologicalMesh::copyProps( HalfedgeHandle input_heh,
                                  HalfedgeHandle copy_heh,
                                  const std::vector<OpenMesh::HPropHandleT<T>>& props ) {
     for ( const auto& oh : props )
-    {
-        property( oh, copy_heh ) = property( oh, input_heh );
-    }
+    { property( oh, copy_heh ) = property( oh, input_heh ); }
 }
 
 template <typename T>
@@ -352,9 +344,7 @@ void TopologicalMesh::interpolateProps( HalfedgeHandle in_a,
                                         const std::vector<OpenMesh::HPropHandleT<T>>& props ) {
     // interpolate properties
     for ( const auto& oh : props )
-    {
-        property( oh, out ) = ( 1 - f ) * property( oh, in_a ) + f * property( oh, in_b );
-    }
+    { property( oh, out ) = ( 1 - f ) * property( oh, in_a ) + f * property( oh, in_b ); }
 }
 
 template <typename T>

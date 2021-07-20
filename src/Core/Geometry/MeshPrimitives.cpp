@@ -38,25 +38,25 @@ TriangleMesh makeBox( const Vector3& halfExts, const Utils::optional<Utils::Colo
 
 TriangleMesh makeBox( const Aabb& aabb, const Utils::optional<Utils::Color>& color ) {
     TriangleMesh result;
-    result.setVertices( {aabb.corner( Aabb::BottomLeftFloor ),
-                         aabb.corner( Aabb::BottomRightFloor ),
-                         aabb.corner( Aabb::TopLeftFloor ),
-                         aabb.corner( Aabb::TopRightFloor ),
-                         aabb.corner( Aabb::BottomLeftCeil ),
-                         aabb.corner( Aabb::BottomRightCeil ),
-                         aabb.corner( Aabb::TopLeftCeil ),
-                         aabb.corner( Aabb::TopRightCeil )} );
+    result.setVertices( { aabb.corner( Aabb::BottomLeftFloor ),
+                          aabb.corner( Aabb::BottomRightFloor ),
+                          aabb.corner( Aabb::TopLeftFloor ),
+                          aabb.corner( Aabb::TopRightFloor ),
+                          aabb.corner( Aabb::BottomLeftCeil ),
+                          aabb.corner( Aabb::BottomRightCeil ),
+                          aabb.corner( Aabb::TopLeftCeil ),
+                          aabb.corner( Aabb::TopRightCeil ) } );
 
     static const Scalar a = 1_ra / std::sqrt( 3_ra );
 
-    result.setNormals( {Vector3( -a, -a, -a ),
-                        Vector3( +a, -a, -a ),
-                        Vector3( -a, +a, -a ),
-                        Vector3( +a, +a, -a ),
-                        Vector3( -a, -a, +a ),
-                        Vector3( +a, -a, +a ),
-                        Vector3( -a, +a, +a ),
-                        Vector3( +a, +a, +a )} );
+    result.setNormals( { Vector3( -a, -a, -a ),
+                         Vector3( +a, -a, -a ),
+                         Vector3( -a, +a, -a ),
+                         Vector3( +a, +a, -a ),
+                         Vector3( -a, -a, +a ),
+                         Vector3( +a, -a, +a ),
+                         Vector3( -a, +a, +a ),
+                         Vector3( +a, +a, +a ) } );
 
     result.setIndices( {
         Vector3ui( 0, 2, 1 ),
@@ -86,72 +86,72 @@ TriangleMesh makeSharpBox( const Vector3& halfExts, const Utils::optional<Utils:
 
 TriangleMesh makeSharpBox( const Aabb& aabb, const Utils::optional<Utils::Color>& color ) {
     TriangleMesh result;
-    result.setVertices( {// Floor Face
-                         aabb.corner( Aabb::BottomLeftFloor ),
-                         aabb.corner( Aabb::TopLeftFloor ),
-                         aabb.corner( Aabb::TopRightFloor ),
-                         aabb.corner( Aabb::BottomRightFloor ),
+    result.setVertices( { // Floor Face
+                          aabb.corner( Aabb::BottomLeftFloor ),
+                          aabb.corner( Aabb::TopLeftFloor ),
+                          aabb.corner( Aabb::TopRightFloor ),
+                          aabb.corner( Aabb::BottomRightFloor ),
 
+                          // Ceil Face
+                          aabb.corner( Aabb::BottomLeftCeil ),
+                          aabb.corner( Aabb::BottomRightCeil ),
+                          aabb.corner( Aabb::TopRightCeil ),
+                          aabb.corner( Aabb::TopLeftCeil ),
+
+                          // Left Face
+                          aabb.corner( Aabb::TopLeftFloor ),
+                          aabb.corner( Aabb::BottomLeftFloor ),
+                          aabb.corner( Aabb::BottomLeftCeil ),
+                          aabb.corner( Aabb::TopLeftCeil ),
+
+                          // Right Face
+                          aabb.corner( Aabb::BottomRightFloor ),
+                          aabb.corner( Aabb::TopRightFloor ),
+                          aabb.corner( Aabb::TopRightCeil ),
+                          aabb.corner( Aabb::BottomRightCeil ),
+
+                          // Bottom Face
+                          aabb.corner( Aabb::BottomLeftFloor ),
+                          aabb.corner( Aabb::BottomRightFloor ),
+                          aabb.corner( Aabb::BottomRightCeil ),
+                          aabb.corner( Aabb::BottomLeftCeil ),
+
+                          // Top face
+                          aabb.corner( Aabb::TopLeftFloor ),
+                          aabb.corner( Aabb::TopLeftCeil ),
+                          aabb.corner( Aabb::TopRightCeil ),
+                          aabb.corner( Aabb::TopRightFloor ) } );
+
+    result.setNormals( { // Floor face
+                         Vector3( 0, 0, -1 ),
+                         Vector3( 0, 0, -1 ),
+                         Vector3( 0, 0, -1 ),
+                         Vector3( 0, 0, -1 ),
                          // Ceil Face
-                         aabb.corner( Aabb::BottomLeftCeil ),
-                         aabb.corner( Aabb::BottomRightCeil ),
-                         aabb.corner( Aabb::TopRightCeil ),
-                         aabb.corner( Aabb::TopLeftCeil ),
-
+                         Vector3( 0, 0, +1 ),
+                         Vector3( 0, 0, +1 ),
+                         Vector3( 0, 0, +1 ),
+                         Vector3( 0, 0, +1 ),
                          // Left Face
-                         aabb.corner( Aabb::TopLeftFloor ),
-                         aabb.corner( Aabb::BottomLeftFloor ),
-                         aabb.corner( Aabb::BottomLeftCeil ),
-                         aabb.corner( Aabb::TopLeftCeil ),
-
+                         Vector3( -1, 0, 0 ),
+                         Vector3( -1, 0, 0 ),
+                         Vector3( -1, 0, 0 ),
+                         Vector3( -1, 0, 0 ),
                          // Right Face
-                         aabb.corner( Aabb::BottomRightFloor ),
-                         aabb.corner( Aabb::TopRightFloor ),
-                         aabb.corner( Aabb::TopRightCeil ),
-                         aabb.corner( Aabb::BottomRightCeil ),
-
+                         Vector3( +1, 0, 0 ),
+                         Vector3( +1, 0, 0 ),
+                         Vector3( +1, 0, 0 ),
+                         Vector3( +1, 0, 0 ),
                          // Bottom Face
-                         aabb.corner( Aabb::BottomLeftFloor ),
-                         aabb.corner( Aabb::BottomRightFloor ),
-                         aabb.corner( Aabb::BottomRightCeil ),
-                         aabb.corner( Aabb::BottomLeftCeil ),
-
-                         // Top face
-                         aabb.corner( Aabb::TopLeftFloor ),
-                         aabb.corner( Aabb::TopLeftCeil ),
-                         aabb.corner( Aabb::TopRightCeil ),
-                         aabb.corner( Aabb::TopRightFloor )} );
-
-    result.setNormals( {// Floor face
-                        Vector3( 0, 0, -1 ),
-                        Vector3( 0, 0, -1 ),
-                        Vector3( 0, 0, -1 ),
-                        Vector3( 0, 0, -1 ),
-                        // Ceil Face
-                        Vector3( 0, 0, +1 ),
-                        Vector3( 0, 0, +1 ),
-                        Vector3( 0, 0, +1 ),
-                        Vector3( 0, 0, +1 ),
-                        // Left Face
-                        Vector3( -1, 0, 0 ),
-                        Vector3( -1, 0, 0 ),
-                        Vector3( -1, 0, 0 ),
-                        Vector3( -1, 0, 0 ),
-                        // Right Face
-                        Vector3( +1, 0, 0 ),
-                        Vector3( +1, 0, 0 ),
-                        Vector3( +1, 0, 0 ),
-                        Vector3( +1, 0, 0 ),
-                        // Bottom Face
-                        Vector3( 0, -1, 0 ),
-                        Vector3( 0, -1, 0 ),
-                        Vector3( 0, -1, 0 ),
-                        Vector3( 0, -1, 0 ),
-                        // Top Face
-                        Vector3( 0, +1, 0 ),
-                        Vector3( 0, +1, 0 ),
-                        Vector3( 0, +1, 0 ),
-                        Vector3( 0, +1, 0 )} );
+                         Vector3( 0, -1, 0 ),
+                         Vector3( 0, -1, 0 ),
+                         Vector3( 0, -1, 0 ),
+                         Vector3( 0, -1, 0 ),
+                         // Top Face
+                         Vector3( 0, +1, 0 ),
+                         Vector3( 0, +1, 0 ),
+                         Vector3( 0, +1, 0 ),
+                         Vector3( 0, +1, 0 ) } );
 
     result.setIndices( {
 
@@ -238,7 +238,7 @@ makeGeodesicSphere( Scalar radius, uint numSubdiv, const Utils::optional<Utils::
         {
             const Vector3ui& tri               = indices[i];
             std::array<Vector3, 3> triVertices = {
-                vertices[tri[0]], vertices[tri[1]], vertices[tri[2]]};
+                vertices[tri[0]], vertices[tri[1]], vertices[tri[2]] };
             std::array<uint, 3> middles;
 
             for ( uint v = 0; v < 3; ++v )
@@ -725,15 +725,15 @@ TriangleMesh makePlaneGrid( const uint rows,
     const Vector3 y = ( 2_ra * halfExts[1] * Y ) / Scalar( rows );
     const Vector3 o = T.translation() - ( halfExts[0] * X ) - ( halfExts[1] * Y );
 
-    Grid<uint, 2> v( {R, C} );
+    Grid<uint, 2> v( { R, C } );
     for ( uint i = 0; i < R; ++i )
     {
         for ( uint j = 0; j < C; ++j )
         {
-            const uint id  = ( i * C ) + j;
-            v.at( {i, j} ) = id;
-            vertices[id]   = o + ( i * y ) + ( j * x );
-            normals[id]    = Z;
+            const uint id    = ( i * C ) + j;
+            v.at( { i, j } ) = id;
+            vertices[id]     = o + ( i * y ) + ( j * x );
+            normals[id]      = Z;
         }
     }
 
@@ -741,8 +741,10 @@ TriangleMesh makePlaneGrid( const uint rows,
     {
         for ( uint j = 0; j < cols; ++j )
         {
-            indices.emplace_back( v.at( {i, j} ), v.at( {i, j + 1} ), v.at( {i + 1, j + 1} ) );
-            indices.emplace_back( v.at( {i, j} ), v.at( {i + 1, j + 1} ), v.at( {i + 1, j} ) );
+            indices.emplace_back(
+                v.at( { i, j } ), v.at( { i, j + 1 } ), v.at( { i + 1, j + 1 } ) );
+            indices.emplace_back(
+                v.at( { i, j } ), v.at( { i + 1, j + 1 } ), v.at( { i + 1, j } ) );
         }
     }
     result.setVertices( std::move( vertices ) );

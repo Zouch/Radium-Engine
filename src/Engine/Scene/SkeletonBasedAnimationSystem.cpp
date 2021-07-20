@@ -22,7 +22,7 @@ namespace Engine {
 namespace Scene {
 
 SkeletonBasedAnimationSystem::SkeletonBasedAnimationSystem() : System(), m_xrayOn( false ) {
-    auto resourceDir {Core::Resources::getRadiumResourcesPath()};
+    auto resourceDir { Core::Resources::getRadiumResourcesPath() };
     if ( resourceDir )
     {
         auto* engine  = RadiumEngine::getInstance();

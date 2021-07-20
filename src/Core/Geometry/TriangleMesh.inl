@@ -80,9 +80,7 @@ inline Aabb AttribArrayGeometry::computeAabb() const {
     {
         Aabb aabb;
         for ( const auto& v : vertices() )
-        {
-            aabb.extend( v );
-        }
+        { aabb.extend( v ); }
         setAabb( aabb );
     }
 

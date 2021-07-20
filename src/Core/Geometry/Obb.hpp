@@ -33,9 +33,7 @@ class Obb
         if ( m_aabb.isEmpty() ) { return m_aabb; }
         Aabb tmp;
         for ( int i = 0; i < 8; ++i )
-        {
-            tmp.extend( worldCorner( i ) );
-        }
+        { tmp.extend( worldCorner( i ) ); }
         return tmp;
     }
 

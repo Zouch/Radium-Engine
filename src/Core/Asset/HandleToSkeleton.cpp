@@ -61,9 +61,7 @@ void createSkeleton( const Ra::Core::Asset::HandleData& data, Core::Animation::S
 
     std::set<uint> root;
     for ( uint i = 0; i < size; ++i )
-    {
-        root.insert( i );
-    }
+    { root.insert( i ); }
     std::set<uint> leaves = root;
 
     auto edgeList = data.getEdgeData();
@@ -75,17 +73,13 @@ void createSkeleton( const Ra::Core::Asset::HandleData& data, Core::Animation::S
 
     std::vector<bool> processed( size, false );
     for ( const auto& r : root )
-    {
-        addRoot( r, data, edgeList, processed, skelOut );
-    }
+    { addRoot( r, data, edgeList, processed, skelOut ); }
 
     if ( data.needsEndNodes() )
     {
         std::map<std::string, uint> boneNameMap;
         for ( uint i = 0; i < skelOut.size(); ++i )
-        {
-            boneNameMap[skelOut.getLabel( i )] = i;
-        }
+        { boneNameMap[skelOut.getLabel( i )] = i; }
         for ( const auto& l : leaves )
         {
             const auto& dd = component[l];

@@ -74,7 +74,7 @@ int main( int argc, char* argv[] ) {
     //! [Colorize the cloud]
     cloud.addAttrib(
         "in_color",
-        Ra::Core::Vector4Array {cloud.vertices().size(), Ra::Core::Utils::Color::Green()} );
+        Ra::Core::Vector4Array { cloud.vertices().size(), Ra::Core::Utils::Color::Green() } );
     //! [Colorize the cloud]
 
     //! [Create the engine entity for the cloud]

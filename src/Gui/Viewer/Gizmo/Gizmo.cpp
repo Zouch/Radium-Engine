@@ -39,16 +39,12 @@ Gizmo::Gizmo( Engine::Scene::Component* c,
 
 Gizmo::~Gizmo() {
     for ( auto ro : m_ros )
-    {
-        m_comp->removeRenderObject( ro->getIndex() );
-    }
+    { m_comp->removeRenderObject( ro->getIndex() ); }
 }
 
 void Gizmo::show( bool on ) {
     for ( auto ro : m_ros )
-    {
-        ro->setVisible( on );
-    }
+    { ro->setVisible( on ); }
 }
 
 bool Gizmo::findPointOnAxis( const Core::Asset::Camera& cam,

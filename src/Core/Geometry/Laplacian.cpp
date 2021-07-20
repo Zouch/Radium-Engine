@@ -32,9 +32,7 @@ LaplacianMatrix powerLaplacian( const LaplacianMatrix& L, const uint k ) {
     LaplacianMatrix lap( L.rows(), L.cols() );
     lap.setIdentity();
     for ( uint i = 0; i < k; ++i )
-    {
-        lap = L * lap;
-    }
+    { lap = L * lap; }
     return lap;
 }
 
@@ -73,9 +71,7 @@ Vector3 uniformLaplacian( const Vector3& v, const VectorArray<Vector3>& p ) {
     Vector3 L;
     L.setZero();
     for ( const auto& pi : p )
-    {
-        L += ( v - pi );
-    }
+    { L += ( v - pi ); }
     return L;
 }
 

@@ -52,20 +52,20 @@ void VolumeObject::loadGeometry( Core::Geometry::AbstractVolume* volume, const C
         m_volume = std::unique_ptr<Core::Geometry::AbstractVolume>( volume );
 
         auto dim = grid->size();
-        TextureParameters texparam {getName(),
-                                    GL_TEXTURE_3D,
-                                    size_t( dim( 0 ) ),
-                                    size_t( dim( 1 ) ),
-                                    size_t( dim( 2 ) ),
-                                    GL_RED,
-                                    GL_R32F,
-                                    GL_SCALAR,
-                                    GL_CLAMP_TO_BORDER,
-                                    GL_CLAMP_TO_BORDER,
-                                    GL_CLAMP_TO_BORDER,
-                                    GL_LINEAR,
-                                    GL_LINEAR,
-                                    grid->data().data()};
+        TextureParameters texparam { getName(),
+                                     GL_TEXTURE_3D,
+                                     size_t( dim( 0 ) ),
+                                     size_t( dim( 1 ) ),
+                                     size_t( dim( 2 ) ),
+                                     GL_RED,
+                                     GL_R32F,
+                                     GL_SCALAR,
+                                     GL_CLAMP_TO_BORDER,
+                                     GL_CLAMP_TO_BORDER,
+                                     GL_CLAMP_TO_BORDER,
+                                     GL_LINEAR,
+                                     GL_LINEAR,
+                                     grid->data().data() };
         m_tex.setParameters( texparam );
 
         m_isDirty = true;

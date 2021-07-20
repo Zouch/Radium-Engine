@@ -132,7 +132,7 @@ std::pair<MultiIndexedGeometry::LayerKeyType, const GeometryIndexLayerBase&>
 MultiIndexedGeometry::getFirstLayerOccurrence( const LayerSemantic& semanticName ) const {
     for ( const auto& [key, value] : m_indices )
     {
-        if ( key.first.find( semanticName ) != key.first.end() ) return {key, *( value.second )};
+        if ( key.first.find( semanticName ) != key.first.end() ) return { key, *( value.second ) };
     }
     throw std::out_of_range( "Layer entry not found" );
 }
@@ -141,7 +141,7 @@ std::pair<MultiIndexedGeometry::LayerKeyType, const GeometryIndexLayerBase&>
 MultiIndexedGeometry::getFirstLayerOccurrence( const LayerSemanticCollection& semantics ) const {
     for ( const auto& [key, value] : m_indices )
     {
-        if ( key.first == semantics ) return {key, *( value.second )};
+        if ( key.first == semantics ) return { key, *( value.second ) };
     }
     throw std::out_of_range( "Layer entry not found" );
 }
@@ -157,7 +157,7 @@ MultiIndexedGeometry::getFirstLayerOccurrenceWithLock( const LayerSemantic& sema
         {
             CORE_ASSERT( !value.first, "try to get already locked layer" );
             value.first = true;
-            return {key, *( value.second )};
+            return { key, *( value.second ) };
         }
     }
     throw std::out_of_range( "Layer entry not found" );
@@ -171,7 +171,7 @@ MultiIndexedGeometry::getFirstLayerOccurrenceWithLock( const LayerSemanticCollec
         {
             CORE_ASSERT( !value.first, "try to get already locked layer" );
             value.first = true;
-            return {key, *( value.second )};
+            return { key, *( value.second ) };
         }
     }
     throw std::out_of_range( "Layer entry not found" );
@@ -227,10 +227,10 @@ void MultiIndexedGeometry::unlockLayer( const LayerKeyType& layerKey ) {
 
 bool MultiIndexedGeometry::addLayer( std::unique_ptr<GeometryIndexLayerBase>&& layer,
                                      const std::string& layerName ) {
-    LayerKeyType key {layer->semantics(), layerName};
+    LayerKeyType key { layer->semantics(), layerName };
     if ( m_indices.find( key ) != m_indices.end() ) return false;
 
-    m_indices.insert( {key, std::make_pair( false, layer.release() )} );
+    m_indices.insert( { key, std::make_pair( false, layer.release() ) } );
 
     notify();
     return true;

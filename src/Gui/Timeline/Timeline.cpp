@@ -162,9 +162,7 @@ void Timeline::selectionChanged( const Ra::Engine::Scene::ItemEntry& ent ) {
         {
             const auto times = frame.m_value->getTimes();
             for ( const auto& t : times )
-            {
-                ui->frame_selector->onAddingKeyFrame( t, false );
-            }
+            { ui->frame_selector->onAddingKeyFrame( t, false ); }
             m_current = frame;
         }
     };
@@ -176,9 +174,7 @@ void Timeline::selectionChanged( const Ra::Engine::Scene::ItemEntry& ent ) {
         if ( it != map.end() )                              \
         {                                                   \
             for ( const auto& keyFramedValue : it->second ) \
-            {                                               \
-                registerFrames( keyFramedValue, prefix );   \
-            }                                               \
+            { registerFrames( keyFramedValue, prefix ); }   \
         }                                                   \
     }
     // register keyframes for the Entity
@@ -339,9 +335,7 @@ void Timeline::updateKeyFrames( Scalar time ) {
         for ( auto& KF : keyFrames )
         {
             for ( auto& kf : KF.second )
-            {
-                kf.updateKeyFrame( time );
-            }
+            { kf.updateKeyFrame( time ); }
         }
     };
     update( m_entityKeyFrames );
@@ -502,9 +496,7 @@ void Timeline::on_comboBox_attribute_currentIndexChanged( const QString& arg1 ) 
     // update ui
     const auto times = m_current.m_value->getTimes();
     for ( const auto& t : times )
-    {
-        ui->frame_selector->onAddingKeyFrame( t, false );
-    }
+    { ui->frame_selector->onAddingKeyFrame( t, false ); }
 }
 
 void Timeline::on_pushButton_editAttribute_clicked() {

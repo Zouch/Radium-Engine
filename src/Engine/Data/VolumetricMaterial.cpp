@@ -11,7 +11,7 @@ namespace Ra {
 namespace Engine {
 namespace Data {
 
-static const std::string materialName {"Volumetric"};
+static const std::string materialName { "Volumetric" };
 
 VolumetricMaterial::VolumetricMaterial( const std::string& name ) :
     Material( name, materialName, Material::MaterialAspect::MAT_DENSITY ) {}
@@ -49,13 +49,13 @@ bool VolumetricMaterial::isTransparent() const {
 
 void VolumetricMaterial::registerMaterial() {
     // For resources access (glsl files) in a filesystem
-    auto resourcesRootDir {RadiumEngine::getInstance()->getResourcesDir()};
+    auto resourcesRootDir { RadiumEngine::getInstance()->getResourcesDir() };
     auto shaderProgramManager = RadiumEngine::getInstance()->getShaderProgramManager();
 
     shaderProgramManager->addShaderProgram(
-        {{"ComposeVolume"},
-         resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
-         resourcesRootDir + "Shaders/Materials/Volumetric/ComposeVolumeRender.frag.glsl"} );
+        { { "ComposeVolume" },
+          resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
+          resourcesRootDir + "Shaders/Materials/Volumetric/ComposeVolumeRender.frag.glsl" } );
 
     // adding the material glsl implementation file
     shaderProgramManager->addNamedString(

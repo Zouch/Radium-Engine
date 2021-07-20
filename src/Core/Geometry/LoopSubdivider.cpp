@@ -75,9 +75,7 @@ bool LoopSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
         e_end = mesh.edges_end();
         m_newEdgePropOps[iter].reserve( 3 * mesh.n_edges() );
         for ( eit = mesh.edges_begin(); eit != e_end; ++eit )
-        {
-            split_edge( mesh, *eit, iter );
-        }
+        { split_edge( mesh, *eit, iter ); }
         m_newEdgePropOps[iter].shrink_to_fit();
 
         // Commit changes in topology and reconsitute consistency
@@ -85,9 +83,7 @@ bool LoopSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
         f_end = mesh.faces_end();
         m_newFacePropOps[iter].reserve( 6 * mesh.n_faces() );
         for ( fit = mesh.faces_begin(); fit != f_end; ++fit )
-        {
-            split_face( mesh, *fit, iter );
-        }
+        { split_face( mesh, *fit, iter ); }
         m_newFacePropOps[iter].shrink_to_fit();
 
         if ( updatePoints )
@@ -187,8 +183,8 @@ void LoopSubdivider::corner_cutting( deprecated::TopologicalMesh& mesh,
     // deal with custom properties
     mesh.copyAllProps( heh1, heh4 );
     mesh.copyAllProps( heh5, heh3 );
-    m_newFacePropOps[iter].push_back( {heh4, {{1, heh1}}} );
-    m_newFacePropOps[iter].push_back( {heh3, {{1, heh5}}} );
+    m_newFacePropOps[iter].push_back( { heh4, { { 1, heh1 } } } );
+    m_newFacePropOps[iter].push_back( { heh3, { { 1, heh5 } } } );
 }
 
 void LoopSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
@@ -240,7 +236,7 @@ void LoopSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
 
         // deal with custom properties
         mesh.interpolateAllProps( t_heh, opp_heh, opp_new_heh, 0.5 );
-        m_newEdgePropOps[iter].push_back( {opp_new_heh, {{0.5, t_heh}, {0.5, opp_heh}}} );
+        m_newEdgePropOps[iter].push_back( { opp_new_heh, { { 0.5, t_heh }, { 0.5, opp_heh } } } );
     }
 
     if ( mesh.face_handle( heh ).is_valid() )
@@ -250,10 +246,10 @@ void LoopSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
 
         // deal with custom properties
         mesh.copyAllProps( heh, new_heh );
-        m_newEdgePropOps[iter].push_back( {new_heh, {{1, heh}}} );
+        m_newEdgePropOps[iter].push_back( { new_heh, { { 1, heh } } } );
         HeHandle heh_prev = mesh.prev_halfedge_handle( heh );
         mesh.interpolateAllProps( heh_prev, new_heh, heh, 0.5 );
-        m_newEdgePropOps[iter].push_back( {heh, {{0.5, heh_prev}, {0.5, new_heh}}} );
+        m_newEdgePropOps[iter].push_back( { heh, { { 0.5, heh_prev }, { 0.5, new_heh } } } );
     }
 
     mesh.set_halfedge_handle( vh, new_heh );
@@ -393,9 +389,7 @@ void LoopSubdivider::recompute( const Vector3Array& newCoarseVertices,
             Ra::Core::Vector3 pos( 0, 0, 0 );
             const auto& ops = m_newVertexOps[i][j];
             for ( const auto& op : ops.second )
-            {
-                pos += op.first * mesh.point( op.second );
-            }
+            { pos += op.first * mesh.point( op.second ); }
             mesh.set_point( ops.first, pos );
         }
         // then compute old vertices
@@ -406,16 +400,12 @@ void LoopSubdivider::recompute( const Vector3Array& newCoarseVertices,
             pos[j]          = Ra::Core::Vector3( 0, 0, 0 );
             const auto& ops = m_oldVertexOps[i][j];
             for ( const auto& op : ops.second )
-            {
-                pos[j] += op.first * mesh.point( op.second );
-            }
+            { pos[j] += op.first * mesh.point( op.second ); }
         }
         // then commit pos for old vertices
 #pragma omp parallel for schedule( static )
         for ( int j = 0; j < int( m_oldVertexOps[i].size() ); ++j )
-        {
-            mesh.set_point( m_oldVertexOps[i][j].first, pos[j] );
-        }
+        { mesh.set_point( m_oldVertexOps[i][j].first, pos[j] ); }
         // deal with normal on edge centers (other non-static properties can be updated the same
         // way)
         // This loop should not be parallelized!
@@ -424,9 +414,7 @@ void LoopSubdivider::recompute( const Vector3Array& newCoarseVertices,
             Ra::Core::Vector3 nor( 0, 0, 0 );
             const auto& ops = m_newEdgePropOps[i][j];
             for ( const auto& op : ops.second )
-            {
-                nor += op.first * mesh.property( hNormalProp, op.second );
-            }
+            { nor += op.first * mesh.property( hNormalProp, op.second ); }
             mesh.property( hNormalProp, ops.first ) = nor.normalized();
         }
         // deal with normal on faces centers (other non-static properties can be updated the same
@@ -437,9 +425,7 @@ void LoopSubdivider::recompute( const Vector3Array& newCoarseVertices,
             Ra::Core::Vector3 nor( 0, 0, 0 );
             const auto& ops = m_newFacePropOps[i][j];
             for ( const auto& op : ops.second )
-            {
-                nor += op.first * mesh.property( hNormalProp, op.second );
-            }
+            { nor += op.first * mesh.property( hNormalProp, op.second ); }
             mesh.property( hNormalProp, ops.first ) = nor.normalized();
         }
     }

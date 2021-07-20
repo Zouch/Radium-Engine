@@ -34,9 +34,9 @@ class RA_ENGINE_API Light : public Component
      * quadratic by default
      */
     struct Attenuation {
-        Scalar constant {1};
-        Scalar linear {0};
-        Scalar quadratic {0};
+        Scalar constant { 1 };
+        Scalar linear { 0 };
+        Scalar quadratic { 0 };
         Attenuation() = default;
     };
 
@@ -106,7 +106,7 @@ class RA_ENGINE_API Light : public Component
   private:
     Core::Utils::Color m_color = Core::Utils::Color::White();
 
-    LightType m_type {LightType::DIRECTIONAL};
+    LightType m_type { LightType::DIRECTIONAL };
 };
 
 } // namespace Scene

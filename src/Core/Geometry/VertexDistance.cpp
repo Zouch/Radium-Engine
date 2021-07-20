@@ -45,9 +45,7 @@ Scalar vertexDistance( const VectorArray<Vector3>& v0, const VectorArray<Vector3
     const uint n  = v0.size();
     Scalar sqrAvg = 0.0;
     for ( uint i = 0; i < n; ++i )
-    {
-        sqrAvg += ( v0[i] - v1[i] ).squaredNorm();
-    }
+    { sqrAvg += ( v0[i] - v1[i] ).squaredNorm(); }
     return ( sqrAvg / (Scalar)n );
 }
 

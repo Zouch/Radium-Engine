@@ -57,7 +57,7 @@ class Spy
   public:
     std::vector<std::string> m_hisName;
     std::vector<std::pair<std::string, int>> m_hisBests;
-    int m_cpt {0};
+    int m_cpt { 0 };
 };
 
 class A
@@ -69,7 +69,7 @@ class A
     static void g() { m_b++; }
     static void g2( int b ) { m_b = b; }
 
-    int m_a {0};
+    int m_a { 0 };
     static int m_b;
 };
 

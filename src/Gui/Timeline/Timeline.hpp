@@ -278,9 +278,9 @@ class RA_GUI_API Timeline : public QDialog
 
     /// Observers id for engine event
     ///@{
-    int m_entityAddObserverId {-1};
-    int m_entityRemoveObserverId {-1};
-    int m_roAddObserverId {-1};
+    int m_entityAddObserverId { -1 };
+    int m_entityRemoveObserverId { -1 };
+    int m_roAddObserverId { -1 };
     ///@}
 };
 

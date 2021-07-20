@@ -9,7 +9,7 @@
 namespace Ra {
 namespace Engine {
 namespace Data {
-static const std::string materialName {"Lambertian"};
+static const std::string materialName { "Lambertian" };
 
 LambertianMaterial::LambertianMaterial( const std::string& instanceName ) :
     SimpleMaterial( instanceName, materialName, Material::MaterialAspect::MAT_OPAQUE ) {}
@@ -18,7 +18,7 @@ LambertianMaterial::~LambertianMaterial() {}
 
 void LambertianMaterial::registerMaterial() {
     // Get the Radium Resource location on the filesystem
-    auto resourcesRootDir {RadiumEngine::getInstance()->getResourcesDir()};
+    auto resourcesRootDir { RadiumEngine::getInstance()->getResourcesDir() };
     auto shaderProgramManager = RadiumEngine::getInstance()->getShaderProgramManager();
 
     shaderProgramManager->addNamedString(

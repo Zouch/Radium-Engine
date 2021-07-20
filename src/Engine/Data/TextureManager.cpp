@@ -16,9 +16,7 @@ TextureManager::TextureManager() = default;
 
 TextureManager::~TextureManager() {
     for ( auto& tex : m_textures )
-    {
-        delete tex.second;
-    }
+    { delete tex.second; }
     m_textures.clear();
     m_pendingTextures.clear();
     m_pendingData.clear();

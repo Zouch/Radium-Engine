@@ -86,64 +86,65 @@ BaseApplication::BaseApplication( int& argc,
     ///\todo check optional
     m_parser = new QCommandLineParser;
 
-    QCommandLineParser& parser {*m_parser};
+    QCommandLineParser& parser { *m_parser };
     parser.setApplicationDescription( "Radium Engine RPZ, TMTC" );
     parser.addHelpOption();
     parser.addVersionOption();
 
     //! [Command line arguments]
     QCommandLineOption fpsOpt(
-        QStringList {"r", "framerate", "fps"},
+        QStringList { "r", "framerate", "fps" },
         "Control the application framerate, 0 to disable it (and run as fast as possible).",
         "number",
         "60" );
     QCommandLineOption maxThreadsOpt(
-        QStringList {"m", "maxthreads", "max-threads"},
+        QStringList { "m", "maxthreads", "max-threads" },
         "Control the maximum number of threads. 0 will set to the number of cores available",
         "number",
         "0" );
     QCommandLineOption numFramesOpt(
-        QStringList {"n", "numframes"}, "Run for a fixed number of frames.", "number", "0" );
-    QCommandLineOption pluginOpt( QStringList {"p", "plugins", "pluginsPath"},
+        QStringList { "n", "numframes" }, "Run for a fixed number of frames.", "number", "0" );
+    QCommandLineOption pluginOpt( QStringList { "p", "plugins", "pluginsPath" },
                                   "Set the path to the plugin dlls.",
                                   "folder",
                                   "Plugins" );
     QCommandLineOption pluginLoadOpt(
-        QStringList {"l", "load", "loadPlugin"},
+        QStringList { "l", "load", "loadPlugin" },
         "Only load plugin with the given name (filename without the extension). If this option is "
         "not used, all plugins in the plugins folder will be loaded. ",
         "name" );
-    QCommandLineOption pluginIgnoreOpt( QStringList {"i", "ignore", "ignorePlugin"},
+    QCommandLineOption pluginIgnoreOpt( QStringList { "i", "ignore", "ignorePlugin" },
                                         "Ignore plugins with the given name. If the name appears "
                                         "within both load and ignore options, it will be ignored.",
                                         "name" );
-    QCommandLineOption fileOpt( QStringList {"f", "file", "scene"},
+    QCommandLineOption fileOpt( QStringList { "f", "file", "scene" },
                                 "Open a scene file at startup.",
                                 "file name",
                                 "foo.bar" );
 
-    QCommandLineOption camOpt( QStringList {"c", "camera", "cam"},
+    QCommandLineOption camOpt( QStringList { "c", "camera", "cam" },
                                "Open a camera file at startup",
                                "file name",
                                "foo.bar" );
-    QCommandLineOption recordOpt( QStringList {"s", "recordFrames"}, "Enable snapshot recording." );
+    QCommandLineOption recordOpt( QStringList { "s", "recordFrames" },
+                                  "Enable snapshot recording." );
 
-    QCommandLineOption datapathOpt( QStringList {"d", "data", "export"},
+    QCommandLineOption datapathOpt( QStringList { "d", "data", "export" },
                                     "Set the default data path and store it in the settings.",
                                     "folder",
                                     "./" );
     //! [Command line arguments]
 
-    parser.addOptions( {fpsOpt,
-                        pluginOpt,
-                        pluginLoadOpt,
-                        pluginIgnoreOpt,
-                        fileOpt,
-                        camOpt,
-                        maxThreadsOpt,
-                        numFramesOpt,
-                        recordOpt,
-                        datapathOpt} );
+    parser.addOptions( { fpsOpt,
+                         pluginOpt,
+                         pluginLoadOpt,
+                         pluginIgnoreOpt,
+                         fileOpt,
+                         camOpt,
+                         maxThreadsOpt,
+                         numFramesOpt,
+                         recordOpt,
+                         datapathOpt } );
 
     if ( !parser.parse( this->arguments() ) )
     { LOG( logWARNING ) << "Command line parsing failed due to unsupported or missing options"; }
@@ -315,9 +316,9 @@ void BaseApplication::initialize( const WindowFactory& factory ) {
     connect(
         &m_pluginContext, &Plugins::Context::askForUpdate, this, &BaseApplication::askForUpdate );
 
-    QCommandLineParser& parser {*m_parser};
+    QCommandLineParser& parser { *m_parser };
     // TODO at startup, only load "standard plugins". This must be extended.
-    auto pluginsPathOptional {Core::Resources::getRadiumPluginsPath()};
+    auto pluginsPathOptional { Core::Resources::getRadiumPluginsPath() };
     auto pluginsPath = pluginsPathOptional.value_or( "[[Default plugin path not found]]" );
 
     // Load installed plugins plugins
@@ -365,9 +366,7 @@ void BaseApplication::initialize( const WindowFactory& factory ) {
     if ( parser.isSet( "scene" ) )
     {
         for ( const auto& filename : parser.values( "scene" ) )
-        {
-            loadFile( filename );
-        }
+        { loadFile( filename ); }
     }
     // A camera has been required, load it.
     if ( parser.isSet( "camera" ) )
@@ -549,9 +548,7 @@ void BaseApplication::initializeGl() {
     if ( !m_openGLPlugins.empty() )
     {
         for ( auto plugin : m_openGLPlugins )
-        {
-            plugin->openGlInitialize( m_pluginContext );
-        }
+        { plugin->openGlInitialize( m_pluginContext ); }
         m_openGLPlugins.clear();
     }
 }
@@ -699,9 +696,7 @@ bool BaseApplication::loadPlugins( const std::string& pluginsPath,
                             CORE_ASSERT( !tmpL.empty(),
                                          "This plugin is expected to add file loaders" );
                             for ( auto& ptr : tmpL )
-                            {
-                                m_engine->registerFileLoader( ptr );
-                            }
+                            { m_engine->registerFileLoader( ptr ); }
                         }
 
                         if ( loadedPlugin->doAddROpenGLInitializer() )
@@ -769,9 +764,7 @@ void BaseApplication::addPluginDirectory( const std::string& pluginDir ) {
     QStringList pluginPaths = settings.value( "plugins/paths" ).value<QStringList>();
     LOG( logINFO ) << "Registered plugin paths are : ";
     for ( const auto& s : pluginPaths )
-    {
-        LOG( logINFO ) << s.toStdString();
-    }
+    { LOG( logINFO ) << s.toStdString(); }
     pluginPaths.append( pluginDir.c_str() );
     settings.setValue( "plugins/paths", pluginPaths );
     loadPlugins( pluginDir, QStringList(), QStringList() );
@@ -789,7 +782,7 @@ void BaseApplication::editSettings() {
 }
 
 std::string BaseApplication::getHelpText() const {
-    std::string helpText {"<h1>BaseApplication command line parameters</h1><\n>"};
+    std::string helpText { "<h1>BaseApplication command line parameters</h1><\n>" };
     helpText += "<p>Not yet written.</p><br/><\n>";
     return helpText;
 }

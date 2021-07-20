@@ -74,9 +74,9 @@ class RA_ENGINE_API RenderParameters final
         void bind( const Data::ShaderProgram* shader ) const override;
 
         /// The texture object
-        Data::Texture* m_texture {nullptr};
+        Data::Texture* m_texture { nullptr };
         /// The texture unit where to bind the parameter
-        int m_texUnit {-1};
+        int m_texUnit { -1 };
     };
 
     /** Set of typed parameters

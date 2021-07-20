@@ -17,9 +17,7 @@ Scalar PolyLine::length() const {
 Aabb PolyLine::aabb() const {
     Aabb aabb;
     for ( const auto& v : m_pts )
-    {
-        aabb.extend( v );
-    }
+    { aabb.extend( v ); }
     return aabb;
 }
 
@@ -45,9 +43,7 @@ uint PolyLine::getSegmentIndex( Scalar t ) const {
     Scalar param = length() * Math::saturate( t );
     uint i       = 0;
     while ( m_lengths[i] < param )
-    {
-        ++i;
-    }
+    { ++i; }
     return i;
 }
 

@@ -92,7 +92,7 @@ MultiIndexedGeometry::containsLayer( const MultiIndexedGeometry::LayerKeyType& l
 inline bool
 MultiIndexedGeometry::containsLayer( const MultiIndexedGeometry::LayerSemanticCollection& semantics,
                                      const std::string& layerName ) const {
-    return containsLayer( {semantics, layerName} );
+    return containsLayer( { semantics, layerName } );
 }
 
 inline size_t
@@ -103,7 +103,7 @@ MultiIndexedGeometry::countLayers( const MultiIndexedGeometry::LayerKeyType& lay
 inline size_t
 MultiIndexedGeometry::countLayers( const MultiIndexedGeometry::LayerSemanticCollection& semantics,
                                    const std::string& layerName ) const {
-    return countLayers( {semantics, layerName} );
+    return countLayers( { semantics, layerName } );
 }
 
 inline const GeometryIndexLayerBase&
@@ -114,19 +114,19 @@ MultiIndexedGeometry::getLayer( const MultiIndexedGeometry::LayerKeyType& layerK
 inline const GeometryIndexLayerBase&
 MultiIndexedGeometry::getLayer( const MultiIndexedGeometry::LayerSemanticCollection& semantics,
                                 const std::string& layerName ) const {
-    return getLayer( {semantics, layerName} );
+    return getLayer( { semantics, layerName } );
 }
 
 inline GeometryIndexLayerBase& MultiIndexedGeometry::getLayerWithLock(
     const MultiIndexedGeometry::LayerSemanticCollection& semantics,
     const std::string& layerName ) {
-    return getLayerWithLock( {semantics, layerName} );
+    return getLayerWithLock( { semantics, layerName } );
 }
 
 inline void
 MultiIndexedGeometry::unlockLayer( const MultiIndexedGeometry::LayerSemanticCollection& semantics,
                                    const std::string& layerName ) {
-    unlockLayer( {semantics, layerName} );
+    unlockLayer( { semantics, layerName } );
 }
 
 [[nodiscard]] inline auto MultiIndexedGeometry::layerKeys() const {
@@ -161,7 +161,7 @@ inline LineIndexLayer::LineIndexLayer( SemanticNames... names ) :
 template <typename T>
 inline IndexedGeometry<T>::IndexedGeometry() {
     auto layer          = std::make_unique<DefaultLayerType>();
-    m_mainIndexLayerKey = {layer->semantics(), ""};
+    m_mainIndexLayerKey = { layer->semantics(), "" };
     addLayer( std::move( layer ) );
 }
 

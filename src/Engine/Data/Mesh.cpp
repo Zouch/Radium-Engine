@@ -19,7 +19,7 @@ using namespace Ra::Core::Utils;
 // we have no data to send to the gpu.
 AttribArrayDisplayable::AttribArrayDisplayable( const std::string& name,
                                                 MeshRenderMode renderMode ) :
-    Displayable( name ), m_renderMode {renderMode} {
+    Displayable( name ), m_renderMode { renderMode } {
     CORE_ASSERT( m_renderMode == RM_POINTS || m_renderMode == RM_LINES ||
                      m_renderMode == RM_LINE_LOOP || m_renderMode == RM_LINE_STRIP ||
                      m_renderMode == RM_TRIANGLES || m_renderMode == RM_TRIANGLE_STRIP ||
@@ -73,7 +73,7 @@ void Mesh::loadGeometry( const Core::Vector3Array& vertices, const std::vector<u
     {
         // We store all indices in order. This means that for lines we have
         // (L00, L01, L10), (L11, L20, L21) etc. We fill the missing by wrapping around indices.
-        mindices.push_back( {indices[i], indices[( i + 1 ) % nIdx], indices[( i + 2 ) % nIdx]} );
+        mindices.push_back( { indices[i], indices[( i + 1 ) % nIdx], indices[( i + 2 ) % nIdx] } );
     }
 
     mesh.setIndices( std::move( mindices ) );

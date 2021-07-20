@@ -59,10 +59,10 @@ class RA_GUI_API FlightCameraManipulator : public CameraManipulator,
 
   protected:
     /// x-position of the mouse on the screen at the manipulation start.
-    Scalar m_lastMouseX {0_ra};
+    Scalar m_lastMouseX { 0_ra };
 
     /// y-position of the mouse on the screen at the manipulation start.
-    Scalar m_lastMouseY {0_ra};
+    Scalar m_lastMouseY { 0_ra };
 
     /// Whether the corresponding camera movement is active or not.
     bool m_rotateAround;
@@ -72,8 +72,8 @@ class RA_GUI_API FlightCameraManipulator : public CameraManipulator,
 
   private:
     void initializeFixedUpVector();
-    Ra::Core::Vector3 m_fixUpVector {0_ra, 1_ra, 0_ra};
-    Scalar m_flightSpeed {1._ra};
+    Ra::Core::Vector3 m_fixUpVector { 0_ra, 1_ra, 0_ra };
+    Scalar m_flightSpeed { 1._ra };
     static void configureKeyMapping_impl();
 
   protected:

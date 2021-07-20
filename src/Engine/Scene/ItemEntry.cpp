@@ -37,9 +37,7 @@ std::vector<Ra::Core::Utils::Index> getItemROs( const Engine::RadiumEngine* /*en
         else if ( ent.isEntityNode() )
         {
             for ( const auto& c : ent.m_entity->getComponents() )
-            {
-                result.insert( result.end(), c->m_renderObjects.begin(), c->m_renderObjects.end() );
-            }
+            { result.insert( result.end(), c->m_renderObjects.begin(), c->m_renderObjects.end() ); }
         }
     }
     return result;

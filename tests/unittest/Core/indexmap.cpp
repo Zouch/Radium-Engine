@@ -129,13 +129,13 @@ TEST_CASE( "Core/Utils/IndexMap", "[Core][Core/Utils][IndexMap]" ) {
 
 template <typename T>
 void testType() {
-    T step = std::numeric_limits<T>::max() / T {1000};
+    T step = std::numeric_limits<T>::max() / T { 1000 };
     for ( T i = static_cast<T>( std::numeric_limits<Index::IntegerType>::max() ) + 1;
           i < static_cast<T>( std::numeric_limits<T>::max() - 2 * step );
           i += step )
     {
         // Index is more than max, so it is invalid
-        Index idx {i};
+        Index idx { i };
         REQUIRE( idx.isInvalid() );
     }
 }
@@ -149,11 +149,11 @@ TEST_CASE( "Core/Utils/Index/Ctor", "[Core][Core/Utils][Index]" ) {
     for ( Index::IntegerType i = 0; i < std::numeric_limits<Index::IntegerType>::max() - 2 * step;
           i += step )
     {
-        Index idx {i};
+        Index idx { i };
         REQUIRE( idx.isValid() );
-        auto idxUl = Index {static_cast<unsigned long int>( i )};
-        auto idxL  = Index {static_cast<long int>( i )};
-        auto idxU  = Index {static_cast<unsigned int>( i )};
+        auto idxUl = Index { static_cast<unsigned long int>( i ) };
+        auto idxL  = Index { static_cast<long int>( i ) };
+        auto idxU  = Index { static_cast<unsigned int>( i ) };
         REQUIRE( idxUl.isValid() );
         REQUIRE( idxU.isValid() );
         REQUIRE( idxL.isValid() );

@@ -14,7 +14,7 @@ class IndexedObject
 {
   public:
     /// CONSTRUCTOR
-    explicit inline IndexedObject( Index idx = Index::Invalid() ) : m_idx {idx} {}
+    explicit inline IndexedObject( Index idx = Index::Invalid() ) : m_idx { idx } {}
     inline IndexedObject( const IndexedObject& id_obj ) = default;
     virtual inline ~IndexedObject()                     = default;
 

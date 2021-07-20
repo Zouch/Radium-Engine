@@ -62,13 +62,13 @@ class RA_GUI_API TreeItem
     /// \name Tree structure variables
     /// \{
     /// Parent object of item.
-    TreeItem* m_parent {nullptr};
+    TreeItem* m_parent { nullptr };
 
     /// Children of item in the tree.
     std::vector<std::unique_ptr<TreeItem>> m_children;
     /// \}
   private:
-    bool m_checked {true};
+    bool m_checked { true };
 };
 
 /// This class implement QAbstractItem model with the TreeItem as its model

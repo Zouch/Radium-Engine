@@ -115,9 +115,7 @@ DegreeMatrix adjacencyDegree( const AdjacencyMatrix& A ) {
     DegreeMatrix D( A.rows(), A.cols() );
     D.reserve( A.rows() );
     for ( int i = 0; i < D.diagonal().size(); ++i )
-    {
-        D.coeffRef( i, i ) = A.row( i ).sum();
-    }
+    { D.coeffRef( i, i ) = A.row( i ).sum(); }
     return D;
 }
 

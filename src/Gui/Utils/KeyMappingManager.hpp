@@ -137,7 +137,7 @@ class RA_GUI_API KeyMappingManager : public Ra::Core::Utils::ObservableVoid
                                int key                         = -1,
                                bool wheel                      = false ) :
 
-            m_buttons {buttons}, m_modifiers {modifiers}, m_key {key}, m_wheel {wheel} {}
+            m_buttons { buttons }, m_modifiers { modifiers }, m_key { key }, m_wheel { wheel } {}
         bool operator<( const MouseBinding& b ) const {
             return ( m_buttons < b.m_buttons ) ||
                    ( ( m_buttons == b.m_buttons ) && ( m_modifiers < b.m_modifiers ) ) ||

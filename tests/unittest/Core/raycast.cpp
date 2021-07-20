@@ -60,7 +60,7 @@ TEST_CASE( "Core/Geometry/RayCast", "[Core][Core/Geometry][RayCast]" ) {
                         Eigen::ParametrizedLine<Scalar, 3> r( Vector3::Zero(), dir.normalized() );
 
                         Scalar t;
-                        Vector3 n {0, 0, 0};
+                        Vector3 n { 0, 0, 0 };
                         const bool result = Geometry::RayCastAabb( r, ones, t, n );
 
                         // The ray should have hit (inside hit)

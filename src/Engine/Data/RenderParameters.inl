@@ -10,9 +10,7 @@ template <typename T>
 inline void
 RenderParameters::UniformBindableSet<T>::bind( const Data::ShaderProgram* shader ) const {
     for ( const auto& value : *this )
-    {
-        value.second.bind( shader );
-    }
+    { value.second.bind( shader ); }
 }
 
 template <typename T>

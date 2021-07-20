@@ -34,7 +34,7 @@ void DebugRender::initialize() {
                          const std::string& configName,
                          const char* vertexShader,
                          const char* fragmentShader ) -> const Data::ShaderProgram* {
-        Data::ShaderConfiguration config {configName};
+        Data::ShaderConfiguration config { configName };
         config.addShaderSource( Data::ShaderType::ShaderType_VERTEX, vertexShader );
         config.addShaderSource( Data::ShaderType::ShaderType_FRAGMENT, fragmentShader );
         auto added = manager->addShaderProgram( config );
@@ -151,7 +151,7 @@ void DebugRender::renderLines( const Core::Matrix4f& viewMatrix,
         colors.push_back( l.col );
         colors.push_back( l.col );
 
-        indices.push_back( {indexI, indexI + 1} );
+        indices.push_back( { indexI, indexI + 1 } );
         indexI += 2;
     }
 
@@ -261,27 +261,23 @@ void DebugRender::addLine( const Core::Vector3& from,
 }
 
 void DebugRender::addPoint( const Core::Vector3& p, const Core::Utils::Color& c ) {
-    m_points.push_back( {p, c.head<3>()} );
+    m_points.push_back( { p, c.head<3>() } );
 }
 
 void DebugRender::addPoints( const Core::Vector3Array& p, const Core::Utils::Color& c ) {
     for ( uint i = 0; i < p.size(); ++i )
-    {
-        m_points.push_back( {p[i], c.head<3>()} );
-    }
+    { m_points.push_back( { p[i], c.head<3>() } ); }
 }
 
 void DebugRender::addPoints( const Core::Vector3Array& p, const Core::Vector4Array& c ) {
     CORE_ASSERT( p.size() == c.size(), "Data sizes mismatch." );
     for ( uint i = 0; i < p.size(); ++i )
-    {
-        m_points.push_back( {p[i], c[i].head<3>()} );
-    }
+    { m_points.push_back( { p[i], c[i].head<3>() } ); }
 }
 
 void DebugRender::addMesh( const std::shared_ptr<Data::AttribArrayDisplayable>& mesh,
                            const Core::Transform& transform ) {
-    m_meshes.push_back( {mesh, transform} );
+    m_meshes.push_back( { mesh, transform } );
 }
 
 void DebugRender::addCross( const Core::Vector3& position,

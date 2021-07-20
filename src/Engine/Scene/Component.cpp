@@ -16,15 +16,14 @@ namespace Scene {
 
 using namespace Core::Utils; // log
 
-Component::Component( const std::string& name, Entity* entity ) : m_name {name}, m_entity {entity} {
+Component::Component( const std::string& name, Entity* entity ) :
+    m_name { name }, m_entity { entity } {
     m_entity->addComponent( this );
 }
 
 Component::~Component() {
     for ( const auto& ro : m_renderObjects )
-    {
-        getRoMgr()->removeRenderObject( ro );
-    }
+    { getRoMgr()->removeRenderObject( ro ); }
     if ( m_system ) { m_system->unregisterComponent( getEntity(), this ); }
     RadiumEngine::getInstance()->getSignalManager()->fireComponentRemoved(
         ItemEntry( getEntity(), this ) );

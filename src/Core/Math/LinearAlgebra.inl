@@ -85,7 +85,7 @@ template <typename Scalar>
 Eigen::ParametrizedLine<Scalar, 3>
 transformRay( const Eigen::Transform<Scalar, 3, Eigen::Affine>& t,
               const Eigen::ParametrizedLine<Scalar, 3>& r ) {
-    return {t * r.origin(), t.linear() * r.direction()};
+    return { t * r.origin(), t.linear() * r.direction() };
 }
 
 //

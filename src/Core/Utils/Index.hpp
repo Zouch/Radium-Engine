@@ -81,12 +81,12 @@ class RA_CORE_API Index
 
   protected:
     /// VARIABLE
-    IntegerType m_idx {s_invalid};
+    IntegerType m_idx { s_invalid };
 
   private:
     /// CONSTANT
-    static const IntegerType s_invalid {-1};
-    static const IntegerType s_maxIdx {std::numeric_limits<IntegerType>::max()};
+    static const IntegerType s_invalid { -1 };
+    static const IntegerType s_maxIdx { std::numeric_limits<IntegerType>::max() };
 };
 } // namespace Utils
 } // namespace Core

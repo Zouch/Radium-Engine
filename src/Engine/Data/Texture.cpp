@@ -11,10 +11,10 @@ namespace Data {
 using namespace Core::Utils; // log
 
 Texture::Texture( const TextureParameters& texParameters ) :
-    m_textureParameters {texParameters},
-    m_texture {nullptr},
-    m_isMipMapped {false},
-    m_isLinear {false} {}
+    m_textureParameters { texParameters },
+    m_texture { nullptr },
+    m_isMipMapped { false },
+    m_isLinear { false } {}
 
 Texture::~Texture() = default;
 
@@ -292,9 +292,7 @@ void Texture::sRGBToLinearRGB( uint8_t* texels, uint numComponent, bool hasAlpha
         {
             // Convert each R or RGB value while keeping alpha unchanged
             for ( uint p = i * numComponent; p < i * numComponent + numValues; ++p )
-            {
-                texels[p] = linearize( texels[p] );
-            }
+            { texels[p] = linearize( texels[p] ); }
         }
     }
 }

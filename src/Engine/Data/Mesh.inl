@@ -23,15 +23,15 @@ AttribArrayDisplayable::MeshRenderMode AttribArrayDisplayable::getRenderMode() c
 }
 
 std::string AttribArrayDisplayable::getAttribName( MeshData type ) {
-    if ( type == VERTEX_POSITION ) return {"in_position"};
-    if ( type == VERTEX_NORMAL ) return {"in_normal"};
-    if ( type == VERTEX_TANGENT ) return {"in_tangent"};
-    if ( type == VERTEX_BITANGENT ) return {"in_bitangent"};
-    if ( type == VERTEX_TEXCOORD ) return {"in_texcoord"};
-    if ( type == VERTEX_COLOR ) return {"in_color"};
-    if ( type == VERTEX_WEIGHTS ) return {"in_weight"};
-    if ( type == VERTEX_WEIGHT_IDX ) return {"in_weight_idx"};
-    return {"invalid mesh data attr name"};
+    if ( type == VERTEX_POSITION ) return { "in_position" };
+    if ( type == VERTEX_NORMAL ) return { "in_normal" };
+    if ( type == VERTEX_TANGENT ) return { "in_tangent" };
+    if ( type == VERTEX_BITANGENT ) return { "in_bitangent" };
+    if ( type == VERTEX_TEXCOORD ) return { "in_texcoord" };
+    if ( type == VERTEX_COLOR ) return { "in_color" };
+    if ( type == VERTEX_WEIGHTS ) return { "in_weight" };
+    if ( type == VERTEX_WEIGHT_IDX ) return { "in_weight_idx" };
+    return { "invalid mesh data attr name" };
 }
 
 ///////////////// VaoIndices  ///////////////////////
@@ -369,9 +369,7 @@ void CoreGeometryDisplayable<CoreGeometry>::updateGL() {
                 {
                     auto tptr = reinterpret_cast<const Scalar*>( cptr + i * stride );
                     for ( size_t j = 0; j < eltSize; ++j )
-                    {
-                        data[i * eltSize + j] = tptr[j];
-                    }
+                    { data[i * eltSize + j] = tptr[j]; }
                 }
 
                 m_vbos[idx]->setData(
@@ -637,8 +635,8 @@ void PolyMesh::triangulate() {
         else
         {
             /// simple sew triangulation
-            int minus {int( face.size() ) - 1};
-            int plus {0};
+            int minus { int( face.size() ) - 1 };
+            int plus { 0 };
             while ( plus + 1 < minus )
             {
                 if ( ( plus - minus ) % 2 )

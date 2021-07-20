@@ -15,8 +15,8 @@ KeyMappingManager::KeyMappingManager() :
     m_metaEnumKey( QMetaEnum::fromType<Qt::Key>() ),
     m_file( nullptr ) {
 
-    auto optionalPath {Core::Resources::getRadiumResourcesPath()};
-    auto resourcesRootDir {optionalPath.value_or( "[[Default resrouces path not found]]" )};
+    auto optionalPath { Core::Resources::getRadiumResourcesPath() };
+    auto resourcesRootDir { optionalPath.value_or( "[[Default resrouces path not found]]" ) };
 
     ///\todo how to check here ?
     m_defaultConfigFile = resourcesRootDir + std::string( "Configs/default.xml" );
@@ -51,7 +51,7 @@ KeyMappingManager::getAction( const KeyMappingManager::Context& context,
     if ( ( key == Qt::Key_Shift ) || ( key == Qt::Key_Control ) || ( key == Qt::Key_Alt ) ||
          ( key == Qt::Key_Meta ) )
     { key = -1; }
-    KeyMappingManager::MouseBinding binding {buttons, modifiers, key, wheel};
+    KeyMappingManager::MouseBinding binding { buttons, modifiers, key, wheel };
 
     auto action = m_mappingAction[context].find( binding );
     if ( action != m_mappingAction[context].end() ) { return action->second; }
@@ -299,7 +299,7 @@ void KeyMappingManager::loadConfiguration( const std::string& inFilename ) {
 }
 
 bool KeyMappingManager::saveConfiguration( const std::string& inFilename ) {
-    QString filename {m_file->fileName()};
+    QString filename { m_file->fileName() };
     if ( !inFilename.empty() ) { filename = QString::fromStdString( inFilename ); }
 
     QFile saveTo( filename );
@@ -495,7 +495,7 @@ KeyMappingManager::loadConfigurationMappingInternal( const std::string& context,
     else
     {
         bindKeyToAction( contextIndex,
-                         MouseBinding {buttonsValue, modifiersValue, keyValue, wheel},
+                         MouseBinding { buttonsValue, modifiersValue, keyValue, wheel },
                          actionIndex );
     }
     return actionIndex;
@@ -557,7 +557,7 @@ std::string KeyMappingManager::getHelpText() {
     std::ostringstream text;
     for ( const auto& context : m_contextNameToIndex )
     {
-        std::string contextString {context.first};
+        std::string contextString { context.first };
         auto end      = contextString.find( "Context" );
         contextString = contextString.substr( 0, end );
         text << "<h2>" << contextString << "</h2>\n";
@@ -583,7 +583,7 @@ std::string KeyMappingManager::getHelpText() {
                 if ( binding.m_modifiers != Qt::NoModifier )
                 {
 
-                    std::string modifierString {"Modifier"};
+                    std::string modifierString { "Modifier" };
                     auto modifiers = enumNamesFromKeyboardModifiers( binding.m_modifiers );
                     auto found     = modifiers.find( modifierString );
                     while ( found != std::string::npos )

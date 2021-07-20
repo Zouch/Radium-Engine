@@ -414,7 +414,7 @@ class RA_CORE_API TopologicalMesh : public OpenMesh::PolyMesh_ArrayKernelT<Topol
         EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
         explicit Wedge() {}
-        explicit Wedge( const WedgeData& wd ) : m_wedgeData {wd}, m_refCount {1} {};
+        explicit Wedge( const WedgeData& wd ) : m_wedgeData { wd }, m_refCount { 1 } {};
         const WedgeData& getWedgeData() const { return m_wedgeData; }
         void setWedgeData( const WedgeData& wedgeData ) { m_wedgeData = wedgeData; }
         void setWedgeData( WedgeData&& wedgeData ) { m_wedgeData = std::move( wedgeData ); }
@@ -435,7 +435,7 @@ class RA_CORE_API TopologicalMesh : public OpenMesh::PolyMesh_ArrayKernelT<Topol
         WedgeData& getWedgeData() { return m_wedgeData; }
 
         WedgeData m_wedgeData {};
-        unsigned int m_refCount {0};
+        unsigned int m_refCount { 0 };
     };
 
     /**
@@ -584,7 +584,7 @@ class RA_CORE_API TopologicalMesh : public OpenMesh::PolyMesh_ArrayKernelT<Topol
     /// \todo add layerKey
     struct DefaultNonManifoldFaceCommand {
         /// \brief details string is printed along with the message
-        DefaultNonManifoldFaceCommand( const std::string& details = {} ) : m_details {details} {}
+        DefaultNonManifoldFaceCommand( const std::string& details = {} ) : m_details { details } {}
         /// \brief Initalize with input Ra::Core::Geometry::TriangleMesh
         inline void initialize( const Ra::Core::Geometry::MultiIndexedGeometry& ) {}
         /// \brief Process non-manifold face
@@ -631,7 +631,7 @@ class RA_CORE_API TopologicalMesh : public OpenMesh::PolyMesh_ArrayKernelT<Topol
     OpenMesh::HPropHandleT<Index> m_inputTriangleMeshIndexPph;
     OpenMesh::HPropHandleT<Index> m_outputTriangleMeshIndexPph;
 
-    int m_normalsIndex {-1};
+    int m_normalsIndex { -1 };
     // vertex handle idx -> face handle idx -> wedge idx with the same normal
     std::vector<std::map<int, std::vector<int>>> m_vertexFaceWedgesWithSameNormals;
 

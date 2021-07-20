@@ -9,8 +9,9 @@ TEST_CASE( "Core/Math/Algebra", "[Core][Core/Math][Algebra]" ) {
     using namespace Ra::Core;
     SECTION( "Test custom vector functions" ) {
 
-        Vector3 tests[] = {
-            {1.34f, 10.34567f, 4.8e5f}, {0.f, -1.42f, -5.3e5f}, {0.9999f, 1.99999f, -1.000001f}};
+        Vector3 tests[] = { { 1.34f, 10.34567f, 4.8e5f },
+                            { 0.f, -1.42f, -5.3e5f },
+                            { 0.9999f, 1.99999f, -1.000001f } };
 
         for ( uint i = 0; i < 3; ++i )
         {
@@ -54,7 +55,7 @@ TEST_CASE( "Core/Math/Algebra", "[Core][Core/Math][Algebra]" ) {
         REQUIRE( Math::areApproxEqual( max, std::clamp( max + s, min, max ) ) );
         REQUIRE( Math::areApproxEqual( min, std::clamp( min - s, min, max ) ) );
 
-        Vector3 v {Scalar( 0.1 ), Scalar( 0.2 ), Scalar( 0.3 )};
+        Vector3 v { Scalar( 0.1 ), Scalar( 0.2 ), Scalar( 0.3 ) };
         Vector3 v2 = Math::clamp( v, min, max );
         REQUIRE( v2.isApprox( v ) );
 

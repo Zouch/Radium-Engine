@@ -72,9 +72,7 @@ void SkeletonBasedAnimationUI::selectionChanged( const Engine::Scene::ItemEntry&
             ui->m_currentAnimation->blockSignals( true );
             ui->m_currentAnimation->clear();
             for ( size_t i = 0; i < m_currentSkeleton->getAnimationCount(); ++i )
-            {
-                ui->m_currentAnimation->addItem( "#" + QString::number( i ) );
-            }
+            { ui->m_currentAnimation->addItem( "#" + QString::number( i ) ); }
             ui->m_currentAnimation->blockSignals( false );
             ui->m_currentAnimation->setCurrentIndex( int( m_currentSkeleton->getAnimationId() ) );
             ui->m_xray->setChecked( m_currentSkeleton->isXray() );
@@ -113,9 +111,7 @@ void SkeletonBasedAnimationUI::selectionChanged( const Engine::Scene::ItemEntry&
         if ( b_it != BM.end() )
         {
             for ( auto skin : m_currentSkinnings )
-            {
-                skin->setWeightBone( b_it->second );
-            }
+            { skin->setWeightBone( b_it->second ); }
         }
     }
 
@@ -349,9 +345,7 @@ void SkeletonBasedAnimationUI::on_m_skinningMethod_currentIndexChanged( int newT
     using SkinningType = Engine::Scene::SkinningComponent::SkinningType;
     auto type          = SkinningType( newType );
     for ( auto skin : m_currentSkinnings )
-    {
-        skin->setSkinningType( type );
-    }
+    { skin->setSkinningType( type ); }
     switch ( type )
     {
     case SkinningType::LBS: {
@@ -382,25 +376,19 @@ void SkeletonBasedAnimationUI::on_m_skinningMethod_currentIndexChanged( int newT
 
 void SkeletonBasedAnimationUI::on_m_showWeights_toggled( bool checked ) {
     for ( auto skin : m_currentSkinnings )
-    {
-        skin->showWeights( checked );
-    }
+    { skin->showWeights( checked ); }
     askForUpdate();
 }
 
 void SkeletonBasedAnimationUI::on_m_weightsType_currentIndexChanged( int newType ) {
     for ( auto skin : m_currentSkinnings )
-    {
-        skin->showWeightsType( Engine::Scene::SkinningComponent::WeightType( newType ) );
-    }
+    { skin->showWeightsType( Engine::Scene::SkinningComponent::WeightType( newType ) ); }
     askForUpdate();
 }
 
 void SkeletonBasedAnimationUI::on_m_normalSkinning_currentIndexChanged( int newType ) {
     for ( auto skin : m_currentSkinnings )
-    {
-        skin->setNormalSkinning( Engine::Scene::SkinningComponent::NormalSkinning( newType ) );
-    }
+    { skin->setNormalSkinning( Engine::Scene::SkinningComponent::NormalSkinning( newType ) ); }
     askForUpdate();
 }
 

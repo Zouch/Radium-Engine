@@ -117,9 +117,7 @@ bool CatmullClarkSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
         auto e_end = mesh.edges_end();
         m_newEdgePropOps[iter].reserve( 3 * mesh.n_edges() );
         for ( auto e_itr = mesh.edges_begin(); e_itr != e_end; ++e_itr )
-        {
-            split_edge( mesh, *e_itr, iter );
-        }
+        { split_edge( mesh, *e_itr, iter ); }
         m_newEdgePropOps[iter].shrink_to_fit();
 
         // Commit changes in topology and reconsitute consistency
@@ -127,9 +125,7 @@ bool CatmullClarkSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
         auto f_end = mesh.faces_end();
         m_newFacePropOps[iter].reserve( 2 * 4 * mesh.n_faces() );
         for ( auto f_itr = mesh.faces_begin(); f_itr != f_end; ++f_itr )
-        {
-            split_face( mesh, *f_itr, iter );
-        }
+        { split_face( mesh, *f_itr, iter ); }
         m_newFacePropOps[iter].shrink_to_fit();
 
         CORE_ASSERT( OpenMesh::Utils::MeshCheckerT<deprecated::TopologicalMesh>( mesh ).check(),
@@ -168,8 +164,8 @@ bool CatmullClarkSubdivider::subdivide( deprecated::TopologicalMesh& mesh,
         // deal with properties
         mesh.copyAllProps( heh3, heh5 );
         mesh.copyAllProps( heh1, heh6 );
-        m_triangulationPropOps.push_back( {heh5, {{1, heh3}}} );
-        m_triangulationPropOps.push_back( {heh6, {{1, heh1}}} );
+        m_triangulationPropOps.push_back( { heh5, { { 1, heh3 } } } );
+        m_triangulationPropOps.push_back( { heh6, { { 1, heh1 } } } );
     }
 
     return true;
@@ -208,11 +204,11 @@ void CatmullClarkSubdivider::split_face( deprecated::TopologicalMesh& mesh,
 
     // deal with properties for hold
     mesh.copyAllProps( hend, hold );
-    m_newFacePropOps[iter].push_back( {hold, {{1, hend}}} );
+    m_newFacePropOps[iter].push_back( { hold, { { 1, hend } } } );
 
     const Scalar inv_val = Scalar( 1 ) / valence;
     std::vector<P_OP> p_ops( valence );
-    p_ops[0] = {inv_val, hh};
+    p_ops[0] = { inv_val, hh };
 
     for ( size_t i = 1; i < valence; i++ )
     {
@@ -241,8 +237,8 @@ void CatmullClarkSubdivider::split_face( deprecated::TopologicalMesh& mesh,
 
         // deal with properties for hold
         mesh.copyAllProps( hnext, hold );
-        m_newFacePropOps[iter].push_back( {hold, {{1, hnext}}} );
-        p_ops[i] = {inv_val, hh};
+        m_newFacePropOps[iter].push_back( { hold, { { 1, hnext } } } );
+        p_ops[i] = { inv_val, hh };
     }
 
     // finish topology
@@ -255,9 +251,7 @@ void CatmullClarkSubdivider::split_face( deprecated::TopologicalMesh& mesh,
 
     // deal with property operations on centroid
     for ( auto vh_iter = mesh.vih_iter( vh ); vh_iter.is_valid(); ++vh_iter )
-    {
-        m_newFacePropOps[iter].push_back( {*vh_iter, p_ops} );
-    }
+    { m_newFacePropOps[iter].push_back( { *vh_iter, p_ops } ); }
 }
 
 void CatmullClarkSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
@@ -311,7 +305,7 @@ void CatmullClarkSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
 
         // deal with custom properties
         mesh.interpolateAllProps( t_heh, opp_heh, opp_new_heh, 0.5 );
-        m_newEdgePropOps[iter].push_back( {opp_new_heh, {{0.5, t_heh}, {0.5, opp_heh}}} );
+        m_newEdgePropOps[iter].push_back( { opp_new_heh, { { 0.5, t_heh }, { 0.5, opp_heh } } } );
     }
 
     if ( mesh.face_handle( heh ).is_valid() )
@@ -321,10 +315,10 @@ void CatmullClarkSubdivider::split_edge( deprecated::TopologicalMesh& mesh,
 
         // deal with custom properties
         mesh.copyAllProps( heh, new_heh );
-        m_newEdgePropOps[iter].push_back( {new_heh, {{1, heh}}} );
+        m_newEdgePropOps[iter].push_back( { new_heh, { { 1, heh } } } );
         HeHandle heh_prev = mesh.prev_halfedge_handle( heh );
         mesh.interpolateAllProps( heh_prev, new_heh, heh, 0.5 );
-        m_newEdgePropOps[iter].push_back( {heh, {{0.5, heh_prev}, {0.5, new_heh}}} );
+        m_newEdgePropOps[iter].push_back( { heh, { { 0.5, heh_prev }, { 0.5, new_heh } } } );
     }
 
     mesh.set_halfedge_handle( vh, new_heh );
@@ -482,9 +476,7 @@ void CatmullClarkSubdivider::recompute( const Vector3Array& newCoarseVertices,
             Ra::Core::Vector3 pos( 0, 0, 0 );
             const auto& ops = m_newFaceVertexOps[i][j];
             for ( const auto& op : ops.second )
-            {
-                pos += op.first * mesh.point( op.second );
-            }
+            { pos += op.first * mesh.point( op.second ); }
             mesh.set_point( ops.first, pos );
         }
         // reapply newEdgeVertexOps
@@ -494,9 +486,7 @@ void CatmullClarkSubdivider::recompute( const Vector3Array& newCoarseVertices,
             Ra::Core::Vector3 pos( 0, 0, 0 );
             const auto& ops = m_newEdgeVertexOps[i][j];
             for ( const auto& op : ops.second )
-            {
-                pos += op.first * mesh.point( op.second );
-            }
+            { pos += op.first * mesh.point( op.second ); }
             mesh.set_point( ops.first, pos );
         }
         // reapply oldVertexOps
@@ -507,16 +497,12 @@ void CatmullClarkSubdivider::recompute( const Vector3Array& newCoarseVertices,
             pos[j]          = Ra::Core::Vector3( 0, 0, 0 );
             const auto& ops = m_oldVertexOps[i][j];
             for ( const auto& op : ops.second )
-            {
-                pos[j] += op.first * mesh.point( op.second );
-            }
+            { pos[j] += op.first * mesh.point( op.second ); }
         }
         // then commit pos for old vertices
 #pragma omp parallel for schedule( static )
         for ( int j = 0; j < int( m_oldVertexOps[i].size() ); ++j )
-        {
-            mesh.set_point( m_oldVertexOps[i][j].first, pos[j] );
-        }
+        { mesh.set_point( m_oldVertexOps[i][j].first, pos[j] ); }
         // deal with normal on edges centers (other non-static properties can be updated the same
         // way)
         // This loop should not be parallelized!
@@ -525,9 +511,7 @@ void CatmullClarkSubdivider::recompute( const Vector3Array& newCoarseVertices,
             Ra::Core::Vector3 nor( 0, 0, 0 );
             const auto& ops = m_newEdgePropOps[i][j];
             for ( const auto& op : ops.second )
-            {
-                nor += op.first * mesh.property( hNormalProp, op.second );
-            }
+            { nor += op.first * mesh.property( hNormalProp, op.second ); }
             mesh.property( hNormalProp, ops.first ) = nor.normalized();
         }
         // deal with normal on faces centers (other non-static properties can be updated the same
@@ -538,9 +522,7 @@ void CatmullClarkSubdivider::recompute( const Vector3Array& newCoarseVertices,
             Ra::Core::Vector3 nor( 0, 0, 0 );
             const auto& ops = m_newFacePropOps[i][j];
             for ( const auto& op : ops.second )
-            {
-                nor += op.first * mesh.property( hNormalProp, op.second );
-            }
+            { nor += op.first * mesh.property( hNormalProp, op.second ); }
             mesh.property( hNormalProp, ops.first ) = nor.normalized();
         }
     }
@@ -552,9 +534,7 @@ void CatmullClarkSubdivider::recompute( const Vector3Array& newCoarseVertices,
         Ra::Core::Vector3 nor( 0, 0, 0 );
         const auto& ops = m_triangulationPropOps[j];
         for ( const auto& op : ops.second )
-        {
-            nor += op.first * mesh.property( hNormalProp, op.second );
-        }
+        { nor += op.first * mesh.property( hNormalProp, op.second ); }
         mesh.property( hNormalProp, ops.first ) = nor.normalized();
     }
     // update subdivided TriangleMesh vertices and normals

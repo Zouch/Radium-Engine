@@ -32,9 +32,7 @@ Scalar PolyLine::squaredDistance( const Vector3& p ) const {
     CORE_ASSERT( m_pts.size() > 1, "Line must have at least two points" );
     Scalar sqDist = std::numeric_limits<Scalar>::max();
     for ( uint i = 0; i < m_ptsDiff.size(); ++i )
-    {
-        sqDist = std::min( Geometry::pointToSegmentSq( p, m_pts[i], m_ptsDiff[i] ), sqDist );
-    }
+    { sqDist = std::min( Geometry::pointToSegmentSq( p, m_pts[i], m_ptsDiff[i] ), sqDist ); }
     return sqDist;
 }
 

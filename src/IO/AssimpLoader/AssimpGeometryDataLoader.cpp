@@ -121,9 +121,7 @@ void AssimpGeometryDataLoader::loadMeshFrame(
     }
 
     for ( uint i = 0; i < child_size; ++i )
-    {
-        loadMeshFrame( node->mChildren[i], frame, indexTable, data );
-    }
+    { loadMeshFrame( node->mChildren[i], frame, indexTable, data ); }
 }
 
 void AssimpGeometryDataLoader::fetchName( const aiMesh& mesh,
@@ -131,9 +129,7 @@ void AssimpGeometryDataLoader::fetchName( const aiMesh& mesh,
                                           std::set<std::string>& usedNames ) const {
     std::string name = assimpToCore( mesh.mName );
     while ( usedNames.find( name ) != usedNames.end() )
-    {
-        name.append( "_" );
-    }
+    { name.append( "_" ); }
     usedNames.insert( name );
     data.setName( name );
 }
@@ -142,9 +138,7 @@ void AssimpGeometryDataLoader::fetchType( const aiMesh& mesh, GeometryData& data
     data.setType( GeometryData::UNKNOWN );
     uint face_type = 0;
     for ( uint i = 0; i < mesh.mNumFaces; ++i )
-    {
-        face_type = std::max( face_type, mesh.mFaces[i].mNumIndices );
-    }
+    { face_type = std::max( face_type, mesh.mFaces[i].mNumIndices ); }
     if ( face_type != 1 )
     {
         switch ( face_type )
@@ -193,9 +187,7 @@ void AssimpGeometryDataLoader::fetchVertices( const aiMesh& mesh, GeometryData& 
     vertex.resize( mesh.mNumVertices );
 #pragma omp parallel for
     for ( int i = 0; i < size; ++i )
-    {
-        vertex[i] = assimpToCore( mesh.mVertices[i] );
-    }
+    { vertex[i] = assimpToCore( mesh.mVertices[i] ); }
     //    fetchVectorData( mesh.mNumVertices, mesh.mVertices, vertex );
 }
 
@@ -205,9 +197,7 @@ void AssimpGeometryDataLoader::fetchEdges( const aiMesh& mesh, GeometryData& dat
     edge.resize( mesh.mNumFaces );
 #pragma omp parallel for
     for ( int i = 0; i < size; ++i )
-    {
-        edge[i] = assimpToCore( mesh.mFaces[i].mIndices, mesh.mFaces[i].mNumIndices ).cast<uint>();
-    }
+    { edge[i] = assimpToCore( mesh.mFaces[i].mIndices, mesh.mFaces[i].mNumIndices ).cast<uint>(); }
 }
 
 void AssimpGeometryDataLoader::fetchFaces( const aiMesh& mesh, GeometryData& data ) const {
@@ -216,9 +206,7 @@ void AssimpGeometryDataLoader::fetchFaces( const aiMesh& mesh, GeometryData& dat
     face.resize( mesh.mNumFaces );
 #pragma omp parallel for
     for ( int i = 0; i < size; ++i )
-    {
-        face[i] = assimpToCore( mesh.mFaces[i].mIndices, mesh.mFaces[i].mNumIndices ).cast<uint>();
-    }
+    { face[i] = assimpToCore( mesh.mFaces[i].mIndices, mesh.mFaces[i].mNumIndices ).cast<uint>(); }
 }
 
 void AssimpGeometryDataLoader::fetchPolyhedron( const aiMesh& mesh, GeometryData& data ) const {
@@ -245,9 +233,7 @@ void AssimpGeometryDataLoader::fetchTangents( const aiMesh& mesh, GeometryData& 
     tangent.resize( mesh.mNumVertices, Core::Vector3::Zero() );
 #pragma omp parallel for
     for ( int i = 0; i < int( size ); ++i )
-    {
-        tangent[i] = assimpToCore( mesh.mTangents[i] );
-    }
+    { tangent[i] = assimpToCore( mesh.mTangents[i] ); }
 }
 
 void AssimpGeometryDataLoader::fetchBitangents( const aiMesh& mesh, GeometryData& data ) const {
@@ -256,9 +242,7 @@ void AssimpGeometryDataLoader::fetchBitangents( const aiMesh& mesh, GeometryData
     bitangent.resize( mesh.mNumVertices );
 #pragma omp parallel for
     for ( int i = 0; i < size; ++i )
-    {
-        bitangent[i] = assimpToCore( mesh.mBitangents[i] );
-    }
+    { bitangent[i] = assimpToCore( mesh.mBitangents[i] ); }
 }
 
 void AssimpGeometryDataLoader::fetchTextureCoordinates( const aiMesh& mesh,

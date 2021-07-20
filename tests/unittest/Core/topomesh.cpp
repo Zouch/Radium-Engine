@@ -117,9 +117,7 @@ class WedgeDataAndIdx
             meshOne.getAttrib( meshOne.template getAttribHandle<REALTYPE>( attr->getName() ) ) \
                 .data();                                                                       \
         for ( size_t i = 0; i < size; ++i )                                                    \
-        {                                                                                      \
-            wedgesMeshOne[i].m_data.getAttribArray<REALTYPE>().push_back( data[i] );           \
-        }                                                                                      \
+        { wedgesMeshOne[i].m_data.getAttribArray<REALTYPE>().push_back( data[i] ); }           \
     }
 
 template <typename T>
@@ -138,9 +136,7 @@ void copyToWedgesVector( size_t size,
         {
             auto data = meshOne.vertices();
             for ( size_t i = 0; i < size; ++i )
-            {
-                wedgesMeshOne[i].m_data.m_position = data[i];
-            }
+            { wedgesMeshOne[i].m_data.m_position = data[i]; }
         }
 
         COPY_TO_WEDGES_VECTOR_HELPER( Float, Scalar );
@@ -277,30 +273,30 @@ TEST_CASE( "Core/Geometry/TopologicalMesh", "[Core][Core/Geometry][TopologicalMe
 
     SECTION( "With user def attribs" ) {
         using Vector5 = Eigen::Matrix<Scalar, 5, 1>;
-        VectorArray<Vector5> array5 {{0_ra, 0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, 0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, 0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, -1_ra, 0_ra, 0_ra, 0_ra},
-                                     {0_ra, 0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, 0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, 0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, -1_ra, 0_ra, 0_ra, 0_ra}};
-        VectorArray<Vector4> array4 {{0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, 0_ra, 0_ra, 1_ra},
-                                     {-1_ra, 0_ra, 0_ra, 0_ra},
-                                     {0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, 0_ra, 0_ra, 1_ra},
-                                     {0_ra, 0_ra, 0_ra, 1_ra},
-                                     {-1_ra, 0_ra, 0_ra, 0_ra}};
-        VectorArray<Vector2> array2 {{0_ra, 1_ra},
-                                     {0_ra, 1_ra},
-                                     {0_ra, 1_ra},
-                                     {0_ra, 0_ra},
-                                     {0_ra, 1_ra},
-                                     {0_ra, 1_ra},
-                                     {0_ra, 1_ra},
-                                     {0_ra, 0_ra}};
+        VectorArray<Vector5> array5 { { 0_ra, 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, -1_ra, 0_ra, 0_ra, 0_ra },
+                                      { 0_ra, 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, -1_ra, 0_ra, 0_ra, 0_ra } };
+        VectorArray<Vector4> array4 { { 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { -1_ra, 0_ra, 0_ra, 0_ra },
+                                      { 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { 0_ra, 0_ra, 0_ra, 1_ra },
+                                      { -1_ra, 0_ra, 0_ra, 0_ra } };
+        VectorArray<Vector2> array2 { { 0_ra, 1_ra },
+                                      { 0_ra, 1_ra },
+                                      { 0_ra, 1_ra },
+                                      { 0_ra, 0_ra },
+                                      { 0_ra, 1_ra },
+                                      { 0_ra, 1_ra },
+                                      { 0_ra, 1_ra },
+                                      { 0_ra, 0_ra } };
 
         auto mesh     = Ra::Core::Geometry::makeBox();
         auto handle2  = mesh.addAttrib<Vector2>( "vector2_attrib" );
@@ -347,7 +343,7 @@ TEST_CASE( "Core/Geometry/TopologicalMesh", "[Core][Core/Geometry][TopologicalMe
         auto topologicalMesh = TopologicalMesh( mesh );
         auto newMesh         = topologicalMesh.toTriangleMesh();
         topologicalMesh.setWedgeData(
-            TopologicalMesh::WedgeIndex {0}, "in_normal", Vector3( 0, 0, 0 ) );
+            TopologicalMesh::WedgeIndex { 0 }, "in_normal", Vector3( 0, 0, 0 ) );
         auto newMeshModified = topologicalMesh.toTriangleMesh();
 
         REQUIRE( isSameMesh( mesh, newMesh ) );
@@ -380,9 +376,7 @@ TEST_CASE( "Core/Geometry/TopologicalMesh", "[Core][Core/Geometry][TopologicalMe
         for ( TopologicalMesh::ConstVertexIter v_it = topologicalMesh.vertices_begin();
               v_it != topologicalMesh.vertices_end();
               ++v_it )
-        {
-            topologicalMesh.propagate_normal_to_wedges( *v_it );
-        }
+        { topologicalMesh.propagate_normal_to_wedges( *v_it ); }
 
         auto newMesh = topologicalMesh.toTriangleMesh();
         bool check1  = true;
@@ -401,15 +395,17 @@ TEST_CASE( "Core/Geometry/TopologicalMesh", "[Core][Core/Geometry][TopologicalMe
     }
 
     SECTION( "Test without normals" ) {
-        VectorArray<Vector3> vertices = {
-            {0_ra, 0_ra, 0_ra}, {0_ra, 1_ra, 0_ra}, {1_ra, 1_ra, 0_ra}, {1_ra, 0_ra, 0_ra}};
-        VectorArray<Vector3ui> indices {{0, 2, 1}, {0, 3, 2}};
+        VectorArray<Vector3> vertices = { { 0_ra, 0_ra, 0_ra },
+                                          { 0_ra, 1_ra, 0_ra },
+                                          { 1_ra, 1_ra, 0_ra },
+                                          { 1_ra, 0_ra, 0_ra } };
+        VectorArray<Vector3ui> indices { { 0, 2, 1 }, { 0, 3, 2 } };
         // well formed mesh
 
         TriangleMesh mesh;
         mesh.setVertices( std::move( vertices ) );
         mesh.setIndices( std::move( indices ) );
-        TopologicalMesh topo1 {mesh};
+        TopologicalMesh topo1 { mesh };
         REQUIRE( topo1.checkIntegrity() );
         TriangleMesh mesh1 = topo1.toTriangleMesh();
 
@@ -478,28 +474,28 @@ void test_poly() {
     Ra::Core::Geometry::PolyMesh polyMesh;
     polyMesh.setVertices( {
         // quad
-        {-1.1_ra, -0_ra, 0_ra},
-        {1.1_ra, -0_ra, 0_ra},
-        {1_ra, 1_ra, 0_ra},
-        {-1_ra, 1_ra, 0_ra},
+        { -1.1_ra, -0_ra, 0_ra },
+        { 1.1_ra, -0_ra, 0_ra },
+        { 1_ra, 1_ra, 0_ra },
+        { -1_ra, 1_ra, 0_ra },
         // hepta
-        {2_ra, 2_ra, 0_ra},
-        {2_ra, 3_ra, 0_ra},
-        {0_ra, 4_ra, 0_ra},
-        {-2_ra, 3_ra, 0_ra},
-        {-2_ra, 2_ra, 0_ra},
+        { 2_ra, 2_ra, 0_ra },
+        { 2_ra, 3_ra, 0_ra },
+        { 0_ra, 4_ra, 0_ra },
+        { -2_ra, 3_ra, 0_ra },
+        { -2_ra, 2_ra, 0_ra },
         // degen
-        {-1.1_ra, -2_ra, 0_ra},
-        {-0.5_ra, -2_ra, 0_ra},
-        {-0.3_ra, -2_ra, 0_ra},
-        {0.0_ra, -2_ra, 0_ra},
-        {0.001_ra, -2_ra, 0_ra},
-        {0.3_ra, -2_ra, 0_ra},
-        {0.5_ra, -2_ra, 0_ra},
-        {1.1_ra, -2_ra, 0_ra},
+        { -1.1_ra, -2_ra, 0_ra },
+        { -0.5_ra, -2_ra, 0_ra },
+        { -0.3_ra, -2_ra, 0_ra },
+        { 0.0_ra, -2_ra, 0_ra },
+        { 0.001_ra, -2_ra, 0_ra },
+        { 0.3_ra, -2_ra, 0_ra },
+        { 0.5_ra, -2_ra, 0_ra },
+        { 1.1_ra, -2_ra, 0_ra },
         // degen2
-        {-1_ra, -3_ra, 0_ra},
-        {1_ra, -3_ra, 0_ra},
+        { -1_ra, -3_ra, 0_ra },
+        { 1_ra, -3_ra, 0_ra },
 
     } );
 
@@ -520,7 +516,7 @@ void test_poly() {
     degen << 1, 0, 9, 10, 11, 12, 13, 14, 15, 16;
     auto degen2 = VectorNui( 10 );
     degen2 << 14, 13, 12, 11, 10, 9, 17, 18, 16, 15;
-    polyMesh.setIndices( {quad, hepta, degen, degen2} );
+    polyMesh.setIndices( { quad, hepta, degen, degen2 } );
 
     TopologicalMesh topologicalMesh;
     topologicalMesh.initWithWedge( polyMesh, polyMesh.getLayerKey() );
@@ -551,11 +547,11 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/EdgeSplit", "[Core][Core/Geometry][Top
 
     // create a triangle mesh with 4 vertices
     TriangleMesh meshSplit;
-    meshSplit.setVertices( {{0, 0, 0}, {1, 0, 0}, {1, 1, 0}, {0, 1, 0}} );
-    meshSplit.setNormals( {{-1, -1, 1}, {1, -1, 1}, {1, 1, 1}, {-1, 1, 1}} );
-    meshSplit.setIndices( {Vector3ui( 0, 1, 2 ), Vector3ui( 0, 2, 3 )} );
+    meshSplit.setVertices( { { 0, 0, 0 }, { 1, 0, 0 }, { 1, 1, 0 }, { 0, 1, 0 } } );
+    meshSplit.setNormals( { { -1, -1, 1 }, { 1, -1, 1 }, { 1, 1, 1 }, { -1, 1, 1 } } );
+    meshSplit.setIndices( { Vector3ui( 0, 1, 2 ), Vector3ui( 0, 2, 3 ) } );
     // add a float attrib
-    auto handle = meshSplit.addAttrib<Scalar>( "test", {0_ra, 1_ra, 2_ra, 3_ra} );
+    auto handle = meshSplit.addAttrib<Scalar>( "test", { 0_ra, 1_ra, 2_ra, 3_ra } );
     CORE_UNUSED( handle ); // until unit test is finished.
 
     // convert to topomesh
@@ -595,7 +591,7 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/Manifold", "[Core][Core/Geometry][Topo
                 LOG( logINFO ) << "Process non-manifold faces";
             }
 
-            int nonManifoldFaces {0};
+            int nonManifoldFaces { 0 };
             const int targetNonManifoldFaces;
         };
 
@@ -622,43 +618,47 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/Manifold", "[Core][Core/Geometry][Topo
                                  const TriangleMesh& candidateMesh,
                                  MyNonManifoldCommand command ) {
             // test with functor
-            TopologicalMesh topoWithCommand {candidateMesh, command};
+            TopologicalMesh topoWithCommand { candidateMesh, command };
             auto convertedMeshWithCommand = topoWithCommand.toTriangleMesh();
             REQUIRE( isSameMesh( referenceMesh, convertedMeshWithCommand ) );
             // test without functor
-            TopologicalMesh topoWithoutCommand {candidateMesh};
+            TopologicalMesh topoWithoutCommand { candidateMesh };
             auto convertedMeshWithoutCommand = topoWithoutCommand.toTriangleMesh();
             REQUIRE( isSameMesh( referenceMesh, convertedMeshWithoutCommand ) );
             return convertedMeshWithoutCommand;
         };
 
-        VectorArray<Vector3> vertices = {
-            {0_ra, 0_ra, 0_ra}, {0_ra, 1_ra, 0_ra}, {1_ra, 1_ra, 0_ra}, {1_ra, 0_ra, 0_ra}};
-        VectorArray<Vector3> normals {
-            {0_ra, 0_ra, 1_ra}, {0_ra, 0_ra, 1_ra}, {0_ra, 0_ra, 1_ra}, {0_ra, 0_ra, 1_ra}};
-        VectorArray<Vector3ui> indices {{0, 2, 1}, {0, 3, 2}};
+        VectorArray<Vector3> vertices = { { 0_ra, 0_ra, 0_ra },
+                                          { 0_ra, 1_ra, 0_ra },
+                                          { 1_ra, 1_ra, 0_ra },
+                                          { 1_ra, 0_ra, 0_ra } };
+        VectorArray<Vector3> normals { { 0_ra, 0_ra, 1_ra },
+                                       { 0_ra, 0_ra, 1_ra },
+                                       { 0_ra, 0_ra, 1_ra },
+                                       { 0_ra, 0_ra, 1_ra } };
+        VectorArray<Vector3ui> indices { { 0, 2, 1 }, { 0, 3, 2 } };
 
-        VectorArray<Vector3> vertices_2 = {{0_ra, 0_ra, 0_ra},
-                                           {0_ra, 1_ra, 0_ra},
-                                           {1_ra, 1_ra, 0_ra},
-                                           {1_ra, 0_ra, 0_ra},
-                                           {1_ra, 0_ra, 1_ra}};
+        VectorArray<Vector3> vertices_2 = { { 0_ra, 0_ra, 0_ra },
+                                            { 0_ra, 1_ra, 0_ra },
+                                            { 1_ra, 1_ra, 0_ra },
+                                            { 1_ra, 0_ra, 0_ra },
+                                            { 1_ra, 0_ra, 1_ra } };
         VectorArray<Vector3> normals_2 {
-            {0_ra, 0_ra, 1_ra},
-            {0_ra, 0_ra, 1_ra},
-            {0_ra, 0_ra, 1_ra},
-            {0_ra, 0_ra, 1_ra},
-            {0_ra, -1_ra, 0_ra},
+            { 0_ra, 0_ra, 1_ra },
+            { 0_ra, 0_ra, 1_ra },
+            { 0_ra, 0_ra, 1_ra },
+            { 0_ra, 0_ra, 1_ra },
+            { 0_ra, -1_ra, 0_ra },
         };
 
-        VectorArray<Vector3ui> indices_2 {{0, 2, 1}, {0, 3, 2}, {0, 2, 4}};
+        VectorArray<Vector3ui> indices_2 { { 0, 2, 1 }, { 0, 3, 2 }, { 0, 2, 4 } };
 
         using Vector5 = Eigen::Matrix<Scalar, 5, 1>;
         VectorArray<Vector5> attrib_array {
-            {0_ra, 0_ra, 0_ra, 0_ra, 1_ra},
-            {0_ra, 0_ra, 0_ra, 0_ra, 1_ra},
-            {0_ra, 0_ra, 0_ra, 0_ra, 1_ra},
-            {0_ra, -1_ra, 0_ra, 0_ra, 0_ra},
+            { 0_ra, 0_ra, 0_ra, 0_ra, 1_ra },
+            { 0_ra, 0_ra, 0_ra, 0_ra, 1_ra },
+            { 0_ra, 0_ra, 0_ra, 0_ra, 1_ra },
+            { 0_ra, -1_ra, 0_ra, 0_ra, 0_ra },
         };
 
         // well formed mesh
@@ -673,7 +673,7 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/Manifold", "[Core][Core/Geometry][Topo
 
         // test with unsupported attribute type
         LOG( logINFO ) << "Test with unsupported attribute (all faces are manifold)";
-        auto mesh3 {mesh}, mesh4 {mesh};
+        auto mesh3 { mesh }, mesh4 { mesh };
         auto handle  = mesh3.addAttrib<Vector5>( "vector5_attrib" );
         auto& attrib = mesh3.getAttrib( handle );
         auto& buf    = attrib.getDataWithLock();
@@ -697,20 +697,20 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/Manifold", "[Core][Core/Geometry][Topo
     }
     SECTION( "Non manifold vertex : Bow tie" ) {
         VectorArray<Vector3> vertices = {
-            {-1_ra, -1_ra, 0_ra},
-            {-1_ra, 1_ra, 0_ra},
-            {0_ra, 0_ra, 0_ra}, // non manifold vertex
-            {1_ra, -1_ra, 0_ra},
-            {1_ra, 1_ra, 0_ra},
+            { -1_ra, -1_ra, 0_ra },
+            { -1_ra, 1_ra, 0_ra },
+            { 0_ra, 0_ra, 0_ra }, // non manifold vertex
+            { 1_ra, -1_ra, 0_ra },
+            { 1_ra, 1_ra, 0_ra },
         };
 
-        VectorArray<Vector3ui> indices {{0, 2, 1}, {2, 3, 4}};
+        VectorArray<Vector3ui> indices { { 0, 2, 1 }, { 2, 3, 4 } };
         TriangleMesh mesh;
         // do not move vertices, we need to compare afterward
         mesh.setVertices( vertices );
         mesh.setIndices( std::move( indices ) );
 
-        TopologicalMesh topo {mesh};
+        TopologicalMesh topo { mesh };
 
         for ( auto itr = topo.vertices_begin(); itr != topo.vertices_end(); ++itr )
         {
@@ -734,26 +734,32 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/Manifold", "[Core][Core/Geometry][Topo
             }
             inline void postProcess( TopologicalMesh& ) {}
             std::vector<std::vector<TopologicalMesh::VertexHandle>>& m_faulty;
-            int nonManifoldFaces {0};
+            int nonManifoldFaces { 0 };
         };
 
-        VectorArray<Vector3> vertices = {{0_ra, 1_ra, 1_ra},
-                                         {1_ra, 1_ra, 1_ra},
-                                         {0.5_ra, 1_ra, 0_ra},
-                                         {0.5_ra, 0.5_ra, 0.5_ra}, // non manifold vertex
-                                         {0_ra, 0_ra, 0_ra},
-                                         {1_ra, 0_ra, 0_ra},
-                                         {0.5_ra, 0_ra, 1_ra}};
-        VectorArray<Vector3ui> indices {
-            {0, 1, 2}, {2, 1, 3}, {1, 0, 3}, {0, 2, 3}, {4, 5, 6}, {5, 4, 3}, {4, 6, 3}, {6, 5, 3}};
+        VectorArray<Vector3> vertices = { { 0_ra, 1_ra, 1_ra },
+                                          { 1_ra, 1_ra, 1_ra },
+                                          { 0.5_ra, 1_ra, 0_ra },
+                                          { 0.5_ra, 0.5_ra, 0.5_ra }, // non manifold vertex
+                                          { 0_ra, 0_ra, 0_ra },
+                                          { 1_ra, 0_ra, 0_ra },
+                                          { 0.5_ra, 0_ra, 1_ra } };
+        VectorArray<Vector3ui> indices { { 0, 1, 2 },
+                                         { 2, 1, 3 },
+                                         { 1, 0, 3 },
+                                         { 0, 2, 3 },
+                                         { 4, 5, 6 },
+                                         { 5, 4, 3 },
+                                         { 4, 6, 3 },
+                                         { 6, 5, 3 } };
 
         TriangleMesh mesh;
         mesh.setVertices( std::move( vertices ) );
         mesh.setIndices( std::move( indices ) );
         std::vector<std::vector<TopologicalMesh::VertexHandle>> faulty;
 
-        MyNonManifoldCommand command {faulty};
-        TopologicalMesh topo {mesh, command};
+        MyNonManifoldCommand command { faulty };
+        TopologicalMesh topo { mesh, command };
 
         for ( auto itr = faulty.begin(); itr != faulty.end(); ++itr )
         {
@@ -776,9 +782,7 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/Manifold", "[Core][Core/Geometry][Topo
         }
 
         for ( auto itr = topo.vertices_begin(); itr != topo.vertices_end(); ++itr )
-        {
-            REQUIRE( topo.isManifold( *itr ) );
-        }
+        { REQUIRE( topo.isManifold( *itr ) ); }
     }
 }
 
@@ -816,13 +820,11 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/Initialization",
 TEST_CASE( "Core/Geometry/TopologicalMesh/MergeWedges", "[Core][Core/Geometry][TopologicalMesh]" ) {
 
     auto mesh = Ra::Core::Geometry::makeSharpBox();
-    auto topo = TopologicalMesh {mesh};
+    auto topo = TopologicalMesh { mesh };
 
     std::set<TopologicalMesh::WedgeIndex> wedgesIndices;
     for ( auto itr = topo.halfedges_begin(), stop = topo.halfedges_end(); itr != stop; ++itr )
-    {
-        wedgesIndices.insert( topo.getWedgeIndex( *itr ) );
-    }
+    { wedgesIndices.insert( topo.getWedgeIndex( *itr ) ); }
     // each 8 vertices of the cube has 3 wedges
     REQUIRE( wedgesIndices.size() == 8 * 3 );
     REQUIRE( topo.checkIntegrity() );
@@ -837,9 +839,7 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/MergeWedges", "[Core][Core/Geometry][T
 
     wedgesIndices.clear();
     for ( auto itr = topo.halfedges_begin(), stop = topo.halfedges_end(); itr != stop; ++itr )
-    {
-        wedgesIndices.insert( topo.getWedgeIndex( *itr ) );
-    }
+    { wedgesIndices.insert( topo.getWedgeIndex( *itr ) ); }
     // each 8 vertices of the cube still has 3 wedges
     REQUIRE( wedgesIndices.size() == 8 * 3 );
     REQUIRE( topo.checkIntegrity() );
@@ -847,9 +847,7 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/MergeWedges", "[Core][Core/Geometry][T
     topo.mergeEqualWedges();
     wedgesIndices.clear();
     for ( auto itr = topo.halfedges_begin(), stop = topo.halfedges_end(); itr != stop; ++itr )
-    {
-        wedgesIndices.insert( topo.getWedgeIndex( *itr ) );
-    }
+    { wedgesIndices.insert( topo.getWedgeIndex( *itr ) ); }
     // after merge, each vertex has only on wedge
     REQUIRE( wedgesIndices.size() == 8 );
     REQUIRE( topo.checkIntegrity() );
@@ -862,9 +860,7 @@ void testAttrib( const IndexedGeometry<T>& mesh, const std::string& name, Scalar
     REQUIRE( attribHandle.idx().isValid() );
     auto& attrib = mesh.getAttrib( attribHandle );
     for ( const auto& v : attrib.data() )
-    {
-        REQUIRE( v == value );
-    }
+    { REQUIRE( v == value ); }
 }
 
 TEST_CASE( "Core/Geometry/TopologicalMesh/Triangulate", "[Core][Core/Geometry][TopologicalMesh]" ) {
@@ -1000,48 +996,56 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
     };
 
     Vector3Array points1 {
-        {00._ra, 00._ra, 00._ra},
-        {10._ra, 00._ra, 00._ra},
-        {05._ra, 05._ra, 00._ra},
-        {05._ra, 10._ra, 00._ra},
-        {15._ra, 05._ra, 00._ra},
-        {10._ra, 08._ra, 00._ra},
-        {10._ra, 12._ra, 00._ra},
-        {15._ra, 10._ra, 00._ra},
+        { 00._ra, 00._ra, 00._ra },
+        { 10._ra, 00._ra, 00._ra },
+        { 05._ra, 05._ra, 00._ra },
+        { 05._ra, 10._ra, 00._ra },
+        { 15._ra, 05._ra, 00._ra },
+        { 10._ra, 08._ra, 00._ra },
+        { 10._ra, 12._ra, 00._ra },
+        { 15._ra, 10._ra, 00._ra },
     };
-    Vector3Array points2 = {points1[0], points1[0], points1[1], points1[1], points1[1], points1[2],
-                            points1[2], points1[2], points1[2], points1[3], points1[3], points1[3],
-                            points1[4], points1[4], points1[5], points1[5], points1[5], points1[5],
-                            points1[5], points1[5], points1[6], points1[6], points1[7], points1[7]};
+    Vector3Array points2 = { points1[0], points1[0], points1[1], points1[1], points1[1],
+                             points1[2], points1[2], points1[2], points1[2], points1[3],
+                             points1[3], points1[3], points1[4], points1[4], points1[5],
+                             points1[5], points1[5], points1[5], points1[5], points1[5],
+                             points1[6], points1[6], points1[7], points1[7] };
 
     Vector4Array colors1 = {
-        {0_ra, 0_ra, 0_ra, 1_ra},    {1_ra, 1_ra, 1_ra, 1_ra},    {2_ra, 2_ra, 2_ra, 1_ra},
-        {3_ra, 3_ra, 3_ra, 1_ra},    {4_ra, 4_ra, 4_ra, 1_ra},    {5_ra, 5_ra, 5_ra, 1_ra},
-        {6_ra, 6_ra, 6_ra, 1_ra},    {7_ra, 7_ra, 7_ra, 1_ra},    {8_ra, 8_ra, 8_ra, 1_ra},
-        {9_ra, 9_ra, 9_ra, 1_ra},    {10_ra, 10_ra, 10_ra, 1_ra}, {11_ra, 11_ra, 11_ra, 1_ra},
-        {12_ra, 12_ra, 12_ra, 1_ra}, {13_ra, 13_ra, 13_ra, 1_ra}, {14_ra, 14_ra, 14_ra, 1_ra},
-        {15_ra, 15_ra, 15_ra, 1_ra}, {16_ra, 16_ra, 16_ra, 1_ra}, {17_ra, 17_ra, 17_ra, 1_ra},
-        {18_ra, 18_ra, 18_ra, 1_ra}, {19_ra, 19_ra, 19_ra, 1_ra}, {20_ra, 20_ra, 20_ra, 1_ra},
-        {21_ra, 21_ra, 21_ra, 1_ra}, {22_ra, 22_ra, 22_ra, 1_ra}, {23_ra, 23_ra, 23_ra, 1_ra},
+        { 0_ra, 0_ra, 0_ra, 1_ra },    { 1_ra, 1_ra, 1_ra, 1_ra },    { 2_ra, 2_ra, 2_ra, 1_ra },
+        { 3_ra, 3_ra, 3_ra, 1_ra },    { 4_ra, 4_ra, 4_ra, 1_ra },    { 5_ra, 5_ra, 5_ra, 1_ra },
+        { 6_ra, 6_ra, 6_ra, 1_ra },    { 7_ra, 7_ra, 7_ra, 1_ra },    { 8_ra, 8_ra, 8_ra, 1_ra },
+        { 9_ra, 9_ra, 9_ra, 1_ra },    { 10_ra, 10_ra, 10_ra, 1_ra }, { 11_ra, 11_ra, 11_ra, 1_ra },
+        { 12_ra, 12_ra, 12_ra, 1_ra }, { 13_ra, 13_ra, 13_ra, 1_ra }, { 14_ra, 14_ra, 14_ra, 1_ra },
+        { 15_ra, 15_ra, 15_ra, 1_ra }, { 16_ra, 16_ra, 16_ra, 1_ra }, { 17_ra, 17_ra, 17_ra, 1_ra },
+        { 18_ra, 18_ra, 18_ra, 1_ra }, { 19_ra, 19_ra, 19_ra, 1_ra }, { 20_ra, 20_ra, 20_ra, 1_ra },
+        { 21_ra, 21_ra, 21_ra, 1_ra }, { 22_ra, 22_ra, 22_ra, 1_ra }, { 23_ra, 23_ra, 23_ra, 1_ra },
     };
 
-    Vector3uArray indices1 {
-        {0, 2, 1}, {0, 3, 2}, {1, 2, 5}, {2, 3, 5}, {1, 5, 4}, {3, 6, 5}, {5, 6, 7}, {4, 5, 7}};
+    Vector3uArray indices1 { { 0, 2, 1 },
+                             { 0, 3, 2 },
+                             { 1, 2, 5 },
+                             { 2, 3, 5 },
+                             { 1, 5, 4 },
+                             { 3, 6, 5 },
+                             { 5, 6, 7 },
+                             { 4, 5, 7 } };
 
-    Vector3uArray indices3 = {{0, 2, 1}, {1, 2, 5}, {1, 5, 4}, {3, 6, 5}, {5, 6, 7}, {4, 5, 7}};
+    Vector3uArray indices3 = {
+        { 0, 2, 1 }, { 1, 2, 5 }, { 1, 5, 4 }, { 3, 6, 5 }, { 5, 6, 7 }, { 4, 5, 7 } };
 
     Vector3uArray indices4 = {
-        {0, 2, 5}, {3, 14, 6}, {4, 12, 15}, {11, 18, 20}, {17, 22, 21}, {16, 13, 23}};
+        { 0, 2, 5 }, { 3, 14, 6 }, { 4, 12, 15 }, { 11, 18, 20 }, { 17, 22, 21 }, { 16, 13, 23 } };
 
-    Vector3uArray indices2 {{0, 5, 2},
-                            {1, 9, 8},
-                            {3, 6, 14},
-                            {7, 10, 19},
-                            {4, 15, 12},
-                            {11, 20, 18},
-                            {17, 21, 22},
-                            {16, 23, 13}};
-    Vector4Array colors2 {24, Color::White()};
+    Vector3uArray indices2 { { 0, 5, 2 },
+                             { 1, 9, 8 },
+                             { 3, 6, 14 },
+                             { 7, 10, 19 },
+                             { 4, 15, 12 },
+                             { 11, 20, 18 },
+                             { 17, 21, 22 },
+                             { 16, 23, 13 } };
+    Vector4Array colors2 { 24, Color::White() };
     for ( const auto& face : indices2 )
     {
         colors2[face[0]] = colors1[face[0]];
@@ -1049,9 +1053,9 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
         colors2[face[2]] = colors1[face[0]];
     }
 
-    Vector4Array colors3 {24, Color::White()};
-    std::vector<int> topFaceIndices {1, 3, 5, 6};
-    std::vector<int> bottomFaceIndices {0, 2, 4, 7};
+    Vector4Array colors3 { 24, Color::White() };
+    std::vector<int> topFaceIndices { 1, 3, 5, 6 };
+    std::vector<int> bottomFaceIndices { 0, 2, 4, 7 };
 
     for ( const auto& faceIndex : topFaceIndices )
     {
@@ -1066,34 +1070,32 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
         colors3[indices2[faceIndex][2]] = colors1[1];
     }
 
-    Vector4Array colors4 {24, Color::White()};
+    Vector4Array colors4 { 24, Color::White() };
 
-    std::vector<std::vector<int>> splitContinuousWedges {// 0
-                                                         {0},
-                                                         {1},
-                                                         // 1
-                                                         {2, 3, 4},
-                                                         // 2
-                                                         {8, 7},
-                                                         {5, 6},
-                                                         // 3
-                                                         {9, 10, 11},
-                                                         // 4
-                                                         {12, 13},
-                                                         // 5
-                                                         {14, 15, 16},
-                                                         {17, 18, 19},
-                                                         // 6
-                                                         {20, 21},
-                                                         // 7
-                                                         {22, 23}};
+    std::vector<std::vector<int>> splitContinuousWedges { // 0
+                                                          { 0 },
+                                                          { 1 },
+                                                          // 1
+                                                          { 2, 3, 4 },
+                                                          // 2
+                                                          { 8, 7 },
+                                                          { 5, 6 },
+                                                          // 3
+                                                          { 9, 10, 11 },
+                                                          // 4
+                                                          { 12, 13 },
+                                                          // 5
+                                                          { 14, 15, 16 },
+                                                          { 17, 18, 19 },
+                                                          // 6
+                                                          { 20, 21 },
+                                                          // 7
+                                                          { 22, 23 } };
 
     for ( size_t i = 0; i < splitContinuousWedges.size(); ++i )
     {
         for ( const auto& widx : splitContinuousWedges[i] )
-        {
-            colors4[widx] = colors1[i];
-        }
+        { colors4[widx] = colors1[i]; }
     }
 
     ///\todo add more checks on resulting topology and wedges after collapse
@@ -1102,17 +1104,17 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
                                          const Vector3uArray& indices,
                                          const Vector3& inFrom,
                                          const Vector3& inTo ) {
-        Vector3 from {inFrom};
-        Vector3 to {inTo};
+        Vector3 from { inFrom };
+        Vector3 to { inTo };
         TriangleMesh mesh1;
         TopologicalMesh topo1;
         optional<TopologicalMesh::HalfedgeHandle> optHe;
 
         mesh1.setVertices( points );
-        mesh1.addAttrib( "color", Vector4Array {colors.begin(), colors.begin() + points.size()} );
+        mesh1.addAttrib( "color", Vector4Array { colors.begin(), colors.begin() + points.size() } );
         mesh1.setIndices( indices );
 
-        topo1 = TopologicalMesh {mesh1};
+        topo1 = TopologicalMesh { mesh1 };
         topo1.mergeEqualWedges();
         topo1.garbage_collection();
 
@@ -1123,7 +1125,7 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
         topo1.collapse( *optHe );
         REQUIRE( topo1.checkIntegrity() );
 
-        topo1 = TopologicalMesh {mesh1};
+        topo1 = TopologicalMesh { mesh1 };
         optHe = findHalfedge( topo1, from, to );
         REQUIRE( optHe );
 
@@ -1132,7 +1134,7 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
 
         std::swap( from, to );
 
-        topo1 = TopologicalMesh {mesh1};
+        topo1 = TopologicalMesh { mesh1 };
         topo1.mergeEqualWedges();
         topo1.garbage_collection();
         optHe = findHalfedge( topo1, from, to );
@@ -1141,7 +1143,7 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
         topo1.collapse( *optHe );
         REQUIRE( topo1.checkIntegrity() );
 
-        topo1 = TopologicalMesh {mesh1};
+        topo1 = TopologicalMesh { mesh1 };
         optHe = findHalfedge( topo1, from, to );
         REQUIRE( optHe );
 
@@ -1186,18 +1188,18 @@ TEST_CASE( "Core/TopologicalMesh/CollapseWedge" ) {
         optional<TopologicalMesh::HalfedgeHandle> optHe;
 
         mesh.setVertices( points );
-        mesh.addAttrib( "color", Vector4Array {colors.begin(), colors.begin() + points.size()} );
+        mesh.addAttrib( "color", Vector4Array { colors.begin(), colors.begin() + points.size() } );
         mesh.setIndices( indices );
 
-        topo = TopologicalMesh {mesh};
+        topo = TopologicalMesh { mesh };
         topo.mergeEqualWedges();
         topo.garbage_collection();
 
         for ( int i = 0; i < 2; ++i )
         {
-            for ( auto f : {0.25_ra, 0.5_ra, 0.75_ra} )
+            for ( auto f : { 0.25_ra, 0.5_ra, 0.75_ra } )
             {
-                topo = TopologicalMesh {mesh};
+                topo = TopologicalMesh { mesh };
                 topo.mergeEqualWedges();
                 optHe   = findHalfedge( topo, from, to );
                 auto eh = topo.edge_handle( *optHe );
@@ -1303,9 +1305,7 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/Updates", "[Core][Core/Geometry][Topol
         auto topologicalMesh = TopologicalMesh( mesh );
         auto& vertices       = mesh.verticesWithLock();
         for ( auto& v : vertices )
-        {
-            v = TriangleMesh::Point( 0_ra, 1_ra, 2_ra );
-        }
+        { v = TriangleMesh::Point( 0_ra, 1_ra, 2_ra ); }
         mesh.verticesUnlock();
 
         // update topo mesh positions from mesh
@@ -1324,20 +1324,14 @@ TEST_CASE( "Core/Geometry/TopologicalMesh/Updates", "[Core][Core/Geometry][Topol
 
         // not update since wedges are not updated yet
         for ( auto itr = mesh.vertices().begin(); itr != mesh.vertices().end(); ++itr )
-        {
-
-            REQUIRE( itr->isApprox( TriangleMesh::Point( 0_ra, 1_ra, 2_ra ) ) );
-        }
+        { REQUIRE( itr->isApprox( TriangleMesh::Point( 0_ra, 1_ra, 2_ra ) ) ); }
 
         topologicalMesh.copyPointsPositionToWedges();
         topologicalMesh.updateTriangleMesh( mesh );
 
         // not update since wedges are not updated yet
         for ( auto itr = mesh.vertices().begin(); itr != mesh.vertices().end(); ++itr )
-        {
-
-            REQUIRE( itr->isApprox( TriangleMesh::Point( 3_ra, 4_ra, 5_ra ) ) );
-        }
+        { REQUIRE( itr->isApprox( TriangleMesh::Point( 3_ra, 4_ra, 5_ra ) ) ); }
     };
 
     SECTION( "Closed mesh" ) {

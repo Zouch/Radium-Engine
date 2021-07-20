@@ -208,22 +208,22 @@ class RA_ENGINE_API SkeletonComponent : public Component
     std::vector<Animation> m_animations;
 
     /// Current animation ID.
-    size_t m_animationID {0};
+    size_t m_animationID { 0 };
 
     /// Current animation time (might be different from the app time -- see below).
-    Scalar m_animationTime {0_ra};
+    Scalar m_animationTime { 0_ra };
 
     /// Animation Play speed.
-    Scalar m_speed {1_ra};
+    Scalar m_speed { 1_ra };
 
     /// Whether animation auto repeat mode in on.
-    bool m_autoRepeat {false};
+    bool m_autoRepeat { false };
 
     /// Whether animation ping-pong mode is on.
-    bool m_pingPong {false};
+    bool m_pingPong { false };
 
     /// Was the animation reset?
-    bool m_wasReset {false};
+    bool m_wasReset { false };
 
     /// Bones ROs.
     std::vector<Rendering::RenderObject*> m_boneDrawables;

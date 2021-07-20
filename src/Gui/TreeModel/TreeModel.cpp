@@ -115,9 +115,7 @@ bool TreeModel::findInTree( const TreeItem* item ) const {
         stack.pop();
         if ( current == item ) { return true; }
         for ( const auto& child : current->m_children )
-        {
-            stack.push( child.get() );
-        }
+        { stack.push( child.get() ); }
     }
     return false;
 }
@@ -133,9 +131,7 @@ void TreeModel::printModel() const {
         stack.pop();
         LOG( logDEBUG ) << current->getName();
         for ( const auto& child : current->m_children )
-        {
-            stack.push( child.get() );
-        }
+        { stack.push( child.get() ); }
     }
 #endif
 }
@@ -155,7 +151,7 @@ void TreeModel::setItemChecked( const QModelIndex& index, bool checked ) {
         if ( item->isSelectable() )
         {
             item->setChecked( checked );
-            emit dataChanged( index, index, {Qt::CheckStateRole} );
+            emit dataChanged( index, index, { Qt::CheckStateRole } );
 
             // recursion on all children
             for ( int i = 0; i < rowCount( index ); ++i )

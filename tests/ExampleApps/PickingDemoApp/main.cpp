@@ -69,16 +69,12 @@ class DemoWindow : public Ra::Gui::SimpleWindow
             LOG( logINFO ) << "Selected objects (" << pickResults.size() << ") : ";
             std::ostringstream ss;
             for ( const auto& pr : pickResults )
-            {
-                ss << pr.getRoIdx() << ' ';
-            }
+            { ss << pr.getRoIdx() << ' '; }
             LOG( logINFO ) << ss.str();
 
             LOG( logINFO ) << "Selection buffers  (" << pickResults.size() << ") : ";
             for ( const auto& pr : pickResults )
-            {
-                processPickResult( pr );
-            }
+            { processPickResult( pr ); }
         }
         else
         {
@@ -101,7 +97,7 @@ class DemoWindow : public Ra::Gui::SimpleWindow
     }
 
   private:
-    bool m_isTracking {false};
+    bool m_isTracking { false };
 };
 #include "main.moc"
 
@@ -123,7 +119,7 @@ class DemoWindowFactory : public Ra::Gui::BaseApplication::WindowFactory
 };
 
 void addDummyScene( Ra::Gui::BaseApplication& app ) {
-    auto cube = Ra::Core::Geometry::makeSharpBox( {0.1f, 0.1f, 0.1f} );
+    auto cube = Ra::Core::Geometry::makeSharpBox( { 0.1f, 0.1f, 0.1f } );
     auto e    = app.m_engine->getEntityManager()->createEntity( "Cube" );
     auto c =
         new Ra::Engine::Scene::TriangleMeshComponent( "Cube Mesh", e, std::move( cube ), nullptr );

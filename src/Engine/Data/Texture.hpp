@@ -43,29 +43,29 @@ struct TextureParameters {
     /// Name of the texture
     std::string name {};
     /// OpenGL target
-    GLenum target {GL_TEXTURE_2D};
+    GLenum target { GL_TEXTURE_2D };
     /// width of the texture (s dimension)
-    size_t width {1};
+    size_t width { 1 };
     /// height of the texture (t dimension)
-    size_t height {1};
+    size_t height { 1 };
     /// width of the texture (p dimension)
-    size_t depth {1};
+    size_t depth { 1 };
     /// Format of the external data
-    GLenum format {GL_RGB};
+    GLenum format { GL_RGB };
     /// OpenGL internal format (WARNING, for Integer textures, must be GL_XXX_INTEGER)
-    GLenum internalFormat {GL_RGB};
+    GLenum internalFormat { GL_RGB };
     /// Type of the components in external data
-    GLenum type {GL_UNSIGNED_BYTE};
+    GLenum type { GL_UNSIGNED_BYTE };
     /// OpenGL wrap mode in the s direction
-    GLenum wrapS {GL_CLAMP_TO_EDGE};
+    GLenum wrapS { GL_CLAMP_TO_EDGE };
     /// OpenGL wrap mode in the t direction
-    GLenum wrapT {GL_CLAMP_TO_EDGE};
+    GLenum wrapT { GL_CLAMP_TO_EDGE };
     /// OpenGL wrap mode in the p direction
-    GLenum wrapP {GL_CLAMP_TO_EDGE};
+    GLenum wrapP { GL_CLAMP_TO_EDGE };
     /// OpenGL minification filter ( GL_LINEAR or GL_NEAREST or GL_XXX_MIPMAP_YYY )
-    GLenum minFilter {GL_LINEAR};
+    GLenum minFilter { GL_LINEAR };
     /// OpenGL magnification filter ( GL_LINEAR or GL_NEAREST )
-    GLenum magFilter {GL_LINEAR};
+    GLenum magFilter { GL_LINEAR };
     /// External data (ownership is left to caller, not stored after OpenGL texture creation).
     /// Note that, for cube-map texture, this is considered as a "void*[6]" array containing the 6
     /// faces of the cube corresponding to the targets. <br/>
@@ -77,7 +77,7 @@ struct TextureParameters {
     /// texels[5] <-- GL_TEXTURE_CUBE_MAP_NEGATIVE_Z <br/>
     /// @todo memory allocated for this pointer might be lost at texture deletion as ownership is
     /// unclear.
-    void* texels {nullptr};
+    void* texels { nullptr };
 };
 
 /** Represent a Texture of the engine
@@ -240,9 +240,9 @@ class RA_ENGINE_API Texture final
     /// Link to glObject texture
     std::unique_ptr<globjects::Texture> m_texture;
     /// Is the texture mip-mapped ?
-    bool m_isMipMapped {false};
+    bool m_isMipMapped { false };
     /// Is the texture in LinearRGB ?
-    bool m_isLinear {false};
+    bool m_isLinear { false };
 };
 } // namespace Data
 } // namespace Engine

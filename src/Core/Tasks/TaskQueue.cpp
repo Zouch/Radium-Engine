@@ -12,9 +12,7 @@ TaskQueue::TaskQueue( uint numThreads ) : m_processingTasks( 0 ), m_shuttingDown
     CORE_ASSERT( numThreads > 0, " You need at least one thread" );
     m_workerThreads.reserve( numThreads );
     for ( uint i = 0; i < numThreads; ++i )
-    {
-        m_workerThreads.emplace_back( &TaskQueue::runThread, this, i );
-    }
+    { m_workerThreads.emplace_back( &TaskQueue::runThread, this, i ); }
 }
 
 TaskQueue::~TaskQueue() {
@@ -22,9 +20,7 @@ TaskQueue::~TaskQueue() {
     m_shuttingDown = true;
     m_threadNotifier.notify_all();
     for ( auto& t : m_workerThreads )
-    {
-        t.join();
-    }
+    { t.join(); }
 }
 
 TaskQueue::TaskId TaskQueue::registerTask( Task* task ) {
@@ -40,7 +36,7 @@ TaskQueue::TaskId TaskQueue::registerTask( Task* task ) {
     CORE_ASSERT( m_tasks.size() == m_dependencies.size(), "Inconsistent task list" );
     CORE_ASSERT( m_tasks.size() == m_remainingDependencies.size(), "Inconsistent task list" );
     CORE_ASSERT( m_tasks.size() == m_timerData.size(), "Inconsistent task list" );
-    return TaskId {m_tasks.size() - 1};
+    return TaskId { m_tasks.size() - 1 };
 }
 
 void TaskQueue::addDependency( TaskQueue::TaskId predecessor, TaskQueue::TaskId successor ) {
@@ -65,7 +61,7 @@ bool TaskQueue::addDependency( const std::string& predecessors, TaskQueue::TaskI
         if ( m_tasks[i]->getName() == predecessors )
         {
             added = true;
-            addDependency( TaskId {i}, successor );
+            addDependency( TaskId { i }, successor );
         }
     }
     return added;
@@ -78,7 +74,7 @@ bool TaskQueue::addDependency( TaskQueue::TaskId predecessor, const std::string&
         if ( m_tasks[i]->getName() == successors )
         {
             added = true;
-            addDependency( predecessor, TaskId {i} );
+            addDependency( predecessor, TaskId { i } );
         }
     }
     return added;
@@ -143,9 +139,7 @@ void TaskQueue::detectCycles() {
 
         visited[id] = true;
         for ( const auto& dep : m_dependencies[id] )
-        {
-            pending.push( dep );
-        }
+        { pending.push( dep ); }
     }
 #endif
 }
@@ -160,7 +154,7 @@ void TaskQueue::startTasks() {
     // Enqueue all tasks with no dependencies.
     for ( uint t = 0; t < m_tasks.size(); ++t )
     {
-        if ( m_remainingDependencies[t] == 0 ) { queueTask( TaskId {t} ); }
+        if ( m_remainingDependencies[t] == 0 ) { queueTask( TaskId { t } ); }
     }
 
     // Wake up all threads.
@@ -204,9 +198,7 @@ void TaskQueue::runThread( uint id ) {
             // Wait for a new task
             // TODO : use the second form of wait()
             while ( !m_shuttingDown && m_taskQueue.empty() )
-            {
-                m_threadNotifier.wait( lock );
-            }
+            { m_threadNotifier.wait( lock ); }
             // If the task queue is shutting down we quit, releasing
             // the lock.
             if ( m_shuttingDown ) { return; }
@@ -252,9 +244,7 @@ void TaskQueue::printTaskGraph( std::ostream& output ) const {
     output << "digraph tasks {" << std::endl;
 
     for ( const auto& t : m_tasks )
-    {
-        output << "\"" << t->getName() << "\"" << std::endl;
-    }
+    { output << "\"" << t->getName() << "\"" << std::endl; }
 
     for ( uint i = 0; i < m_dependencies.size(); ++i )
     {

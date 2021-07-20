@@ -31,28 +31,28 @@ namespace Rendering {
 using namespace Core::Utils; // log
 
 namespace {
-const GLenum buffers[] = {GL_COLOR_ATTACHMENT0,
-                          GL_COLOR_ATTACHMENT1,
-                          GL_COLOR_ATTACHMENT2,
-                          GL_COLOR_ATTACHMENT3,
-                          GL_COLOR_ATTACHMENT4,
-                          GL_COLOR_ATTACHMENT5,
-                          GL_COLOR_ATTACHMENT6,
-                          GL_COLOR_ATTACHMENT7};
+const GLenum buffers[] = { GL_COLOR_ATTACHMENT0,
+                           GL_COLOR_ATTACHMENT1,
+                           GL_COLOR_ATTACHMENT2,
+                           GL_COLOR_ATTACHMENT3,
+                           GL_COLOR_ATTACHMENT4,
+                           GL_COLOR_ATTACHMENT5,
+                           GL_COLOR_ATTACHMENT6,
+                           GL_COLOR_ATTACHMENT7 };
 }
 
 Renderer::Renderer() :
-    m_quadMesh {nullptr},
-    m_depthTexture {nullptr},
-    m_fancyTexture {nullptr},
-    m_pickingFbo {nullptr},
-    m_pickingTexture {nullptr} {}
+    m_quadMesh { nullptr },
+    m_depthTexture { nullptr },
+    m_fancyTexture { nullptr },
+    m_pickingFbo { nullptr },
+    m_pickingTexture { nullptr } {}
 
 Renderer::~Renderer() = default;
 
 void Renderer::initialize( uint width, uint height ) {
     /// For internal resources management in a filesystem
-    auto resourcesRootDir {RadiumEngine::getInstance()->getResourcesDir()};
+    auto resourcesRootDir { RadiumEngine::getInstance()->getResourcesDir() };
 
     // Get aliases on frequently used managers from the Engine
     // Not that ownership is never transfered when using raw pointers
@@ -66,21 +66,21 @@ void Renderer::initialize( uint width, uint height ) {
     m_height = height;
 
     m_shaderProgramManager->addShaderProgram(
-        {{"DrawScreen"},
-         resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
-         resourcesRootDir + "Shaders/2DShaders/DrawScreen.frag.glsl"} );
+        { { "DrawScreen" },
+          resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
+          resourcesRootDir + "Shaders/2DShaders/DrawScreen.frag.glsl" } );
     m_shaderProgramManager->addShaderProgram(
-        {{"DrawScreenI"},
-         resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
-         resourcesRootDir + "Shaders/2DShaders/DrawScreenI.frag.glsl"} );
+        { { "DrawScreenI" },
+          resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
+          resourcesRootDir + "Shaders/2DShaders/DrawScreenI.frag.glsl" } );
     m_shaderProgramManager->addShaderProgram(
-        {{"CircleBrush"},
-         resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
-         resourcesRootDir + "Shaders/2DShaders/CircleBrush.frag.glsl"} );
+        { { "CircleBrush" },
+          resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
+          resourcesRootDir + "Shaders/2DShaders/CircleBrush.frag.glsl" } );
     m_shaderProgramManager->addShaderProgram(
-        {{"DisplayDepthBuffer"},
-         resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
-         resourcesRootDir + "Shaders/2DShaders//DepthDisplay.frag.glsl"} );
+        { { "DisplayDepthBuffer" },
+          resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
+          resourcesRootDir + "Shaders/2DShaders//DepthDisplay.frag.glsl" } );
 
     Data::ShaderConfiguration pickingPointsConfig( "PickingPoints" );
     pickingPointsConfig.addShader( Data::ShaderType_VERTEX,
@@ -219,7 +219,7 @@ Renderer::PickingResult Renderer::doPickingNow( const PickingQuery& query,
     GL_ASSERT( glDrawBuffers( 1, buffers ) );
 
     float clearDepth = 1.0;
-    int clearColor[] = {-1, -1, -1, -1};
+    int clearColor[] = { -1, -1, -1, -1 };
 
     GL_ASSERT( glClearBufferiv( GL_COLOR, 0, clearColor ) );
     GL_ASSERT( glClearBufferfv( GL_DEPTH, 0, &clearDepth ) );
@@ -233,10 +233,10 @@ Renderer::PickingResult Renderer::doPickingNow( const PickingQuery& query,
     renderForPicking( renderData, m_pickingShaders, m_fancyRenderObjectsPicking );
     ////////////////// added save depth //////////////////////////////////////
     float depth;
-    m_pickingFbo->readPixels( {static_cast<int>( query.m_screenCoords.x() ),
-                               static_cast<int>( query.m_screenCoords.y() ),
-                               1,
-                               1},
+    m_pickingFbo->readPixels( { static_cast<int>( query.m_screenCoords.x() ),
+                                static_cast<int>( query.m_screenCoords.y() ),
+                                1,
+                                1 },
                               GL_DEPTH_COMPONENT,
                               GL_FLOAT,
                               &depth );
@@ -295,15 +295,15 @@ Renderer::PickingResult Renderer::doPickingNow( const PickingQuery& query,
 
     // Now read the Picking Texture to address the Picking Requests.
     m_pickingFbo->readPixels( GL_COLOR_ATTACHMENT0,
-                              {static_cast<int>( query.m_screenCoords.x() ),
-                               static_cast<int>( query.m_screenCoords.y() ),
-                               1,
-                               1},
+                              { static_cast<int>( query.m_screenCoords.x() ),
+                                static_cast<int>( query.m_screenCoords.y() ),
+                                1,
+                                1 },
                               GL_RGBA_INTEGER,
                               GL_INT,
                               pick );
     result.setRoIdx( pick[0] ); // RO idx
-    result.addIndex( {pick[2], pick[1], pick[3]} );
+    result.addIndex( { pick[2], pick[1], pick[3] } );
     result.setMode( query.m_mode );
     m_pickingFbo->unbind();
 
@@ -384,21 +384,13 @@ void Renderer::saveExternalFBOInternal() {
 
 void Renderer::updateRenderObjectsInternal( const Data::ViewingParameters& /*renderData*/ ) {
     for ( auto& ro : m_fancyRenderObjects )
-    {
-        ro->updateGL();
-    }
+    { ro->updateGL(); }
     for ( auto& ro : m_xrayRenderObjects )
-    {
-        ro->updateGL();
-    }
+    { ro->updateGL(); }
     for ( auto& ro : m_debugRenderObjects )
-    {
-        ro->updateGL();
-    }
+    { ro->updateGL(); }
     for ( auto& ro : m_uiRenderObjects )
-    {
-        ro->updateGL();
-    }
+    { ro->updateGL(); }
 }
 
 void Renderer::feedRenderQueuesInternal( const Data::ViewingParameters& /*renderData*/ ) {
@@ -451,9 +443,7 @@ void Renderer::splitRQ( const std::vector<RenderObjectPtr>& renderQueue,
                         std::array<std::vector<RenderObjectPtr>, 4>& renderQueuePicking ) {
     // clean renderQueuePicking
     for ( auto& q : renderQueuePicking )
-    {
-        q.clear();
-    }
+    { q.clear(); }
 
     // fill renderQueuePicking from renderQueue
     for ( auto& roPtr : renderQueue )
@@ -530,7 +520,7 @@ void Renderer::doPicking( const Data::ViewingParameters& renderData ) {
                                      GL_INT,
                                      pick ) );
             result.setRoIdx( pick[0] ); // RO idx
-            result.addIndex( {pick[2], pick[1], pick[3]} );
+            result.addIndex( { pick[2], pick[1], pick[3] } );
         }
         else
         {
@@ -549,7 +539,7 @@ void Renderer::doPicking( const Data::ViewingParameters& renderData ) {
                     { continue; }
                     GL_ASSERT( glReadPixels( x, y, 1, 1, GL_RGBA_INTEGER, GL_INT, pick ) );
                     resultPerRO[pick[0]].setRoIdx( pick[0] );
-                    resultPerRO[pick[0]].addIndex( {pick[2], pick[1], pick[3]} );
+                    resultPerRO[pick[0]].addIndex( { pick[2], pick[1], pick[3] } );
                 }
             }
 
@@ -575,7 +565,7 @@ void Renderer::preparePicking( const Data::ViewingParameters& renderData ) {
     GL_ASSERT( glDrawBuffers( 1, buffers ) );
 
     float clearDepth = 1.0;
-    int clearColor[] = {-1, -1, -1, -1};
+    int clearColor[] = { -1, -1, -1, -1 };
 
     GL_ASSERT( glClearBufferiv( GL_COLOR, 0, clearColor ) );
     GL_ASSERT( glClearBufferfv( GL_DEPTH, 0, &clearDepth ) );
@@ -676,24 +666,16 @@ void Renderer::drawScreenInternal() {
 
 void Renderer::notifyRenderObjectsRenderingInternal() {
     for ( auto& ro : m_fancyRenderObjects )
-    {
-        ro->hasBeenRenderedOnce();
-    }
+    { ro->hasBeenRenderedOnce(); }
 
     for ( auto& ro : m_debugRenderObjects )
-    {
-        ro->hasBeenRenderedOnce();
-    }
+    { ro->hasBeenRenderedOnce(); }
 
     for ( auto& ro : m_xrayRenderObjects )
-    {
-        ro->hasBeenRenderedOnce();
-    }
+    { ro->hasBeenRenderedOnce(); }
 
     for ( auto& ro : m_uiRenderObjects )
-    {
-        ro->hasBeenRenderedOnce();
-    }
+    { ro->hasBeenRenderedOnce(); }
 }
 
 void Renderer::resize( uint w, uint h ) {
@@ -797,9 +779,7 @@ int Renderer::buildAllRenderTechniques() const {
     if ( renderObjects.size() > 0 )
     {
         for ( auto& ro : renderObjects )
-        {
-            buildRenderTechnique( ro.get() );
-        }
+        { buildRenderTechnique( ro.get() ); }
     }
     return 0;
 }

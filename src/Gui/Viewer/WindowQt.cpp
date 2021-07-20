@@ -53,8 +53,8 @@ WindowQt::~WindowQt() {
 }
 
 void WindowQt::screenChanged() {
-    QSize s {size().width(), size().height()};
-    QResizeEvent patchEvent {s, s};
+    QSize s { size().width(), size().height() };
+    QResizeEvent patchEvent { s, s };
     resizeInternal( &patchEvent );
 }
 
@@ -106,8 +106,8 @@ void WindowQt::resizeInternal( QResizeEvent* event ) {
     if ( event->size().width() < minimumSize().width() ||
          event->size().height() < minimumSize().height() )
     {
-        QSize size {std::max( event->size().width(), minimumSize().width() ),
-                    std::max( event->size().height(), minimumSize().height() )};
+        QSize size { std::max( event->size().width(), minimumSize().width() ),
+                     std::max( event->size().height(), minimumSize().height() ) };
         QResizeEvent* patchEvent = new QResizeEvent( size, event->oldSize() );
         event                    = patchEvent;
         QWindow::resize( size );

@@ -103,17 +103,13 @@ void ScaleGizmo::updateTransform( Gizmo::Mode mode,
     }
 
     for ( const auto& ro : ros() )
-    {
-        ro->setLocalTransform( m_worldTo * displayTransform );
-    }
+    { ro->setLocalTransform( m_worldTo * displayTransform ); }
 }
 
 void ScaleGizmo::selectConstraint( int drawableIdx ) {
     // deselect previously selected axis. Due to "whole" selection clear all states
     for ( uint i = 0; i < 6; ++i )
-    {
-        getControler( i )->clearState();
-    }
+    { getControler( i )->clearState(); }
     // prepare selection
     m_selectedAxis  = -1;
     m_selectedPlane = -1;
@@ -150,16 +146,12 @@ Core::Transform ScaleGizmo::mouseMove( const Core::Asset::Camera& cam,
     if ( whole )
     {
         for ( uint i = 0; i < 6; ++i )
-        {
-            getControler( i )->setState();
-        }
+        { getControler( i )->setState(); }
     }
     else
     {
         for ( uint i = 0; i < 6; ++i )
-        {
-            getControler( i )->clearState();
-        }
+        { getControler( i )->clearState(); }
         if ( m_selectedAxis > -1 ) { getControler( m_selectedAxis )->setState(); }
 
         if ( m_selectedPlane > -1 )

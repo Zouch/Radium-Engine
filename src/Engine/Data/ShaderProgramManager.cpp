@@ -66,9 +66,7 @@ ShaderProgramManager::addShaderProgram( const Data::ShaderConfiguration& config 
 
     // add named strings
     for ( const auto& p : config.getNamedStrings() )
-    {
-        addNamedString( p.first, p.second );
-    }
+    { addNamedString( p.first, p.second ); }
 
     // Try to load the shader
     auto prog = Core::make_shared<Data::ShaderProgram>( config );
@@ -123,9 +121,7 @@ void ShaderProgramManager::reloadAllShaderPrograms() {
 
     // For each shader in the map
     for ( auto& shader : m_shaderPrograms )
-    {
-        shader.second->reload();
-    }
+    { shader.second->reload(); }
 
     // and also try the failed ones
     reloadNotCompiledShaderPrograms();
@@ -147,8 +143,8 @@ void ShaderProgramManager::reloadNotCompiledShaderPrograms() {
 
 void ShaderProgramManager::insertShader( const Data::ShaderConfiguration& config,
                                          const ShaderProgramPtr& shader ) {
-    m_shaderProgramIds.insert( {config.getName(), config} );
-    m_shaderPrograms.insert( {config, shader} );
+    m_shaderProgramIds.insert( { config.getName(), config } );
+    m_shaderPrograms.insert( { config, shader } );
 }
 
 } // namespace Data

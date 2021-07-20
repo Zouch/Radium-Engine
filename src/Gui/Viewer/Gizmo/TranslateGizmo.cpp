@@ -100,9 +100,7 @@ void TranslateGizmo::updateTransform( Gizmo::Mode mode,
     }
 
     for ( auto ro : ros() )
-    {
-        ro->setLocalTransform( m_worldTo * displayTransform );
-    }
+    { ro->setLocalTransform( m_worldTo * displayTransform ); }
 }
 
 void TranslateGizmo::selectConstraint( int drawableIdx ) {
@@ -164,9 +162,7 @@ Core::Transform TranslateGizmo::mouseMove( const Core::Asset::Camera& cam,
     Ra::Core::Vector3 endPoint;
     bool found = false;
     if ( m_selectedAxis > -1 )
-    {
-        found = findPointOnAxis( cam, origin, translateDir, m_initialPix + nextXY, endPoint, hits );
-    }
+    { found = findPointOnAxis( cam, origin, translateDir, m_initialPix + nextXY, endPoint, hits ); }
     else if ( m_selectedPlane > -1 )
     {
         found =

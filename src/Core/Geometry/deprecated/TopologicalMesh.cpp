@@ -37,9 +37,7 @@ void copyAttribToCoreVertex( HandleAndValueVector<T>& data,
                              const std::vector<P>& vprop,
                              TopologicalMesh::HalfedgeHandle heh ) {
     for ( auto pp : vprop )
-    {
-        data.push_back( std::make_pair( pp.first, topoMesh->property( pp.second, heh ) ) );
-    }
+    { data.push_back( std::make_pair( pp.first, topoMesh->property( pp.second, heh ) ) ); }
 }
 
 template <typename T>
@@ -57,7 +55,7 @@ void copyAttribToCore( TriangleMesh& triMesh, const HandleAndValueVector<T>& dat
 //! [Default command implementation]
 struct DefaultNonManifoldFaceCommand {
     /// \brief details string is printed along with the message
-    DefaultNonManifoldFaceCommand( const std::string& details = {} ) : m_details {details} {}
+    DefaultNonManifoldFaceCommand( const std::string& details = {} ) : m_details { details } {}
     /// \brief Initalize with input Ra::Core::Geometry::TriangleMesh
     inline void initialize( const TriangleMesh& /*triMesh*/ ) {}
     /// \brief Process non-manifold face
@@ -446,7 +444,7 @@ void TopologicalMesh::split_copy( EdgeHandle _eh, VertexHandle _vh ) {
     for ( VEIter ve_it = ve_iter( _vh ); ve_it.is_valid(); ++ve_it )
         copy_all_properties( _eh, *ve_it, true );
 
-    for ( auto vh : {v0, v1} )
+    for ( auto vh : { v0, v1 } )
     {
         // get the halfedge pointing from new vertex to old vertex
         const HalfedgeHandle h = find_halfedge( _vh, vh );

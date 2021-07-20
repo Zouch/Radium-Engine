@@ -11,7 +11,7 @@ using namespace Ra::Engine::Scene;
 class Foo
 {
   public:
-    Ra::Core::Utils::Index i {0};
+    Ra::Core::Utils::Index i { 0 };
     void incr( const ItemEntry& /*entity*/ ) { ++i; }
     void decr( const ItemEntry& /*entity*/ ) { --i; }
 };
@@ -19,7 +19,7 @@ class Foo
 class Bar
 {
   public:
-    explicit Bar( Foo& f ) : m_f {f} {};
+    explicit Bar( Foo& f ) : m_f { f } {};
     void operator()( const ItemEntry& entity ) { m_f.incr( entity ); }
 
   private:
@@ -49,11 +49,11 @@ TEST_CASE( "Engine/Scene/SignalManager/ON", "[Engine][Engine/Scene][SignalManage
     auto entity = engine->getEntityManager()->createEntity( "test entity" );
 
     SECTION( "Entities signals" ) {
-        ItemEntry item {entity};
+        ItemEntry item { entity };
         auto& addNotifier = signalmanager.getEntityCreatedNotifier();
         auto& delNotifier = signalmanager.getEntityDestroyedNotifier();
 
-        Bar bar {entitytest};
+        Bar bar { entitytest };
 
         int ia = addNotifier.attach( bar );
         int id = delNotifier.attachMember( &entitytest, &Foo::decr );
@@ -91,7 +91,7 @@ TEST_CASE( "Engine/Scene/SignalManager/ON", "[Engine][Engine/Scene][SignalManage
 
         auto component = new FooBarComponent( "test component", entity );
 
-        ItemEntry item {entity, component};
+        ItemEntry item { entity, component };
         auto& addNotifier = signalmanager.getComponentCreatedNotifier();
         auto& delNotifier = signalmanager.getComponentDestroyedNotifier();
 
@@ -132,7 +132,7 @@ TEST_CASE( "Engine/Scene/SignalManager/ON", "[Engine][Engine/Scene][SignalManage
 
         auto component = new FooBarComponent( "test component", entity );
 
-        ItemEntry item {entity, component, 1};
+        ItemEntry item { entity, component, 1 };
         auto& addNotifier = signalmanager.getRenderObjectCreatedNotifier();
         auto& delNotifier = signalmanager.getRenderObjectDestroyedNotifier();
 
@@ -176,7 +176,7 @@ TEST_CASE( "Engine/Scene/SignalManager/ON", "[Engine][Engine/Scene][SignalManage
         // this one is just to check it compiles ... we can  add some REQUIREs in a near futur.
         auto& eofNotifier = signalmanager.getEndFrameNotifier();
 
-        ItemEntry item {entity, component, 1};
+        ItemEntry item { entity, component, 1 };
 
         int ia = eofNotifier.attach( [&eoftest, item]() { eoftest.incr( item ); } );
 
@@ -211,11 +211,11 @@ TEST_CASE( "Engine/Scene/SignalManager/OFF/", "[Engine][Engine/Scene][SignalMana
     Foo eoftest;
 
     SECTION( "Entities signals" ) {
-        ItemEntry item {entity};
+        ItemEntry item { entity };
         auto& addNotifier = signalmanager.getEntityCreatedNotifier();
         auto& delNotifier = signalmanager.getEntityDestroyedNotifier();
 
-        Bar bar {entitytest};
+        Bar bar { entitytest };
 
         addNotifier.attach( bar );
         delNotifier.attachMember( &entitytest, &Foo::decr );
@@ -238,7 +238,7 @@ TEST_CASE( "Engine/Scene/SignalManager/OFF/", "[Engine][Engine/Scene][SignalMana
     SECTION( "Components signals" ) {
         auto component = new FooBarComponent( "test component", entity );
 
-        ItemEntry item {entity, component};
+        ItemEntry item { entity, component };
         auto& addNotifier = signalmanager.getComponentCreatedNotifier();
         auto& delNotifier = signalmanager.getComponentDestroyedNotifier();
 
@@ -266,7 +266,7 @@ TEST_CASE( "Engine/Scene/SignalManager/OFF/", "[Engine][Engine/Scene][SignalMana
 
         auto component = new FooBarComponent( "test component", entity );
 
-        ItemEntry item {entity, component, 1};
+        ItemEntry item { entity, component, 1 };
         auto& addNotifier = signalmanager.getRenderObjectCreatedNotifier();
         auto& delNotifier = signalmanager.getRenderObjectDestroyedNotifier();
 
@@ -295,7 +295,7 @@ TEST_CASE( "Engine/Scene/SignalManager/OFF/", "[Engine][Engine/Scene][SignalMana
         // this one is just to check it compiles ... we can  add some REQUIREs in a near futur.
         auto& eofNotifier = signalmanager.getEndFrameNotifier();
 
-        ItemEntry item {entity, component, 1};
+        ItemEntry item { entity, component, 1 };
 
         eofNotifier.attach( [&eoftest, item]() { eoftest.incr( item ); } );
 

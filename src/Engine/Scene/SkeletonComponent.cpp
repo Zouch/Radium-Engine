@@ -34,9 +34,9 @@ namespace Ra {
 namespace Engine {
 namespace Scene {
 
-std::shared_ptr<Data::Mesh> SkeletonComponent::s_boneMesh {nullptr};
-std::shared_ptr<Data::BlinnPhongMaterial> SkeletonComponent::s_boneMaterial {nullptr};
-std::shared_ptr<Rendering::RenderTechnique> SkeletonComponent::s_boneRenderTechnique {nullptr};
+std::shared_ptr<Data::Mesh> SkeletonComponent::s_boneMesh { nullptr };
+std::shared_ptr<Data::BlinnPhongMaterial> SkeletonComponent::s_boneMaterial { nullptr };
+std::shared_ptr<Rendering::RenderTechnique> SkeletonComponent::s_boneRenderTechnique { nullptr };
 
 SkeletonComponent::SkeletonComponent( const std::string& name, Entity* entity ) :
     Component( name, entity ) {}
@@ -108,9 +108,7 @@ void SkeletonComponent::handleAnimationLoading(
     {
         m_animations.emplace_back();
         for ( uint i = 0; i < m_skel.size(); ++i )
-        {
-            m_animations[0].push_back( KeyFramedValue( 0_ra, pose[i] ) );
-        }
+        { m_animations[0].push_back( KeyFramedValue( 0_ra, pose[i] ) ); }
     }
     m_animationID   = 0;
     m_animationTime = 0_ra;
@@ -127,9 +125,7 @@ void SkeletonComponent::setSkeleton( const Skeleton& skel ) {
 SkeletonComponent::Animation& SkeletonComponent::addNewAnimation() {
     m_animations.emplace_back();
     for ( uint i = 0; i < m_skel.size(); ++i )
-    {
-        m_animations.back().push_back( KeyFramedValue( 0_ra, m_refPose[i] ) );
-    }
+    { m_animations.back().push_back( KeyFramedValue( 0_ra, m_refPose[i] ) ); }
     return m_animations.back();
 }
 
@@ -163,9 +159,7 @@ void SkeletonComponent::update( Scalar t ) {
     m_animationTime = m_speed * t;
     Scalar lastTime = 0;
     for ( auto boneAnim : m_animations[m_animationID] )
-    {
-        lastTime = std::max( lastTime, *boneAnim.getTimes().rbegin() );
-    }
+    { lastTime = std::max( lastTime, *boneAnim.getTimes().rbegin() ); }
     if ( m_autoRepeat )
     {
         if ( !m_pingPong ) { m_animationTime = std::fmod( m_animationTime, lastTime ); }
@@ -205,7 +199,7 @@ Scalar SkeletonComponent::getAnimationTime() const {
 }
 
 std::pair<Scalar, Scalar> SkeletonComponent::getAnimationTimeInterval() const {
-    if ( m_animations.empty() ) { return {0_ra, 0_ra}; }
+    if ( m_animations.empty() ) { return { 0_ra, 0_ra }; }
     Scalar startTime = std::numeric_limits<Scalar>::max();
     Scalar endTime   = 0;
     for ( auto boneAnim : m_animations[m_animationID] )
@@ -214,7 +208,7 @@ std::pair<Scalar, Scalar> SkeletonComponent::getAnimationTimeInterval() const {
         startTime         = std::min( startTime, *times.begin() );
         endTime           = std::max( endTime, *times.rbegin() );
     }
-    return {startTime, endTime};
+    return { startTime, endTime };
 }
 
 void SkeletonComponent::setSpeed( const Scalar value ) {
@@ -245,9 +239,7 @@ bool SkeletonComponent::isPingPong() const {
 
 void SkeletonComponent::setXray( bool on ) const {
     for ( const auto& b : m_boneDrawables )
-    {
-        b->setXRay( on );
-    }
+    { b->setXRay( on ); }
 }
 
 bool SkeletonComponent::isXray() const {
@@ -257,9 +249,7 @@ bool SkeletonComponent::isXray() const {
 
 void SkeletonComponent::toggleSkeleton( const bool status ) {
     for ( const auto& b : m_boneDrawables )
-    {
-        b->setVisible( status );
-    }
+    { b->setVisible( status ); }
 }
 
 bool SkeletonComponent::isShowingSkeleton() const {
@@ -272,28 +262,28 @@ Core::Geometry::TriangleMesh makeBoneShape() {
     Core::Geometry::TriangleMesh mesh;
     const Scalar l = 0.1_ra;
     const Scalar w = 0.1_ra;
-    mesh.setVertices( {Core::Vector3( 0, 0, 0 ),
+    mesh.setVertices( { Core::Vector3( 0, 0, 0 ),
+                        Core::Vector3( 0, 0, 1 ),
+                        Core::Vector3( 0, w, l ),
+                        Core::Vector3( w, 0, l ),
+                        Core::Vector3( 0, -w, l ),
+                        Core::Vector3( -w, 0, l ) } );
+
+    mesh.setNormals( { Core::Vector3( 0, 0, -1 ),
                        Core::Vector3( 0, 0, 1 ),
-                       Core::Vector3( 0, w, l ),
-                       Core::Vector3( w, 0, l ),
-                       Core::Vector3( 0, -w, l ),
-                       Core::Vector3( -w, 0, l )} );
+                       Core::Vector3( 0, 1, 0 ),
+                       Core::Vector3( 1, 0, 0 ),
+                       Core::Vector3( 0, -1, 0 ),
+                       Core::Vector3( -1, 0, 0 ) } );
 
-    mesh.setNormals( {Core::Vector3( 0, 0, -1 ),
-                      Core::Vector3( 0, 0, 1 ),
-                      Core::Vector3( 0, 1, 0 ),
-                      Core::Vector3( 1, 0, 0 ),
-                      Core::Vector3( 0, -1, 0 ),
-                      Core::Vector3( -1, 0, 0 )} );
-
-    mesh.setIndices( {Core::Vector3ui( 0, 2, 3 ),
-                      Core::Vector3ui( 0, 5, 2 ),
-                      Core::Vector3ui( 0, 3, 4 ),
-                      Core::Vector3ui( 0, 4, 5 ),
-                      Core::Vector3ui( 1, 3, 2 ),
-                      Core::Vector3ui( 1, 2, 5 ),
-                      Core::Vector3ui( 1, 4, 3 ),
-                      Core::Vector3ui( 1, 5, 4 )} );
+    mesh.setIndices( { Core::Vector3ui( 0, 2, 3 ),
+                       Core::Vector3ui( 0, 5, 2 ),
+                       Core::Vector3ui( 0, 3, 4 ),
+                       Core::Vector3ui( 0, 4, 5 ),
+                       Core::Vector3ui( 1, 3, 2 ),
+                       Core::Vector3ui( 1, 2, 5 ),
+                       Core::Vector3ui( 1, 4, 3 ),
+                       Core::Vector3ui( 1, 5, 4 ) } );
     return mesh;
 }
 

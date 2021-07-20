@@ -40,7 +40,7 @@ class ScaleGizmo : public Gizmo
     Core::Vector2 m_initialPix;     ///< The pixel position when edition starts.
     int m_selectedAxis;             ///< The axis to scale in.
     int m_selectedPlane;            ///< The plane to scale in.
-    bool m_start {false};           ///< Did the edition start.
+    bool m_start { false };         ///< Did the edition start.
 };
 
 } // namespace Gui

@@ -17,13 +17,13 @@ int main( int argc, char* argv[] ) {
     //! [Creating the application]
 
     //! [Creating the cube]
-    auto cube = Ra::Core::Geometry::makeSharpBox( {0.1f, 0.1f, 0.1f} );
+    auto cube = Ra::Core::Geometry::makeSharpBox( { 0.1f, 0.1f, 0.1f } );
     //! [Creating the cube]
 
     //! [Colorize the Cube]
     cube.addAttrib(
         "in_color",
-        Ra::Core::Vector4Array {cube.vertices().size(), Ra::Core::Utils::Color::Green()} );
+        Ra::Core::Vector4Array { cube.vertices().size(), Ra::Core::Utils::Color::Green() } );
     //! [Colorize the Cube]
 
     //! [Create the engine entity for the cube]

@@ -65,9 +65,7 @@ QModelIndex ItemModel::findEntryIndex( const ItemEntry& entry ) const {
 
             // Add children to the stack
             for ( const auto& child : item->m_children )
-            {
-                stack.push( child.get() );
-            }
+            { stack.push( child.get() ); }
         }
     }
 
@@ -107,9 +105,7 @@ void ItemModel::addItem( const Engine::Scene::ItemEntry& ent ) {
             bool checked = roManager->getRenderObject( ent.m_roIndex )->isVisible();
             auto pent    = static_cast<EngineTreeItem*>( parentItem )->m_entry.m_component;
             for ( const auto& roIdx : pent->getRenderObjects() )
-            {
-                checked = checked || roManager->getRenderObject( roIdx )->isVisible();
-            }
+            { checked = checked || roManager->getRenderObject( roIdx )->isVisible(); }
 
             parentItem->setChecked( checked );
         }
@@ -118,9 +114,7 @@ void ItemModel::addItem( const Engine::Scene::ItemEntry& ent ) {
             //
             bool checked = false;
             for ( const auto& roIdx : ent.m_component->getRenderObjects() )
-            {
-                checked = checked || roManager->getRenderObject( roIdx )->isVisible();
-            }
+            { checked = checked || roManager->getRenderObject( roIdx )->isVisible(); }
             childItem->setChecked( checked );
         }
 

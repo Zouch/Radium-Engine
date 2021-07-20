@@ -28,7 +28,7 @@ class RA_ENGINE_API DirectionalLight final : public Ra::Engine::Scene::Light
     std::string getShaderInclude() const override;
 
   private:
-    Eigen::Matrix<Scalar, 3, 1> m_direction {0, -1, 0};
+    Eigen::Matrix<Scalar, 3, 1> m_direction { 0, -1, 0 };
 };
 } // namespace Scene
 } // namespace Engine

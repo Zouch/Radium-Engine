@@ -44,9 +44,7 @@ void AssimpLightDataLoader::loadData( const aiScene* scene,
     uint lightSize = sceneLightSize( scene );
     data.reserve( lightSize );
     for ( uint lightId = 0; lightId < lightSize; ++lightId )
-    {
-        data.emplace_back( loadLightData( scene, *( scene->mLights[lightId] ) ) );
-    }
+    { data.emplace_back( loadLightData( scene, *( scene->mLights[lightId] ) ) ); }
 
     if ( m_verbose ) { LOG( logINFO ) << "Light Loading end.\n"; }
 }
@@ -83,7 +81,7 @@ std::unique_ptr<LightData> AssimpLightDataLoader::loadLightData( const aiScene* 
         builtLight->setLight(
             color,
             ( frame *
-              Core::Vector4 {light.mPosition[0], light.mPosition[1], light.mPosition[2], 1.0} )
+              Core::Vector4 { light.mPosition[0], light.mPosition[1], light.mPosition[2], 1.0 } )
                 .hnormalized(),
             LightData::LightAttenuation( light.mAttenuationConstant,
                                          light.mAttenuationLinear,
@@ -97,7 +95,7 @@ std::unique_ptr<LightData> AssimpLightDataLoader::loadLightData( const aiScene* 
         builtLight->setLight(
             color,
             ( frame *
-              Core::Vector4 {light.mPosition[0], light.mPosition[1], light.mPosition[2], 1.0} )
+              Core::Vector4 { light.mPosition[0], light.mPosition[1], light.mPosition[2], 1.0 } )
                 .hnormalized(),
             -( frame.transpose().inverse() * dir ).head<3>(),
             light.mAngleInnerCone,

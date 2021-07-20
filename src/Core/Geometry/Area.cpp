@@ -61,9 +61,7 @@ void barycentricArea( const VectorArray<Vector3>& p,
     int size = int( p.size() );
 #pragma omp parallel for
     for ( int i = 0; i < size; ++i )
-    {
-        A.coeffRef( i, i ) /= Scalar( 3. );
-    }
+    { A.coeffRef( i, i ) /= Scalar( 3. ); }
 }
 
 AreaMatrix voronoiArea( const VectorArray<Vector3>& p, const AlignedStdVector<Vector3ui>& T ) {

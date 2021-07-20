@@ -70,19 +70,19 @@ class RA_ENGINE_API VolumetricMaterial final : public Material
 
   public:
     /// Absorption coefficient, default to Air (0.0011, 0.0024, 0.014)
-    Core::Utils::Color m_sigma_a {0.0011_ra, 0.0024_ra, 0.014_ra};
+    Core::Utils::Color m_sigma_a { 0.0011_ra, 0.0024_ra, 0.014_ra };
     /// Scattering coefficient, default to Air (2.55, 3.21, 3.77)
-    Core::Utils::Color m_sigma_s {2.55_ra, 3.21_ra, 3.77_ra};
+    Core::Utils::Color m_sigma_s { 2.55_ra, 3.21_ra, 3.77_ra };
     /// phase function assymetry factor, default to 0
-    Scalar m_g {0_ra};
+    Scalar m_g { 0_ra };
     /// Scale factor applied to the absorption and scattering coefficients
-    Scalar m_scale {1_ra};
+    Scalar m_scale { 1_ra };
     /// Step size for ray-marching rendering. If negative whane rendering, interpreted as
     /// 1/textureDim.
-    Scalar m_stepsize {-1_ra};
+    Scalar m_stepsize { -1_ra };
     /// Transformation matrix to go from the associated geometry frame to the
     /// canonical [0, 1]^3 density domain
-    Core::Transform m_modelToMedium {Core::Transform::Identity()};
+    Core::Transform m_modelToMedium { Core::Transform::Identity() };
 
   private:
     // The density matrix

@@ -140,9 +140,9 @@ class RA_ENGINE_API Renderer
 
       private:
         /// Picking mode of the query
-        PickingMode m_mode {Engine::Rendering::Renderer::RO};
+        PickingMode m_mode { Engine::Rendering::Renderer::RO };
         /// Idx of the picked RO
-        Core::Utils::Index m_roIdx {Core::Utils::Index::Invalid()};
+        Core::Utils::Index m_roIdx { Core::Utils::Index::Invalid() };
 
         /// Query result, stored as: [vertexId, elementId, edgeId]
         /// \see removeDuplicatedIndices()
@@ -430,20 +430,20 @@ class RA_ENGINE_API Renderer
     void notifyRenderObjectsRenderingInternal();
 
   protected:
-    uint m_width {0};
-    uint m_height {0};
+    uint m_width { 0 };
+    uint m_height { 0 };
 
     /// This raw pointer is used as an alias to a std::unique_ptr own by the engine.
     /// It is guaranteed that the lifetime of the engine is longer than the lifetime of a Renderer.
     /// \see https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Ri-raw
     /// \see https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rr-ptr
-    Data::ShaderProgramManager* m_shaderProgramManager {nullptr};
+    Data::ShaderProgramManager* m_shaderProgramManager { nullptr };
 
     /// This raw pointer is used as an alias to a std::unique_ptr own by the engine.
     /// It is guaranteed that the lifetime of the engine is longer than the lifetime of a Renderer.
     /// \see https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Ri-raw
     /// \see https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rr-ptr
-    RenderObjectManager* m_renderObjectManager {nullptr};
+    RenderObjectManager* m_renderObjectManager { nullptr };
 
     //                It would make more sense if we are able to show the
     //                debugged texture in its own viewport.
@@ -452,13 +452,13 @@ class RA_ENGINE_API Renderer
      * @see debugTexture has been done, this is just a pointer to
      * @see m_fancyTexture.
      */
-    Data::Texture* m_displayedTexture {nullptr};
+    Data::Texture* m_displayedTexture { nullptr };
 
     /// A renderer could define several LightManager (for instance, one for point light, one other
     /// for infinite light ...)
     std::vector<Ra::Engine::Scene::LightManager*> m_lightmanagers;
 
-    bool m_renderQueuesUpToDate {false};
+    bool m_renderQueuesUpToDate { false };
 
     std::vector<RenderObjectPtr> m_fancyRenderObjects;
     std::vector<RenderObjectPtr> m_debugRenderObjects;
@@ -468,9 +468,9 @@ class RA_ENGINE_API Renderer
     // Simple quad mesh, used to render the final image
     std::unique_ptr<Data::Displayable> m_quadMesh;
 
-    bool m_drawDebug {true};          // Should we render debug stuff ?
-    bool m_wireframe {false};         // Are we rendering in "real" wireframe mode
-    bool m_postProcessEnabled {true}; // Should we do post processing ?
+    bool m_drawDebug { true };          // Should we render debug stuff ?
+    bool m_wireframe { false };         // Are we rendering in "real" wireframe mode
+    bool m_postProcessEnabled { true }; // Should we do post processing ?
 
     // derived class could use the already created textures
     /// Depth texture : might be attached to the main framebuffer
@@ -488,7 +488,7 @@ class RA_ENGINE_API Renderer
 
     // PICKING STUFF
     Ra::Core::Vector2 m_mousePosition;
-    float m_brushRadius {0};
+    float m_brushRadius { 0 };
     std::unique_ptr<globjects::Framebuffer> m_pickingFbo;
     std::unique_ptr<Data::Texture> m_pickingTexture;
 
@@ -503,10 +503,10 @@ class RA_ENGINE_API Renderer
     std::vector<PickingQuery> m_lastFramePickingQueries;
     std::vector<PickingResult> m_pickingResults;
 
-    Core::Utils::Color m_backgroundColor {Core::Utils::Color::Grey( 0.0392_ra, 0_ra )};
+    Core::Utils::Color m_backgroundColor { Core::Utils::Color::Grey( 0.0392_ra, 0_ra ) };
     void preparePicking( const Data::ViewingParameters& renderData );
 
-    bool m_initialized {false};
+    bool m_initialized { false };
 };
 
 } // namespace Rendering

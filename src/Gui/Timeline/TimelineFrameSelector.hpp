@@ -304,19 +304,19 @@ class TimelineFrameSelector : public QFrame
     std::vector<Scalar> m_keyFrames;
 
     /// Whether the user is sliding the current time.
-    bool m_mouseLeftClicked {false};
+    bool m_mouseLeftClicked { false };
 
     /// The KeyFrame to Flash.
     Scalar m_keyFrameFlash;
 
     /// The number of KeyFrame Flash we have to do.
-    int m_updateKeyFrameFlash {0};
+    int m_updateKeyFrameFlash { 0 };
 
     /// The QTimer for KeyFrame Flash.
-    QTimer* m_timer {nullptr};
+    QTimer* m_timer { nullptr };
 
     /// The Timeline UI.
-    Ui::Timeline* m_timelineUI {nullptr};
+    Ui::Timeline* m_timelineUI { nullptr };
 };
 
 } // namespace Ra::Gui

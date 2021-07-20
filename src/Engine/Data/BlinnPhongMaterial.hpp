@@ -79,12 +79,12 @@ class RA_ENGINE_API BlinnPhongMaterial final : public Material
     static void unregisterMaterial();
 
   public:
-    Core::Utils::Color m_kd {0.7, 0.7, 0.7, 1.0};
-    Core::Utils::Color m_ks {0.3, 0.3, 0.3, 1.0};
-    Scalar m_ns {64.0};
-    Scalar m_alpha {1.0};
-    bool m_perVertexColor {false};
-    bool m_renderAsSplat {false};
+    Core::Utils::Color m_kd { 0.7, 0.7, 0.7, 1.0 };
+    Core::Utils::Color m_ks { 0.3, 0.3, 0.3, 1.0 };
+    Scalar m_ns { 64.0 };
+    Scalar m_alpha { 1.0 };
+    bool m_perVertexColor { false };
+    bool m_renderAsSplat { false };
 
     /**
      * Add an new texture, from a TextureData, to control the specified BSDF parameter.

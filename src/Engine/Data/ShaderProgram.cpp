@@ -72,9 +72,9 @@ ShaderType getGLenumAsType( GLenum type ) {
     return ShaderType_COUNT;
 }
 
-ShaderProgram::ShaderProgram() : m_program {nullptr} {
+ShaderProgram::ShaderProgram() : m_program { nullptr } {
     std::generate( m_shaderObjects.begin(), m_shaderObjects.end(), []() {
-        return std::pair<bool, std::unique_ptr<globjects::Shader>> {false, nullptr};
+        return std::pair<bool, std::unique_ptr<globjects::Shader>> { false, nullptr };
     } );
     std::fill( m_shaderSources.begin(), m_shaderSources.end(), nullptr );
 }
@@ -88,13 +88,9 @@ ShaderProgram::~ShaderProgram() {
     // them during delete
     // See ~Shader (setSource(nullptr)
     for ( auto& s : m_shaderObjects )
-    {
-        s.second.reset( nullptr );
-    }
+    { s.second.reset( nullptr ); }
     for ( auto& s : m_shaderSources )
-    {
-        s.reset( nullptr );
-    }
+    { s.reset( nullptr ); }
     m_program.reset( nullptr );
 }
 
@@ -147,7 +143,7 @@ void ShaderProgram::loadShader( ShaderType type,
             { return a; }
         } );
 
-    std::unique_ptr<globjects::StaticStringSource> fullsource {nullptr};
+    std::unique_ptr<globjects::StaticStringSource> fullsource { nullptr };
     if ( fromFile )
     {
         auto loadedSource = globjects::Shader::sourceFromFile( name );

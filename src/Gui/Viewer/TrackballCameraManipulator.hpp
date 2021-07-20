@@ -87,26 +87,26 @@ class RA_GUI_API TrackballCameraManipulator
     // the center of the trackball is defined by the m_referenceFrame.translation()
 
     /// x-position of the mouse on the screen at the manipulation start.
-    Scalar m_lastMouseX {0_ra};
+    Scalar m_lastMouseX { 0_ra };
 
     /// y-position of the mouse on the screen at the manipulation start.
-    Scalar m_lastMouseY {0_ra};
+    Scalar m_lastMouseY { 0_ra };
 
     /// Spherical coordinates   (ISO 80000-2:2019 convention)
     /// https://en.wikipedia.org/wiki/Spherical_coordinate_system
     /// phi is azimutal
     /// theta is polar, from y which is world "up" direction
     /// rest pose correspond to camera view direction at m_referenceFrame -z;
-    Scalar m_phi {0_ra};
-    Scalar m_theta {0_ra};
+    Scalar m_phi { 0_ra };
+    Scalar m_theta { 0_ra };
     /// sign of m_theta at mousePressEvent, to guide the phi rotation direction.
-    Scalar m_phiDir {1_ra};
+    Scalar m_phiDir { 1_ra };
 
     /// initial frame of the camera, centered on target, to compute angles.
     Core::Transform m_referenceFrame;
 
     /// The distance from the camera to the trackball center.
-    Scalar m_distFromCenter {0_ra};
+    Scalar m_distFromCenter { 0_ra };
 
   private:
     bool checkIntegrity( const std::string& mess ) const;

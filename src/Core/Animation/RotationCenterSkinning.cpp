@@ -76,9 +76,7 @@ void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon 
     // matrix from initial mesh vertices
     std::unordered_map<Ra::Core::Vector3, int, hash_vec> mapV2I;
     for ( auto vit = topoMesh.vertices_begin(); vit != topoMesh.vertices_end(); ++vit )
-    {
-        mapV2I[topoMesh.point( *vit )] = vit->idx();
-    }
+    { mapV2I[topoMesh.point( *vit )] = vit->idx(); }
 
     // Squash weight matrix to fit TopologicalMesh (access through handle indices)
     // Store the weights as row major here because we are going to query the per-vertex weights.
@@ -87,9 +85,7 @@ void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon 
     subdivW.resize( topoMesh.n_vertices(), numCols );
     const auto& V = triMesh.vertices();
     for ( std::size_t i = 0; i < V.size(); ++i )
-    {
-        subdivW.row( mapV2I[V[i]] ) = dataInOut.m_weights.row( int( i ) );
-    }
+    { subdivW.row( mapV2I[V[i]] ) = dataInOut.m_weights.row( int( i ) ); }
 
     // The mesh will be subdivided by repeated edge-split, so that adjacent vertices
     // weights are distant of at most `weightEpsilon`.
@@ -242,18 +238,14 @@ void centerOfRotationSkinning( const SkinningRefData& refData,
     // prepare the pose w.r.t. the bind matrices
 #pragma omp parallel for
     for ( int i = 0; i < int( frameData.m_skeleton.size() ); ++i )
-    {
-        pose[i] = refData.m_meshTransformInverse * pose[i] * refData.m_bindMatrices[i];
-    }
+    { pose[i] = refData.m_meshTransformInverse * pose[i] * refData.m_bindMatrices[i]; }
     // Compute the dual quaternions
     const auto DQ = computeDQ( pose, W );
 
     // Do LBS on the COR with weights of their associated vertices
 #pragma omp parallel for
     for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
-    {
-        frameData.m_currentPosition[i] = Vector3::Zero();
-    }
+    { frameData.m_currentPosition[i] = Vector3::Zero(); }
     for ( int k = 0; k < W.outerSize(); ++k )
     {
         const int nonZero = W.col( k ).nonZeros();

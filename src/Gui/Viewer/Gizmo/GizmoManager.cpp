@@ -174,9 +174,7 @@ Gizmo* GizmoManager::currentGizmo() {
 
 void GizmoManager::cleanup() {
     for ( auto& g : m_gizmos )
-    {
-        g.reset( nullptr );
-    }
+    { g.reset( nullptr ); }
 }
 } // namespace Gui
 } // namespace Ra

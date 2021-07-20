@@ -140,7 +140,7 @@ int main( int argc, char* argv[] ) {
 
     //! [Create the demo animated component]
     //! [Creating the cube]
-    auto cube = Ra::Core::Geometry::makeSharpBox( {0.1f, 0.1f, 0.1f} );
+    auto cube = Ra::Core::Geometry::makeSharpBox( { 0.1f, 0.1f, 0.1f } );
     //! [Creating the cube]
 
     //! [Create the engine entity for the cube]

@@ -256,9 +256,9 @@ inline RA_CORE_API LineToTriangleOutput lineToTriSq( const Vector3& lineOrigin,
         Vector3 basis[3]; // {D, U, V}
         basis[0] = lineDirection;
         if ( std::abs( basis[0][0] ) > std::abs( basis[0][1] ) )
-        { basis[1] = {-basis[0][2], (Scalar)0, basis[0][0]}; }
+        { basis[1] = { -basis[0][2], (Scalar)0, basis[0][0] }; }
         else
-        { basis[1] = {(Scalar)0, basis[0][2], -basis[0][1]}; }
+        { basis[1] = { (Scalar)0, basis[0][2], -basis[0][1] }; }
         basis[2] = basis[0].cross( basis[1] );
         // Orthonormalize basis
         // Normalize basis[0]

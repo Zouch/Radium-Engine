@@ -56,9 +56,7 @@ HandleData::setComponents( const Core::AlignedStdVector<HandleComponentData>& co
     m_component.resize( size );
 #pragma omp parallel for
     for ( int i = 0; i < int( size ); ++i )
-    {
-        m_component[i] = components[i];
-    }
+    { m_component[i] = components[i]; }
 }
 
 inline const HandleComponentData& HandleData::getComponent( const uint i ) const {
@@ -84,9 +82,7 @@ inline void HandleData::setEdges( const Core::AlignedStdVector<Core::Vector2ui>&
     m_edge.resize( size );
 #pragma omp parallel for
     for ( int i = 0; i < int( size ); ++i )
-    {
-        m_edge[i] = edgeList[i];
-    }
+    { m_edge[i] = edgeList[i]; }
 }
 
 inline const Core::AlignedStdVector<Core::VectorNui>& HandleData::getFaceData() const {
@@ -102,17 +98,13 @@ inline void HandleData::setFaces( const Core::AlignedStdVector<Core::VectorNui>&
     m_face.resize( size );
 #pragma omp parallel for
     for ( int i = 0; i < int( size ); ++i )
-    {
-        m_face[i] = faceList[i];
-    }
+    { m_face[i] = faceList[i]; }
 }
 
 inline void HandleData::recomputeAllIndices() {
     m_nameTable.clear();
     for ( uint i = 0; i < getComponentDataSize(); ++i )
-    {
-        m_nameTable[m_component[i].m_name] = i;
-    }
+    { m_nameTable[m_component[i].m_name] = i; }
 }
 
 inline bool HandleData::isPointCloud() const {

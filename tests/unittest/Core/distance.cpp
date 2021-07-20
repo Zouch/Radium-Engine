@@ -31,7 +31,7 @@ TEST_CASE( "Core/Geometry/DistanceQueries", "[Core][Core/Geometry][DistanceQueri
         REQUIRE( Math::areApproxEqual( distLineToSeg, Geometry::pointToSegmentSq( a, c, b - c ) ) );
 
         // Test line to triangle distance query
-        Vector3 v[3]         = {a, d, e};
+        Vector3 v[3]         = { a, d, e };
         Scalar distLineToTri = Geometry::lineToTriSq( segCenter, segDirection, v ).sqrDistance;
         REQUIRE( Math::areApproxEqual( distLineToTri, Geometry::pointToSegmentSq( a, c, b - c ) ) );
 
@@ -41,7 +41,7 @@ TEST_CASE( "Core/Geometry/DistanceQueries", "[Core][Core/Geometry][DistanceQueri
         REQUIRE( Math::areApproxEqual( distSegToTri, Geometry::pointToSegmentSq( a, c, b - c ) ) );
 
         // Test triangle to triangle distance query
-        Vector3 v2[3]       = {c, f, b};
+        Vector3 v2[3]       = { c, f, b };
         Scalar distTriToTri = Geometry::triangleToTriSq( v, v2 ).sqrDistance;
         REQUIRE( Math::areApproxEqual( distTriToTri, Geometry::pointToSegmentSq( a, c, b - c ) ) );
     }

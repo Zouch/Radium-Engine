@@ -86,9 +86,7 @@ class KeyFramedValue : public KeyFramedValueBase
         std::vector<Scalar> times( m_keyframes.size() );
 #pragma omp parallel for
         for ( int i = 0; i < int( m_keyframes.size() ); ++i )
-        {
-            times[i] = m_keyframes[i].first;
-        }
+        { times[i] = m_keyframes[i].first; }
         return times;
     }
 
@@ -184,12 +182,12 @@ class KeyFramedValue : public KeyFramedValueBase
      */
     std::tuple<size_t, size_t, Scalar> findRange( Scalar t ) const {
         // before first
-        if ( t < m_keyframes.begin()->first ) { return {0, 0, 0_ra}; }
+        if ( t < m_keyframes.begin()->first ) { return { 0, 0, 0_ra }; }
         // after last
         if ( t > m_keyframes.rbegin()->first )
         {
             const size_t i = m_keyframes.size() - 1;
-            return {i, i, 0_ra};
+            return { i, i, 0_ra };
         }
         // look for exact match
         auto kf0   = m_keyframes[0];
@@ -205,13 +203,13 @@ class KeyFramedValue : public KeyFramedValueBase
         if ( Math::areApproxEqual( lower->first, t ) )
         {
             const size_t i = std::distance( m_keyframes.begin(), lower );
-            return {i, i, 0_ra};
+            return { i, i, 0_ra };
         }
         // in-between
         const size_t i  = std::distance( m_keyframes.begin(), lower );
         const Scalar t0 = lower->first;
         const Scalar t1 = upper->first;
-        return {i, i + 1, ( t - t0 ) / ( t1 - t0 )};
+        return { i, i + 1, ( t - t0 ) / ( t1 - t0 ) };
     }
     /// \}
 

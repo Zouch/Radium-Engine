@@ -42,12 +42,12 @@ RadiumEngine::~RadiumEngine() = default;
 
 void RadiumEngine::initialize() {
     LOG( logINFO ) << "*** Radium Engine ***";
-    auto resourceDir {Core::Resources::getRadiumResourcesPath()};
+    auto resourceDir { Core::Resources::getRadiumResourcesPath() };
     if ( !resourceDir )
     {
         LOG( logWARNING )
             << "Default Radium resources dir not found. Setting resources path to \".\"";
-        resourceDir = {"."};
+        resourceDir = { "." };
     }
     m_resourcesRootDir     = *resourceDir;
     m_signalManager        = std::make_unique<Scene::SignalManager>();
@@ -145,9 +145,7 @@ void RadiumEngine::cleanup() {
     m_loadedFile.reset();
 
     for ( auto& system : m_systems )
-    {
-        system.second.reset();
-    }
+    { system.second.reset(); }
 
     Scene::ComponentMessenger::destroyInstance();
 
@@ -169,11 +167,9 @@ void RadiumEngine::getTasks( Core::TaskQueue* taskQueue, Scalar dt ) {
     }
 
     FrameInfo frameInfo {
-        m_timeData.m_time, m_timeData.m_realTime ? dt : m_timeData.m_dt, frameCounter++};
+        m_timeData.m_time, m_timeData.m_realTime ? dt : m_timeData.m_dt, frameCounter++ };
     for ( auto& syst : m_systems )
-    {
-        syst.second->generateTasks( taskQueue, frameInfo );
-    }
+    { syst.second->generateTasks( taskQueue, frameInfo ); }
 }
 
 bool RadiumEngine::registerSystem( const std::string& name, Scene::System* system, int priority ) {
@@ -263,16 +259,12 @@ bool RadiumEngine::loadFile( const std::string& filename ) {
     Scene::Entity* entity = m_entityManager->createEntity( entityName );
 
     for ( auto& system : m_systems )
-    {
-        system.second->handleAssetLoading( entity, m_loadedFile.get() );
-    }
+    { system.second->handleAssetLoading( entity, m_loadedFile.get() ); }
 
     if ( !entity->getComponents().empty() )
     {
         for ( auto& comp : entity->getComponents() )
-        {
-            comp->initialize();
-        }
+        { comp->initialize(); }
     }
     else
     {

@@ -189,9 +189,7 @@ inline void TopologicalMesh::WedgeCollection::setWedgeData( const TopologicalMes
             wd.m_vector2Attrib.size() == m_vector2AttribNames.size() &&
             wd.m_vector3Attrib.size() == m_vector3AttribNames.size() &&
             wd.m_vector4Attrib.size() == m_vector4AttribNames.size() ) )
-    {
-        LOG( logWARNING ) << "Warning, topological mesh set wedge: number of attribs inconsistency";
-    }
+    { LOG( logWARNING ) << "Warning, topological mesh set wedge: number of attribs inconsistency"; }
     if ( idx.isValid() ) m_data[idx].setWedgeData( wd );
 }
 
@@ -343,9 +341,7 @@ inline void TopologicalMesh::WedgeCollection::clean() {
 template <typename T>
 void init( VectorArray<T>& vec, const std::vector<std::string> names ) {
     for ( size_t i = 0; i < names.size(); ++i )
-    {
-        vec.emplace_back();
-    }
+    { vec.emplace_back(); }
 }
 // return a new wedgeData with uninit values.
 inline TopologicalMesh::WedgeData TopologicalMesh::WedgeCollection::newWedgeData() const {
@@ -477,7 +473,7 @@ void TopologicalMesh::initWithWedge(
     VertexMap vertexHandles;
 
     // loop over all attribs and build correspondance pair
-    mesh.vertexAttribs().for_each_attrib( InitWedgeAttribsFromMultiIndexedGeometry {this, mesh} );
+    mesh.vertexAttribs().for_each_attrib( InitWedgeAttribsFromMultiIndexedGeometry { this, mesh } );
 
     for ( size_t i = 0; i < mesh.vertices().size(); ++i )
     {
@@ -539,7 +535,7 @@ void TopologicalMesh::initWithWedge(
 
                 face_vhandles[j] = vh;
                 if ( hasNormals ) face_normals[j] = mesh.normals()[inMeshVertexIndex];
-                face_wedges[j] = WedgeIndex {inMeshVertexIndex};
+                face_wedges[j] = WedgeIndex { inMeshVertexIndex };
                 m_wedges.m_data[inMeshVertexIndex].getWedgeData().m_vertexHandle = vh;
             }
 
@@ -816,9 +812,7 @@ inline void TopologicalMesh::replaceWedgeIndex( OpenMesh::HalfedgeHandle he,
 
 inline void TopologicalMesh::mergeEqualWedges() {
     for ( auto itr = vertices_begin(), stop = vertices_end(); itr != stop; ++itr )
-    {
-        mergeEqualWedges( *itr );
-    }
+    { mergeEqualWedges( *itr ); }
 }
 
 inline void TopologicalMesh::mergeEqualWedges( OpenMesh::VertexHandle vh ) {

@@ -98,7 +98,7 @@ class RA_CORE_API AbstractDiscreteVolume : public AbstractVolume
 
   protected:
     inline AbstractDiscreteVolume( const VolumeStorageType& type ) :
-        AbstractVolume( type ), m_size( IndexType::Zero() ), m_binSize {1_ra, 1_ra, 1_ra} {}
+        AbstractVolume( type ), m_size( IndexType::Zero() ), m_binSize { 1_ra, 1_ra, 1_ra } {}
 
   public:
     AbstractDiscreteVolume( const AbstractDiscreteVolume& data ) = default;
@@ -205,9 +205,7 @@ class RA_CORE_API VolumeGrid : public AbstractDiscreteVolume
     /// Add a value to all bins
     inline void addToAllBins( const ValueType& value ) {
         for ( auto& v : m_data )
-        {
-            v += value;
-        }
+        { v += value; }
     }
 
   protected:

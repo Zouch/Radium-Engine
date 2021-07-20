@@ -25,16 +25,12 @@ Spline<D, K>::setCtrlPoints( const Core::VectorArray<typename Spline<D, K>::Vect
     m_points = points;
     m_vecs.resize( points.size() - 1, Vector::Zero() );
     for ( uint i = 0; i < m_vecs.size(); ++i )
-    {
-        m_vecs[i] = m_points[i + 1] - m_points[i];
-    }
+    { m_vecs[i] = m_points[i + 1] - m_points[i]; }
     setNodalVector();
     assertSplines();
 
     for ( uint i = 0; i < m_vecs.size(); ++i )
-    {
-        m_vecs[i] /= m_node[K + i] - m_node[i + 1];
-    }
+    { m_vecs[i] /= m_node[K + i] - m_node[i + 1]; }
 }
 
 // -----------------------------------------------------------------------------
@@ -103,9 +99,7 @@ inline void Spline<D, K>::setNodeToUniform() {
 
     Scalar step = 1.f / Scalar( n - K + 2 );
     for ( uint i = 0; i < m_node.size(); ++i )
-    {
-        m_node[i] = Scalar( i ) * step - step * ( Scalar )( K - 1 );
-    }
+    { m_node[i] = Scalar( i ) * step - step * ( Scalar )( K - 1 ); }
 }
 
 // -----------------------------------------------------------------------------
@@ -142,22 +136,16 @@ inline typename Spline<D, K>::Vector Spline<D, K>::eval( Scalar u,
     // TODO: better search with dichotomy ?
     // TODO: check for overflow
     while ( u > node[dec + k + off] )
-    {
-        dec++;
-    }
+    { dec++; }
 
     // TODO: use buffers in attributes for better performances ?
     Core::VectorArray<Vector> pOut( k, Vector::Zero() );
     for ( uint i = dec, j = 0; i < ( dec + k ); ++i, ++j )
-    {
-        pOut[j] = points[i];
-    }
+    { pOut[j] = points[i]; }
 
     std::vector<Scalar> nodeOut( k + k - 2, Scalar( 0 ) );
     for ( uint i = ( dec + 1 ), j = 0; i < ( dec + k + k - 1 ); ++i, ++j )
-    {
-        nodeOut[j] = node[i + off];
-    }
+    { nodeOut[j] = node[i + off]; }
     return evalRec( u, pOut, nodeOut, k );
 }
 
@@ -186,9 +174,7 @@ inline typename Spline<D, K>::Vector Spline<D, K>::evalRec( Scalar u,
     std::vector<Scalar> nodeOut( node.size() - 2 );
 
     for ( uint i = 1; i < node.size() - 1; ++i )
-    {
-        nodeOut[i - 1] = node[i];
-    }
+    { nodeOut[i - 1] = node[i]; }
     return evalRec( u, pOut, nodeOut, k - 1 );
 }
 } // namespace Geometry

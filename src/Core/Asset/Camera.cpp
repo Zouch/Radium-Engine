@@ -15,7 +15,7 @@ namespace Core {
 namespace Asset {
 
 Camera::Camera( Scalar width, Scalar height ) :
-    m_width {width}, m_height {height}, m_aspect {width / height} {}
+    m_width { width }, m_height { height }, m_aspect { width / height } {}
 
 Camera& Camera::operator=( const Camera& rhs ) {
     m_frame      = rhs.getFrame();
@@ -151,15 +151,15 @@ void Camera::fitZRange( const Core::Aabb& aabb ) {
     };
 #else
 
-    const auto position  = Ra::Core::Vector3 {0_ra, 0_ra, 0_ra};
-    const auto direction = Ra::Core::Vector3 {0_ra, 0_ra, -1_ra};
+    const auto position  = Ra::Core::Vector3 { 0_ra, 0_ra, 0_ra };
+    const auto direction = Ra::Core::Vector3 { 0_ra, 0_ra, -1_ra };
     const auto view      = getFrame().inverse();
     const auto& minAabb  = aabb.min();
     const auto& maxAabb  = aabb.max();
 
     m_zNear = m_zFar = direction.dot( view * minAabb - position );
     auto adaptRange  = [view, position, direction, this]( Scalar x, Scalar y, Scalar z ) {
-        auto corner   = Core::Vector3 {x, y, z};
+        auto corner   = Core::Vector3 { x, y, z };
         auto d        = direction.dot( view * corner - position );
         this->m_zNear = std::min( d, this->m_zNear );
         this->m_zFar  = std::max( d, this->m_zFar );
@@ -201,13 +201,13 @@ Core::Vector3 Camera::projectToScreen( const Core::Vector3& p ) const {
 }
 
 Core::Vector3 Camera::unProjectFromScreen( const Core::Vector2& pix ) const {
-    return unProjectFromScreen( Vector3 {pix.x(), pix.y(), 0_ra} );
+    return unProjectFromScreen( Vector3 { pix.x(), pix.y(), 0_ra } );
 }
 
 Core::Vector3 Camera::unProjectFromScreen( const Core::Vector3& pix ) const {
-    Core::Vector3 ndc {pix.cwiseProduct( Core::Vector3( 2_ra, -2_ra, 2_ra ) )
-                           .cwiseQuotient( Core::Vector3( getWidth(), getHeight(), 1_ra ) ) +
-                       Core::Vector3 {-1_ra, 1_ra, -1_ra}};
+    Core::Vector3 ndc { pix.cwiseProduct( Core::Vector3( 2_ra, -2_ra, 2_ra ) )
+                            .cwiseQuotient( Core::Vector3( getWidth(), getHeight(), 1_ra ) ) +
+                        Core::Vector3 { -1_ra, 1_ra, -1_ra } };
     return unProjectFromNDC( ndc );
 }
 

@@ -45,9 +45,7 @@ void System::unregisterAllComponents( const Entity* entity ) {
                   m_components.begin(), m_components.end(), [entity]( const auto& pair ) {
                       return pair.first == entity;
                   } ) ) != m_components.end() )
-    {
-        m_components.erase( pos );
-    }
+    { m_components.erase( pos ); }
 }
 
 std::vector<Component*> System::getEntityComponents( const Entity* entity ) {

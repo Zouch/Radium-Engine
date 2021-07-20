@@ -3,7 +3,7 @@ namespace Ra {
 namespace Core {
 namespace Utils {
 
-AttribBase::AttribBase( const std::string& name ) : m_name {name} {}
+AttribBase::AttribBase( const std::string& name ) : m_name { name } {}
 
 std::string AttribBase::getName() const {
     return m_name;

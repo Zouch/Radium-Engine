@@ -134,8 +134,8 @@ AdjacencyList::ConsistencyStatus AdjacencyList::computeConsistencyStatus() const
 }
 
 std::ofstream& operator<<( std::ofstream& ofs, const AdjacencyList& adj ) {
-    const std::string header {"ADJACENCYLIST\n"};
-    const std::string comment {"#ID PARENT nCHILDREN CHILDREN\n"};
+    const std::string header { "ADJACENCYLIST\n" };
+    const std::string comment { "#ID PARENT nCHILDREN CHILDREN\n" };
     const uint size = adj.size();
 
     ofs << header + comment + std::to_string( size ) + "\n";
@@ -145,9 +145,7 @@ std::ofstream& operator<<( std::ofstream& ofs, const AdjacencyList& adj ) {
         ofs << std::to_string( i ) + " " + std::to_string( adj.parents()[i] ) + " " +
                    std::to_string( c = adj.children()[i].size() );
         for ( uint j = 0; j < c; ++j )
-        {
-            ofs << " " + std::to_string( adj.children()[i][j] );
-        }
+        { ofs << " " + std::to_string( adj.children()[i][j] ); }
         ofs << "\n";
     }
     return ofs;

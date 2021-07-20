@@ -41,7 +41,7 @@ class RA_ENGINE_API CameraComponent : public Scene::Component
 
   protected:
     std::unique_ptr<Core::Asset::Camera> m_camera;
-    Rendering::RenderObject* m_RO {nullptr}; ///< Render mesh for the camera.
+    Rendering::RenderObject* m_RO { nullptr }; ///< Render mesh for the camera.
 };
 } // namespace Scene
 } // namespace Engine

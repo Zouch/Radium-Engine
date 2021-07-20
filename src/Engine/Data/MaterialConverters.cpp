@@ -23,7 +23,7 @@ static std::map<std::string, std::function<RadiumMaterialPtr( AssetMaterialPtr )
     MaterialConverterRegistry;
 
 bool registerMaterialConverter( const std::string& name, ConverterFunction converter ) {
-    auto result = MaterialConverterRegistry.insert( {name, converter} );
+    auto result = MaterialConverterRegistry.insert( { name, converter } );
     return result.second;
 }
 
@@ -34,7 +34,7 @@ bool removeMaterialConverter( const std::string& name ) {
 
 std::pair<bool, ConverterFunction> getMaterialConverter( const std::string& name ) {
     auto search = MaterialConverterRegistry.find( name );
-    if ( search != MaterialConverterRegistry.end() ) { return {true, search->second}; }
+    if ( search != MaterialConverterRegistry.end() ) { return { true, search->second }; }
     auto result = std::make_pair( false, [name]( AssetMaterialPtr ) -> RadiumMaterialPtr {
         LOG( logERROR ) << "Required material converter " << name << " not found!";
         return nullptr;

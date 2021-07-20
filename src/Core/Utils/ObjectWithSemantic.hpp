@@ -54,7 +54,7 @@ class RA_CORE_API ObjectWithSemantic
 
   protected:
     template <class... SemanticNames>
-    inline ObjectWithSemantic( SemanticNames... names ) : m_names( {names...} ) {}
+    inline ObjectWithSemantic( SemanticNames... names ) : m_names( { names... } ) {}
 
     inline ObjectWithSemantic( const SemanticNameCollection& otherNames ) : m_names( otherNames ) {}
 

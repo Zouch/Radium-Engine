@@ -58,9 +58,7 @@ bool OFFFileManager::importData( std::istream& file, Geometry::TriangleMesh& dat
 
     // Edge
     for ( uint i = 0; i < e_size; ++i )
-    {
-        break;
-    }
+    { break; }
 
     // Triangle
     for ( uint i = 0; i < f_size; ++i )

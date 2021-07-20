@@ -106,7 +106,7 @@ class RA_CORE_API Skeleton : public HandleArray
     AdjacencyList m_graph;
 
     /// The manipulation scheme.
-    Manipulation m_manipulation {FORWARD};
+    Manipulation m_manipulation { FORWARD };
 
   protected:
     /// Skeleton pose in MODEL space.

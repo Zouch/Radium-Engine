@@ -5,7 +5,7 @@
 #include <catch2/catch.hpp>
 
 TEST_CASE( "Core/Utils/StdMapIterators", "[Core][Core/Utils][StdMapIterators]" ) {
-    std::map<int, std::string> myMap {{2, "2"}, {3, "3"}};
+    std::map<int, std::string> myMap { { 2, "2" }, { 3, "3" } };
 
     //! [Iterating over keys]
     for ( const auto& k : Ra::Core::Utils::map_keys( myMap ) )

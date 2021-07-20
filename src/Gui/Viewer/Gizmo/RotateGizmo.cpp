@@ -65,9 +65,7 @@ void RotateGizmo::updateTransform( Gizmo::Mode mode,
     }
 
     for ( auto ro : ros() )
-    {
-        ro->setLocalTransform( m_worldTo * displayTransform );
-    }
+    { ro->setLocalTransform( m_worldTo * displayTransform ); }
 }
 
 void RotateGizmo::selectConstraint( int drawableIdx ) {
