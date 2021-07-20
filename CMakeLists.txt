@@ -100,9 +100,6 @@ if(MEASURE_ALL)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE "time")
 endif()
 
-# Append library and executable names with d in debug mode
-set(CMAKE_DEBUG_POSTFIX d)
-
 # -------------------------------------------------------------------------------
 # Set default paths for Radium
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
