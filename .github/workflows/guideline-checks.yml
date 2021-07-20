@@ -39,12 +39,12 @@ jobs:
         uses: actions/checkout@master
       - name: Check coding style
         id: format-check
-        uses: DoozyX/clang-format-lint-action@v0.6
+        uses: dlyr/clang-format-lint-action@master
         with:
           source: '.'
           exclude: './tests/external ./external'
           extensions: 'hpp,inl,cpp,glsl'
-          clangFormatVersion: 9
+          clangFormatVersion: 11.1.0
           style: file
       - name: xxxxxxxxxx Status report README PLEASE xxxxxxxxxx
         if: ${{ failure() && github.event.pull_request.head.repo.full_name != github.repository }}
