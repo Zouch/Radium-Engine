@@ -44,4 +44,3 @@ BinPackParameters: false
 #not supported yet ?
 SpaceBeforeCpp11BracedList: true
 ...
-

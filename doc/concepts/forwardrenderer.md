@@ -1,7 +1,7 @@
-\page forwardRenderer Forward Render 
+\page forwardRenderer Forward Render
 [TOC]
 
-The main renderer of Radium, implemented in the class Ra::Engine::Rendering::ForwardRenderer implements a Z-pre-pass forward 
+The main renderer of Radium, implemented in the class Ra::Engine::Rendering::ForwardRenderer implements a Z-pre-pass forward
 rendering loop.
 Even if the material association to a drawable object, realized by the so called Ra::Engine::Rendering::RenderTechnique is tightly
 coupled with the main rendering loop, Plugins might define new renderers and interact differently with shader and
@@ -11,8 +11,8 @@ Here is a summary of the different passes of the Ra::Engine::Rendering::ForwardR
 
 # 1. Depth, ambient color and "deferred info" pass
 This pass
-*   only concerns opaque objects AND opaque fragment on transparent objects. 
-It is mainly used to fill in the Z-buffer, allowing to activate early z-test for next passes since the depth 
+*   only concerns opaque objects AND opaque fragment on transparent objects.
+It is mainly used to fill in the Z-buffer, allowing to activate early z-test for next passes since the depth
 buffer is already filled,
 
 *   initialize the color buffer by computing e.g. the ambient color for each object,
@@ -24,7 +24,7 @@ buffer is already filled,
 
 
 In this pass, each Ra::Engine::Rendering::RenderObject is drawn with the Ra::Engine::Rendering::Z_PREPASS argument so that
-the corresponding shader (if it exists) will be activated before draw call. 
+the corresponding shader (if it exists) will be activated before draw call.
 (``ro->render( renderParameters, viewingParameters, DefaultRenderingPasses::Z_PREPASS );``)
 
 Note that the  shader associated to the Ra::Engine::Rendering::Z_PREPASS pass must draw only fully opaque fragments.

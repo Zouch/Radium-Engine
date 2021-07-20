@@ -2,7 +2,7 @@
 +++ globjects/CMakeLists.txt.Radium	2020-06-26 15:16:55.000000000 +0200
 @@ -132,8 +132,6 @@
  endif()
- 
+
  # Installation paths
 -if(UNIX AND SYSTEM_DIR_INSTALL)
 -    # Install into the system (/usr/bin or /usr/local/bin)
@@ -30,6 +30,6 @@
 -    set(INSTALL_INIT      "misc")                   # ./misc
 -endif()
 +    set(INSTALL_INIT      "etc/init")              # /etc/init (upstart init scripts)
- 
+
  # Set runtime path
  set(CMAKE_SKIP_BUILD_RPATH            FALSE) # Add absolute path to all dependencies for BUILD

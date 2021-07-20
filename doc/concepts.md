@@ -4,8 +4,4 @@
  * \subpage componentMessenger
  * \subpage eventSystem
  * \subpage pluginSystem
- * \subpage forwardRenderer 
-
-
-
-
+ * \subpage forwardRenderer

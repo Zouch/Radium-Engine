@@ -7,7 +7,7 @@
 # --indent-namespaces    # Since radium as lot's of namespace, indent namespace use too much place !
 
 # Indent multiple lines if, while...(RTFM for the values)
---min-conditional-indent=0   
+--min-conditional-indent=0
 --max-instatement-indent=100
 
 # Brackets
@@ -21,7 +21,7 @@
 
 # *, & and ^ are attached to the type (e.g char* str)
 --align-pointer=type
-#--align-reference={none/type/middle/name} # Uncomment and choose a value if 
+#--align-reference={none/type/middle/name} # Uncomment and choose a value if
                                            # different value than pointer stuff
                                            # is required.
 
@@ -39,7 +39,7 @@
 --break-after-logical
 
 # Do not backup original file
---suffix=none 
+--suffix=none
 
 # Use linux line end style !
 --lineend=linux #

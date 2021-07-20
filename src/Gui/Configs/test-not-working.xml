@@ -5,7 +5,7 @@
 -->
 
 <keymaps>
-    
+
     <keymap context="GizmoContext" key="" modifiers="" buttons="LeftButton" action="GIZMOMANAGER_MANIPULATION"/>
     <keymap context="GizmoContext" key="" modifiers="ControlModifier" buttons="LeftButton" action="GIZMOMANAGER_STEP"/>
     <keymap context="GizmoContext" key="" modifiers="ShiftModifier" buttons="LeftButton" action="GIZMOMANAGER_WHOLE"/>

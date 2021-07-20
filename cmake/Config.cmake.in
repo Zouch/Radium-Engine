@@ -1,28 +1,29 @@
-#--------------------------- Base configuration for installation and rpath settings ---------------------------
+#--------------------------- Base configuration for installation and rpath settings ----------------
 # Custom Install target, used in run target in source/CMakeLists.txt
-add_custom_target( Install_${PROJECT_NAME} COMMAND "${CMAKE_COMMAND}" --build . --target
-        install WORKING_DIRECTORY "${CMAKE_BINARY_DIR}")
+add_custom_target(
+    Install_${PROJECT_NAME} COMMAND "${CMAKE_COMMAND}" --build . --target install
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+)
 
-#------------------------------------------------------------------------------------------------------------
+# --------------------------------------------------------------------------------------------------
 # use, i.e. don't skip the full RPATH for the build tree
-SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-# when building, don't use the install RPATH already
-# (but later on when installing)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-# add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+set(CMAKE_SKIP_BUILD_RPATH FALSE)
+# when building, don't use the install RPATH already (but later on when installing)
+set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+# add the automatically determined parts of the RPATH which point to directories outside the build
+# tree to the install RPATH
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # the RPATH to be used when installing, but only if it's not a system directory
-LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
-IF("${isSystemDir}" STREQUAL "-1")
+list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/lib" isSystemDir)
+if("${isSystemDir}" STREQUAL "-1")
     if(APPLE)
-        SET(CMAKE_INSTALL_RPATH "@executable_path/../lib")
+        set(CMAKE_INSTALL_RPATH "@executable_path/../lib")
     else()
-        SET(CMAKE_INSTALL_RPATH "\$ORIGIN:\$ORIGIN/../lib")
+        set(CMAKE_INSTALL_RPATH "\$ORIGIN:\$ORIGIN/../lib")
     endif()
-ENDIF("${isSystemDir}" STREQUAL "-1")
+endif("${isSystemDir}" STREQUAL "-1")
 
-#--------------------------- Configuration of the Radium exported targets and definitions ---------------------------
+# -------------- Configuration of the Radium exported targets and definitions ------------0---------
 
 # Load Radium cmake functions
 include(${CMAKE_CURRENT_LIST_DIR}/radium_setup_functions.cmake)
@@ -33,28 +34,28 @@ if(@OPENMP_FOUND@) # Indicates if OpenMP has been used when compiling the Radium
     find_dependency(OpenMP REQUIRED)
 endif()
 # Theses paths reflect the paths founds in RadiumEngine/external/Core/package
-if ("@Eigen3_DIR@" STREQUAL "" )
+if("@Eigen3_DIR@" STREQUAL "")
     set(Eigen3_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../@Eigen3_sub_DIR@")
 else()
-    set(Eigen3_DIR    "@Eigen3_DIR@")
+    set(Eigen3_DIR "@Eigen3_DIR@")
 endif()
-if ("@OpenMesh_DIR@" STREQUAL "")
+if("@OpenMesh_DIR@" STREQUAL "")
     set(OpenMesh_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../@OpenMesh_sub_DIR@")
 else()
-    set(OpenMesh_DIR  "@OpenMesh_DIR@")
+    set(OpenMesh_DIR "@OpenMesh_DIR@")
 endif()
-if ("@cpplocate_DIR@" STREQUAL "")
+if("@cpplocate_DIR@" STREQUAL "")
     set(cpplocate_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../@cpplocate_sub_DIR@")
 else()
     set(cpplocate_DIR "@cpplocate_DIR@")
 endif()
 set(RadiumExternalDlls_location "")
 
-find_dependency(Eigen3    REQUIRED NO_DEFAULT_PATH)
-find_dependency(OpenMesh  REQUIRED NO_DEFAULT_PATH)
+find_dependency(Eigen3 REQUIRED NO_DEFAULT_PATH)
+find_dependency(OpenMesh REQUIRED NO_DEFAULT_PATH)
 find_dependency(cpplocate REQUIRED NO_DEFAULT_PATH)
-if (MSVC OR MSVC_IDE OR MINGW)
-    add_imported_dir( FROM cpplocate::cpplocate TO RadiumExternalDlls_location) 
+if(MSVC OR MSVC_IDE OR MINGW)
+    add_imported_dir(FROM cpplocate::cpplocate TO RadiumExternalDlls_location)
 endif()
 
 set(_supported_components Core)
@@ -62,136 +63,125 @@ set(_supported_components Core)
 include("${CMAKE_CURRENT_LIST_DIR}/CoreTargets.cmake")
 
 macro(checkOptionalTarget TARGET)
-    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${TARGET}Targets.cmake" )
+    if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/${TARGET}Targets.cmake")
         list(APPEND _supported_components ${TARGET})
     endif()
 endmacro()
 
 # Check available library targets
-checkOptionalTarget(Engine)
-checkOptionalTarget(IO)
-checkOptionalTarget(PluginBase)
-checkOptionalTarget(Gui)
+checkoptionaltarget(Engine)
+checkoptionaltarget(IO)
+checkoptionaltarget(PluginBase)
+checkoptionaltarget(Gui)
 
 # Check the user request matches the available library targets
 set(Radium_FOUND True)
 foreach(_comp ${Radium_FIND_COMPONENTS})
-  list(FIND _supported_components ${_comp} ${_comp}_FOUND)
-  if (${${_comp}_FOUND} EQUAL -1)
-    set(Radium_FOUND False)
-    set(Radium_NOT_FOUND_MESSAGE "Unsupported component: ${_comp}")
-  endif()
+    list(FIND _supported_components ${_comp} ${_comp}_FOUND)
+    if(${${_comp}_FOUND} EQUAL -1)
+        set(Radium_FOUND False)
+        set(Radium_NOT_FOUND_MESSAGE "Unsupported component: ${_comp}")
+    endif()
 endforeach()
 
 if(Engine_FOUND)
     # Theses paths reflect the paths founds in RadiumEngine/external/Engine/package
-    if ("@glm_DIR@" STREQUAL "")
+    if("@glm_DIR@" STREQUAL "")
         set(glm_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../@glm_sub_DIR@")
     else()
-        set(glm_DIR       "@glm_DIR@")
+        set(glm_DIR "@glm_DIR@")
     endif()
-    if ("@glbinding_DIR@" STREQUAL "")
+    if("@glbinding_DIR@" STREQUAL "")
         set(glbinding_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../@glbinding_sub_DIR@")
     else()
         set(glbinding_DIR "@glbinding_DIR@")
     endif()
-    if ("@globjects_DIR@" STREQUAL "")
+    if("@globjects_DIR@" STREQUAL "")
         set(globjects_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../@globjects_sub_DIR@")
     else()
         set(globjects_DIR "@globjects_DIR@")
     endif()
-    find_dependency(glm       REQUIRED NO_DEFAULT_PATH)
+    find_dependency(glm REQUIRED NO_DEFAULT_PATH)
     find_dependency(glbinding REQUIRED NO_DEFAULT_PATH)
     find_dependency(globjects REQUIRED NO_DEFAULT_PATH)
-    if (MSVC OR MSVC_IDE OR MINGW)
-        add_imported_dir( FROM glbinding::glbinding TO RadiumExternalDlls_location) 
-        add_imported_dir( FROM globjects::globjects TO RadiumExternalDlls_location)
+    if(MSVC OR MSVC_IDE OR MINGW)
+        add_imported_dir(FROM glbinding::glbinding TO RadiumExternalDlls_location)
+        add_imported_dir(FROM globjects::globjects TO RadiumExternalDlls_location)
     endif()
-    include("${CMAKE_CURRENT_LIST_DIR}/EngineTargets.cmake" )
+    include("${CMAKE_CURRENT_LIST_DIR}/EngineTargets.cmake")
 endif()
 
 if(IO_FOUND)
-    define_property(TARGET
-        PROPERTY RADIUM_IO_USE_ASSIMP
-        BRIEF_DOCS "Radium::IO has assimp support."
+    define_property(
+        TARGET PROPERTY RADIUM_IO_USE_ASSIMP BRIEF_DOCS "Radium::IO has assimp support."
         FULL_DOCS "Identify if Radium::IO was compiled with assimp support."
     )
-    define_property(TARGET
-        PROPERTY RADIUM_IO_USE_TINYPLY
-        BRIEF_DOCS "Radium::IO has tinyply support."
+    define_property(
+        TARGET PROPERTY RADIUM_IO_USE_TINYPLY BRIEF_DOCS "Radium::IO has tinyply support."
         FULL_DOCS "Identify if Radium::IO was compiled with tinyply support."
     )
-    include("${CMAKE_CURRENT_LIST_DIR}/IOTargets.cmake" )
+    include("${CMAKE_CURRENT_LIST_DIR}/IOTargets.cmake")
 
     # Detect if library has been compiled using assimp and tinyply
-    get_target_property( deps Radium::IO INTERFACE_LINK_LIBRARIES)
-    list( FIND deps "assimp::assimp" depAssimpFound)
-    list( FIND deps "tinyply" depTinyPLYFound)
+    get_target_property(deps Radium::IO INTERFACE_LINK_LIBRARIES)
+    list(FIND deps "assimp::assimp" depAssimpFound)
+    list(FIND deps "tinyply" depTinyPLYFound)
 
     # Theses paths reflect the paths founds in RadiumEngine/external/IO/package
-    if( depAssimpFound GREATER_EQUAL "0")
-        if ("@assimp_DIR@" STREQUAL "")
+    if(depAssimpFound GREATER_EQUAL "0")
+        if("@assimp_DIR@" STREQUAL "")
             set(assimp_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../@assimp_sub_DIR@")
         else()
             set(assimp_DIR "@assimp_DIR@")
         endif()
         find_dependency(assimp 5.0 REQUIRED NO_DEFAULT_PATH)
-        # Assimp do not have minsizerel nor relwithdebinfo target, so map it to release (\todo deep check)
-        set_target_properties(assimp::assimp PROPERTIES
-          MAP_IMPORTED_CONFIG_MINSIZEREL Release
-          MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
-        )
-        if (MSVC OR MSVC_IDE OR MINGW)
-            add_imported_dir( FROM assimp::assimp TO RadiumExternalDlls_location)
-        endif()
+        # Assimp do not have minsizerel nor relwithdebinfo target, so map it to release (\todo deep
+        # check)
         set_target_properties(
-            Radium::IO
-            PROPERTIES
-                RADIUM_IO_USE_ASSIMP TRUE
+            assimp::assimp PROPERTIES MAP_IMPORTED_CONFIG_MINSIZEREL Release
+                                      MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
         )
+        if(MSVC OR MSVC_IDE OR MINGW)
+            add_imported_dir(FROM assimp::assimp TO RadiumExternalDlls_location)
+        endif()
+        set_target_properties(Radium::IO PROPERTIES RADIUM_IO_USE_ASSIMP TRUE)
     endif()
-    if( depTinyPLYFound GREATER_EQUAL "0")
-        if ("@tinyply_DIR@" STREQUAL "")
+    if(depTinyPLYFound GREATER_EQUAL "0")
+        if("@tinyply_DIR@" STREQUAL "")
             set(tinyply_DIR "${CMAKE_CURRENT_LIST_DIR}/../../../@tinyply_sub_DIR@")
         else()
             set(tinyply_DIR "@tinyply_DIR@")
         endif()
         find_dependency(tinyply REQUIRED NO_DEFAULT_PATH)
-        if (MSVC OR MSVC_IDE OR MINGW)
-            add_imported_dir( FROM tinyply TO RadiumExternalDlls_location)
+        if(MSVC OR MSVC_IDE OR MINGW)
+            add_imported_dir(FROM tinyply TO RadiumExternalDlls_location)
         endif()
-        set_target_properties(
-            Radium::IO
-            PROPERTIES
-                RADIUM_IO_USE_TINYPLY TRUE
-        )
+        set_target_properties(Radium::IO PROPERTIES RADIUM_IO_USE_TINYPLY TRUE)
     endif()
 
 endif()
 
-
 if(PluginBase_FOUND)
     find_dependency(Qt5 COMPONENTS Core REQUIRED)
-        get_target_property(QtCore_Dll Qt5::Core LOCATION)
-        get_filename_component(QtDlls_location "${QtCore_Dll}" DIRECTORY)
-    include("${CMAKE_CURRENT_LIST_DIR}/PluginBaseTargets.cmake" )
+    get_target_property(QtCore_Dll Qt5::Core LOCATION)
+    get_filename_component(QtDlls_location "${QtCore_Dll}" DIRECTORY)
+    include("${CMAKE_CURRENT_LIST_DIR}/PluginBaseTargets.cmake")
 endif()
 
 if(Gui_FOUND)
     find_dependency(Qt5 COMPONENTS Core Widgets OpenGL Xml REQUIRED)
-        get_target_property(QtCore_Dll Qt5::Core LOCATION)
-        get_filename_component(QtDlls_location "${QtCore_Dll}" DIRECTORY)
-    include("${CMAKE_CURRENT_LIST_DIR}/GuiTargets.cmake" )
+    get_target_property(QtCore_Dll Qt5::Core LOCATION)
+    get_filename_component(QtDlls_location "${QtCore_Dll}" DIRECTORY)
+    include("${CMAKE_CURRENT_LIST_DIR}/GuiTargets.cmake")
 endif()
 
 # Compute paths
 get_filename_component(SELF_DIR "${CMAKE_CURRENT_LIST_FILE}" DIRECTORY)
-# get up in the directories until we found a "Resources/Radium" subdir
-# TODO : instead of 'Resources/Radium' that might not exists if Engine nor Gui are compiled,
-# search for a file identifying Radium (a la Eigen) and that is installed at the root of the
-# Radium Bundle
-while( NOT EXISTS ${SELF_DIR}/Resources/Radium)
-  get_filename_component(SELF_DIR "${SELF_DIR}" DIRECTORY)
+# get up in the directories until we found a "Resources/Radium" subdir TODO : instead of
+# 'Resources/Radium' that might not exists if Engine nor Gui are compiled, search for a file
+# identifying Radium (a la Eigen) and that is installed at the root of the Radium Bundle
+while(NOT EXISTS ${SELF_DIR}/Resources/Radium)
+    get_filename_component(SELF_DIR "${SELF_DIR}" DIRECTORY)
 endwhile()
 
 set(RADIUM_ROOT_DIR "${SELF_DIR}")

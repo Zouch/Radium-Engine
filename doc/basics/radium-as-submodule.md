@@ -6,7 +6,7 @@ Radium is now shiped with a cmake package. To get it:
  - Get latest release,
  - Build from source, and install to the directory of your choice.
 
-Then, to use Radium in your own project, you need to set, at configure time `CMAKE_PREFIX_PATH=/path/to/install/or/release/dir/lib/cmake/Radium` 
+Then, to use Radium in your own project, you need to set, at configure time `CMAKE_PREFIX_PATH=/path/to/install/or/release/dir/lib/cmake/Radium`
 or to define `Radium_DIR=/path/to/install/or/release/dir/lib/cmake/Radium`.
 
 Your `CMakeLists.txt` might then do the following:

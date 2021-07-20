@@ -2,7 +2,7 @@
 [TOC]
 
 # Rendering in Radium
-Rendering in Radium is managed by the abstract Ra::Engine::Rendering::Renderer class that provides the following main rendering method. 
+Rendering in Radium is managed by the abstract Ra::Engine::Rendering::Renderer class that provides the following main rendering method.
 
 ## Main abstract render method
 
@@ -69,26 +69,26 @@ This method will apply post-processing filters on the computed image.
 
 ## Defining a concrete renderer
 
-To define a concrete renderer, the Ra::Engine::Rendering::Renderer class can be inherited to define, at least, the 
-`renderInternal` method. Note that only two methods can be overridden for the renderer, renderInternal (step 4) and 
+To define a concrete renderer, the Ra::Engine::Rendering::Renderer class can be inherited to define, at least, the
+`renderInternal` method. Note that only two methods can be overridden for the renderer, renderInternal (step 4) and
 postProcessInternal (step 5).
 
-A concrete renderer will build its rendering loop, the `renderInternal` method, by decomposing it into passes 
+A concrete renderer will build its rendering loop, the `renderInternal` method, by decomposing it into passes
 configured, for each Ra::engine::RenderObject, using the Ra::Engine::Rendering::RenderTechique class.
 
 A Ra::Engine::Rendering::RenderTechnique consists in a set of named Ra::Engine::Data::ShaderConfiguration that provide the GLSL code used
-by each pass to compute the appearance of a Ra::Engine::Rendering::RenderObject and a set of Ra::Engine::Data::ShaderParameterProvider 
+by each pass to compute the appearance of a Ra::Engine::Rendering::RenderObject and a set of Ra::Engine::Data::ShaderParameterProvider
 that provide shader data to be used for each pass.
 
-When rendering, the renderer will loop over all the configured Ra::Engine::Rendering::RenderObject and, for each rendering pass, 
-will get the OpenGL pipeline configuration and parameters from the Ra::Engine::Rendering::RenderTechnique associated with the 
+When rendering, the renderer will loop over all the configured Ra::Engine::Rendering::RenderObject and, for each rendering pass,
+will get the OpenGL pipeline configuration and parameters from the Ra::Engine::Rendering::RenderTechnique associated with the
 Ra::Engine::Rendering::RenderObject.
 
-The Radium Engine exports a ready to use renderer, Ra::Engine::Rendering::ForwardRenderer, that decomposes the rendering into three 
+The Radium Engine exports a ready to use renderer, Ra::Engine::Rendering::ForwardRenderer, that decomposes the rendering into three
 passes as described in the \ref forwardRenderer document.
 
 ## Minimal renderer howto
-This section explain, through the developement of a simple Rendering, how to configure RenderObjects and RenderTechnique 
+This section explain, through the developement of a simple Rendering, how to configure RenderObjects and RenderTechnique
 to be used by a renderer.
 
 ### Developping the Rendering
@@ -96,12 +96,12 @@ Help wanted for this section.
 
 ### Configuring the RenderObjects and their RenderTechnique
 Help wanted for this section.
- 
+
 
 
 # Radium Engine default rendering information
 
-See [Material management](@ref develmaterials) documentation for a complete description of the 
+See [Material management](@ref develmaterials) documentation for a complete description of the
 interactions geometry, material and shader._
 
 

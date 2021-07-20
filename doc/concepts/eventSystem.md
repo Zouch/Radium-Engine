@@ -1,4 +1,4 @@
-\page eventSystem [deprecated] Event System 
+\page eventSystem [deprecated] Event System
 \todo check and update
 [TOC]
 
@@ -9,7 +9,7 @@
    * UI (ui clicks, keyboard, mouse)
    * Object moved
    * New plugin registered
- * Every plugin should be able to register his own events 
+ * Every plugin should be able to register his own events
 
 ## Events identification
 Events could be identified by a name (string) and a unique ID
@@ -23,5 +23,5 @@ Any plugin could also ask the engine the ID of other plugins events, to subscrib
 When an event occurs, the sender adds it to engine's event queue, with associated data (_any_ ftw !).
 Then at each frame, events could be handled this way :
  * Send all events / data to each system
- * Send events to systems that have subscribed for it 
+ * Send events to systems that have subscribed for it
  * Call system functions bound to an event (given at subscribe time)

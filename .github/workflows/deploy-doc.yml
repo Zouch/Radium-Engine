@@ -25,11 +25,11 @@ jobs:
           cmake ../../src/Radium-Engine/doc -DCMAKE_EXECUTE_PROCESS_COMMAND_ECHO=STDOUT
       - name: Build Doc
         run: |
-          cd build/Radium-Engine 
+          cd build/Radium-Engine
           cmake --build . --target RadiumDoc
       - name: Temp ugly badge fix (remove when doxygen>1.17)
         run: |
-          cd build/Radium-Engine 
+          cd build/Radium-Engine
           sed -i 's/object type="image\/svg+xml" data/img src/g ; s/>codecov<\/object/ alt="codecov" class="inline"\//g' html/index.html
       - name: Deploy Doc
         uses: peaceiris/actions-gh-pages@v3

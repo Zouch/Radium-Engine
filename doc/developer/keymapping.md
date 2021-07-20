@@ -120,7 +120,7 @@ class MyViewer : public Ra::Gui::Viewer, public Ra::Gui::KeyMappingManageable<My
 void  MyViewer::setupKeyMappingCallbacks() {
 	// Setup keymapping for base
     base::setupKeyMappingCallbacks();
-	
+
 	// then extend
     auto keyMappingManager = Gui::KeyMappingManager::getInstance();
     keyMappingManager->addListener( thisKeyMapping::configureKeyMapping );
@@ -136,7 +136,7 @@ void MyViewer::configureKeyMapping_impl() {
     }
 
 #define KMA_VALUE( XX ) XX = keyMappingManager->getActionIndex( thisKeyMapping::m_keyMappingContext, #XX );
-    
+
 	KeyMappingMyViewer
 
 #undef KMA_VALUE

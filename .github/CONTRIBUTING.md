@@ -67,7 +67,7 @@ Bugs are tracked as [GitHub issues](https://guides.github.com/features/issues/).
 Explain the problem and include additional details to help maintainers reproduce the problem:
 
 * **Use a clear and descriptive title** for the issue to identify the problem.
-* **Describe the exact steps which reproduce the problem** in as many details as possible. For example, start by explaining how you compiled Radium, e.g. which command exactly you used in the terminal, if you used the libraries or packages applications. When listing steps, **don't just say what you did, but explain how you did it**. 
+* **Describe the exact steps which reproduce the problem** in as many details as possible. For example, start by explaining how you compiled Radium, e.g. which command exactly you used in the terminal, if you used the libraries or packages applications. When listing steps, **don't just say what you did, but explain how you did it**.
 * **Provide specific examples to demonstrate the steps**. Include links to files or GitHub projects, or copy/pasteable snippets, which you use in those examples. If you're providing snippets in the issue, use [Markdown code blocks](https://help.github.com/articles/markdown-basics/#multiple-lines).
 * **Describe the behavior you observed after following the steps** and point out what exactly is the problem with that behavior.
 * **Explain which behavior you expected to see instead and why.**
@@ -79,7 +79,7 @@ Provide more context by answering these questions:
 
 * **Can you reproduce the problem**
 * **Did the problem start happening recently** (e.g. after updating to a new version of Radium) or was this always a problem?
-* If the problem started happening recently, **can you reproduce the problem in an older version of Radium?** What's the most recent version in which the problem doesn't happen? 
+* If the problem started happening recently, **can you reproduce the problem in an older version of Radium?** What's the most recent version in which the problem doesn't happen?
 * **Can you reliably reproduce the issue?** If not, provide details about how often the problem happens and under which conditions it normally happens.
 * If the problem is related to working with files (e.g. opening and editing files), **does the problem happen for all files and projects or only some?** Is there anything else special about the files you are using? If the files are not too large, add them to your report.
 
@@ -132,7 +132,7 @@ Both issue lists are sorted by total number of comments. While not perfect, numb
 * Follow the [DEFINE CODE GUIDELINES](#).
 * Document new code based on the [Documentation Styleguide](#documentation-styleguide)
 * Avoid platform-dependent code
-* 
+*
 ## Styleguides
 
 ### Git Commit Messages
@@ -147,5 +147,3 @@ Both issue lists are sorted by total number of comments. While not perfect, numb
 ### Documentation Styleguide
 
 * Use [Markdown](https://daringfireball.net/projects/markdown).
-
-

@@ -24,7 +24,7 @@ The following platforms and tool chains have been tested and should work :
  * *Linux* : gcc 10  or higher, clang
 
 ## Continuous Integration:
- * *Linux (gcc10), Windows (MSVC 19.28.29335.0), and Mac OSX (AppleClang 12)* https://github.com/STORM-IRIT/Radium-Engine/actions 
+ * *Linux (gcc10), Windows (MSVC 19.28.29335.0), and Mac OSX (AppleClang 12)* https://github.com/STORM-IRIT/Radium-Engine/actions
 
 # Build instructions
 

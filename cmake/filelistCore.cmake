@@ -5,7 +5,7 @@
 # run form scripts directory
 # ./generateFilelistForModule.sh Core
 # ----------------------------------------------------
-set( core_sources
+set(core_sources
     Animation/BulgeCorrection.cpp
     Animation/Cage.cpp
     Animation/DualQuaternionSkinning.cpp
@@ -52,7 +52,7 @@ set( core_sources
     Utils/StringUtils.cpp
 )
 
-set( core_headers
+set(core_headers
     Animation/BulgeCorrection.hpp
     Animation/Cage.hpp
     Animation/DualQuaternionSkinning.hpp
@@ -151,7 +151,7 @@ set( core_headers
     Utils/Version.hpp
 )
 
-set( core_inlines
+set(core_inlines
     Animation/HandleArray.inl
     Animation/Sequence.inl
     Asset/AnimationData.inl

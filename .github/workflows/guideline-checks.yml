@@ -52,7 +52,7 @@ jobs:
             echo **CHECK FORMAT FAIL**
             echo You can trigger automatic format action on github with the special branch gh-formatter.
             echo This special branch trigger clang-format and add a commit with the modified files.
-            echo 
+            echo
             echo git branch -D gh-formatter
             echo git switch -c gh-formatter
             echo
@@ -60,17 +60,17 @@ jobs:
             echo https://github.com/STORM-IRIT/Radium-Engine/tree/master/.github/workflows.
             echo
             echo **ADAPT REMOTE TO YOUR SETUP**, here origin is supposed to correspond to your repo: ${{ github.event.pull_request.head.repo.full_name }}
-            echo 
+            echo
             echo git push -f --set-upstream origin gh-formatter
-            echo 
+            echo
             echo Wait for git action to finish, it will add a commit to orogin/gh-formatter.
             echo Then take this commit back to your branch and update your PR:
-            echo 
+            echo
             echo git pull
             echo git checkout ${{  github.head_ref }}
             echo git reset --hard gh-formatter
             echo git push
-            echo 
+            echo
 
       - name: Update badge en merge (failure)
         if: ${{ failure() &&  github.event_name == 'push' && github.ref == 'refs/heads/master' }}

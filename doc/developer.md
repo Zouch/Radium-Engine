@@ -7,7 +7,7 @@ There are three main options to work and develop using Radium:
 2. Write an application: give total control over the GUI, the camera settings, etc...
 3. Contribute to Radium libraries: to improve/extend core components of Radium, add tests.
 
-Radium offers several cmake functions to configure and build your extension. 
+Radium offers several cmake functions to configure and build your extension.
 
 - \subpage cmakeutilities
 - \subpage develplugin
@@ -29,7 +29,7 @@ Radium offers several cmake functions to configure and build your extension.
 \page core Core
 - \subpage develmeshes
 - \subpage develanimation
-   
+
 \page engine Engine
 - \subpage develrendering
 - \subpage develmaterials
@@ -42,7 +42,7 @@ Radium offers several cmake functions to configure and build your extension.
 - \subpage develCameraManipulator
 
 \page io [TODO] IO
-\todo write IO doc 
+\todo write IO doc
 
 \page apps How to write your own application
 \todo write application dev doc, merging ExampleApp and Apps docs.
