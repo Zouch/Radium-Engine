@@ -151,19 +151,6 @@ inline void GeometryData::setTextureCoordinates( const Container& texCoordList )
     internal::copyData( texCoordList, m_texCoord );
 }
 
-inline GeometryData::ColorArray& GeometryData::getColors() {
-    return m_color;
-}
-
-inline const GeometryData::ColorArray& GeometryData::getColors() const {
-    return m_color;
-}
-
-template <typename Container>
-inline void GeometryData::setColors( const Container& colorList ) {
-    internal::copyData( colorList, m_color );
-}
-
 inline const MaterialData& GeometryData::getMaterial() const {
     return *( m_material.get() );
 }
@@ -230,10 +217,6 @@ inline bool GeometryData::hasBiTangents() const {
 
 inline bool GeometryData::hasTextureCoordinates() const {
     return !m_texCoord.empty();
-}
-
-inline bool GeometryData::hasColors() const {
-    return !m_color.empty();
 }
 
 inline bool GeometryData::hasMaterial() const {

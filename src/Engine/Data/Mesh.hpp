@@ -506,11 +506,6 @@ CoreMeshType createCoreMeshFromGeometryData( const Ra::Core::Asset::GeometryData
                         data->getTexCoords() );
     }
 
-    if ( data->hasColors() )
-    {
-        mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_COLOR ), data->getColors() );
-    }
-
     // add custom attribs
     // only attributs not handled before are handled by data->getAttribManager()
     // but futur plan will handle also "usual" attibutes this way

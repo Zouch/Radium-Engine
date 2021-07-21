@@ -18,7 +18,6 @@ GeometryData::GeometryData( const std::string& name, const GeometryType& type ) 
     m_tangent(),
     m_bitangent(),
     m_texCoord(),
-    m_color(),
     m_material() {}
 
 GeometryData::~GeometryData() {}
@@ -63,7 +62,6 @@ void GeometryData::displayInfo() const {
     LOG( logINFO ) << " Tangent ?      : " << ( ( m_tangent.empty() ) ? "NO" : "YES" );
     LOG( logINFO ) << " Bitangent ?    : " << ( ( m_bitangent.empty() ) ? "NO" : "YES" );
     LOG( logINFO ) << " Tex.Coord. ?   : " << ( ( m_texCoord.empty() ) ? "NO" : "YES" );
-    LOG( logINFO ) << " Color ?        : " << ( ( m_color.empty() ) ? "NO" : "YES" );
     LOG( logINFO ) << " Material ?     : " << ( ( !hasMaterial() ) ? "NO" : "YES" );
 
     if ( hasMaterial() ) { m_material->displayInfo(); }

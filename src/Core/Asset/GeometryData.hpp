@@ -169,17 +169,6 @@ class RA_CORE_API GeometryData : public AssetData
     template <typename Container>
     inline void setTextureCoordinates( const Container& texCoordList );
 
-    /// Return the list of vertex colors.
-    inline ColorArray& getColors();
-
-    /// Return the list of vertex colors.
-    inline const ColorArray& getColors() const;
-
-    /// Set the vertex colors.
-    /// \note In-place setting with getColors() is preferred.
-    template <typename Container>
-    inline void setColors( const Container& colorList );
-
     /// Return the MaterialData associated to the objet.
     inline const MaterialData& getMaterial() const;
 
@@ -236,9 +225,6 @@ class RA_CORE_API GeometryData : public AssetData
     /// Return true if the object has vertex texture coordinates.
     inline bool hasTextureCoordinates() const;
 
-    /// Return true if the object has vertex colors.
-    inline bool hasColors() const;
-
     /// Return true if the object has MaterialData.
     inline bool hasMaterial() const;
     /// \}
@@ -282,9 +268,6 @@ class RA_CORE_API GeometryData : public AssetData
 
     /// The list of vertex texture coordinates.
     [[deprecated]] Vector3Array m_texCoord;
-
-    /// The list of vertex colors.
-    [[deprecated]] ColorArray m_color;
 
     /// The MaterialData for the object.
     std::shared_ptr<MaterialData> m_material;

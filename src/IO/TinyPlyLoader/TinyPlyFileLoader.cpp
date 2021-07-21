@@ -1,6 +1,7 @@
 #include <IO/TinyPlyLoader/TinyPlyFileLoader.hpp>
 
 #include <Core/Asset/FileData.hpp>
+#include <Core/Containers/VectorArray.hpp>
 #include <Core/Utils/Attribs.hpp>
 
 #include <tinyply.h>
@@ -246,11 +247,14 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
     copyBufferToContainer( vertBuffer, geometry->getVertices() );
     copyBufferToContainer( normalBuffer, geometry->getNormals() );
 
+    auto& attribManager = geometry->getAttribManager();
+
     size_t colorCount = colorBuffer ? colorBuffer->count : 0;
     if ( colorCount != 0 )
     {
-        auto& container = geometry->getColors();
-        container.reserve( colorCount );
+        auto handle     = attribManager.addAttrib<Core::Vector4>( "in_color" );
+        auto& attrib    = attribManager.getAttrib( handle );
+        auto& container = attrib.getDataWithLock();
 
         if ( alphaBuffer && alphaBuffer->count == colorCount )
         {
@@ -275,10 +279,10 @@ FileData* TinyPlyFileLoader::loadFile( const std::string& filename ) {
                                         1_ra );
             }
         }
+        attrib.unlock();
     }
 
     //// Save other attributes
-    auto& attribManager = geometry->getAttribManager();
     for ( const auto& a : allAttributes )
     {
         // For now manage scalar properties only

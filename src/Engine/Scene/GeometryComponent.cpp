@@ -108,11 +108,6 @@ void PointCloudComponent::generatePointCloud( const Ra::Core::Asset::GeometryDat
                         data->getTexCoords() );
     }
 
-    if ( data->hasColors() )
-    {
-        mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_COLOR ), data->getColors() );
-    }
-
     // add custom attribs
     mesh.vertexAttribs().copyAllAttributes( data->getAttribManager() );
 
