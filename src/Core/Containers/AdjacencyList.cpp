@@ -38,22 +38,19 @@ void AdjacencyList::pruneLeaves( std::vector<uint>& pruned, std::vector<bool>& d
     delete_flag.clear();
     delete_flag.resize( this->size(), false );
     std::vector<bool> prune_flag = delete_flag;
-    for ( uint i = 0; i < this->size(); ++i )
-    {
-        if ( this->isLeaf( i ) && !this->isRoot( i ) )
-        {
+    for ( uint i = 0; i < this->size(); ++i ) {
+        if ( this->isLeaf( i ) && !this->isRoot( i ) ) {
             delete_flag[i] = true;
             prune_flag[i]  = true;
         }
-        else
-        { pruned.push_back( i ); }
+        else {
+            pruned.push_back( i );
+        }
     }
 
-    for ( uint j = this->size(); j > 0; --j )
-    {
+    for ( uint j = this->size(); j > 0; --j ) {
         const uint i = j - 1;
-        if ( prune_flag[i] )
-        {
+        if ( prune_flag[i] ) {
             this->m_parent.erase( this->m_parent.begin() + i );
             this->m_child.erase( this->m_child.begin() + i );
             prune_flag.erase( prune_flag.begin() + i );
@@ -61,19 +58,17 @@ void AdjacencyList::pruneLeaves( std::vector<uint>& pruned, std::vector<bool>& d
         }
     }
 
-    for ( uint i = 0; i < this->size(); ++i )
-    {
+    for ( uint i = 0; i < this->size(); ++i ) {
         this->m_parent[i] =
             ( ( this->m_parent[i] == -1 ) || ( delete_flag[i] ) ) ? -1 : pruned[this->m_parent[i]];
-        for ( auto it = this->m_child[i].begin(); it != this->m_child[i].end(); ++it )
-        {
-            if ( delete_flag[( *it )] )
-            {
+        for ( auto it = this->m_child[i].begin(); it != this->m_child[i].end(); ++it ) {
+            if ( delete_flag[( *it )] ) {
                 this->m_child[i].erase( it );
                 --it;
             }
-            else
-            { *it = pruned[*it]; }
+            else {
+                *it = pruned[*it];
+            }
         }
     }
 }
@@ -88,19 +83,15 @@ VectorArray<Eigen::Matrix<uint, 2, 1>> AdjacencyList::extractEdgeList( bool incl
     using Edge = Eigen::Matrix<uint, 2, 1>;
     VectorArray<Edge> edgeList;
 
-    for ( uint i = 0; i < m_child.size(); ++i )
-    {
-        if ( include_leaf && isLeaf( i ) )
-        {
+    for ( uint i = 0; i < m_child.size(); ++i ) {
+        if ( include_leaf && isLeaf( i ) ) {
             Edge e;
             e( 0 ) = i;
             e( 1 ) = i;
             edgeList.push_back( e );
         }
-        else
-        {
-            for ( const auto& edge : m_child[i] )
-            {
+        else {
+            for ( const auto& edge : m_child[i] ) {
                 Edge e;
                 e( 0 ) = i;
                 e( 1 ) = edge;
@@ -113,39 +104,38 @@ VectorArray<Eigen::Matrix<uint, 2, 1>> AdjacencyList::extractEdgeList( bool incl
 
 AdjacencyList::ConsistencyStatus AdjacencyList::computeConsistencyStatus() const {
     // Note: we abort at the first error found to keep the error backtrace
-    if ( m_parent.size() != m_child.size() )
-    { return ConsistencyStatus::IncompatibleChildrenAndParentList; }
+    if ( m_parent.size() != m_child.size() ) {
+        return ConsistencyStatus::IncompatibleChildrenAndParentList;
+    }
 
-    for ( uint node = 0; node < size(); ++node )
-    {
+    for ( uint node = 0; node < size(); ++node ) {
         if ( m_parent.at( node ) >= int( node ) ) { return ConsistencyStatus::WrongParentOrdering; }
         if ( m_parent.at( node ) < -1 ) { return ConsistencyStatus::WrongParentIndex; }
 
-        for ( const auto& child : m_child.at( node ) )
-        {
-            if ( m_parent.at( child ) != int( node ) )
-            { return ConsistencyStatus::InconsistentParentIndex; }
+        for ( const auto& child : m_child.at( node ) ) {
+            if ( m_parent.at( child ) != int( node ) ) {
+                return ConsistencyStatus::InconsistentParentIndex;
+            }
         }
 
-        if ( isLeaf( node ) != ( m_child.at( node ).size() == 0 ) )
-        { return ConsistencyStatus::NonLeafNodeWithoutChild; }
+        if ( isLeaf( node ) != ( m_child.at( node ).size() == 0 ) ) {
+            return ConsistencyStatus::NonLeafNodeWithoutChild;
+        }
     }
     return ConsistencyStatus::Valid;
 }
 
 std::ofstream& operator<<( std::ofstream& ofs, const AdjacencyList& adj ) {
-    const std::string header {"ADJACENCYLIST\n"};
-    const std::string comment {"#ID PARENT nCHILDREN CHILDREN\n"};
+    const std::string header { "ADJACENCYLIST\n" };
+    const std::string comment { "#ID PARENT nCHILDREN CHILDREN\n" };
     const uint size = adj.size();
 
     ofs << header + comment + std::to_string( size ) + "\n";
-    for ( uint i = 0; i < size; ++i )
-    {
+    for ( uint i = 0; i < size; ++i ) {
         uint c;
         ofs << std::to_string( i ) + " " + std::to_string( adj.parents()[i] ) + " " +
                    std::to_string( c = adj.children()[i].size() );
-        for ( uint j = 0; j < c; ++j )
-        {
+        for ( uint j = 0; j < c; ++j ) {
             ofs << " " + std::to_string( adj.children()[i][j] );
         }
         ofs << "\n";

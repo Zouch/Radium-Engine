@@ -34,9 +34,9 @@ namespace Ra {
 namespace Engine {
 namespace Scene {
 
-std::shared_ptr<Data::Mesh> SkeletonComponent::s_boneMesh {nullptr};
-std::shared_ptr<Data::BlinnPhongMaterial> SkeletonComponent::s_boneMaterial {nullptr};
-std::shared_ptr<Rendering::RenderTechnique> SkeletonComponent::s_boneRenderTechnique {nullptr};
+std::shared_ptr<Data::Mesh> SkeletonComponent::s_boneMesh { nullptr };
+std::shared_ptr<Data::BlinnPhongMaterial> SkeletonComponent::s_boneMaterial { nullptr };
+std::shared_ptr<Rendering::RenderTechnique> SkeletonComponent::s_boneRenderTechnique { nullptr };
 
 SkeletonComponent::SkeletonComponent( const std::string& name, Entity* entity ) :
     Component( name, entity ) {}
@@ -87,28 +87,26 @@ void SkeletonComponent::handleAnimationLoading(
     m_animations.reserve( data.size() );
 
     auto pose = m_skel.getPose( SpaceType::LOCAL );
-    for ( uint n = 0; n < data.size(); ++n )
-    {
+    for ( uint n = 0; n < data.size(); ++n ) {
         m_animations.emplace_back();
         m_animations.back().reserve( m_skel.size() );
         auto handleAnim = data[n]->getHandleData();
-        for ( uint i = 0; i < m_skel.size(); ++i )
-        {
+        for ( uint i = 0; i < m_skel.size(); ++i ) {
             auto it =
                 std::find_if( handleAnim.cbegin(), handleAnim.cend(), [this, i]( const auto& ha ) {
                     return m_skel.getLabel( i ) == ha.m_name;
                 } );
-            if ( it == handleAnim.cend() )
-            { m_animations.back().push_back( KeyFramedValue( 0_ra, pose[i] ) ); }
-            else
-            { m_animations.back().push_back( it->m_anim ); }
+            if ( it == handleAnim.cend() ) {
+                m_animations.back().push_back( KeyFramedValue( 0_ra, pose[i] ) );
+            }
+            else {
+                m_animations.back().push_back( it->m_anim );
+            }
         }
     }
-    if ( m_animations.size() == 0 )
-    {
+    if ( m_animations.size() == 0 ) {
         m_animations.emplace_back();
-        for ( uint i = 0; i < m_skel.size(); ++i )
-        {
+        for ( uint i = 0; i < m_skel.size(); ++i ) {
             m_animations[0].push_back( KeyFramedValue( 0_ra, pose[i] ) );
         }
     }
@@ -126,8 +124,7 @@ void SkeletonComponent::setSkeleton( const Skeleton& skel ) {
 
 SkeletonComponent::Animation& SkeletonComponent::addNewAnimation() {
     m_animations.emplace_back();
-    for ( uint i = 0; i < m_skel.size(); ++i )
-    {
+    for ( uint i = 0; i < m_skel.size(); ++i ) {
         m_animations.back().push_back( KeyFramedValue( 0_ra, m_refPose[i] ) );
     }
     return m_animations.back();
@@ -151,8 +148,7 @@ size_t SkeletonComponent::getAnimationId() const {
 
 void SkeletonComponent::update( Scalar t ) {
     m_wasReset = Core::Math::areApproxEqual( t, 0_ra );
-    if ( m_wasReset )
-    {
+    if ( m_wasReset ) {
         m_animationTime = t;
         m_skel.setPose( m_refPose, SpaceType::LOCAL );
 
@@ -162,39 +158,35 @@ void SkeletonComponent::update( Scalar t ) {
 
     m_animationTime = m_speed * t;
     Scalar lastTime = 0;
-    for ( auto boneAnim : m_animations[m_animationID] )
-    {
+    for ( auto boneAnim : m_animations[m_animationID] ) {
         lastTime = std::max( lastTime, *boneAnim.getTimes().rbegin() );
     }
-    if ( m_autoRepeat )
-    {
+    if ( m_autoRepeat ) {
         if ( !m_pingPong ) { m_animationTime = std::fmod( m_animationTime, lastTime ); }
-        else
-        {
+        else {
             m_animationTime = std::fmod( m_animationTime, 2 * lastTime );
             if ( m_animationTime > lastTime ) { m_animationTime = 2 * lastTime - m_animationTime; }
         }
     }
-    else if ( m_pingPong )
-    {
+    else if ( m_pingPong ) {
         if ( m_animationTime > 2 * lastTime ) { m_animationTime = 0_ra; }
-        else if ( m_animationTime > lastTime )
-        { m_animationTime = 2 * lastTime - m_animationTime; }
+        else if ( m_animationTime > lastTime ) {
+            m_animationTime = 2 * lastTime - m_animationTime;
+        }
     }
 
     // get the current pose from the animation
     Core::Animation::Pose pose = m_skel.getPose( SpaceType::LOCAL );
-    if ( !m_animations.empty() )
-    {
+    if ( !m_animations.empty() ) {
 #pragma omp parallel for
-        for ( int i = 0; i < int( m_animations[m_animationID].size() ); ++i )
-        {
+        for ( int i = 0; i < int( m_animations[m_animationID].size() ); ++i ) {
             pose[uint( i )] = m_animations[m_animationID][uint( i )].at(
                 m_animationTime, Core::Animation::linearInterpolate<Core::Transform> );
         }
     }
-    else
-    { pose = m_refPose; }
+    else {
+        pose = m_refPose;
+    }
     m_skel.setPose( pose, SpaceType::LOCAL );
 
     updateDisplay();
@@ -205,16 +197,15 @@ Scalar SkeletonComponent::getAnimationTime() const {
 }
 
 std::pair<Scalar, Scalar> SkeletonComponent::getAnimationTimeInterval() const {
-    if ( m_animations.empty() ) { return {0_ra, 0_ra}; }
+    if ( m_animations.empty() ) { return { 0_ra, 0_ra }; }
     Scalar startTime = std::numeric_limits<Scalar>::max();
     Scalar endTime   = 0;
-    for ( auto boneAnim : m_animations[m_animationID] )
-    {
+    for ( auto boneAnim : m_animations[m_animationID] ) {
         const auto& times = boneAnim.getTimes();
         startTime         = std::min( startTime, *times.begin() );
         endTime           = std::max( endTime, *times.rbegin() );
     }
-    return {startTime, endTime};
+    return { startTime, endTime };
 }
 
 void SkeletonComponent::setSpeed( const Scalar value ) {
@@ -244,8 +235,7 @@ bool SkeletonComponent::isPingPong() const {
 // Skeleton display
 
 void SkeletonComponent::setXray( bool on ) const {
-    for ( const auto& b : m_boneDrawables )
-    {
+    for ( const auto& b : m_boneDrawables ) {
         b->setXRay( on );
     }
 }
@@ -256,8 +246,7 @@ bool SkeletonComponent::isXray() const {
 }
 
 void SkeletonComponent::toggleSkeleton( const bool status ) {
-    for ( const auto& b : m_boneDrawables )
-    {
+    for ( const auto& b : m_boneDrawables ) {
         b->setVisible( status );
     }
 }
@@ -272,36 +261,35 @@ Core::Geometry::TriangleMesh makeBoneShape() {
     Core::Geometry::TriangleMesh mesh;
     const Scalar l = 0.1_ra;
     const Scalar w = 0.1_ra;
-    mesh.setVertices( {Core::Vector3( 0, 0, 0 ),
+    mesh.setVertices( { Core::Vector3( 0, 0, 0 ),
+                        Core::Vector3( 0, 0, 1 ),
+                        Core::Vector3( 0, w, l ),
+                        Core::Vector3( w, 0, l ),
+                        Core::Vector3( 0, -w, l ),
+                        Core::Vector3( -w, 0, l ) } );
+
+    mesh.setNormals( { Core::Vector3( 0, 0, -1 ),
                        Core::Vector3( 0, 0, 1 ),
-                       Core::Vector3( 0, w, l ),
-                       Core::Vector3( w, 0, l ),
-                       Core::Vector3( 0, -w, l ),
-                       Core::Vector3( -w, 0, l )} );
+                       Core::Vector3( 0, 1, 0 ),
+                       Core::Vector3( 1, 0, 0 ),
+                       Core::Vector3( 0, -1, 0 ),
+                       Core::Vector3( -1, 0, 0 ) } );
 
-    mesh.setNormals( {Core::Vector3( 0, 0, -1 ),
-                      Core::Vector3( 0, 0, 1 ),
-                      Core::Vector3( 0, 1, 0 ),
-                      Core::Vector3( 1, 0, 0 ),
-                      Core::Vector3( 0, -1, 0 ),
-                      Core::Vector3( -1, 0, 0 )} );
-
-    mesh.setIndices( {Core::Vector3ui( 0, 2, 3 ),
-                      Core::Vector3ui( 0, 5, 2 ),
-                      Core::Vector3ui( 0, 3, 4 ),
-                      Core::Vector3ui( 0, 4, 5 ),
-                      Core::Vector3ui( 1, 3, 2 ),
-                      Core::Vector3ui( 1, 2, 5 ),
-                      Core::Vector3ui( 1, 4, 3 ),
-                      Core::Vector3ui( 1, 5, 4 )} );
+    mesh.setIndices( { Core::Vector3ui( 0, 2, 3 ),
+                       Core::Vector3ui( 0, 5, 2 ),
+                       Core::Vector3ui( 0, 3, 4 ),
+                       Core::Vector3ui( 0, 4, 5 ),
+                       Core::Vector3ui( 1, 3, 2 ),
+                       Core::Vector3ui( 1, 2, 5 ),
+                       Core::Vector3ui( 1, 4, 3 ),
+                       Core::Vector3ui( 1, 5, 4 ) } );
     return mesh;
 }
 
 void SkeletonComponent::setupSkeletonDisplay() {
     m_renderObjects.clear();
     m_boneDrawables.clear();
-    if ( !s_boneMesh )
-    {
+    if ( !s_boneMesh ) {
         s_boneMesh = std::make_shared<Data::Mesh>( "Bone Mesh" );
         s_boneMesh->loadGeometry( makeBoneShape() );
         s_boneMaterial.reset( new Data::BlinnPhongMaterial( "Bone Material" ) );
@@ -312,11 +300,9 @@ void SkeletonComponent::setupSkeletonDisplay() {
             *Data::ShaderConfigurationFactory::getConfiguration( "BlinnPhong" ) );
         s_boneRenderTechnique->setParametersProvider( s_boneMaterial );
     }
-    for ( uint i = 0; i < m_skel.size(); ++i )
-    {
+    for ( uint i = 0; i < m_skel.size(); ++i ) {
         if ( !m_skel.m_graph.isLeaf( i ) && !m_skel.m_graph.isRoot( i ) &&
-             m_skel.getLabel( i ).find( "_$AssimpFbx$_" ) == std::string::npos )
-        {
+             m_skel.getLabel( i ).find( "_$AssimpFbx$_" ) == std::string::npos ) {
             std::string name = m_skel.getLabel( i ) + "_" + std::to_string( i );
             auto ro          = new Engine::Rendering::RenderObject(
                 name, this, Rendering::RenderObjectType::Geometry );
@@ -328,8 +314,9 @@ void SkeletonComponent::setupSkeletonDisplay() {
             m_boneMap[m_renderObjects.back()] = i;
             m_boneDrawables.push_back( ro );
         }
-        else
-        { LOG( logDEBUG ) << "Bone " << m_skel.getLabel( i ) << " not displayed."; }
+        else {
+            LOG( logDEBUG ) << "Bone " << m_skel.getLabel( i ) << " not displayed.";
+        }
     }
     updateDisplay();
 }
@@ -340,15 +327,13 @@ void SkeletonComponent::printSkeleton( const Skeleton& skeleton ) {
 
     queue.push_back( 0 );
     levels.push_back( 0 );
-    while ( !queue.empty() )
-    {
+    while ( !queue.empty() ) {
         uint i = queue.front();
         queue.pop_front();
         int level = levels.front();
         levels.pop_front();
         std::cout << i << " " << skeleton.getLabel( i ) << "\t";
-        for ( const auto& c : skeleton.m_graph.children()[i] )
-        {
+        for ( const auto& c : skeleton.m_graph.children()[i] ) {
             queue.push_back( c );
             levels.push_back( level + 1 );
         }
@@ -358,8 +343,7 @@ void SkeletonComponent::printSkeleton( const Skeleton& skeleton ) {
 }
 
 void SkeletonComponent::updateDisplay() {
-    for ( auto& bone : m_boneDrawables )
-    {
+    for ( auto& bone : m_boneDrawables ) {
         uint boneIdx = m_boneMap.at( bone->getIndex() );
         Core::Vector3 start;
         Core::Vector3 end;

@@ -85,7 +85,7 @@ template <typename Scalar>
 Eigen::ParametrizedLine<Scalar, 3>
 transformRay( const Eigen::Transform<Scalar, 3, Eigen::Affine>& t,
               const Eigen::ParametrizedLine<Scalar, 3>& r ) {
-    return {t * r.origin(), t.linear() * r.direction()};
+    return { t * r.origin(), t.linear() * r.direction() };
 }
 
 //
@@ -134,13 +134,11 @@ Vector_ slerp( const Vector_& v1, const Vector_& v2, Scalar t ) {
 // http://www0.cs.ucl.ac.uk/research/equator/papers/Documents2002/Paolo%20Baerlocher_Thesis_2001.pdf
 inline void getSwingTwist( const Quaternion& in, Quaternion& swingOut, Quaternion& twistOut ) {
     // singular case.
-    if ( UNLIKELY( in.z() == 0 && in.w() == 0 ) )
-    {
+    if ( UNLIKELY( in.z() == 0 && in.w() == 0 ) ) {
         twistOut = in;
         swingOut.setIdentity();
     }
-    else
-    {
+    else {
         const Scalar gamma = std::atan2( in.z(), in.w() );
         // beta = atan2 ( sqrt ( in.x^2 + in.y^2), sqrt ( in.z^2 + in.w^2))
         const Scalar beta =
@@ -216,8 +214,7 @@ bool checkInvalidNumbers( Eigen::Ref<const Matrix_> matrix, const bool FAIL_ON_A
     matrix
         .unaryExpr( [&ok, FAIL_ON_ASSERT]( Scalar x ) {
             ok |= !std::isnormal( x );
-            if ( !ok )
-            {
+            if ( !ok ) {
                 if ( FAIL_ON_ASSERT ) { CORE_ASSERT( false, "At least an element is nan" ); }
             }
             return 1;

@@ -49,7 +49,7 @@ TEST_CASE( "Core/Geometry/IndexedGeometry", "[Core][Core/Geometry][IndexedGeomet
         //! [Creating and adding pointcloud layer]
         REQUIRE( layerAdded );
 
-        keys.insert( {pilSemantics, ""} );
+        keys.insert( { pilSemantics, "" } );
     }
 
     REQUIRE( geo.containsLayer( tilSemantics ) );
@@ -71,7 +71,7 @@ TEST_CASE( "Core/Geometry/IndexedGeometry", "[Core][Core/Geometry][IndexedGeomet
     REQUIRE( geo.countLayers( cilSemantics ) == 0 );
 
     REQUIRE( geo.addLayer( std::move( cil ) ) );
-    keys.insert( {cilSemantics, ""} );
+    keys.insert( { cilSemantics, "" } );
 
     REQUIRE( geo.containsLayer( cilSemantics ) );
     REQUIRE( geo.containsLayer( TriangleIndexLayer::staticSemanticName ) );
@@ -88,8 +88,7 @@ TEST_CASE( "Core/Geometry/IndexedGeometry", "[Core][Core/Geometry][IndexedGeomet
     // Check layer keys iterator: we should traverse all keys
     REQUIRE( keys.size() != 0 );
     //! [Iterating over layer keys]
-    for ( const auto& k : geo.layerKeys() )
-    {
+    for ( const auto& k : geo.layerKeys() ) {
         REQUIRE( keys.erase( k ) == 1 );
         REQUIRE( geo.countLayers( k ) == 1 );
     }
@@ -173,31 +172,31 @@ TEST_CASE( "Core/Geometry/IndexedGeometry/Attributes", "[Core][Core/Geometry][In
     TriangleMesh::NormalAttribHandle::Container normals;
     TriangleMesh::IndexContainerType indices;
 
-    vertices.push_back( {0, 0, 0} );
-    vertices.push_back( {1, 0, 0} );
-    vertices.push_back( {0, 2, 0} );
-    normals.push_back( {0, 0, 1} );
-    normals.push_back( {0, 0, 1} );
-    normals.push_back( {0, 0, 1} );
+    vertices.push_back( { 0, 0, 0 } );
+    vertices.push_back( { 1, 0, 0 } );
+    vertices.push_back( { 0, 2, 0 } );
+    normals.push_back( { 0, 0, 1 } );
+    normals.push_back( { 0, 0, 1 } );
+    normals.push_back( { 0, 0, 1 } );
 
     m.setVertices( std::move( vertices ) );
     m.setNormals( std::move( normals ) );
 
-    m.setIndices( {{0, 1, 2}} );
+    m.setIndices( { { 0, 1, 2 } } );
 
     auto handle1  = m.addAttrib<Vector3>( "vector3_attrib" );
     auto& attrib1 = m.getAttrib( handle1 );
     auto& buf     = attrib1.getDataWithLock();
 
     buf.reserve( 3 );
-    buf.push_back( {1, 1, 1} );
-    buf.push_back( {2, 2, 2} );
-    buf.push_back( {3, 3, 3} );
+    buf.push_back( { 1, 1, 1 } );
+    buf.push_back( { 2, 2, 2 } );
+    buf.push_back( { 3, 3, 3 } );
     attrib1.unlock();
 
     auto handle2  = m.addAttrib<float>( "float_attrib" );
     auto& attrib2 = m.getAttrib( handle2 );
-    attrib2.setData( {1.f, 2.f, 3.f} );
+    attrib2.setData( { 1.f, 2.f, 3.f } );
 
     TriangleMesh m2;
     m2.copyBaseGeometry( m );
@@ -232,15 +231,13 @@ TEST_CASE( "Core/Geometry/IndexedGeometry/Attributes", "[Core][Core/Geometry][In
         [&cpt, &attribM2_1, &attribM2_2, &attrMgr]( Ra::Core::Utils::AttribBase* b ) {
             cpt++;
             // 3 since we want to skip position and normals
-            if ( cpt == 3 )
-            {
+            if ( cpt == 3 ) {
                 auto& t        = b->cast<Vector3>();
                 const void* p1 = t.dataPtr();
                 const void* p2 = attribM2_1.dataPtr();
                 REQUIRE( p1 == p2 );
             }
-            if ( cpt == 4 )
-            {
+            if ( cpt == 4 ) {
                 // const to check const cast;
                 const Ra::Core::Utils::AttribBase* cb   = b;
                 const Ra::Core::Utils::Attrib<float>& t = cb->cast<float>();
@@ -248,7 +245,7 @@ TEST_CASE( "Core/Geometry/IndexedGeometry/Attributes", "[Core][Core/Geometry][In
             }
         } );
     REQUIRE( cpt == attrMgr.getNumAttribs() );
-    const Ra::Core::Utils::AttribHandle<float>::Container newData {0.f, 1.f, 2.f};
+    const Ra::Core::Utils::AttribHandle<float>::Container newData { 0.f, 1.f, 2.f };
     attrMgr.setAttrib( handle2, newData );
     REQUIRE( m2.getAttrib( handle2 ).data() == newData );
 }
@@ -266,31 +263,31 @@ TEST_CASE( "Core/Geometry/IndexedGeometry/CopyAllAttributes",
     TriangleMesh::NormalAttribHandle::Container normals;
     TriangleMesh::IndexContainerType indices;
 
-    vertices.push_back( {0, 0, 0} );
-    vertices.push_back( {1, 0, 0} );
-    vertices.push_back( {0, 2, 0} );
-    normals.push_back( {0, 0, 1} );
-    normals.push_back( {0, 0, 1} );
-    normals.push_back( {0, 0, 1} );
+    vertices.push_back( { 0, 0, 0 } );
+    vertices.push_back( { 1, 0, 0 } );
+    vertices.push_back( { 0, 2, 0 } );
+    normals.push_back( { 0, 0, 1 } );
+    normals.push_back( { 0, 0, 1 } );
+    normals.push_back( { 0, 0, 1 } );
 
     m.setVertices( std::move( vertices ) );
     m.setNormals( std::move( normals ) );
 
-    m.setIndices( {{0, 1, 2}} );
+    m.setIndices( { { 0, 1, 2 } } );
 
     auto handle1  = m.addAttrib<Vector2>( "vector2_attrib" );
     auto& attrib1 = m.getAttrib( handle1 );
     auto& buf1    = attrib1.getDataWithLock();
 
     buf1.reserve( 3 );
-    buf1.push_back( {1, 1} );
-    buf1.push_back( {2, 2} );
-    buf1.push_back( {3, 3} );
+    buf1.push_back( { 1, 1 } );
+    buf1.push_back( { 2, 2 } );
+    buf1.push_back( { 3, 3 } );
     attrib1.unlock();
 
     auto handle2  = m.addAttrib<Scalar>( "float_attrib" );
     auto& attrib2 = m.getAttrib( handle2 );
-    attrib2.setData( {1.f, 2.f, 3.f} );
+    attrib2.setData( { 1.f, 2.f, 3.f } );
 
     using Vector5 = Eigen::Matrix<Scalar, 5, 1>;
     auto handle3  = m.addAttrib<Vector5>( "vector5_attrib" );
@@ -298,8 +295,7 @@ TEST_CASE( "Core/Geometry/IndexedGeometry/CopyAllAttributes",
     auto& buf3    = attrib3.getDataWithLock();
 
     buf3.reserve( 3 );
-    for ( int val = 1; val <= 3; ++val )
-    {
+    for ( int val = 1; val <= 3; ++val ) {
         Vector5 v;
         v << val, val, val, val, val;
         buf3.push_back( v );

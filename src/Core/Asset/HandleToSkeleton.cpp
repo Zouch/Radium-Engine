@@ -21,16 +21,15 @@ void addBone( const uint parent,                       // index of parent bone
               std::vector<bool>& processed,        // which ids have been processed
               Core::Animation::Skeleton& skelOut ) // correspondance between bone name and bone idx
 {
-    if ( !processed[dataID] )
-    {
+    if ( !processed[dataID] ) {
         processed[dataID] = true;
         const auto& dd    = data.getComponentData()[dataID];
         uint index        = skelOut.addBone(
             parent, dd.m_frame, Ra::Core::Animation::HandleArray::SpaceType::MODEL, dd.m_name );
-        for ( const auto& edge : edgeList )
-        {
-            if ( edge[0] == dataID )
-            { addBone( index, edge[1], data, edgeList, processed, skelOut ); }
+        for ( const auto& edge : edgeList ) {
+            if ( edge[0] == dataID ) {
+                addBone( index, edge[1], data, edgeList, processed, skelOut );
+            }
         }
     }
 }
@@ -41,15 +40,14 @@ void addRoot( const uint dataID,                                               /
               std::vector<bool>& processed,        // which ids have been processed
               Core::Animation::Skeleton& skelOut ) // correspondance between bone name and bone idx
 {
-    if ( !processed[dataID] )
-    {
+    if ( !processed[dataID] ) {
         processed[dataID] = true;
         const auto& dd    = data.getComponentData()[dataID];
         uint index        = skelOut.addRoot( dd.m_frame, dd.m_name );
-        for ( const auto& edge : edgeList )
-        {
-            if ( edge[0] == dataID )
-            { addBone( index, edge[1], data, edgeList, processed, skelOut ); }
+        for ( const auto& edge : edgeList ) {
+            if ( edge[0] == dataID ) {
+                addBone( index, edge[1], data, edgeList, processed, skelOut );
+            }
         }
     }
 }
@@ -60,37 +58,30 @@ void createSkeleton( const Ra::Core::Asset::HandleData& data, Core::Animation::S
     auto component  = data.getComponentData();
 
     std::set<uint> root;
-    for ( uint i = 0; i < size; ++i )
-    {
+    for ( uint i = 0; i < size; ++i ) {
         root.insert( i );
     }
     std::set<uint> leaves = root;
 
     auto edgeList = data.getEdgeData();
-    for ( const auto& edge : edgeList )
-    {
+    for ( const auto& edge : edgeList ) {
         root.erase( edge[1] );
         leaves.erase( edge[0] );
     }
 
     std::vector<bool> processed( size, false );
-    for ( const auto& r : root )
-    {
+    for ( const auto& r : root ) {
         addRoot( r, data, edgeList, processed, skelOut );
     }
 
-    if ( data.needsEndNodes() )
-    {
+    if ( data.needsEndNodes() ) {
         std::map<std::string, uint> boneNameMap;
-        for ( uint i = 0; i < skelOut.size(); ++i )
-        {
+        for ( uint i = 0; i < skelOut.size(); ++i ) {
             boneNameMap[skelOut.getLabel( i )] = i;
         }
-        for ( const auto& l : leaves )
-        {
+        for ( const auto& l : leaves ) {
             const auto& dd = component[l];
-            if ( dd.m_weights.size() )
-            {
+            if ( dd.m_weights.size() ) {
                 LOG( logDEBUG ) << "Adding end-bone at " << dd.m_name << ".";
                 skelOut.addBone( boneNameMap[dd.m_name],
                                  data.getFrame().inverse() * dd.m_frame,

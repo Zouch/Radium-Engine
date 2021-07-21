@@ -12,7 +12,7 @@
 namespace Ra {
 namespace Engine {
 namespace Data {
-static const std::string materialName {"BlinnPhong"};
+static const std::string materialName { "BlinnPhong" };
 
 BlinnPhongMaterial::BlinnPhongMaterial( const std::string& instanceName ) :
     Material( instanceName, materialName, Material::MaterialAspect::MAT_OPAQUE ) {}
@@ -30,45 +30,45 @@ void BlinnPhongMaterial::updateRenderingParameters() {
     m_renderParameters.addParameter( "material.ns", m_ns );
     m_renderParameters.addParameter( "material.alpha", std::min( m_alpha, m_kd[3] ) );
     Texture* tex = getTexture( BlinnPhongMaterial::TextureSemantic::TEX_DIFFUSE );
-    if ( tex != nullptr )
-    {
+    if ( tex != nullptr ) {
         m_renderParameters.addParameter( "material.tex.kd", tex );
         m_renderParameters.addParameter( "material.tex.hasKd", 1 );
     }
-    else
-    { m_renderParameters.addParameter( "material.tex.hasKd", 0 ); }
+    else {
+        m_renderParameters.addParameter( "material.tex.hasKd", 0 );
+    }
     tex = getTexture( BlinnPhongMaterial::TextureSemantic::TEX_SPECULAR );
-    if ( tex != nullptr )
-    {
+    if ( tex != nullptr ) {
         m_renderParameters.addParameter( "material.tex.ks", tex );
         m_renderParameters.addParameter( "material.tex.hasKs", 1 );
     }
-    else
-    { m_renderParameters.addParameter( "material.tex.hasKs", 0 ); }
+    else {
+        m_renderParameters.addParameter( "material.tex.hasKs", 0 );
+    }
     tex = getTexture( BlinnPhongMaterial::TextureSemantic::TEX_NORMAL );
-    if ( tex != nullptr )
-    {
+    if ( tex != nullptr ) {
         m_renderParameters.addParameter( "material.tex.normal", tex );
         m_renderParameters.addParameter( "material.tex.hasNormal", 1 );
     }
-    else
-    { m_renderParameters.addParameter( "material.tex.hasNormal", 0 ); }
+    else {
+        m_renderParameters.addParameter( "material.tex.hasNormal", 0 );
+    }
     tex = getTexture( BlinnPhongMaterial::TextureSemantic::TEX_SHININESS );
-    if ( tex != nullptr )
-    {
+    if ( tex != nullptr ) {
         m_renderParameters.addParameter( "material.tex.ns", tex );
         m_renderParameters.addParameter( "material.tex.hasNs", 1 );
     }
-    else
-    { m_renderParameters.addParameter( "material.tex.hasNs", 0 ); }
+    else {
+        m_renderParameters.addParameter( "material.tex.hasNs", 0 );
+    }
     tex = getTexture( BlinnPhongMaterial::TextureSemantic::TEX_ALPHA );
-    if ( tex != nullptr )
-    {
+    if ( tex != nullptr ) {
         m_renderParameters.addParameter( "material.tex.alpha", tex );
         m_renderParameters.addParameter( "material.tex.hasAlpha", 1 );
     }
-    else
-    { m_renderParameters.addParameter( "material.tex.hasAlpha", 0 ); }
+    else {
+        m_renderParameters.addParameter( "material.tex.hasAlpha", 0 );
+    }
 }
 
 void BlinnPhongMaterial::updateGL() {
@@ -76,8 +76,7 @@ void BlinnPhongMaterial::updateGL() {
 
     // Load textures
     auto texManager = RadiumEngine::getInstance()->getTextureManager();
-    for ( const auto& tex : m_pendingTextures )
-    {
+    for ( const auto& tex : m_pendingTextures ) {
         // ask to convert color textures from sRGB to Linear RGB
         bool tolinear         = ( tex.first == TextureSemantic::TEX_DIFFUSE ||
                           tex.first == TextureSemantic::TEX_SPECULAR );
@@ -99,7 +98,7 @@ bool BlinnPhongMaterial::isTransparent() const {
 
 void BlinnPhongMaterial::registerMaterial() {
     // For resources access (glsl files) in a filesystem
-    auto resourcesRootDir {RadiumEngine::getInstance()->getResourcesDir()};
+    auto resourcesRootDir { RadiumEngine::getInstance()->getResourcesDir() };
     auto shaderProgramManager = RadiumEngine::getInstance()->getShaderProgramManager();
 
     // Defining the material converter
@@ -143,8 +142,7 @@ void BlinnPhongMaterial::registerMaterial() {
                 Data::ShaderConfigurationFactory::getConfiguration( "ZprepassBlinnPhong" );
             rt.setConfiguration( *zprepass, Rendering::DefaultRenderingPasses::Z_PREPASS );
             // Transparent pass (0ptional) : If Transparent ... add LitOIT
-            if ( isTransparent )
-            {
+            if ( isTransparent ) {
                 auto transparentpass =
                     Data::ShaderConfigurationFactory::getConfiguration( "LitOITBlinnPhong" );
                 rt.setConfiguration( *transparentpass,

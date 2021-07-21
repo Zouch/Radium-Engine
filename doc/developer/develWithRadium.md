@@ -3,7 +3,20 @@
 
 # Radium libraries
 Direct contributions to master are closed.
-Please submit your pull request.
+We defer merge to master after our radium based projects (public or private) CI tests.
+To this end, please select release_candidate as a base branch of your pull requests.
+
+# Pre commit hook
+
+We provide a configuration file for [pre-commit](https://pre-commit.com/). Please install and use it, e.g.
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+This hook will check several formatting convention and cleanup your files' style on each commit. If some checks fail,
+it might have update automatically your code (hence just add again the modified file to your commit) or needs manual intervention.
+These script are also added as CI github check (to show any problems in case you have troubles to install the hook script).
 
 # Radium test suite
 ## Preliminaries
@@ -30,7 +43,7 @@ Note that we target Unit Tests, which can be defined as:
 >
 > Source: [https://www.toptal.com/qa/how-to-write-testable-code-and-why-it-matters](https://www.toptal.com/qa/how-to-write-testable-code-and-why-it-matters)
 
-To add a unit test, 
+To add a unit test,
 create the test file in tests/unittest/LIB/mytestfile.cpp where LIB correspond to the library you are testing (Core, Engine, Gui, IO).
 Edit `tests/unittest/CMakeLists.txt` and add your test to the list of sources of `add_executable(unittests ...`.
 If your test needs data, add them to `tests/unittest/data`. unittest working dir is `tests/unittest` so you can refer your data with a relative path starting with `data`. No output file are allowed in unittest.

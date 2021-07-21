@@ -24,8 +24,7 @@ bool RayCastAabb( const Ray& r, const Core::Aabb& aabb, Scalar& hitOut, Vector3&
     auto supMax = r.origin().array() > aabb.max().array();
 
     // Get rid of the case where the origin of the ray is inside the box
-    if ( !( infMin.any() ) && !( supMax.any() ) )
-    {
+    if ( !( infMin.any() ) && !( supMax.any() ) ) {
         hitOut    = 0;
         normalOut = -r.direction();
         return true;
@@ -59,8 +58,7 @@ bool RayCastAabb( const Ray& r, const Core::Aabb& aabb, Scalar& hitOut, Vector3&
         s.select( 0, ( p.array() < aabb.min().array() || p.array() > aabb.max().array() ) );
 
     // Ignore negative t (box behind the origin), and points outside the aabb.
-    if ( t >= 0 && !inFace.any() )
-    {
+    if ( t >= 0 && !inFace.any() ) {
         hitOut    = t;
         normalOut = -s * Math::sign( r.direction()[i] );
         return true;
@@ -91,15 +89,13 @@ bool RayCastSphere( const Ray& r,
 
     const Scalar delta = ( b * b ) - ( 4.f * c );
 
-    if ( delta == 0.f )
-    {
+    if ( delta == 0.f ) {
         const Scalar t       = -b * 0.5f;
         const bool tPositive = ( t >= 0.f );
         if ( tPositive ) { hitsOut.push_back( t ); }
         return tPositive;
     }
-    else if ( delta > 0.f )
-    {
+    else if ( delta > 0.f ) {
         const Scalar t1 = ( -b - std::sqrt( delta ) ) * 0.5f;
         const Scalar t2 = ( -b + std::sqrt( delta ) ) * 0.5f;
 
@@ -133,15 +129,13 @@ bool RayCastPlane( const Ray& r,
 
     // If d.n is non zero, the line intersects the plane.
     // we check that the ray intersects for t>=0 by checking that d.n and OA.n have the same sign.
-    if ( ddotn != 0 && ( ddotn * OAdotn ) >= 0 )
-    {
+    if ( ddotn != 0 && ( ddotn * OAdotn ) >= 0 ) {
         hitsOut.push_back( OAdotn / ddotn );
         return true;
     }
     // If d.n is 0 the ray is parallel to the plane, so there is only an intersection
     // if the ray is completely in the plane (i.e. if OA.n = 0).
-    else if ( ddotn == 0 && OAdotn == 0 )
-    {
+    else if ( ddotn == 0 && OAdotn == 0 ) {
         hitsOut.push_back( 0 );
         return true;
     }
@@ -173,22 +167,19 @@ bool RayCastCylinder( const Ray& r,
 
     auto n = r.direction().cross( cylAxis );
     // Degenerated case : cylinder axis parallel to ray.
-    if ( UNLIKELY( n.squaredNorm() == 0 ) )
-    {
+    if ( UNLIKELY( n.squaredNorm() == 0 ) ) {
         // Distance between two parallel lines.
         const Scalar distSquared =
             ao.cross( r.direction() ).squaredNorm() / r.direction().squaredNorm();
 
         // Is the ray inside the cylinder ?
-        if ( distSquared <= ( radiusSquared ) )
-        {
+        if ( distSquared <= ( radiusSquared ) ) {
             // In this case we must hit at least one of the planes
             CORE_ASSERT( vsA || vsB, "Ray must hit at least one of the planes !" );
 
             // The most common case is that both plane are hits (i.e. the ray's origin is outside
             // the cylinder). In that case we just return the smallest hit.
-            if ( LIKELY( vsA && vsB ) )
-            {
+            if ( LIKELY( vsA && vsB ) ) {
                 CORE_ASSERT( std::min( hitA, hitB ) >= 0, "Invalid hit result" );
                 hitsOut.push_back( std::min( hitA, hitB ) );
                 return true;
@@ -213,8 +204,7 @@ bool RayCastCylinder( const Ray& r,
         // If the distance is bigger than radius, no further processing is needed
         // and it's an early exit. If not then an intersection with the infinite
         // cylinder is guaranteed.
-        if ( dist <= radius )
-        {
+        if ( dist <= radius ) {
             // TODO : this could be optimized with squared norms.
             auto v1        = cylAxis.cross( ao );
             const Scalar t = v1.dot( n ) / ln;
@@ -232,8 +222,7 @@ bool RayCastCylinder( const Ray& r,
 
             // Ray has an opposite direction cylinder axis, so it may enter through plane B and exit
             // through plane A.
-            if ( ddotAxis < 0 )
-            {
+            if ( ddotAxis < 0 ) {
                 const Scalar tInPlaneB  = ( b - r.origin() ).dot( cylAxis ) / ddotAxis;
                 const Scalar tOutPlaneA = ( a - r.origin() ).dot( cylAxis ) / ddotAxis;
 
@@ -245,8 +234,7 @@ bool RayCastCylinder( const Ray& r,
             }
             // Ray has the same direction as the cylinder axis it may enter through plane A and exit
             // through B.
-            else if ( ddotAxis > 0 )
-            {
+            else if ( ddotAxis > 0 ) {
                 const Scalar tInPlaneA  = ( a - r.origin() ).dot( cylAxis ) / ddotAxis;
                 const Scalar tOutPlaneB = ( b - r.origin() ).dot( cylAxis ) / ddotAxis;
 
@@ -259,8 +247,7 @@ bool RayCastCylinder( const Ray& r,
             }
             // Degenerate case : ray parallel to end planes.
             // in that case we check that the ray does not miss the cylinder.
-            else if ( UNLIKELY( ddotAxis == 0 ) )
-            {
+            else if ( UNLIKELY( ddotAxis == 0 ) ) {
                 const Scalar h       = ao.dot( cylAxis );
                 const Scalar lAxisSq = cylAxis.squaredNorm();
                 if ( h < 0 || h > lAxisSq ) { return false; }
@@ -268,15 +255,13 @@ bool RayCastCylinder( const Ray& r,
 
             // At this point our tIn and tOut are valid within the capped cylinder.
             // The only thing left is to find whether the ray hits (i.e. tIn is positive).
-            if ( tIn >= 0 )
-            {
+            if ( tIn >= 0 ) {
                 hitsOut.push_back( tIn );
                 return true;
             }
             // tIn is negative but tOut is positive, which means the origin is inside the cylinder,
             // so we return 0
-            else if ( tIn * tOut < 0 )
-            {
+            else if ( tIn * tOut < 0 ) {
                 hitsOut.push_back( 0 );
                 return true;
             }
@@ -306,19 +291,16 @@ bool RayCastTriangle( const Ray& ray,
 
     const Vector3 qvec = tvec.cross( ab );
 
-    if ( det > 0 )
-    {
+    if ( det > 0 ) {
         Scalar u = tvec.dot( pvec );
-        if ( u < 0 || u > det )
-        {
+        if ( u < 0 || u > det ) {
             return false; // We're out of the slab across ab
         }
 
         Scalar v = ray.direction().dot( qvec );
         if ( v < 0 || u + v > det ) { return false; }
     }
-    else if ( det < 0 )
-    {
+    else if ( det < 0 ) {
         Scalar u = tvec.dot( pvec );
         if ( u > 0 || u < det ) { return false; }
 
@@ -326,7 +308,9 @@ bool RayCastTriangle( const Ray& ray,
         if ( v > 0 || u + v < det ) { return false; }
     }
     else // line parallel to plane. Maybe we should intersect with the triangle edges ?
-    { return false; }
+    {
+        return false;
+    }
 
     // If we're here we really intersect the triangle so let's compute T.
     const Scalar t = ac.dot( qvec ) * inv_det;
@@ -339,14 +323,12 @@ bool RayCastTriangleMesh( const Ray& r,
                           std::vector<Scalar>& hitsOut,
                           std::vector<Vector3ui>& trianglesIdxOut ) {
     bool hit = false;
-    for ( size_t i = 0; i < mesh.getIndices().size(); ++i )
-    {
+    for ( size_t i = 0; i < mesh.getIndices().size(); ++i ) {
         const auto& t    = mesh.getIndices()[i];
         const Vector3& a = mesh.vertices()[t[0]];
         const Vector3& b = mesh.vertices()[t[1]];
         const Vector3& c = mesh.vertices()[t[2]];
-        if ( RayCastTriangle( r, a, b, c, hitsOut ) )
-        {
+        if ( RayCastTriangle( r, a, b, c, hitsOut ) ) {
             trianglesIdxOut.push_back( t );
             hit = true;
         }

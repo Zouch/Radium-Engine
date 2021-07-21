@@ -38,8 +38,7 @@ void main() {
     // compute limit point in screenspace
     vec3 fpos        = gl_FragCoord.xyz / vec3( colorImageSize, 1 );
     vec3 objectDepth = vec3( fpos.xy, texture( imageDepth, fpos.xy ).r );
-    if ( objectDepth.z < 1 )
-    {
+    if ( objectDepth.z < 1 ) {
         // Transform limit point to model space
         vec4 objPoint = invbiasmvp * vec4( objectDepth, 1 );
         objPoint /= objPoint.w;
@@ -51,16 +50,14 @@ void main() {
         // compute the depth limit
         dt = ( tmax - dt );
     }
-    else
-    {
+    else {
         // no limit, set it to infinity
         dt = 2;
     }
 
     // compute the light information in canonical space
     Light l = transformLight( light, material.modelToDensity * world2model );
-    switch ( light.type )
-    {
+    switch ( light.type ) {
     case 0:
         break;
     case 1:
@@ -80,12 +77,10 @@ void main() {
     bool hit             = raymarch( material, p, dir, l, dt, volColor, volTransmitance );
 
     // compute final color
-    if ( !hit )
-    {
+    if ( !hit ) {
         discard; // no medium found
     }
-    else
-    {
+    else {
         vec4 backColor = texture( imageColor, fpos.xy );
         fragColor      = vec4( volColor + backColor.rgb * volTransmitance, 1 );
     }

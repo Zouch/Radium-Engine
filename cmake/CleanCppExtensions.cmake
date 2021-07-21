@@ -2,74 +2,85 @@
 find_program(GDB_PATH gdb)
 
 # Adds -run and -dbg targets
-macro(addRunAndDebugTargets TARGET)
-    add_custom_target(run_${TARGET}
+macro(add_run_and_debug_targets TARGET)
+    add_custom_target(
+        run_${TARGET}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
         DEPENDS ${TARGET}
-        COMMAND ./${TARGET})
+        COMMAND ./${TARGET}
+    )
 
     # convenience run gdb target
     if(GDB_PATH)
-        add_custom_target(gdb_${TARGET}
+        add_custom_target(
+            gdb_${TARGET}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             USES_TERMINAL
             DEPENDS ${TARGET}
-            COMMAND ${GDB_PATH} ./${TARGET})
+            COMMAND ${GDB_PATH} ./${TARGET}
+        )
     endif()
 endmacro()
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Usefull for adding header only libraries
+# ~~~
 # Example usage:
-#
-#     ExternalHeaderOnly_Add("Catch"
+#     external_header_only_add("Catch"
 #         "https://github.com/catchorg/Catch2.git" "origin/master" "single_include/catch2")
-#
-# Use with:
-#     target_link_libraries(unittests Catch)
-# This will add the INCLUDE_FOLDER_PATH to the `unittests` target.
+# ~~~
+# Use with target_link_libraries(unittests Catch) This will add the INCLUDE_FOLDER_PATH to the
+# `unittests` target.
 
-macro(ExternalHeaderOnly_Add LIBNAME REPOSITORY GIT_TAG INCLUDE_FOLDER_PATH)
+macro(external_header_only_add LIBNAME REPOSITORY GIT_TAG INCLUDE_FOLDER_PATH)
     ExternalProject_Add(
         ${LIBNAME}_download
         PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}
         GIT_REPOSITORY ${REPOSITORY}
-        # For shallow git clone (without downloading whole history)
-        # GIT_SHALLOW 1
-        # For point at certain tag
+        # For shallow git clone (without downloading whole history) GIT_SHALLOW 1 For point at
+        # certain tag
         GIT_TAG ${GIT_TAG}
-        #disables auto update on every build
+        # disables auto update on every build
         UPDATE_DISCONNECTED 1
-        #disable following
-        CONFIGURE_COMMAND "" BUILD_COMMAND "" INSTALL_DIR "" INSTALL_COMMAND ""
-        )
+        # disable following
+        CONFIGURE_COMMAND ""
+        BUILD_COMMAND ""
+        INSTALL_DIR ""
+        INSTALL_COMMAND ""
+    )
     # special target
-    add_custom_target(${LIBNAME}_update
+    add_custom_target(
+        ${LIBNAME}_update
         COMMENT "Updated ${LIBNAME}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}/src/${LIBNAME}_download
         COMMAND ${GIT_EXECUTABLE} fetch --recurse-submodules
         COMMAND ${GIT_EXECUTABLE} reset --hard ${GIT_TAG}
         COMMAND ${GIT_EXECUTABLE} submodule update --init --force --recursive --remote --merge
-        DEPENDS ${LIBNAME}_download)
+        DEPENDS ${LIBNAME}_download
+    )
 
     set(${LIBNAME}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}/src/${LIBNAME}_download/)
     add_library(${LIBNAME} INTERFACE)
     add_dependencies(${LIBNAME} ${LIBNAME}_download)
     add_dependencies(update ${LIBNAME}_update)
-    target_include_directories(${LIBNAME} SYSTEM INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}/src/${LIBNAME}_download/${INCLUDE_FOLDER_PATH})
+    target_include_directories(
+        ${LIBNAME} SYSTEM
+        INTERFACE
+            ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}/src/${LIBNAME}_download/${INCLUDE_FOLDER_PATH}
+    )
 endmacro()
 
-#------------------------------------------------------------------------------
-# This command will clone git repo during cmake setup phase, also adds
-# ${LIBNAME}_update target into general update target.
+# ------------------------------------------------------------------------------
+# This command will clone git repo during cmake setup phase, also adds ${LIBNAME}_update target into
+# general update target.
+# ~~~
 # Example usage:
-#
-#   ExternalDownloadNowGit(cpr https://github.com/finkandreas/cpr.git origin/master)
+#   external_download_now_git(cpr https://github.com/finkandreas/cpr.git origin/master)
 #   add_subdirectory(${cpr_SOURCE_DIR})
-#
+# ~~~
 
-macro(ExternalDownloadNowGit LIBNAME REPOSITORY GIT_TAG)
+macro(external_download_now_git LIBNAME REPOSITORY GIT_TAG)
 
     set(${LIBNAME}_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}/src/${LIBNAME}_download/)
 
@@ -80,43 +91,44 @@ macro(ExternalDownloadNowGit LIBNAME REPOSITORY GIT_TAG)
         message(STATUS "Clonning: ${REPOSITORY}")
         execute_process(
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-            COMMAND ${GIT_EXECUTABLE} clone --recursive ${REPOSITORY} ${LIBNAME}/src/${LIBNAME}_download
-            )
+            COMMAND ${GIT_EXECUTABLE} clone --recursive ${REPOSITORY}
+                    ${LIBNAME}/src/${LIBNAME}_download
+        )
         # switch to target TAG and update submodules
         execute_process(
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}/src/${LIBNAME}_download
             COMMAND ${GIT_EXECUTABLE} reset --hard ${GIT_TAG}
             COMMAND ${GIT_EXECUTABLE} submodule update --init --force --recursive --remote --merge
-            )
+        )
     endif()
 
     # special update target
-    add_custom_target(${LIBNAME}_update
+    add_custom_target(
+        ${LIBNAME}_update
         COMMENT "Updated ${LIBNAME}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${LIBNAME}/src/${LIBNAME}_download
         COMMAND ${GIT_EXECUTABLE} fetch --recurse-submodules
         COMMAND ${GIT_EXECUTABLE} reset --hard ${GIT_TAG}
-        COMMAND ${GIT_EXECUTABLE} submodule update --init --force --recursive --remote --merge)
+        COMMAND ${GIT_EXECUTABLE} submodule update --init --force --recursive --remote --merge
+    )
     # Add this as dependency to the general update target
     add_dependencies(update ${LIBNAME}_update)
 endmacro()
 
-#------------------------------------------------------------------------------
-# Other MISC targets - formating, static analysis
-# format, cppcheck, tidy
-macro(addMiscTargets)
-    list(APPEND CMAKE_MESSAGE_INDENT "[addMiscTargets] ")
+# ------------------------------------------------------------------------------
+# Other MISC targets - formating, static analysis format, cppcheck, tidy
+macro(add_misc_targets)
+    list(APPEND CMAKE_MESSAGE_INDENT "[add_misc_targets] ")
 
     file(GLOB_RECURSE ALL_SOURCE_FILES *.cpp *.cc *.c)
     file(GLOB_RECURSE ALL_HEADER_FILES *.h *.hpp)
 
-    # Static analysis via clang-tidy target
-    # We check for program, since when it is not here, target makes no sense
+    # Static analysis via clang-tidy target We check for program, since when it is not here, target
+    # makes no sense
     find_program(TIDY_PATH clang-tidy PATHS /usr/local/Cellar/llvm/*/bin)
     if(TIDY_PATH)
         message(STATUS "clang-tidy - static analysis              YES ")
-        add_custom_target(tidy
-            COMMAND ${TIDY_PATH} -header-filter=.* ${ALL_SOURCE_FILES} -p=./ )
+        add_custom_target(tidy COMMAND ${TIDY_PATH} -header-filter=.* ${ALL_SOURCE_FILES} -p=./)
     else()
         message(STATUS "clang-tidy - static analysis              NO ")
     endif()
@@ -126,14 +138,11 @@ macro(addMiscTargets)
     if(CPPCHECK_PATH)
         message(STATUS "cppcheck - static analysis                YES ")
         add_custom_target(
-                cppcheck
-                COMMAND ${CPPCHECK_PATH}
-                --enable=warning,performance,portability,information,missingInclude
-                --std=c++11
-                --template=gcc
-                --verbose
-                --quiet
-                ${ALL_SOURCE_FILES}
+            cppcheck
+            COMMAND
+                ${CPPCHECK_PATH}
+                --enable=warning,performance,portability,information,missingInclude --std=c++11
+                --template=gcc --verbose --quiet ${ALL_SOURCE_FILES}
         )
     else()
         message(STATUS "cppcheck - static analysis                NO ")
@@ -144,21 +153,24 @@ macro(addMiscTargets)
     if(FORMAT_PATH)
         message(STATUS "clang-format - code formating             YES ")
         if(FORMAT_STYLE_FILENAME)
-            add_custom_target(format
-                COMMAND ${FORMAT_PATH} -i ${ALL_SOURCE_FILES} ${ALL_HEADER_FILES} -style=file "${FORMAT_STYLE_FILENAME}" )
+            add_custom_target(
+                format COMMAND ${FORMAT_PATH} -i ${ALL_SOURCE_FILES} ${ALL_HEADER_FILES}
+                               -style=file "${FORMAT_STYLE_FILENAME}"
+            )
         else()
-            add_custom_target(format
-                COMMAND ${FORMAT_PATH} -i ${ALL_SOURCE_FILES} ${ALL_HEADER_FILES} )
+            add_custom_target(
+                format COMMAND ${FORMAT_PATH} -i ${ALL_SOURCE_FILES} ${ALL_HEADER_FILES}
+            )
         endif()
     else()
         message(STATUS "clang-format - code formating             NO ")
     endif()
 
-
-    # Does not work well, left here for future work, but it would still only
-    # provides same info as tidy, only in html form.
+    # Does not work well, left here for future work, but it would still only provides same info as
+    # tidy, only in html form.
     #
     # Produces html analysis in *.plist dirs in build dir or build/source directory
+    # ~~~
     # add_custom_target(
     #     analyze
     #     COMMAND rm -rf ../*.plist
@@ -168,10 +180,11 @@ macro(addMiscTargets)
     #     -p=./
     #     COMMAND echo ""
     #     )
+    # ~~~
     list(REMOVE_AT CMAKE_MESSAGE_INDENT -1)
 endmacro()
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Force compilers, this was deprecated in CMake, but still comes handy sometimes
 macro(FORCE_C_COMPILER compiler id)
     set(CMAKE_C_COMPILER "${compiler}")

@@ -22,16 +22,16 @@
  * Demonstrate the usage of RawShaderMaterial functionalities
  */
 // Vertex shader source code
-const std::string _vertexShaderSource {"#include \"TransformStructs.glsl\"\n"
-                                       "layout (location = 0) in vec3 in_position;\n"
-                                       "layout (location = 0) out vec3 out_pos;\n"
-                                       "uniform Transform transform;\n"
-                                       "void main(void)\n"
-                                       "{\n"
-                                       "    mat4 mvp    = transform.proj * transform.view;\n"
-                                       "    out_pos     = in_position;\n"
-                                       "    gl_Position = mvp*vec4(in_position.xyz, 1.0);\n"
-                                       "}\n"};
+const std::string _vertexShaderSource { "#include \"TransformStructs.glsl\"\n"
+                                        "layout (location = 0) in vec3 in_position;\n"
+                                        "layout (location = 0) out vec3 out_pos;\n"
+                                        "uniform Transform transform;\n"
+                                        "void main(void)\n"
+                                        "{\n"
+                                        "    mat4 mvp    = transform.proj * transform.view;\n"
+                                        "    out_pos     = in_position;\n"
+                                        "    gl_Position = mvp*vec4(in_position.xyz, 1.0);\n"
+                                        "}\n" };
 // Fragment shader source code
 const std::string _fragmentShaderSource {
     "layout (location = 0) in  vec3 in_pos;\n"
@@ -41,7 +41,7 @@ const std::string _fragmentShaderSource {
     "void main(void)\n"
     "{\n"
     "    out_color =  ( 1 + cos( 20 * ( in_pos.x + aScalarUniform ) ) ) * 0.5 * aColorUniform;\n"
-    "}\n"};
+    "}\n" };
 
 // Fragment shader source code
 const std::string _fragmentShaderSource2 {
@@ -52,15 +52,15 @@ const std::string _fragmentShaderSource2 {
     "void main(void)\n"
     "{\n"
     "    out_color =  ( 1 + sin( 20 * ( in_pos.y + aScalarUniform ) ) ) * 0.5 * aColorUniform;\n"
-    "}\n"};
+    "}\n" };
 
 const std::vector<std::pair<Ra::Engine::Data::ShaderType, std::string>> _config1 {
-    {Ra::Engine::Data::ShaderType::ShaderType_VERTEX, _vertexShaderSource},
-    {Ra::Engine::Data::ShaderType::ShaderType_FRAGMENT, _fragmentShaderSource}};
+    { Ra::Engine::Data::ShaderType::ShaderType_VERTEX, _vertexShaderSource },
+    { Ra::Engine::Data::ShaderType::ShaderType_FRAGMENT, _fragmentShaderSource } };
 
 const std::vector<std::pair<Ra::Engine::Data::ShaderType, std::string>> _config2 {
-    {Ra::Engine::Data::ShaderType::ShaderType_VERTEX, _vertexShaderSource},
-    {Ra::Engine::Data::ShaderType::ShaderType_FRAGMENT, _fragmentShaderSource2}};
+    { Ra::Engine::Data::ShaderType::ShaderType_VERTEX, _vertexShaderSource },
+    { Ra::Engine::Data::ShaderType::ShaderType_FRAGMENT, _fragmentShaderSource2 } };
 
 class MyParameterProvider : public Ra::Engine::Data::ShaderParameterProvider
 {
@@ -80,8 +80,8 @@ class MyParameterProvider : public Ra::Engine::Data::ShaderParameterProvider
     }
 
   private:
-    Ra::Core::Utils::Color m_colorParameter {Ra::Core::Utils::Color::Green()};
-    Scalar m_scalarParameter {1};
+    Ra::Core::Utils::Color m_colorParameter { Ra::Core::Utils::Color::Green() };
+    Scalar m_scalarParameter { 1 };
 };
 
 /**
@@ -91,7 +91,7 @@ class MyParameterProvider : public Ra::Engine::Data::ShaderParameterProvider
  */
 std::shared_ptr<Ra::Engine::Rendering::RenderObject> initQuad( Ra::Gui::BaseApplication& app ) {
     //! [Creating the quad]
-    auto quad = Ra::Core::Geometry::makeZNormalQuad( {1_ra, 1_ra} );
+    auto quad = Ra::Core::Geometry::makeZNormalQuad( { 1_ra, 1_ra } );
 
     //! [Create the engine entity for the quad]
     auto e = app.m_engine->getEntityManager()->createEntity( "Quad Entity" );
@@ -101,7 +101,7 @@ std::shared_ptr<Ra::Engine::Rendering::RenderObject> initQuad( Ra::Gui::BaseAppl
     paramProvider->setOrComputeTheParameterValues();
 
     //! [Create the shader material]
-    Ra::Core::Asset::RawShaderMaterialData mat {"Quad Material", _config1, paramProvider};
+    Ra::Core::Asset::RawShaderMaterialData mat { "Quad Material", _config1, paramProvider };
 
     //! [Create a geometry component using the custom material]
     auto c =

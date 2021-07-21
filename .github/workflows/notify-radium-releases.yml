@@ -16,4 +16,3 @@ jobs:
           repository: STORM-IRIT/Radium-Releases
           event-type: code-update-event
           client-payload: '{"ref": "${{ github.ref }}", "sha": "${{ github.sha }}"}'
-

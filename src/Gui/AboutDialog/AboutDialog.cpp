@@ -9,8 +9,7 @@ AboutDialog::AboutDialog( QWidget* parent ) : QDialog( parent ), ui( new Ui::Abo
     ui->setupUi( this );
     ui->radiumText->setFocusPolicy( Qt::NoFocus );
     auto file = QFile( ":/about.html" );
-    if ( file.open( QIODevice::ReadOnly | QIODevice::Text ) )
-    {
+    if ( file.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
         auto text = file.readAll();
         ui->radiumText->setText( text );
     }

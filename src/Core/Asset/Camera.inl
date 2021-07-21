@@ -130,7 +130,7 @@ inline void Camera::setXYmag( Scalar xmag, Scalar ymag ) {
 }
 
 inline std::pair<Scalar, Scalar> Camera::getXYmag() const {
-    return {m_xmag, m_ymag};
+    return { m_xmag, m_ymag };
 }
 
 } // namespace Asset

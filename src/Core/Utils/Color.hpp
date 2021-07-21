@@ -51,11 +51,11 @@ class ColorBase : public Eigen::Matrix<_Scalar, 4, 1>
     /// convert the color expressed in sRGB color space to linear RGB
     static inline ColorBase sRGBToLinearRGB( const ColorBase& srgb ) {
         ColorBase<_Scalar> c( srgb );
-        for ( auto& u : c.rgb() )
-        {
+        for ( auto& u : c.rgb() ) {
             if ( u < 0.04045_ra ) { u /= 12.92_ra; }
-            else
-            { u = std::pow( ( u + 0.055_ra ) / 1.055_ra, 2.4_ra ); }
+            else {
+                u = std::pow( ( u + 0.055_ra ) / 1.055_ra, 2.4_ra );
+            }
         }
         return c;
     }
@@ -63,11 +63,11 @@ class ColorBase : public Eigen::Matrix<_Scalar, 4, 1>
     /// convert the color expressed in linear RGB color space to sRGB
     static inline ColorBase linearRGBTosRGB( const ColorBase& lrgb ) {
         ColorBase<_Scalar> c( lrgb );
-        for ( auto& u : c.rgb() )
-        {
+        for ( auto& u : c.rgb() ) {
             if ( u < 0.0031308_ra ) { u *= 12.92_ra; }
-            else
-            { u = 1.055_ra * std::pow( u, 1_ra / 2.4_ra ) - 0.055_ra; }
+            else {
+                u = 1.055_ra * std::pow( u, 1_ra / 2.4_ra ) - 0.055_ra;
+            }
         }
         return c;
     }
@@ -161,8 +161,7 @@ class ColorBase : public Eigen::Matrix<_Scalar, 4, 1>
                                               const _Scalar alpha      = 1.0 ) {
         ColorBase<_Scalar> c;
 
-        if ( saturation == 0.0f )
-        {
+        if ( saturation == 0.0f ) {
             c[0] = c[1] = c[2] = value;
             c[3]               = alpha;
             return c;
@@ -172,44 +171,37 @@ class ColorBase : public Eigen::Matrix<_Scalar, 4, 1>
         _Scalar v1 = value * ( 1.0f - saturation );
         _Scalar v2 = value * ( 1.0f - ( saturation * ( h - i ) ) );
         _Scalar v3 = value * ( 1.0f - ( saturation * ( 1.0f - h - i ) ) );
-        switch ( i )
-        {
+        switch ( i ) {
         case 0: {
             c[0] = value;
             c[1] = v3;
             c[2] = v1;
-        }
-        break;
+        } break;
         case 1: {
             c[0] = v2;
             c[1] = value;
             c[2] = v1;
-        }
-        break;
+        } break;
         case 2: {
             c[0] = v1;
             c[1] = value;
             c[2] = v3;
-        }
-        break;
+        } break;
         case 3: {
             c[0] = v1;
             c[1] = v2;
             c[2] = value;
-        }
-        break;
+        } break;
         case 4: {
             c[0] = v3;
             c[1] = v1;
             c[2] = value;
-        }
-        break;
+        } break;
         default: {
             c[0] = value;
             c[1] = v1;
             c[2] = v2;
-        }
-        break;
+        } break;
         }
         c[3] = alpha;
         return c;
@@ -232,13 +224,13 @@ class ColorBase : public Eigen::Matrix<_Scalar, 4, 1>
     static inline std::vector<ColorBase<_Scalar>> scatter( const uint size, const _Scalar gamma ) {
         std::vector<ColorBase<_Scalar>> color( size );
         if ( size > 1 )
-            for ( uint i = 0; i < size; ++i )
-            {
+            for ( uint i = 0; i < size; ++i ) {
                 color[i] = fromHSV( ( _Scalar( i ) / _Scalar( size - 1 ) ) * 0.777 );
                 color[i] = ( color[i] + ColorBase<_Scalar>::Constant( gamma ) ) * 0.5;
             }
-        else
-        { color[0] = Red(); }
+        else {
+            color[0] = Red();
+        }
         std::shuffle( color.begin(), color.end(), std::mt19937( std::random_device()() ) );
         return color;
     }

@@ -848,8 +848,8 @@
            </font>
           </property>
           <property name="text">
-           <string>Offset All from Current so that 
-Current comes to mouse 
+           <string>Offset All from Current so that
+Current comes to mouse
 (If cursor not on a keyframe,
 applies to the last one before)</string>
           </property>
@@ -897,9 +897,9 @@ applies to the last one before)</string>
            </font>
           </property>
           <property name="text">
-           <string>Move Current to mouse 
+           <string>Move Current to mouse
 (If cursor not on a keyframe,
-offset All from the next one after 
+offset All from the next one after
 so that it comes to mouse)</string>
           </property>
          </widget>

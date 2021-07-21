@@ -25,16 +25,13 @@ ShaderProgramManager::~ShaderProgramManager() {
 bool ShaderProgramManager::addNamedString( const std::string& includepath,
                                            const std::string& realfile ) {
     auto el = m_namedStrings.find( includepath );
-    if ( el != m_namedStrings.end() )
-    {
-        if ( el->second.first->filePath() != realfile )
-        {
+    if ( el != m_namedStrings.end() ) {
+        if ( el->second.first->filePath() != realfile ) {
             LOG( logWARNING )
                 << "[ShaderProgramManager] A named string already exists with this key: "
                 << includepath << " --> " << el->second.first->filePath();
         }
-        else
-        {
+        else {
             LOG( logINFO ) << "[ShaderProgramManager] Named string already inserted, skipping: "
                            << includepath << " --> " << realfile;
         }
@@ -50,8 +47,7 @@ bool ShaderProgramManager::addNamedString( const std::string& includepath,
 }
 
 void ShaderProgramManager::reloadNamedString() {
-    for ( auto& el : m_namedStrings )
-    {
+    for ( auto& el : m_namedStrings ) {
         el.second.first->reload();
         el.second.second.reset( nullptr );
         el.second.second = globjects::NamedString::create( el.first, el.second.first.get() );
@@ -65,32 +61,26 @@ ShaderProgramManager::addShaderProgram( const Data::ShaderConfiguration& config 
     if ( found != m_shaderPrograms.end() ) { return found->second.get(); }
 
     // add named strings
-    for ( const auto& p : config.getNamedStrings() )
-    {
+    for ( const auto& p : config.getNamedStrings() ) {
         addNamedString( p.first, p.second );
     }
 
     // Try to load the shader
     auto prog = Core::make_shared<Data::ShaderProgram>( config );
 
-    if ( prog->getProgramObject()->isLinked() )
-    {
+    if ( prog->getProgramObject()->isLinked() ) {
         insertShader( config, prog );
         return prog.get();
     }
-    else
-    {
+    else {
 
         LOG( logERROR ) << "Error occurred while loading shader program "
                         << config.getName().c_str() << ":\nDefault shader program used instead.";
 
-        for ( const auto& strings : config.getNamedStrings() )
-        {
+        for ( const auto& strings : config.getNamedStrings() ) {
             auto el = m_namedStrings.find( strings.first );
-            if ( el != m_namedStrings.end() )
-            {
-                if ( el->second.first->filePath() == strings.second )
-                {
+            if ( el != m_namedStrings.end() ) {
+                if ( el->second.first->filePath() == strings.second ) {
                     LOG( logINFO ) << "[ShaderProgramManager] Removing named string "
                                    << strings.first << " --> " << strings.second;
                 }
@@ -122,8 +112,7 @@ void ShaderProgramManager::reloadAllShaderPrograms() {
     reloadNamedString();
 
     // For each shader in the map
-    for ( auto& shader : m_shaderPrograms )
-    {
+    for ( auto& shader : m_shaderPrograms ) {
         shader.second->reload();
     }
 
@@ -133,12 +122,10 @@ void ShaderProgramManager::reloadAllShaderPrograms() {
 
 void ShaderProgramManager::reloadNotCompiledShaderPrograms() {
     // for each shader in the failed map, try to reload
-    for ( const auto& conf : m_shaderFailedConfs )
-    {
+    for ( const auto& conf : m_shaderFailedConfs ) {
         auto prog = Core::make_shared<Data::ShaderProgram>( conf );
 
-        if ( prog->getProgramObject()->isValid() )
-        {
+        if ( prog->getProgramObject()->isValid() ) {
             insertShader( conf, prog );
             // m_shaderFailedConfs.erase(conf);
         }
@@ -147,8 +134,8 @@ void ShaderProgramManager::reloadNotCompiledShaderPrograms() {
 
 void ShaderProgramManager::insertShader( const Data::ShaderConfiguration& config,
                                          const ShaderProgramPtr& shader ) {
-    m_shaderProgramIds.insert( {config.getName(), config} );
-    m_shaderPrograms.insert( {config, shader} );
+    m_shaderProgramIds.insert( { config.getName(), config } );
+    m_shaderPrograms.insert( { config, shader } );
 }
 
 } // namespace Data

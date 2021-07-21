@@ -74,8 +74,7 @@ void TimelineScrollArea::onDrawRuler( int width ) {
 }
 
 void TimelineScrollArea::keyPressEvent( QKeyEvent* event ) {
-    switch ( event->key() )
-    {
+    switch ( event->key() ) {
     case Qt::Key_Space:
         emit togglePlayPause();
         break;
@@ -86,8 +85,9 @@ void TimelineScrollArea::keyPressEvent( QKeyEvent* event ) {
 
     case Qt::Key_I:
         if ( event->modifiers() & Qt::Modifier::SHIFT ) { emit removeKeyFrame(); }
-        else
-        { emit addKeyFrame(); }
+        else {
+            emit addKeyFrame();
+        }
         break;
 
     case Qt::Key_Left:
@@ -107,11 +107,11 @@ void TimelineScrollArea::keyPressEvent( QKeyEvent* event ) {
         break;
 
     case Qt::Key_Z:
-        if ( event->modifiers() & Qt::Modifier::CTRL )
-        {
+        if ( event->modifiers() & Qt::Modifier::CTRL ) {
             if ( event->modifiers() & Qt::Modifier::SHIFT ) { emit redo(); }
-            else
-            { emit undo(); }
+            else {
+                emit undo();
+            }
         }
         break;
 
@@ -129,28 +129,26 @@ void TimelineScrollArea::wheelEvent( QWheelEvent* event ) {
     bool ctrlDown  = event->modifiers() & Qt::Modifier::CTRL;
     bool shiftDown = event->modifiers() & Qt::Modifier::SHIFT;
     // next/previous KeyFrame
-    if ( shiftDown )
-    {
+    if ( shiftDown ) {
         if ( ry > 0 ) { emit nextKeyFrame(); }
-        else
-        { emit previousKeyFrame(); }
+        else {
+            emit previousKeyFrame();
+        }
     }
     // scroll left/right bar
-    else if ( ctrlDown )
-    {
+    else if ( ctrlDown ) {
         horizontalScrollBar()->setValue(
             int( horizontalScrollBar()->value() + ry * TIMELINE_SLIDE_SPEED ) );
     }
     // zoom in/out
-    else
-    {
+    else {
         int newRulerWidth = int( widget()->minimumWidth() +
                                  ry * TIMELINE_ZOOM_SPEED * widget()->minimumWidth() / width() );
-        if ( newRulerWidth <= width() - 2 )
-        {
+        if ( newRulerWidth <= width() - 2 ) {
             if ( widget()->minimumWidth() == width() - 2 ) { return; }
-            else
-            { newRulerWidth = width() - 2; }
+            else {
+                newRulerWidth = width() - 2;
+            }
         }
 
         double hScroll = horizontalScrollBar()->value();
@@ -172,8 +170,7 @@ void TimelineScrollArea::wheelEvent( QWheelEvent* event ) {
 }
 
 void TimelineScrollArea::mousePressEvent( QMouseEvent* event ) {
-    if ( event->button() == Qt::MiddleButton )
-    {
+    if ( event->button() == Qt::MiddleButton ) {
         setCursor( Qt::SplitHCursor );
         m_mousePosX = event->x();
         m_sliderPos = horizontalScrollBar()->value();
@@ -185,8 +182,9 @@ void TimelineScrollArea::mouseReleaseEvent( QMouseEvent* event ) {
 }
 
 void TimelineScrollArea::mouseMoveEvent( QMouseEvent* event ) {
-    if ( event->buttons() & Qt::MiddleButton )
-    { horizontalScrollBar()->setValue( ( m_sliderPos + m_mousePosX - event->x() ) ); }
+    if ( event->buttons() & Qt::MiddleButton ) {
+        horizontalScrollBar()->setValue( ( m_sliderPos + m_mousePosX - event->x() ) );
+    }
 }
 
 } // namespace Ra::Gui

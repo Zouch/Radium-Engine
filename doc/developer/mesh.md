@@ -16,9 +16,9 @@ See inheritance diagram of Ra::Core::Geometry::AbstractGeometry :
    - Ra::Core::Geometry::TriangleMesh *
    - Ra::Core::Geometry::PolyMesh *
 
- 2. Ra::Core::Geometry::TopologicalMesh, which is an half-edge data structure. 
+ 2. Ra::Core::Geometry::TopologicalMesh, which is an half-edge data structure.
 A converter allows to go back and forth to `TriangleMesh`
-without loss of data, but during the conversion, vertices with the same position represents the same topological point (and are hence merged). 
+without loss of data, but during the conversion, vertices with the same position represents the same topological point (and are hence merged).
 **Soon deprecated:** The other vertex attributes are stored on half-edges (to manage multiple normals per 3D positions
 for instance).
 **New:** The other vertex attributes are stored on wedges. Each half-edge has one wedge index. If multiple half-edge have the same set of attributes (including vertex position) they have the same wedge index at construction. See section [wedges](#wedges) below.
@@ -34,9 +34,9 @@ See inheritance diagram of Ra::Engine::Data::AttribArrayDisplayable
    - Ra::Engine::Data::LineMesh *
    - Ra::Engine::Data::Mesh *
    - Ra::Engine::Data::PolyMesh *
-   
+
  `*` : the starred classes are the one you want to instanciate, the other are more for code factoring or abstraction.
-   
+
 # Colaboration between Core and Engine
 
 A Core Geometry can be used on its own.
@@ -88,7 +88,7 @@ Utility methods are provided for position and normals :
 
 Others attributes are written with :
  - Ra::Core::Geometry::AttribArrayGeometry::getAttrib to get an attrib handle
- - Ra::Core::Utils::Attrib::setData to set the data directly 
+ - Ra::Core::Utils::Attrib::setData to set the data directly
 or
  - Ra::Core::Utils::Attrib::getDataWithLock to get a writable reference to the data array
  - Ra::Core::Utils::Attrib::unlock to release the writable reference
@@ -120,7 +120,7 @@ The following figure illustrate this.
 ![Mesh to Topo conversion for faces with multiples times the same 3D position](wedge-degen.svg)
 
 
-TopologicalMesh methods and types related to wedges: 
+TopologicalMesh methods and types related to wedges:
 
 - Ra::Core::Geometry::TopologicalMesh::WedgeData the actual wedge data, with one vector array for each of the supported types (float, Vector2, Vector3, Vector4). The order in these arrays follow the names found in getXXXAttribNames referenced below.
 - Ra::Core::Geometry::TopologicalMesh::WedgeIndex

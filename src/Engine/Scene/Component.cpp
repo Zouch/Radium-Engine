@@ -16,13 +16,13 @@ namespace Scene {
 
 using namespace Core::Utils; // log
 
-Component::Component( const std::string& name, Entity* entity ) : m_name {name}, m_entity {entity} {
+Component::Component( const std::string& name, Entity* entity ) :
+    m_name { name }, m_entity { entity } {
     m_entity->addComponent( this );
 }
 
 Component::~Component() {
-    for ( const auto& ro : m_renderObjects )
-    {
+    for ( const auto& ro : m_renderObjects ) {
         getRoMgr()->removeRenderObject( ro );
     }
     if ( m_system ) { m_system->unregisterComponent( getEntity(), this ); }
@@ -43,8 +43,7 @@ Core::Utils::Index Component::addRenderObject( Rendering::RenderObject* renderOb
 void Component::removeRenderObject( const Core::Utils::Index& roIdx ) {
     auto found = std::find( m_renderObjects.cbegin(), m_renderObjects.cend(), roIdx );
     CORE_WARN_IF( found == m_renderObjects.cend(), " Render object not found in component" );
-    if ( ( found != m_renderObjects.cend() ) && getRoMgr() )
-    {
+    if ( ( found != m_renderObjects.cend() ) && getRoMgr() ) {
         getRoMgr()->removeRenderObject( *found );
         m_renderObjects.erase( found );
     }
@@ -58,12 +57,10 @@ void Component::notifyRenderObjectExpired( const Core::Utils::Index& idx ) {
 }
 
 Core::Aabb Component::computeAabb() {
-    if ( !m_isAabbValid )
-    {
+    if ( !m_isAabbValid ) {
         // component haven't any transformation, so ask render objects own aabb.
         Core::Aabb aabb;
-        for ( const auto& roIndex : m_renderObjects )
-        {
+        for ( const auto& roIndex : m_renderObjects ) {
             auto ro =
                 RadiumEngine::getInstance()->getRenderObjectManager()->getRenderObject( roIndex );
             if ( ro->isVisible() ) { aabb.extend( ro->computeAabb() ); }

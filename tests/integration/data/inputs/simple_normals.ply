@@ -9,6 +9,6 @@ property float nx
 property float ny
 property float nz
 end_header
-0 0 0 1 0 0 
-0 0 1 0 1 0 
+0 0 0 1 0 0
+0 0 1 0 1 0
 0 1 1 0 0 1

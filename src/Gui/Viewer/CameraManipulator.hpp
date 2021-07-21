@@ -124,26 +124,26 @@ class RA_GUI_API CameraManipulator : public QObject
 
   protected:
     /// the Camera sensitivity to manipulation.
-    Scalar m_cameraSensitivity {1_ra};
+    Scalar m_cameraSensitivity { 1_ra };
     /// Additional factor for camera sensitivity.
-    Scalar m_quickCameraModifier {1_ra};
+    Scalar m_quickCameraModifier { 1_ra };
     /// Speed modifier on mouse wheel events.
-    Scalar m_wheelSpeedModifier {0.02_ra};
+    Scalar m_wheelSpeedModifier { 0.02_ra };
 
-    Core::Aabb m_targetedAabb;               ///< Camera behavior restriction AABB.
-    Scalar m_targetedAabbVolume {0_ra};      ///< Volume of the m_targetedAabb
-    bool m_mapCameraBahaviourToAabb {false}; ///< whether the camera is restrained or not
+    Core::Aabb m_targetedAabb;                 ///< Camera behavior restriction AABB.
+    Scalar m_targetedAabbVolume { 0_ra };      ///< Volume of the m_targetedAabb
+    bool m_mapCameraBahaviourToAabb { false }; ///< whether the camera is restrained or not
 
     /// Target point of the camera (usefull for most of the manipulator metaphor)
     /// Be aware that m_target must always be on the line of sight of the camera so that it
     /// could be used as a "focus" point by a manipulator.
-    Core::Vector3 m_target {0_ra, 0_ra, 0_ra};
+    Core::Vector3 m_target { 0_ra, 0_ra, 0_ra };
 
     /// Whether the corresponding camera movement is active or not.
     KeyMappingManager::KeyMappingAction m_currentAction {};
 
-    Core::Asset::Camera* m_camera {nullptr}; ///< The Camera.
-    Engine::Scene::Light* m_light {nullptr}; ///< The light attached to the Camera.
+    Core::Asset::Camera* m_camera { nullptr }; ///< The Camera.
+    Engine::Scene::Light* m_light { nullptr }; ///< The light attached to the Camera.
 };
 
 } // namespace Gui

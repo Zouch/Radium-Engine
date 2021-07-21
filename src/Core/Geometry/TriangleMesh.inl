@@ -19,8 +19,7 @@ inline AttribArrayGeometry::AttribArrayGeometry( AttribArrayGeometry&& other ) :
     m_normalsHandle( std::move( other.m_normalsHandle ) ) {}
 
 inline AttribArrayGeometry& AttribArrayGeometry::operator=( const AttribArrayGeometry& other ) {
-    if ( this != &other )
-    {
+    if ( this != &other ) {
         m_vertexAttribs.clear();
         m_vertexAttribs.copyAllAttributes( other.m_vertexAttribs );
         m_verticesHandle = other.m_verticesHandle;
@@ -32,8 +31,7 @@ inline AttribArrayGeometry& AttribArrayGeometry::operator=( const AttribArrayGeo
 }
 
 inline AttribArrayGeometry& AttribArrayGeometry::operator=( AttribArrayGeometry&& other ) {
-    if ( this != &other )
-    {
+    if ( this != &other ) {
         m_vertexAttribs  = std::move( other.m_vertexAttribs );
         m_verticesHandle = std::move( other.m_verticesHandle );
         m_normalsHandle  = std::move( other.m_normalsHandle );
@@ -76,11 +74,9 @@ inline bool AttribArrayGeometry::copyAllAttributes( const AttribArrayGeometry& i
 }
 
 inline Aabb AttribArrayGeometry::computeAabb() const {
-    if ( !isAabbValid() )
-    {
+    if ( !isAabbValid() ) {
         Aabb aabb;
-        for ( const auto& v : vertices() )
-        {
+        for ( const auto& v : vertices() ) {
             aabb.extend( v );
         }
         setAabb( aabb );

@@ -142,13 +142,11 @@ class RA_ENGINE_API AttribArrayDisplayable : public Displayable
         explicit AttribObserver( AttribArrayDisplayable* displayable, int idx ) :
             m_displayable( displayable ), m_idx( idx ) {}
         void operator()() {
-            if ( m_idx < int( m_displayable->m_dataDirty.size() ) )
-            {
+            if ( m_idx < int( m_displayable->m_dataDirty.size() ) ) {
                 m_displayable->m_dataDirty[m_idx] = true;
                 m_displayable->m_isDirty          = true;
             }
-            else
-            {
+            else {
                 /// \todo Should never be here
                 LOG( logDEBUG ) << "Invalid dirty bit notified on " << m_displayable->getName();
             }
@@ -162,7 +160,7 @@ class RA_ENGINE_API AttribArrayDisplayable : public Displayable
   protected:
     std::unique_ptr<globjects::VertexArray> m_vao;
 
-    MeshRenderMode m_renderMode {MeshRenderMode::RM_TRIANGLES};
+    MeshRenderMode m_renderMode { MeshRenderMode::RM_TRIANGLES };
 
     // m_vbos and m_dataDirty have the same size and are indexed thru m_handleToBuffer[attribName]
     std::vector<std::unique_ptr<globjects::Buffer>> m_vbos;
@@ -174,7 +172,7 @@ class RA_ENGINE_API AttribArrayDisplayable : public Displayable
 
     /// General dirty bit of the mesh. Must be equivalent of the "or" of the other dirty flags.
     /// an empty mesh is not dirty
-    bool m_isDirty {false};
+    bool m_isDirty { false };
 };
 
 /// Concept class to ensure consistent naming of VaoIndices accross derived classes.
@@ -189,7 +187,7 @@ class RA_ENGINE_API VaoIndices
     {
       public:
         /// not tested
-        explicit IndicesObserver( VaoIndices* displayable ) : m_displayable {displayable} {}
+        explicit IndicesObserver( VaoIndices* displayable ) : m_displayable { displayable } {}
         /// not tested
         void operator()() { m_displayable->m_indicesDirty = true; }
 
@@ -198,11 +196,11 @@ class RA_ENGINE_API VaoIndices
     };
 
   protected:
-    std::unique_ptr<globjects::Buffer> m_indices {nullptr};
-    bool m_indicesDirty {true};
+    std::unique_ptr<globjects::Buffer> m_indices { nullptr };
+    bool m_indicesDirty { true };
     /// number of elements to draw (i.e number of indices to use)
     /// automatically set by updateGL(), not meaningfull if m_indicesDirty.
-    size_t m_numElements {0};
+    size_t m_numElements { 0 };
 };
 
 /// This class handles an attrib array displayable on gpu only, without core
@@ -474,8 +472,7 @@ CoreMeshType createCoreMeshFromGeometryData( const Ra::Core::Asset::GeometryData
     std::copy(
         data->getVertices().begin(), data->getVertices().end(), std::back_inserter( vertices ) );
 
-    if ( data->hasNormals() )
-    {
+    if ( data->hasNormals() ) {
         normals.reserve( data->getVerticesSize() );
         std::copy(
             data->getNormals().begin(), data->getNormals().end(), std::back_inserter( normals ) );
@@ -488,26 +485,22 @@ CoreMeshType createCoreMeshFromGeometryData( const Ra::Core::Asset::GeometryData
     mesh.setNormals( std::move( normals ) );
 
     // \todo remove when data will handle all the attributes in a coherent way.
-    if ( data->hasTangents() )
-    {
+    if ( data->hasTangents() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_TANGENT ),
                         data->getTangents() );
     }
 
-    if ( data->hasBiTangents() )
-    {
+    if ( data->hasBiTangents() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_BITANGENT ),
                         data->getBiTangents() );
     }
 
-    if ( data->hasTextureCoordinates() )
-    {
+    if ( data->hasTextureCoordinates() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_TEXCOORD ),
                         data->getTexCoords() );
     }
 
-    if ( data->hasColors() )
-    {
+    if ( data->hasColors() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_COLOR ), data->getColors() );
     }
 
@@ -553,7 +546,7 @@ createMeshFromGeometryData( const std::string& name, const Ra::Core::Asset::Geom
 
     CoreMeshType mesh = createCoreMeshFromGeometryData<CoreMeshType>( data );
 
-    MeshType* ret = new MeshType {name};
+    MeshType* ret = new MeshType { name };
     ret->loadGeometry( std::move( mesh ) );
 
     return ret;

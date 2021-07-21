@@ -74,7 +74,7 @@ class RA_ENGINE_API VolumeObject : public Displayable
     Mesh m_mesh;
 
     /// General dirty bit of the mesh. An empty volume is not dirty
-    bool m_isDirty {false};
+    bool m_isDirty { false };
 };
 
 } // namespace Data

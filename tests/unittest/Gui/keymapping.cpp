@@ -42,8 +42,7 @@ KeyMappingDummy
     Dummy::configureKeyMapping_impl() {
 
     KeyMapping::setContext( Gui::KeyMappingManager::getInstance()->getContext( "DummyContext" ) );
-    if ( Dummy::getContext().isInvalid() )
-    {
+    if ( Dummy::getContext().isInvalid() ) {
         LOG( Ra::Core::Utils::logINFO )
             << "DummyContext not defined (maybe the configuration file do not contains it)";
         return;
@@ -62,8 +61,8 @@ TEST_CASE( "Gui/Utils/KeyMappingManager", "[Gui][Gui/Utils][KeyMappingManager]" 
     settings.clear();
     KeyMappingManager::createInstance();
     auto mgr = Gui::KeyMappingManager::getInstance();
-    auto optionalPath {Core::Resources::getRadiumResourcesPath()};
-    auto resourcesRootDir {optionalPath.value_or( "[[Default resrouces path not found]]" )};
+    auto optionalPath { Core::Resources::getRadiumResourcesPath() };
+    auto resourcesRootDir { optionalPath.value_or( "[[Default resrouces path not found]]" ) };
     ///\todo how to check here ?
     auto defaultConfigFile = resourcesRootDir + std::string( "Configs/default.xml" );
 
@@ -91,26 +90,26 @@ TEST_CASE( "Gui/Utils/KeyMappingManager", "[Gui][Gui/Utils][KeyMappingManager]" 
     SECTION( "getAction" ) {
         mgr->loadConfiguration( "data/keymapping-valid.xml" );
         // check context
-        auto cameraContext {mgr->getContext( "CameraContext" )};
+        auto cameraContext { mgr->getContext( "CameraContext" ) };
         REQUIRE( cameraContext.isValid() );
         REQUIRE( mgr->getContextName( cameraContext ) == "CameraContext" );
 
-        auto viewerContext {mgr->getContext( "ViewerContext" )};
+        auto viewerContext { mgr->getContext( "ViewerContext" ) };
         REQUIRE( viewerContext.isValid() );
         REQUIRE( viewerContext != cameraContext );
 
-        auto invalidContext {mgr->getContext( "InvalidContext" )};
+        auto invalidContext { mgr->getContext( "InvalidContext" ) };
         REQUIRE( invalidContext.isInvalid() );
         // invalidContext index returns "Invalid" context name
         REQUIRE( mgr->getContextName( Ctx {} ) == "Invalid" );
-        REQUIRE( mgr->getContextName( Ctx {42} ) == "Invalid" );
+        REQUIRE( mgr->getContextName( Ctx { 42 } ) == "Invalid" );
 
         // test on action
-        auto validAction {mgr->getAction( cameraContext, Qt::LeftButton, Qt::NoModifier, -1 )};
+        auto validAction { mgr->getAction( cameraContext, Qt::LeftButton, Qt::NoModifier, -1 ) };
         REQUIRE( validAction.isValid() );
         REQUIRE( validAction == mgr->getActionIndex( cameraContext, "TRACKBALLCAMERA_ROTATE" ) );
         REQUIRE( mgr->getActionIndex( Ctx {}, "TRACKBALLCAMERA_ROTATE" ).isInvalid() );
-        REQUIRE( mgr->getActionIndex( Ctx {42}, "TRACKBALLCAMERA_ROTATE" ).isInvalid() );
+        REQUIRE( mgr->getActionIndex( Ctx { 42 }, "TRACKBALLCAMERA_ROTATE" ).isInvalid() );
         REQUIRE( mgr->getActionName( cameraContext, validAction ) == "TRACKBALLCAMERA_ROTATE" );
 
         // invalid action index returns "Invalid" action name
@@ -119,11 +118,11 @@ TEST_CASE( "Gui/Utils/KeyMappingManager", "[Gui][Gui/Utils][KeyMappingManager]" 
         // modifiers as key are ignored
         validAction = mgr->getAction( cameraContext, Qt::LeftButton, Qt::ShiftModifier, -1 );
         auto action2 {
-            mgr->getAction( cameraContext, Qt::LeftButton, Qt::ShiftModifier, Qt::Key_Shift )};
+            mgr->getAction( cameraContext, Qt::LeftButton, Qt::ShiftModifier, Qt::Key_Shift ) };
         REQUIRE( validAction == action2 );
 
         // tests some invalid actions
-        auto invalidAction {mgr->getAction( cameraContext, Qt::LeftButton, Qt::AltModifier, -1 )};
+        auto invalidAction { mgr->getAction( cameraContext, Qt::LeftButton, Qt::AltModifier, -1 ) };
         REQUIRE( invalidAction.isInvalid() );
         REQUIRE( invalidAction != mgr->getActionIndex( cameraContext, "TRACKBALLCAMERA_ROTATE" ) );
         REQUIRE( mgr->getAction( Idx {}, Qt::LeftButton, Qt::AltModifier, -1 ).isInvalid() );

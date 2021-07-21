@@ -25,21 +25,17 @@ Scalar weightSimilarity( const Eigen::SparseVector<Scalar>& v1w,
 
     Scalar result = 0;
     // Iterating over non zero coefficients
-    for ( Eigen::SparseVector<Scalar>::InnerIterator it1( v1w ); it1; ++it1 )
-    {
+    for ( Eigen::SparseVector<Scalar>::InnerIterator it1( v1w ); it1; ++it1 ) {
         const uint j      = it1.index();
         const Scalar& W1j = it1.value();              // This one is necessarily non zero
         const Scalar& W2j = v2w.coeff( it1.index() ); // This one may be 0.
 
-        if ( W2j > 0 )
-        {
-            for ( Eigen::SparseVector<Scalar>::InnerIterator it2( v2w ); it2; ++it2 )
-            {
+        if ( W2j > 0 ) {
+            for ( Eigen::SparseVector<Scalar>::InnerIterator it2( v2w ); it2; ++it2 ) {
                 const uint k      = it2.index();
                 const Scalar& W1k = v1w.coeff( it2.index() );
                 const Scalar& W2k = it2.value();
-                if ( j != k && W1k > 0 )
-                {
+                if ( j != k && W1k > 0 ) {
                     const Scalar diff =
                         std::exp( -Math::ipow<2>( ( W1j * W2k ) - ( W1k * W2j ) ) / ( sigmaSq ) );
                     result += W1j * W1k * W2j * W2k * diff;
@@ -75,8 +71,7 @@ void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon 
     // fill map from vertex position to handle index, used to access the weight
     // matrix from initial mesh vertices
     std::unordered_map<Ra::Core::Vector3, int, hash_vec> mapV2I;
-    for ( auto vit = topoMesh.vertices_begin(); vit != topoMesh.vertices_end(); ++vit )
-    {
+    for ( auto vit = topoMesh.vertices_begin(); vit != topoMesh.vertices_end(); ++vit ) {
         mapV2I[topoMesh.point( *vit )] = vit->idx();
     }
 
@@ -86,8 +81,7 @@ void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon 
     const int numCols = dataInOut.m_weights.cols();
     subdivW.resize( topoMesh.n_vertices(), numCols );
     const auto& V = triMesh.vertices();
-    for ( std::size_t i = 0; i < V.size(); ++i )
-    {
+    for ( std::size_t i = 0; i < V.size(); ++i ) {
         subdivW.row( mapV2I[V[i]] ) = dataInOut.m_weights.row( int( i ) );
     }
 
@@ -97,16 +91,14 @@ void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon 
     // and appended to the existing vertices.
     const Scalar wEps2       = weightEpsilon * weightEpsilon;
     Scalar maxWeightDistance = 0;
-    do
-    {
+    do {
         maxWeightDistance = 0;
 
         // Stores the edges to split
         std::vector<Geometry::TopologicalMesh::EdgeHandle> edgesToSplit;
 
         // Compute all weights distances for all edges.
-        for ( auto e_it = topoMesh.edges_begin(); e_it != topoMesh.edges_end(); ++e_it )
-        {
+        for ( auto e_it = topoMesh.edges_begin(); e_it != topoMesh.edges_end(); ++e_it ) {
             const auto& he0 = topoMesh.halfedge_handle( *e_it, 0 );
             const auto& he1 = topoMesh.halfedge_handle( *e_it, 1 );
             int v0          = topoMesh.to_vertex_handle( he0 ).idx();
@@ -135,8 +127,7 @@ void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon 
             } );
 
         // We found some edges over the limit, so we split them.
-        if ( !edgesToSplit.empty() )
-        {
+        if ( !edgesToSplit.empty() ) {
             LOG( logDEBUG ) << "Splitting " << edgesToSplit.size() << " edges";
             int startIndex = subdivW.rows();
 
@@ -148,8 +139,7 @@ void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon 
 
             int i = 0;
             // Split ALL the edges !
-            for ( const auto& edge : edgesToSplit )
-            {
+            for ( const auto& edge : edgesToSplit ) {
                 int v0 = topoMesh.to_vertex_handle( topoMesh.halfedge_handle( edge, 0 ) ).idx();
                 int v1 = topoMesh.to_vertex_handle( topoMesh.halfedge_handle( edge, 1 ) ).idx();
 
@@ -178,8 +168,7 @@ void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon 
     std::map<Geometry::TopologicalMesh::FaceHandle,
              std::tuple<Vector3, Scalar, Eigen::SparseVector<Scalar>>>
         triangleData;
-    for ( auto f_it = topoMesh.faces_begin(); f_it != topoMesh.faces_end(); ++f_it )
-    {
+    for ( auto f_it = topoMesh.faces_begin(); f_it != topoMesh.faces_end(); ++f_it ) {
         // get needed data
         const auto& he0        = topoMesh.halfedge_handle( *f_it );
         const auto& he1        = topoMesh.next_halfedge_handle( he0 );
@@ -199,15 +188,13 @@ void computeCoR( SkinningRefData& dataInOut, Scalar sigma, Scalar weightEpsilon 
     }
 
 #pragma omp parallel for
-    for ( int i = 0; i < int( nVerts ); ++i )
-    {
+    for ( int i = 0; i < int( nVerts ); ++i ) {
         Vector3 cor( 0, 0, 0 );
         Scalar sumweight                     = 0;
         const Eigen::SparseVector<Scalar> Wi = subdivW.row( mapV2I[V[i]] );
 
         // Sum the cor and weights over all triangles of the subdivided mesh.
-        for ( auto f_it = topoMesh.faces_begin(); f_it != topoMesh.faces_end(); ++f_it )
-        {
+        for ( auto f_it = topoMesh.faces_begin(); f_it != topoMesh.faces_end(); ++f_it ) {
             const auto& triData     = triangleData[*f_it];
             const Vector3& centroid = std::get<0>( triData );
             Scalar area             = std::get<1>( triData );
@@ -241,8 +228,7 @@ void centerOfRotationSkinning( const SkinningRefData& refData,
 
     // prepare the pose w.r.t. the bind matrices
 #pragma omp parallel for
-    for ( int i = 0; i < int( frameData.m_skeleton.size() ); ++i )
-    {
+    for ( int i = 0; i < int( frameData.m_skeleton.size() ); ++i ) {
         pose[i] = refData.m_meshTransformInverse * pose[i] * refData.m_bindMatrices[i];
     }
     // Compute the dual quaternions
@@ -250,17 +236,14 @@ void centerOfRotationSkinning( const SkinningRefData& refData,
 
     // Do LBS on the COR with weights of their associated vertices
 #pragma omp parallel for
-    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
-    {
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i ) {
         frameData.m_currentPosition[i] = Vector3::Zero();
     }
-    for ( int k = 0; k < W.outerSize(); ++k )
-    {
+    for ( int k = 0; k < W.outerSize(); ++k ) {
         const int nonZero = W.col( k ).nonZeros();
         WeightMatrix::InnerIterator it0( W, k );
 #pragma omp parallel for
-        for ( int nz = 0; nz < nonZero; ++nz )
-        {
+        for ( int nz = 0; nz < nonZero; ++nz ) {
             WeightMatrix::InnerIterator it = it0 + Eigen::Index( nz );
             const uint i                   = it.row();
             const uint j                   = it.col();
@@ -271,8 +254,7 @@ void centerOfRotationSkinning( const SkinningRefData& refData,
 
     // Compute final transformation
 #pragma omp parallel for
-    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
-    {
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i ) {
         frameData.m_currentPosition[i] += DQ[i].rotate( vertices[i] - CoR[i] );
         frameData.m_currentNormal[i]    = DQ[i].rotate( normals[i] );
         frameData.m_currentTangent[i]   = DQ[i].rotate( tangents[i] );

@@ -98,7 +98,7 @@ class RA_CORE_API AnimationData : public AssetData
     AnimationTime m_time;
 
     /// The animation timestep.
-    AnimationTime::Time m_dt {0};
+    AnimationTime::Time m_dt { 0 };
 
     /// The animation frames.
     std::vector<HandleAnimation> m_keyFrame;

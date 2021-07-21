@@ -58,7 +58,7 @@ struct RA_CORE_API AbstractGeometry {
     }
 
   private:
-    mutable bool m_isAabbValid {false};
+    mutable bool m_isAabbValid { false };
     mutable Core::Aabb m_aabb;
     Ra::Core::Utils::ObservableVoid m_aabbObservable;
 };

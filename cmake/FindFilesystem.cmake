@@ -96,7 +96,6 @@ Using `find_package(Filesystem)` with no component arguments:
 
 #]=======================================================================]
 
-
 if(TARGET std::filesystem)
     # This module has already been processed. Don't do it again.
     return()
@@ -107,8 +106,8 @@ cmake_minimum_required(VERSION 3.10)
 include(CMakePushCheckState)
 include(CheckIncludeFileCXX)
 
-# If we're not cross-compiling, try to run test executables.
-# Otherwise, assume that compile + link is a sufficient check.
+# If we're not cross-compiling, try to run test executables. Otherwise, assume that compile + link
+# is a sufficient check.
 if(CMAKE_CROSSCOMPILING)
     include(CheckCXXSourceCompiles)
     macro(_cmcm_check_cxx_source code var)
@@ -155,8 +154,7 @@ if(find_final)
     check_include_file_cxx("filesystem" _CXX_FILESYSTEM_HAVE_HEADER)
     mark_as_advanced(_CXX_FILESYSTEM_HAVE_HEADER)
     if(_CXX_FILESYSTEM_HAVE_HEADER)
-        # We found the non-experimental header. Don't bother looking for the
-        # experimental one.
+        # We found the non-experimental header. Don't bother looking for the experimental one.
         set(find_experimental FALSE)
     endif()
 else()
@@ -185,15 +183,23 @@ else()
 endif()
 
 set(CXX_FILESYSTEM_HAVE_FS ${_have_fs} CACHE BOOL "TRUE if we have the C++ filesystem headers")
-set(CXX_FILESYSTEM_HEADER ${_fs_header} CACHE STRING "The header that should be included to obtain the filesystem APIs")
-set(CXX_FILESYSTEM_NAMESPACE ${_fs_namespace} CACHE STRING "The C++ namespace that contains the filesystem APIs")
-set(CXX_FILESYSTEM_IS_EXPERIMENTAL ${_is_experimental} CACHE BOOL "TRUE if the C++ filesystem library is the experimental version")
+set(CXX_FILESYSTEM_HEADER ${_fs_header}
+    CACHE STRING "The header that should be included to obtain the filesystem APIs"
+)
+set(CXX_FILESYSTEM_NAMESPACE ${_fs_namespace}
+    CACHE STRING "The C++ namespace that contains the filesystem APIs"
+)
+set(CXX_FILESYSTEM_IS_EXPERIMENTAL ${_is_experimental}
+    CACHE BOOL "TRUE if the C++ filesystem library is the experimental version"
+)
 
 set(_found FALSE)
 
 if(CXX_FILESYSTEM_HAVE_FS)
     # We have some filesystem library available. Do link checks
-    string(CONFIGURE [[
+    string(
+        CONFIGURE
+            [[
         #include <cstdlib>
         #include <@CXX_FILESYSTEM_HEADER@>
 
@@ -202,7 +208,10 @@ if(CXX_FILESYSTEM_HAVE_FS)
             printf("%s", cwd.c_str());
             return EXIT_SUCCESS;
         }
-    ]] code @ONLY)
+    ]]
+            code
+        @ONLY
+    )
 
     # Check a simple filesystem program without any linker flags
     _cmcm_check_cxx_source("${code}" CXX_FILESYSTEM_NO_LINK_NEEDED)
@@ -240,7 +249,9 @@ endif()
 
 cmake_pop_check_state()
 
-set(Filesystem_FOUND ${_found} CACHE BOOL "TRUE if we can run a program using std::filesystem" FORCE)
+set(Filesystem_FOUND ${_found} CACHE BOOL "TRUE if we can run a program using std::filesystem"
+                                     FORCE
+)
 
 if(Filesystem_FIND_REQUIRED AND NOT Filesystem_FOUND)
     message(FATAL_ERROR "Cannot run simple program using std::filesystem")

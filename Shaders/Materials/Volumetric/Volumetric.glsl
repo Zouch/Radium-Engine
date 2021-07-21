@@ -55,11 +55,9 @@ bool getTr( Material volume, vec3 p, vec3 dir, out vec3 tr ) {
         ( volume.sigma_a.rgb + volume.sigma_s.rgb ) * SHADOW_RAY_SUBSAMPLING * volume.stepsize;
     bool hit = false;
     p += dir * VanderCorput( uint( dot( p, p ) ) ) * volume.stepsize;
-    for ( ;; )
-    {
+    for ( ;; ) {
         float density = texture( volume.density, p ).r;
-        if ( density > 0 )
-        {
+        if ( density > 0 ) {
             hit = true;
             tau = density * sigma_t;
             tr *= exp( -tau );
@@ -137,11 +135,9 @@ bool raymarch( Material volume,
     bool hit = false;
     float t  = VanderCorput( uint( dot( p, p ) ) ) * volume.stepsize;
     p += dir * t;
-    for ( ;; )
-    {
+    for ( ;; ) {
         float density = texture( volume.density, p ).r * volume.scale;
-        if ( density > 0 )
-        {
+        if ( density > 0 ) {
             hit = true;
             // Compute Transmission
             tau = density * sigma_t;
@@ -154,8 +150,7 @@ bool raymarch( Material volume,
         t += volume.stepsize;
         // volume test
         if ( t > tmax || any( greaterThan( p, vec3( 1.0 ) ) ) ||
-             any( lessThan( p, vec3( 0.0 ) ) ) || all( lessThan( tr, vec3( 0.00001 ) ) ) )
-        {
+             any( lessThan( p, vec3( 0.0 ) ) ) || all( lessThan( tr, vec3( 0.00001 ) ) ) ) {
             tmax = t;
             break;
         }

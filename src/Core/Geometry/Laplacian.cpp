@@ -31,8 +31,7 @@ LaplacianMatrix randomWalkNormalizedLaplacian( const DegreeMatrix& D, const Adja
 LaplacianMatrix powerLaplacian( const LaplacianMatrix& L, const uint k ) {
     LaplacianMatrix lap( L.rows(), L.cols() );
     lap.setIdentity();
-    for ( uint i = 0; i < k; ++i )
-    {
+    for ( uint i = 0; i < k; ++i ) {
         lap = L * lap;
     }
     return lap;
@@ -41,8 +40,7 @@ LaplacianMatrix powerLaplacian( const LaplacianMatrix& L, const uint k ) {
 LaplacianMatrix cotangentWeightLaplacian( const VectorArray<Vector3>& p,
                                           const AlignedStdVector<Vector3ui>& T ) {
     LaplacianMatrix L( p.size(), p.size() );
-    for ( const auto& t : T )
-    {
+    for ( const auto& t : T ) {
         uint i      = t( 0 );
         uint j      = t( 1 );
         uint k      = t( 2 );
@@ -72,8 +70,7 @@ LaplacianMatrix cotangentWeightLaplacian( const VectorArray<Vector3>& p,
 Vector3 uniformLaplacian( const Vector3& v, const VectorArray<Vector3>& p ) {
     Vector3 L;
     L.setZero();
-    for ( const auto& pi : p )
-    {
+    for ( const auto& pi : p ) {
         L += ( v - pi );
     }
     return L;
@@ -85,8 +82,7 @@ Vector3 cotangentWeightLaplacian( const Vector3& v, const VectorArray<Vector3>& 
     uint N = p.size();
     Utils::CircularIndex i;
     i.setSize( N );
-    for ( uint j = 0; j < N; ++j )
-    {
+    for ( uint j = 0; j < N; ++j ) {
         i.setValue( j );
         Scalar cot_a = Math::cotan( ( v - p[i - 1] ), ( p[i] - p[i - 1] ) );
         Scalar cot_b = Math::cotan( ( v - p[i + 1] ), ( p[i] - p[i + 1] ) );

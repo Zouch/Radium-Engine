@@ -7,4 +7,4 @@ configure with
 `cmake -DRadium_DIR=/PathToInstalledRadium/lib/cmake/Radium/ ..`
 compile and install using `make install`
 
-To use the library, just do `FindPackage(ExampleLibrary)` then `target_link_libraries(yourTarget ExampleLibrary::ExampleLibrary)` in your client application or lib and configure with `-D/pathToInstalledExampleLibrary` 
+To use the library, just do `FindPackage(ExampleLibrary)` then `target_link_libraries(yourTarget ExampleLibrary::ExampleLibrary)` in your client application or lib and configure with `-D/pathToInstalledExampleLibrary`

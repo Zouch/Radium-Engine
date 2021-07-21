@@ -9,7 +9,7 @@ AlwaysBreakTemplateDeclarations: true
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterClass: true
-  AfterControlStatement: true
+  AfterControlStatement: false
   AfterEnum: false
   AfterFunction: false
   AfterNamespace: false
@@ -41,7 +41,9 @@ AlignConsecutiveAssignments: true
 AllowAllParametersOfDeclarationOnNextLine: false
 BinPackArguments: false
 BinPackParameters: false
-#not supported yet ?
+#tests for ci
+SpacesInCStyleCastParentheses: false
+
 SpaceBeforeCpp11BracedList: true
 StatementMacros: [
 'KeyMappingViewer',
@@ -55,4 +57,3 @@ StatementMacros: [
 'CORE_ASSERT'
 ]
 ...
-

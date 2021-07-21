@@ -15,7 +15,7 @@ namespace Core {
 namespace Asset {
 
 Camera::Camera( Scalar width, Scalar height ) :
-    m_width {width}, m_height {height}, m_aspect {width / height} {}
+    m_width { width }, m_height { height }, m_aspect { width / height } {}
 
 Camera& Camera::operator=( const Camera& rhs ) {
     m_frame      = rhs.getFrame();
@@ -42,10 +42,12 @@ void Camera::setDirection( const Core::Vector3& direction ) {
 
     // Special case if two directions are exactly opposites we constrain.
     // to rotate around the up vector.
-    if ( c.isApprox( Core::Vector3::Zero() ) && d < 0.0 )
-    { T.rotate( Core::AngleAxis( Core::Math::Pi, getUpVector() ) ); }
-    else
-    { T.rotate( Core::Quaternion::FromTwoVectors( d0, d1 ) ); }
+    if ( c.isApprox( Core::Vector3::Zero() ) && d < 0.0 ) {
+        T.rotate( Core::AngleAxis( Core::Math::Pi, getUpVector() ) );
+    }
+    else {
+        T.rotate( Core::Quaternion::FromTwoVectors( d0, d1 ) );
+    }
     applyTransform( T );
 }
 
@@ -66,20 +68,17 @@ void Camera::applyTransform( const Core::Transform& T ) {
 }
 
 void Camera::updateProjMatrix() {
-    switch ( m_projType )
-    {
+    switch ( m_projType ) {
     case ProjType::ORTHOGRAPHIC: {
         const Scalar r = m_xmag * m_zoomFactor;
         const Scalar t = m_ymag * m_zoomFactor / m_aspect;
         m_projMatrix   = ortho( -r, r, -t, t, m_zNear, m_zFar );
-    }
-    break;
+    } break;
 
     case ProjType::PERSPECTIVE: {
         Scalar fov   = std::clamp( m_zoomFactor * m_fov, 0.001_ra, Math::Pi - 0.1_ra );
         m_projMatrix = perspective( m_aspect, fov, m_zNear, m_zFar );
-    }
-    break;
+    } break;
 
     default:
         break;
@@ -151,15 +150,15 @@ void Camera::fitZRange( const Core::Aabb& aabb ) {
     };
 #else
 
-    const auto position  = Ra::Core::Vector3 {0_ra, 0_ra, 0_ra};
-    const auto direction = Ra::Core::Vector3 {0_ra, 0_ra, -1_ra};
+    const auto position  = Ra::Core::Vector3 { 0_ra, 0_ra, 0_ra };
+    const auto direction = Ra::Core::Vector3 { 0_ra, 0_ra, -1_ra };
     const auto view      = getFrame().inverse();
     const auto& minAabb  = aabb.min();
     const auto& maxAabb  = aabb.max();
 
     m_zNear = m_zFar = direction.dot( view * minAabb - position );
     auto adaptRange  = [view, position, direction, this]( Scalar x, Scalar y, Scalar z ) {
-        auto corner   = Core::Vector3 {x, y, z};
+        auto corner   = Core::Vector3 { x, y, z };
         auto d        = direction.dot( view * corner - position );
         this->m_zNear = std::min( d, this->m_zNear );
         this->m_zFar  = std::max( d, this->m_zFar );
@@ -201,13 +200,13 @@ Core::Vector3 Camera::projectToScreen( const Core::Vector3& p ) const {
 }
 
 Core::Vector3 Camera::unProjectFromScreen( const Core::Vector2& pix ) const {
-    return unProjectFromScreen( Vector3 {pix.x(), pix.y(), 0_ra} );
+    return unProjectFromScreen( Vector3 { pix.x(), pix.y(), 0_ra } );
 }
 
 Core::Vector3 Camera::unProjectFromScreen( const Core::Vector3& pix ) const {
-    Core::Vector3 ndc {pix.cwiseProduct( Core::Vector3( 2_ra, -2_ra, 2_ra ) )
-                           .cwiseQuotient( Core::Vector3( getWidth(), getHeight(), 1_ra ) ) +
-                       Core::Vector3 {-1_ra, 1_ra, -1_ra}};
+    Core::Vector3 ndc { pix.cwiseProduct( Core::Vector3( 2_ra, -2_ra, 2_ra ) )
+                            .cwiseQuotient( Core::Vector3( getWidth(), getHeight(), 1_ra ) ) +
+                        Core::Vector3 { -1_ra, 1_ra, -1_ra } };
     return unProjectFromNDC( ndc );
 }
 

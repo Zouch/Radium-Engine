@@ -40,8 +40,7 @@ class SimpleSimulationSystem : public Ra::Engine::Scene::System
                 auto& cAttrib = getColorAttrib();
                 auto& cbuf    = cAttrib.getDataWithLock();
 
-                for ( size_t i = 0; i != vbuf.size(); ++i )
-                {
+                for ( size_t i = 0; i != vbuf.size(); ++i ) {
                     auto& x = vbuf[i];
                     x       = ( x + 0.02 * Ra::Core::Vector3::Random() )
                             .cwiseMin( 1_ra )
@@ -74,7 +73,7 @@ int main( int argc, char* argv[] ) {
     //! [Colorize the cloud]
     cloud.addAttrib(
         "in_color",
-        Ra::Core::Vector4Array {cloud.vertices().size(), Ra::Core::Utils::Color::Green()} );
+        Ra::Core::Vector4Array { cloud.vertices().size(), Ra::Core::Utils::Color::Green() } );
     //! [Colorize the cloud]
 
     //! [Create the engine entity for the cloud]

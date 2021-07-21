@@ -46,22 +46,20 @@ void LightManager::handleAssetLoading( Entity* entity, const FileData* filedata 
     // belong to the system entity (e.g. the headlight) from the list of managed lights. Beware to
     // not destroy the headlight component, that do not belong to this system, so that it could be
     // added again
-    for ( size_t i = 0; i < m_data->size(); )
-    {
+    for ( size_t i = 0; i < m_data->size(); ) {
         auto l = ( *m_data )[i];
         if ( l->getEntity() == SystemEntity::getInstance() ) { m_data->remove( l ); }
-        else
-        { ++i; }
+        else {
+            ++i;
+        }
     }
 
-    for ( const auto& data : lightData )
-    {
+    for ( const auto& data : lightData ) {
         std::string componentName =
             "LIGHT_" + data->getName() + " (" + std::to_string( id++ ) + ")";
         Scene::Light* comp = nullptr;
 
-        switch ( data->getType() )
-        {
+        switch ( data->getType() ) {
         case LightData::DIRECTIONAL_LIGHT: {
 
             auto thelight = new DirectionalLight( entity, componentName );
@@ -128,10 +126,10 @@ void LightManager::unregisterComponent( const Entity* entity, Component* compone
 }
 
 void LightManager::unregisterAllComponents( const Entity* entity ) {
-    for ( const auto& comp : this->m_components )
-    {
-        if ( comp.first == entity )
-        { m_data->remove( reinterpret_cast<Scene::Light*>( comp.second ) ); }
+    for ( const auto& comp : this->m_components ) {
+        if ( comp.first == entity ) {
+            m_data->remove( reinterpret_cast<Scene::Light*>( comp.second ) );
+        }
     }
     System::unregisterAllComponents( entity );
 }

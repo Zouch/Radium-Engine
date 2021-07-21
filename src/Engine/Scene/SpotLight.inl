@@ -50,7 +50,7 @@ inline void SpotLight::setAttenuation( const Attenuation& attenuation ) {
 }
 
 inline void SpotLight::setAttenuation( Scalar constant, Scalar linear, Scalar quadratic ) {
-    m_attenuation = {constant, linear, quadratic};
+    m_attenuation = { constant, linear, quadratic };
 }
 
 inline const SpotLight::Attenuation& SpotLight::getAttenuation() const {

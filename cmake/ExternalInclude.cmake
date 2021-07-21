@@ -1,16 +1,16 @@
 #set the compile defdinition for current directory (i.e. externals)
-if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     if(CMAKE_CXX_FLAGS MATCHES "/W[0-4]")
         string(REGEX REPLACE "/W[0-4]" "/w " EXTERNAL_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
     else()
         set(EXTERNAL_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /w ")
     endif()
 else()
-    set(EXTERNAL_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w") 
+    set(EXTERNAL_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -w")
 endif()
 
-#if we are in a radium process, use radium specific option, else use cmake option.
-if(RADIUM_EXTERNAL_CMAKE_INSTALL_MESSAGE) 
+# if we are in a radium process, use radium specific option, else use cmake option.
+if(RADIUM_EXTERNAL_CMAKE_INSTALL_MESSAGE)
     set(EXTERNAL_INSTALL_MESSAGE ${RADIUM_EXTERNAL_CMAKE_INSTALL_MESSAGE})
 else()
     set(EXTERNAL_INSTALL_MESSAGE ${CMAKE_INSTALL_MESSAGE})
@@ -35,14 +35,13 @@ set(RADIUM_EXTERNAL_CMAKE_OPTIONS
     -DCMAKE_OBJECT_PATH_MAX=${CMAKE_OBJECT_PATH_MAX}
     -DCMAKE_MACOSX_RPATH=TRUE
     --no-warn-unused-cli
-    )
-
+)
 
 # First message formating function, need other to have better consistency
-macro(StatusMessage MODULE NAME VAR)
+macro(status_message MODULE NAME VAR)
     message(STATUS "${MODULE} Using ${NAME} from ${VAR}")
 endmacro()
 
-macro(CheckExternalsPrerequisite)
+macro(check_externals_prerequisite)
     find_package(Git REQUIRED)
 endmacro()

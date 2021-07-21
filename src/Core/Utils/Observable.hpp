@@ -44,8 +44,7 @@ class Observable
 
     /// explicit copy of all attached observers the \p other Observable
     void copyObserversTo( Observable& other ) const {
-        for ( const auto& o : m_observers )
-        {
+        for ( const auto& o : m_observers ) {
             other.attach( o.second );
         }
     }
@@ -53,7 +52,7 @@ class Observable
     /// Attach an \p observer that will be call on subsecant call to notify()
     /// \return An unique int to identify the observer, could be used to pass to Obeservable::detach
     inline int attach( Observer observer ) {
-        m_observers.insert( {++m_currentId, observer} );
+        m_observers.insert( { ++m_currentId, observer } );
         return m_currentId;
     }
 
@@ -85,7 +84,7 @@ class Observable
     }
 
     std::map<int, Observer> m_observers;
-    int m_currentId {0};
+    int m_currentId { 0 };
 };
 
 class RA_CORE_API ObservableVoid : public Observable<>

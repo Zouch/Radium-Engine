@@ -20,4 +20,3 @@ This will install the library and its cmake configuration scripts in the `CMAKE_
 ```bash
 make install
 ```
-

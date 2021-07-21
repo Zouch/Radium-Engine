@@ -148,8 +148,7 @@ class RA_ENGINE_API SystemEntity : public Entity
 #    define RA_CLEAR_DEBUG_DISPLAY()                                \
         {                                                           \
             auto cmp = Ra::Engine::Scene::SystemEntity::dbgCmp();   \
-            while ( cmp->m_renderObjects.size() )                   \
-            {                                                       \
+            while ( cmp->m_renderObjects.size() ) {                 \
                 cmp->removeRenderObject( cmp->m_renderObjects[0] ); \
             }                                                       \
         }

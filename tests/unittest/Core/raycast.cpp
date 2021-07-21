@@ -6,18 +6,14 @@ TEST_CASE( "Core/Geometry/RayCast", "[Core][Core/Geometry][RayCast]" ) {
     using namespace Ra::Core;
     Aabb ones( -Vector3::Ones(), Vector3::Ones() );
     // For all directions x, y, z
-    for ( int i = 0; i < 3; ++i )
-    {
+    for ( int i = 0; i < 3; ++i ) {
         // From negative x and positive x
-        for ( int sig = -1; sig < 2; sig += 2 )
-        {
+        for ( int sig = -1; sig < 2; sig += 2 ) {
             Vector3 s = 3 * sig * Vector3::Unit( i );
             Vector3 d = -sig * Vector3::Unit( i );
 
-            for ( int p = -10; p < 11; p++ )
-            {
-                for ( int q = -10; q < 11; q++ )
-                {
+            for ( int p = -10; p < 11; p++ ) {
+                for ( int q = -10; q < 11; q++ ) {
                     Vector3 dir = d + Scalar( p ) / 10_ra * Vector3::Unit( ( i + 1 ) % 3 ) +
                                   Scalar( q ) / 10_ra * Vector3::Unit( ( i + 2 ) % 3 );
 
@@ -29,8 +25,7 @@ TEST_CASE( "Core/Geometry/RayCast", "[Core][Core/Geometry][RayCast]" ) {
                         Vector3 n         = Vector3::Zero();
                         const bool result = Geometry::RayCastAabb( r, ones, t, n );
 
-                        if ( std::abs( p ) <= 5 && std::abs( q ) <= 5 )
-                        {
+                        if ( std::abs( p ) <= 5 && std::abs( q ) <= 5 ) {
                             // The ray should have hit
                             REQUIRE( result );
                             // Wrong normal
@@ -39,8 +34,9 @@ TEST_CASE( "Core/Geometry/RayCast", "[Core][Core/Geometry][RayCast]" ) {
                             // Wrong hit point
                             REQUIRE( Math::areApproxEqual( r.pointAt( t )[i], Scalar( sig ) ) );
                         }
-                        else
-                        { REQUIRE( !result ); } // The ray should have missed
+                        else {
+                            REQUIRE( !result );
+                        } // The ray should have missed
                     }
 
                     // Fire a ray on the other direction (which should miss)
@@ -60,7 +56,7 @@ TEST_CASE( "Core/Geometry/RayCast", "[Core][Core/Geometry][RayCast]" ) {
                         Eigen::ParametrizedLine<Scalar, 3> r( Vector3::Zero(), dir.normalized() );
 
                         Scalar t;
-                        Vector3 n {0, 0, 0};
+                        Vector3 n { 0, 0, 0 };
                         const bool result = Geometry::RayCastAabb( r, ones, t, n );
 
                         // The ray should have hit (inside hit)

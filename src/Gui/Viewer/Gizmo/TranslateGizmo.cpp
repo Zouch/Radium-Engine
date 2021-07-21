@@ -26,8 +26,7 @@ TranslateGizmo::TranslateGizmo( Engine::Scene::Component* c,
     constexpr Scalar axisWidth  = .05_ra;
     constexpr Scalar arrowFrac  = .15_ra;
 
-    for ( uint i = 0; i < 3; ++i )
-    {
+    for ( uint i = 0; i < 3; ++i ) {
         Core::Vector3 cylinderEnd             = Core::Vector3::Zero();
         cylinderEnd[i]                        = ( 1_ra - arrowFrac );
         Core::Vector3 arrowEnd                = Core::Vector3::Zero();
@@ -50,8 +49,7 @@ TranslateGizmo::TranslateGizmo( Engine::Scene::Component* c,
         addRenderObject( arrowDrawable );
     }
 
-    for ( uint i = 0; i < 3; ++i )
-    {
+    for ( uint i = 0; i < 3; ++i ) {
         Core::Vector3 axis                        = Core::Vector3::Zero();
         axis[( i == 0 ? 1 : ( i == 1 ? 0 : 2 ) )] = 1;
         Core::Transform T                         = Core::Transform::Identity();
@@ -90,8 +88,7 @@ void TranslateGizmo::updateTransform( Gizmo::Mode mode,
     m_transform                      = t;
     Core::Transform displayTransform = Core::Transform::Identity();
     displayTransform.translate( m_transform.translation() );
-    if ( m_mode == LOCAL )
-    {
+    if ( m_mode == LOCAL ) {
         Core::Matrix3 R = m_transform.rotation();
         R.col( 0 ).normalize();
         R.col( 1 ).normalize();
@@ -99,22 +96,19 @@ void TranslateGizmo::updateTransform( Gizmo::Mode mode,
         displayTransform.rotate( R );
     }
 
-    for ( auto ro : ros() )
-    {
+    for ( auto ro : ros() ) {
         ro->setLocalTransform( m_worldTo * displayTransform );
     }
 }
 
 void TranslateGizmo::selectConstraint( int drawableIdx ) {
     // deselect previously selected axis
-    if ( m_selectedAxis != -1 )
-    {
+    if ( m_selectedAxis != -1 ) {
         getControler( m_selectedAxis )->clearState();
         m_selectedAxis = -1;
     }
     // deselect previously selected plane
-    if ( m_selectedPlane != -1 )
-    {
+    if ( m_selectedPlane != -1 ) {
         getControler( m_selectedPlane + 3 )->clearState();
         getControler( ( m_selectedPlane + 1 ) % 3 )->clearState();
         getControler( ( m_selectedPlane + 2 ) % 3 )->clearState();
@@ -128,14 +122,12 @@ void TranslateGizmo::selectConstraint( int drawableIdx ) {
     auto found = std::find_if( ros().cbegin(), ros().cend(), [drawableIdx]( const auto& ro ) {
         return ro->getIndex() == Core::Utils::Index( drawableIdx );
     } );
-    if ( found != ros().cend() )
-    {
+    if ( found != ros().cend() ) {
         int i = int( std::distance( ros().cbegin(), found ) );
         getControler( i )->setState();
         ( i < 3 ) ? m_selectedAxis = i : m_selectedPlane = i - 3;
         // Activate the axes correponding to the selected plane
-        if ( m_selectedPlane != -1 )
-        {
+        if ( m_selectedPlane != -1 ) {
             getControler( ( m_selectedPlane + 1 ) % 3 )->setState();
             getControler( ( m_selectedPlane + 2 ) % 3 )->setState();
         }
@@ -163,21 +155,17 @@ Core::Transform TranslateGizmo::mouseMove( const Core::Asset::Camera& cam,
     // or the planes defined by the translation plane.
     Ra::Core::Vector3 endPoint;
     bool found = false;
-    if ( m_selectedAxis > -1 )
-    {
+    if ( m_selectedAxis > -1 ) {
         found = findPointOnAxis( cam, origin, translateDir, m_initialPix + nextXY, endPoint, hits );
     }
-    else if ( m_selectedPlane > -1 )
-    {
+    else if ( m_selectedPlane > -1 ) {
         found =
             findPointOnPlane( cam, origin, translateDir, m_initialPix + nextXY, endPoint, hits );
     }
 
-    if ( found )
-    {
+    if ( found ) {
         // Initialize translation
-        if ( !m_start )
-        {
+        if ( !m_start ) {
             m_start        = true;
             m_startPoint   = endPoint;
             m_initialTrans = origin;

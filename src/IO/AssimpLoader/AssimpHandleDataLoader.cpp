@@ -29,14 +29,12 @@ void AssimpHandleDataLoader::loadData( const aiScene* scene,
                                        std::vector<std::unique_ptr<HandleData>>& data ) {
     data.clear();
 
-    if ( scene == nullptr )
-    {
+    if ( scene == nullptr ) {
         LOG( logDEBUG ) << "AssimpHandleDataLoader : scene is nullptr.";
         return;
     }
 
-    if ( m_verbose )
-    {
+    if ( m_verbose ) {
         LOG( logDEBUG ) << "File contains handle.";
         LOG( logDEBUG ) << "Handle Loading begin...";
     }
@@ -52,13 +50,11 @@ namespace {
 
 aiNode* findMeshNode( aiNode* node, const aiScene* scene, const aiString& meshName ) {
     // look inside the node
-    for ( uint i = 0; i < node->mNumMeshes; ++i )
-    {
+    for ( uint i = 0; i < node->mNumMeshes; ++i ) {
         if ( scene->mMeshes[node->mMeshes[i]]->mName == meshName ) { return node; }
     }
     // repeat on children
-    for ( uint i = 0; i < node->mNumChildren; ++i )
-    {
+    for ( uint i = 0; i < node->mNumChildren; ++i ) {
         aiNode* n = findMeshNode( node->mChildren[i], scene, meshName );
         if ( n != nullptr ) { return n; }
     }
@@ -67,8 +63,7 @@ aiNode* findMeshNode( aiNode* node, const aiScene* scene, const aiString& meshNa
 
 void initMarks( const aiNode* node, std::map<std::string, bool>& flags, bool flag = false ) {
     flags[assimpToCore( node->mName )] = flag;
-    for ( uint i = 0; i < node->mNumChildren; ++i )
-    {
+    for ( uint i = 0; i < node->mNumChildren; ++i ) {
         initMarks( node->mChildren[i], flags, flag );
     }
 }
@@ -78,8 +73,7 @@ void markParents( aiNode* node,
                   const std::vector<aiNode*>& meshParents,
                   std::map<std::string, bool>& flag ) {
     const std::string nodeName = assimpToCore( node->mName );
-    if ( flag[nodeName] )
-    {
+    if ( flag[nodeName] ) {
         // skip already visited up-tree.
         return;
     }
@@ -87,8 +81,7 @@ void markParents( aiNode* node,
     // check if node is in the mesh hierarchy
     auto it = std::find_if(
         meshParents.begin(), meshParents.end(), [node]( const auto& n ) { return n == node; } );
-    if ( it != meshParents.end() )
-    {
+    if ( it != meshParents.end() ) {
         flag[nodeName] = false;
         return;
     }
@@ -113,13 +106,11 @@ void AssimpHandleDataLoader::loadHandleData(
 
     // load the HandleComponentData for all meshes
     std::map<std::string, HandleComponentData> mapBone2Data;
-    for ( uint n = 0; n < scene->mNumMeshes; ++n )
-    {
+    for ( uint n = 0; n < scene->mNumMeshes; ++n ) {
         const aiMesh* mesh = scene->mMeshes[n];
         // fetch mesh name as registered by the GeometryLoader
         std::string meshName = assimpToCore( mesh->mName );
-        while ( meshNames.find( meshName ) != meshNames.end() )
-        {
+        while ( meshNames.find( meshName ) != meshNames.end() ) {
             meshName.append( "_" );
         }
         meshNames.insert( meshName );
@@ -129,15 +120,13 @@ void AssimpHandleDataLoader::loadHandleData(
 
         // get mesh node parents
         aiNode* meshNode = findMeshNode( scene->mRootNode, scene, mesh->mName );
-        while ( meshNode != nullptr )
-        {
+        while ( meshNode != nullptr ) {
             meshParents[n].push_back( meshNode );
             meshNode = meshNode->mParent;
         }
 
         // deal with skeleton
-        for ( uint j = 0; j < mesh->mNumBones; ++j )
-        {
+        for ( uint j = 0; j < mesh->mNumBones; ++j ) {
             const aiBone* bone = mesh->mBones[j];
             // fetch bone data
             const std::string boneName = assimpToCore( bone->mName );
@@ -151,8 +140,7 @@ void AssimpHandleDataLoader::loadHandleData(
             // mark parents as needed up to mesh node relative
             markParents( node, scene, meshParents[n], needNode );
             // check children since end bones may not have weights
-            if ( node->mNumChildren == 1 )
-            {
+            if ( node->mNumChildren == 1 ) {
                 const aiNode* child         = node->mChildren[0];
                 const std::string childName = assimpToCore( child->mName );
                 // mark as needed
@@ -165,8 +153,7 @@ void AssimpHandleDataLoader::loadHandleData(
 
     // also add bone nodes for skeletons not attached to a mesh
     auto rootNode = scene->mRootNode;
-    for ( uint i = 0; i < rootNode->mNumChildren; ++i )
-    {
+    for ( uint i = 0; i < rootNode->mNumChildren; ++i ) {
         auto node = rootNode->mChildren[i];
         if ( needNode[assimpToCore( node->mName )] ) { continue; }
         // check not up from a mesh
@@ -183,56 +170,48 @@ void AssimpHandleDataLoader::loadHandleData(
 
     // load hierarchy for needed bones
     std::vector<std::pair<std::string, std::string>> edgeList;
-    for ( const auto& n : needNode )
-    {
+    for ( const auto& n : needNode ) {
         if ( !n.second ) { continue; }
         // if data doesn't exist, create it (bone with no weight)
         mapBone2Data[n.first].m_name = n.first;
         // link to children
         const aiNode* node = scene->mRootNode->FindNode( aiString( n.first ) );
-        for ( uint j = 0; j < node->mNumChildren; ++j )
-        {
+        for ( uint j = 0; j < node->mNumChildren; ++j ) {
             const std::string childName = assimpToCore( node->mChildren[j]->mName );
-            if ( needNode.at( childName ) )
-            {
+            if ( needNode.at( childName ) ) {
                 // if data doesn't exist, create it (bone with no weight)
                 mapBone2Data[childName].m_name = childName;
                 // register parenthood
-                edgeList.push_back( {n.first, childName} );
+                edgeList.push_back( { n.first, childName } );
             }
         }
     }
 
     // load bone frame once all are registered
-    for ( auto& bone : mapBone2Data )
-    {
+    for ( auto& bone : mapBone2Data ) {
         loadHandleComponentDataFrame( scene, aiString( bone.first ), bone.second );
     }
 
     // find roots and leaves
     std::set<std::string> roots;
-    for ( const auto& node : needNode )
-    {
+    for ( const auto& node : needNode ) {
         if ( node.second ) { roots.insert( node.first ); }
     }
     std::set<std::string> leaves = roots;
-    for ( auto edge : edgeList )
-    {
+    for ( auto edge : edgeList ) {
         roots.erase( edge.second );
         leaves.erase( edge.first );
     }
 
     // build one HandleData per root
-    for ( auto root : roots )
-    {
+    for ( auto root : roots ) {
         HandleData* handle = new HandleData();
         handle->setType( HandleData::SKELETON );
         handle->setName( root );
 
         Ra::Core::Transform frame = Ra::Core::Transform::Identity();
         aiNode* node              = scene->mRootNode->FindNode( aiString( root ) );
-        while ( node->mParent != nullptr )
-        {
+        while ( node->mParent != nullptr ) {
             node  = node->mParent;
             frame = assimpToCore( node->mTransformation ) * frame;
         }
@@ -245,15 +224,11 @@ void AssimpHandleDataLoader::loadHandleData(
 
         // check if need additional end bones
         bool needEndBone = false;
-        for ( const std::string& leaf : leaves )
-        {
-            if ( nameTable.find( leaf ) != nameTable.end() )
-            {
+        for ( const std::string& leaf : leaves ) {
+            if ( nameTable.find( leaf ) != nameTable.end() ) {
                 const auto& handleComponentData = mapBone2Data[leaf];
-                for ( const auto& mesh : handleComponentData.m_weights )
-                {
-                    if ( mesh.second.size() != 0 )
-                    {
+                for ( const auto& mesh : handleComponentData.m_weights ) {
+                    if ( mesh.second.size() != 0 ) {
                         needEndBone = true;
                         break;
                     }
@@ -263,13 +238,11 @@ void AssimpHandleDataLoader::loadHandleData(
         }
         handle->needEndNodes( needEndBone );
 
-        if ( handle->isSkeleton() && !handle->hasEdges() )
-        {
+        if ( handle->isSkeleton() && !handle->hasEdges() ) {
             // Do not load empty skeleton
             delete handle;
         }
-        else
-        {
+        else {
             // register the HandleData
             data.emplace_back( handle );
             if ( m_verbose ) { handle->displayInfo(); }
@@ -283,8 +256,7 @@ void AssimpHandleDataLoader::loadHandleComponentDataFrame( const aiScene* scene,
     // fetch global transform
     data.m_frame.setIdentity();
     aiNode* node = scene->mRootNode->FindNode( boneName );
-    while ( node != nullptr )
-    {
+    while ( node != nullptr ) {
         data.m_frame = assimpToCore( node->mTransformation ) * data.m_frame;
         node         = node->mParent;
     }
@@ -294,8 +266,7 @@ void AssimpHandleDataLoader::loadHandleComponentDataWeights( const aiBone* bone,
                                                              const std::string& meshName,
                                                              HandleComponentData& data ) const {
     // fetch skinning weigthts
-    for ( uint j = 0; j < bone->mNumWeights; ++j )
-    {
+    for ( uint j = 0; j < bone->mNumWeights; ++j ) {
         std::pair<uint, Scalar> weight( bone->mWeights[j].mVertexId, bone->mWeights[j].mWeight );
         data.m_weights[meshName].push_back( weight );
     }
@@ -312,18 +283,15 @@ void AssimpHandleDataLoader::fillHandleData(
     nameTable[node] = uint( data->getComponentData().size() );
     data->getComponentData().push_back( mapBone2Data.at( node ) );
     // bind meshes bound to the bone
-    for ( const auto& mesh : mapBone2Data.at( node ).m_weights )
-    {
+    for ( const auto& mesh : mapBone2Data.at( node ).m_weights ) {
         data->addBindMesh( mesh.first );
     }
     // go through children
-    for ( const auto& edge : edgeList )
-    {
-        if ( edge.first == node )
-        {
+    for ( const auto& edge : edgeList ) {
+        if ( edge.first == node ) {
             fillHandleData( edge.second, edgeList, mapBone2Data, nameTable, data );
             data->getEdgeData().push_back(
-                {nameTable.at( edge.first ), nameTable.at( edge.second )} );
+                { nameTable.at( edge.first ), nameTable.at( edge.second ) } );
         }
     }
 }

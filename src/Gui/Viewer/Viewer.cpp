@@ -82,8 +82,7 @@ void Viewer::setupKeyMappingCallbacks() {
 void Viewer::configureKeyMapping_impl() {
     auto keyMappingManager = KeyMappingManager::getInstance();
     ViewerMapping::setContext( keyMappingManager->getContext( "ViewerContext" ) );
-    if ( ViewerMapping::getContext().isInvalid() )
-    {
+    if ( ViewerMapping::getContext().isInvalid() ) {
         LOG( logINFO )
             << "ViewerContext not defined (maybe the configuration file do not contains it)";
         LOG( Ra::Core::Utils::logERROR ) << "ViewerContext all keymapping invalide !";
@@ -105,8 +104,7 @@ Viewer::Viewer( QScreen* screen ) :
     m_gizmoManager( nullptr ) {}
 
 Viewer::~Viewer() {
-    if ( m_glInitialized.load() )
-    {
+    if ( m_glInitialized.load() ) {
         makeCurrent();
         m_renderers.clear();
 
@@ -148,15 +146,13 @@ int Viewer::addRenderer( const std::shared_ptr<Engine::Rendering::Renderer>& e )
     m_renderers.push_back( e );
 
     // initialize the renderer (deferred if GL is not ready yet)
-    if ( m_glInitialized.load() )
-    {
+    if ( m_glInitialized.load() ) {
         makeCurrent();
         initializeRenderer( e.get() );
         LOG( logINFO ) << "[Viewer] New Renderer (" << e->getRendererName() << ") added.";
         doneCurrent();
     }
-    else
-    {
+    else {
         LOG( logINFO ) << "[Viewer] New Renderer (" << e->getRendererName()
                        << ") added with deferred init.";
         m_pendingRenderers.push_back( e );
@@ -187,22 +183,19 @@ void Viewer::startRendering( const Scalar dt ) {
 
     // update znear/zfar to fit the scene ...
     auto entityManager = Engine::RadiumEngine::getInstance()->getEntityManager();
-    if ( entityManager )
-    {
+    if ( entityManager ) {
 
         // to fit scene only
         // auto aabb = Ra::Engine::RadiumEngine::getInstance()->computeSceneAabb();
         // to fit also debug and system entity aabb
         Core::Aabb aabb;
-        for ( const auto& entity : entityManager->getEntities() )
-        {
+        for ( const auto& entity : entityManager->getEntities() ) {
             // entity aabb is in world space
             aabb.extend( entity->computeAabb() );
         }
 
         if ( !aabb.isEmpty() ) { m_camera->getCamera()->fitZRange( aabb ); }
-        else
-        {
+        else {
             auto cameraManager = static_cast<Ra::Engine::Scene::CameraManager*>(
                 Engine::RadiumEngine::getInstance()->getSystem( "DefaultCameraManager" ) );
 
@@ -214,15 +207,14 @@ void Viewer::startRendering( const Scalar dt ) {
 
     /// \todo FIXME : move this outside of the rendering loop. must be done once per renderer ...
     /// if there is no light on the renderer, add the head light attached to the camera ...
-    if ( !m_currentRenderer->hasLight() )
-    {
+    if ( !m_currentRenderer->hasLight() ) {
         if ( m_camera->hasLightAttached() )
             m_currentRenderer->addLight( m_camera->getLight() );
         else
             LOG( logDEBUG ) << "Unable to attach the head light!";
     }
     Engine::Data::ViewingParameters data {
-        m_camera->getCamera()->getViewMatrix(), m_camera->getCamera()->getProjMatrix(), dt};
+        m_camera->getCamera()->getViewMatrix(), m_camera->getCamera()->getProjMatrix(), dt };
     m_currentRenderer->render( data );
 }
 
@@ -240,13 +232,11 @@ void Viewer::processPicking() {
                      m_currentRenderer->getPickingResults().size(),
                  "There should be one result per query." );
 
-    for ( uint i = 0; i < m_currentRenderer->getPickingQueries().size(); ++i )
-    {
+    for ( uint i = 0; i < m_currentRenderer->getPickingQueries().size(); ++i ) {
         const Engine::Rendering::Renderer::PickingQuery& query =
             m_currentRenderer->getPickingQueries()[i];
 
-        if ( query.m_purpose == Engine::Rendering::Renderer::PickingPurpose::MANIPULATION )
-        {
+        if ( query.m_purpose == Engine::Rendering::Renderer::PickingPurpose::MANIPULATION ) {
             const auto& result = m_currentRenderer->getPickingResults()[i];
             m_pickingManager->setCurrent( result );
             emit rightClickPicking( result );
@@ -255,8 +245,7 @@ void Viewer::processPicking() {
 }
 
 void Viewer::fitCameraToScene( const Core::Aabb& aabb ) {
-    if ( !aabb.isEmpty() )
-    {
+    if ( !aabb.isEmpty() ) {
         CORE_ASSERT( m_camera != nullptr, "No camera found." );
         m_camera->fitScene( aabb );
 
@@ -264,22 +253,23 @@ void Viewer::fitCameraToScene( const Core::Aabb& aabb ) {
         // RA_DISPLAY_AABB( aabb, Color::Blue() );
         emit needUpdate();
     }
-    else
-    { LOG( logINFO ) << "Unable to fit the camera to the scene : empty Bbox."; }
+    else {
+        LOG( logINFO ) << "Unable to fit the camera to the scene : empty Bbox.";
+    }
 }
 
 void Viewer::fitCamera() {
     auto aabb = Ra::Engine::RadiumEngine::getInstance()->computeSceneAabb();
     if ( aabb.isEmpty() ) { getCameraManipulator()->resetCamera(); }
-    else
-    { fitCameraToScene( aabb ); }
+    else {
+        fitCameraToScene( aabb );
+    }
 }
 
 std::vector<std::string> Viewer::getRenderersName() const {
     std::vector<std::string> ret;
 
-    for ( const auto& renderer : m_renderers )
-    {
+    for ( const auto& renderer : m_renderers ) {
         if ( renderer ) { ret.push_back( renderer->getRendererName() ); }
     }
 
@@ -295,10 +285,12 @@ void Viewer::grabFrame( const std::string& filename ) {
     std::string ext = Core::Utils::getFileExt( filename );
 
     if ( ext == "bmp" ) { stbi_write_bmp( filename.c_str(), w, h, 4, writtenPixels.get() ); }
-    else if ( ext == "png" )
-    { stbi_write_png( filename.c_str(), w, h, 4, writtenPixels.get(), w * 4 * sizeof( uchar ) ); }
-    else
-    { LOG( logWARNING ) << "Cannot write frame to " << filename << " : unsupported extension"; }
+    else if ( ext == "png" ) {
+        stbi_write_png( filename.c_str(), w, h, 4, writtenPixels.get(), w * 4 * sizeof( uchar ) );
+    }
+    else {
+        LOG( logWARNING ) << "Cannot write frame to " << filename << " : unsupported extension";
+    }
 
     doneCurrent();
 }
@@ -308,8 +300,7 @@ void Viewer::enableDebug() {
                                 glbinding::CallbackMask::ParametersAndReturnValue );
     glbinding::setAfterCallback( []( const glbinding::FunctionCall& call ) {
         std::cerr << call.function->name() << "(";
-        for ( unsigned i = 0; i < call.parameters.size(); ++i )
-        {
+        for ( unsigned i = 0; i < call.parameters.size(); ++i ) {
             std::cerr << call.parameters[i].get();
             if ( i < call.parameters.size() - 1 ) { std::cerr << ", "; }
         }
@@ -345,8 +336,7 @@ void Viewer::displayTexture( const QString& tex ) {
 }
 
 bool Viewer::changeRenderer( int index ) {
-    if ( m_glInitialized.load() && m_renderers[index] )
-    {
+    if ( m_glInitialized.load() && m_renderers[index] ) {
         makeCurrent();
 
         if ( m_currentRenderer != nullptr ) { m_currentRenderer->lockRendering(); }
@@ -456,8 +446,7 @@ bool Viewer::initializeGL() {
     m_camera->attachLight( headlight );
 
     // Initialize renderers added to the viewer before initializeGL
-    for ( auto& rptr : m_pendingRenderers )
-    {
+    for ( auto& rptr : m_pendingRenderers ) {
         initializeRenderer( rptr.get() );
     }
     m_pendingRenderers.clear();
@@ -470,8 +459,7 @@ bool Viewer::initializeGL() {
 
     // If no renderer was added before that (either by slots on requestEngineOpenGLInitialization
     // or on glInitialized), add default forward renderer
-    if ( m_renderers.empty() )
-    {
+    if ( m_renderers.empty() ) {
         LOG( logINFO ) << "[Viewer] No renderer added, adding default (Forward Renderer)";
         std::shared_ptr<Ra::Engine::Rendering::Renderer> e(
             new Ra::Engine::Rendering::ForwardRenderer() );
@@ -497,18 +485,15 @@ void Viewer::resizeGL( QResizeEvent* event ) {
 
 Engine::Rendering::Renderer::PickingMode
 Viewer::getPickingMode( const KeyMappingManager::KeyMappingAction& action ) const {
-    if ( action == VIEWER_PICKING_VERTEX )
-    {
+    if ( action == VIEWER_PICKING_VERTEX ) {
         return m_isBrushPickingEnabled ? Engine::Rendering::Renderer::C_VERTEX
                                        : Engine::Rendering::Renderer::VERTEX;
     }
-    if ( action == VIEWER_PICKING_EDGE )
-    {
+    if ( action == VIEWER_PICKING_EDGE ) {
         return m_isBrushPickingEnabled ? Engine::Rendering::Renderer::C_EDGE
                                        : Engine::Rendering::Renderer::EDGE;
     }
-    if ( action == VIEWER_PICKING_TRIANGLE )
-    {
+    if ( action == VIEWER_PICKING_TRIANGLE ) {
         return m_isBrushPickingEnabled ? Engine::Rendering::Renderer::C_TRIANGLE
                                        : Engine::Rendering::Renderer::TRIANGLE;
     }
@@ -538,8 +523,7 @@ void Viewer::keyReleaseEvent( QKeyEvent* event ) {
 }
 
 void Viewer::mousePressEvent( QMouseEvent* event ) {
-    if ( !m_glInitialized.load() )
-    {
+    if ( !m_glInitialized.load() ) {
         propagateEventToParent( event );
         return;
     }
@@ -547,7 +531,7 @@ void Viewer::mousePressEvent( QMouseEvent* event ) {
     m_currentRenderer->setMousePosition( Ra::Core::Vector2( event->x(), event->y() ) );
 
     // get what's under the mouse
-    auto result       = pickAtPosition( {event->x(), height() - event->y()} );
+    auto result       = pickAtPosition( { event->x(), height() - event->y() } );
     m_depthUnderMouse = result.getDepth();
 
     handleMousePressEvent( event, result );
@@ -560,15 +544,14 @@ void Viewer::mouseReleaseEvent( QMouseEvent* event ) {
 }
 
 void Viewer::mouseMoveEvent( QMouseEvent* event ) {
-    if ( !m_glInitialized.load() )
-    {
+    if ( !m_glInitialized.load() ) {
         event->ignore();
         return;
     }
 
     m_currentRenderer->setMousePosition( Ra::Core::Vector2( event->x(), event->y() ) );
 
-    auto result       = pickAtPosition( {event->x(), height() - event->y()} );
+    auto result       = pickAtPosition( { event->x(), height() - event->y() } );
     m_depthUnderMouse = result.getDepth();
 
     handleMouseMoveEvent( event, result );
@@ -577,8 +560,7 @@ void Viewer::mouseMoveEvent( QMouseEvent* event ) {
 
 void Viewer::wheelEvent( QWheelEvent* event ) {
 
-    if ( !m_glInitialized.load() )
-    {
+    if ( !m_glInitialized.load() ) {
         event->ignore();
         return;
     }
@@ -611,7 +593,7 @@ Viewer::getComponentActions( const Qt::MouseButtons& buttons,
         keyMap->getAction( keyMap->getContext( "GizmoContext" ), buttons, modifiers, key, wheel );
     auto actionViewer =
         keyMap->getAction( keyMap->getContext( "ViewerContext" ), buttons, modifiers, key, wheel );
-    return {actionCamera, actionGizmo, actionViewer};
+    return { actionCamera, actionGizmo, actionViewer };
 }
 
 bool Viewer::handleKeyPressEvent( QKeyEvent* event ) {
@@ -623,40 +605,34 @@ bool Viewer::handleKeyPressEvent( QKeyEvent* event ) {
     // Is keymapping something of the viewer only ?
     // or should be dispatched to all receivers ?
 
-    if ( actionCamera.isValid() )
-    { eventCatched = m_camera->handleKeyPressEvent( event, actionCamera ); }
-    else if ( actionGizmo.isValid() )
-    {
+    if ( actionCamera.isValid() ) {
+        eventCatched = m_camera->handleKeyPressEvent( event, actionCamera );
+    }
+    else if ( actionGizmo.isValid() ) {
         // m_gizmoManager->handleKeyPressEvent( event, action );
         // eventCatched = true;
     }
-    else if ( actionViewer.isValid() )
-    {
+    else if ( actionViewer.isValid() ) {
 
-        if ( actionViewer == VIEWER_TOGGLE_WIREFRAME )
-        {
+        if ( actionViewer == VIEWER_TOGGLE_WIREFRAME ) {
             m_currentRenderer->toggleWireframe();
             eventCatched = true;
         }
-        else if ( actionViewer == VIEWER_RELOAD_SHADERS )
-        {
+        else if ( actionViewer == VIEWER_RELOAD_SHADERS ) {
             reloadShaders();
             eventCatched = true;
         }
-        else if ( actionViewer == VIEWER_PICKING_MULTI_CIRCLE )
-        {
+        else if ( actionViewer == VIEWER_PICKING_MULTI_CIRCLE ) {
             m_isBrushPickingEnabled = !m_isBrushPickingEnabled;
             m_currentRenderer->setBrushRadius( m_isBrushPickingEnabled ? m_brushRadius : 0 );
             emit toggleBrushPicking( m_isBrushPickingEnabled );
             eventCatched = true;
         }
-        else if ( actionViewer == VIEWER_SWITCH_CAMERA )
-        {
+        else if ( actionViewer == VIEWER_SWITCH_CAMERA ) {
             auto cameraManager = static_cast<Ra::Engine::Scene::CameraManager*>(
                 Engine::RadiumEngine::getInstance()->getSystem( "DefaultCameraManager" ) );
             static int idx = 0;
-            if ( cameraManager->count() > 0 )
-            {
+            if ( cameraManager->count() > 0 ) {
                 idx %= cameraManager->count();
                 cameraManager->activate( idx );
                 m_camera->updateCamera();
@@ -664,22 +640,18 @@ bool Viewer::handleKeyPressEvent( QKeyEvent* event ) {
             }
             idx++;
         }
-        else if ( actionViewer == VIEWER_CAMERA_FIT_SCENE )
-        {
+        else if ( actionViewer == VIEWER_CAMERA_FIT_SCENE ) {
             fitCamera();
             eventCatched = true;
         }
-        else if ( actionViewer == VIEWER_HELP )
-        {
+        else if ( actionViewer == VIEWER_HELP ) {
             displayHelpDialog();
             eventCatched = true;
             requestActivate();
         }
-        else
-        {
+        else {
             auto itr = m_customKeyActions[KeyEventType::KeyPressed].find( actionViewer );
-            if ( itr != m_customKeyActions[KeyEventType::KeyPressed].end() )
-            {
+            if ( itr != m_customKeyActions[KeyEventType::KeyPressed].end() ) {
                 itr->second( event );
                 eventCatched = true;
             }
@@ -697,13 +669,12 @@ bool Viewer::handleKeyReleaseEvent( QKeyEvent* event ) {
     auto [actionCamera, actionGizmo, actionViewer] =
         getComponentActions( Qt::NoButton, event->modifiers(), activeKey(), false );
 
-    if ( actionCamera.isValid() )
-    { eventCatched = m_camera->handleKeyReleaseEvent( event, actionCamera ); }
-    else if ( actionViewer.isValid() )
-    {
+    if ( actionCamera.isValid() ) {
+        eventCatched = m_camera->handleKeyReleaseEvent( event, actionCamera );
+    }
+    else if ( actionViewer.isValid() ) {
         auto itr = m_customKeyActions[KeyEventType::KeyReleased].find( actionViewer );
-        if ( itr != m_customKeyActions[KeyEventType::KeyReleased].end() )
-        {
+        if ( itr != m_customKeyActions[KeyEventType::KeyReleased].end() ) {
             itr->second( event );
             eventCatched = true;
         }
@@ -732,39 +703,37 @@ void Viewer::handleMousePressEvent( QMouseEvent* event,
     auto key       = activeKey();
 
     // nothing under mouse ? juste move the camera ...
-    if ( result.getRoIdx().isInvalid() )
-    {
-        if ( m_camera->handleMousePressEvent( event, buttons, modifiers, key ) )
-        { m_activeContext = m_camera->mappingContext(); }
-        else
-        {
+    if ( result.getRoIdx().isInvalid() ) {
+        if ( m_camera->handleMousePressEvent( event, buttons, modifiers, key ) ) {
+            m_activeContext = m_camera->mappingContext();
+        }
+        else {
             // should not pass here, since viewerContext is only for valid picking ...
             m_activeContext = KeyMappingManageable::getContext();
         }
     }
     //! [event dispatch]
-    else
-    {
+    else {
         // something under the mouse, let's check if it's a gizmo ro
         getGizmoManager()->handlePickingResult( result.getRoIdx() );
         if ( getGizmoManager()->handleMousePressEvent(
-                 event, buttons, modifiers, key, *m_camera->getCamera() ) )
-        { m_activeContext = GizmoManager::getContext(); } // if not, try to do camera stuff
-        else if ( m_camera->handleMousePressEvent( event, buttons, modifiers, key ) )
-        { m_activeContext = m_camera->mappingContext(); }
-        else
-        {
+                 event, buttons, modifiers, key, *m_camera->getCamera() ) ) {
+            m_activeContext = GizmoManager::getContext();
+        } // if not, try to do camera stuff
+        else if ( m_camera->handleMousePressEvent( event, buttons, modifiers, key ) ) {
+            m_activeContext = m_camera->mappingContext();
+        }
+        else {
             m_activeContext  = KeyMappingManageable::getContext();
             auto action      = keyMap->getAction( m_activeContext, buttons, modifiers, key );
             auto pickingMode = getPickingMode( action );
 
-            if ( pickingMode != Ra::Engine::Rendering::Renderer::NONE )
-            {
+            if ( pickingMode != Ra::Engine::Rendering::Renderer::NONE ) {
                 // Push query, we may also do it here ...
                 Engine::Rendering::Renderer::PickingQuery query = {
                     Core::Vector2( event->x(), ( height() - event->y() ) ),
                     Engine::Rendering::Renderer::PickingPurpose::MANIPULATION,
-                    pickingMode};
+                    pickingMode };
                 m_currentRenderer->addPickingRequest( query );
             }
         }
@@ -778,10 +747,12 @@ void Viewer::handleMousePressEvent( QMouseEvent* event,
 }
 
 void Viewer::handleMouseReleaseEvent( QMouseEvent* event ) {
-    if ( m_activeContext == m_camera->mappingContext() )
-    { m_camera->handleMouseReleaseEvent( event ); }
-    if ( m_activeContext == GizmoManager::getContext() )
-    { m_gizmoManager->handleMouseReleaseEvent( event ); }
+    if ( m_activeContext == m_camera->mappingContext() ) {
+        m_camera->handleMouseReleaseEvent( event );
+    }
+    if ( m_activeContext == GizmoManager::getContext() ) {
+        m_gizmoManager->handleMouseReleaseEvent( event );
+    }
     m_activeContext.setInvalid();
 }
 
@@ -795,28 +766,27 @@ void Viewer::handleMouseMoveEvent( QMouseEvent* event,
     // if needed can use
     //    auto action = keyMap->getAction( m_activeContext, buttons, modifiers, key );
 
-    if ( m_activeContext == m_camera->mappingContext() )
-    { m_camera->handleMouseMoveEvent( event, buttons, modifiers, key ); }
-    else if ( m_activeContext == GizmoManager::getContext() )
-    {
+    if ( m_activeContext == m_camera->mappingContext() ) {
+        m_camera->handleMouseMoveEvent( event, buttons, modifiers, key );
+    }
+    else if ( m_activeContext == GizmoManager::getContext() ) {
         m_gizmoManager->handleMouseMoveEvent(
             event, buttons, modifiers, key, *m_camera->getCamera() );
     }
-    else if ( m_activeContext == KeyMappingManageable::getContext() )
-    {
+    else if ( m_activeContext == KeyMappingManageable::getContext() ) {
         auto action      = keyMap->getAction( m_activeContext, buttons, modifiers, key );
         auto pickingMode = getPickingMode( action );
-        if ( pickingMode != Ra::Engine::Rendering::Renderer::NONE )
-        {
+        if ( pickingMode != Ra::Engine::Rendering::Renderer::NONE ) {
             Engine::Rendering::Renderer::PickingQuery query = {
                 Core::Vector2( event->x(), ( height() - event->y() ) ),
                 Engine::Rendering::Renderer::PickingPurpose::MANIPULATION,
-                pickingMode};
+                pickingMode };
             m_currentRenderer->addPickingRequest( query );
         }
     }
-    else
-    { getGizmoManager()->handlePickingResult( result.getRoIdx() ); }
+    else {
+        getGizmoManager()->handlePickingResult( result.getRoIdx() );
+    }
 }
 
 void Viewer::handleWheelEvent( QWheelEvent* event ) {
@@ -828,24 +798,24 @@ void Viewer::handleWheelEvent( QWheelEvent* event ) {
     auto action =
         keyMap->getAction( KeyMappingManageable::getContext(), buttons, modifiers, key, true );
 
-    if ( action == VIEWER_SCALE_BRUSH && m_isBrushPickingEnabled )
-    {
+    if ( action == VIEWER_SCALE_BRUSH && m_isBrushPickingEnabled ) {
         m_brushRadius +=
             ( event->angleDelta().y() * 0.01 + event->angleDelta().x() * 0.01 ) > 0 ? 5 : -5;
         m_brushRadius = std::max( m_brushRadius, Scalar( 5 ) );
         m_currentRenderer->setBrushRadius( m_brushRadius );
     }
-    else
-    { m_camera->handleWheelEvent( event, buttons, modifiers, key ); }
+    else {
+        m_camera->handleWheelEvent( event, buttons, modifiers, key );
+    }
 }
 
 Ra::Engine::Rendering::Renderer::PickingResult Viewer::pickAtPosition( Core::Vector2 position ) {
     makeCurrent();
     auto result = m_currentRenderer->doPickingNow(
-        {position,
-         Engine::Rendering::Renderer::PickingPurpose::SELECTION,
-         Engine::Rendering::Renderer::RO},
-        {m_camera->getCamera()->getViewMatrix(), m_camera->getCamera()->getProjMatrix(), 0.} );
+        { position,
+          Engine::Rendering::Renderer::PickingPurpose::SELECTION,
+          Engine::Rendering::Renderer::RO },
+        { m_camera->getCamera()->getViewMatrix(), m_camera->getCamera()->getProjMatrix(), 0. } );
 
     doneCurrent();
     return result;
@@ -853,14 +823,14 @@ Ra::Engine::Rendering::Renderer::PickingResult Viewer::pickAtPosition( Core::Vec
 
 bool Viewer::prepareDisplay() {
     auto renderer = getRenderer();
-    if ( renderer )
-    {
+    if ( renderer ) {
         makeCurrent();
         getRenderer()->buildAllRenderTechniques();
         auto aabb = Ra::Engine::RadiumEngine::getInstance()->computeSceneAabb();
         if ( aabb.isEmpty() ) { getCameraManipulator()->resetCamera(); }
-        else
-        { fitCameraToScene( aabb ); }
+        else {
+            fitCameraToScene( aabb );
+        }
         doneCurrent();
         return true;
     }
@@ -870,7 +840,7 @@ bool Viewer::prepareDisplay() {
 void Viewer::displayHelpDialog() {
     if ( !m_helpDialog ) { m_helpDialog.reset( new QMessageBox() ); }
     auto kmappingMngr = Gui::KeyMappingManager::getInstance();
-    std::string keyMappingHelp {"<h1> UI action mapping </h1>\n"};
+    std::string keyMappingHelp { "<h1> UI action mapping </h1>\n" };
     keyMappingHelp += kmappingMngr->getHelpText();
     keyMappingHelp += "<br/>\n";
     m_helpDialog->setText( keyMappingHelp.c_str() );
@@ -928,7 +898,7 @@ Viewer::addCustomAction( int index,
                                                      wheelString,
                                                      actionName,
                                                      false );
-    m_customKeyActions[index].insert( {actionIndex, callback} );
+    m_customKeyActions[index].insert( { actionIndex, callback } );
     return actionIndex;
 }
 

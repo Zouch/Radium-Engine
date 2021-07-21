@@ -23,28 +23,24 @@ void AssimpLightDataLoader::loadData( const aiScene* scene,
                                       std::vector<std::unique_ptr<LightData>>& data ) {
     data.clear();
 
-    if ( scene == nullptr )
-    {
+    if ( scene == nullptr ) {
         LOG( logDEBUG ) << "AssimpLightDataLoader : scene is nullptr.";
         return;
     }
 
-    if ( !sceneHasLight( scene ) )
-    {
+    if ( !sceneHasLight( scene ) ) {
         LOG( logDEBUG ) << "AssimpLightDataLoader : scene has no lights.";
         return;
     }
 
-    if ( m_verbose )
-    {
+    if ( m_verbose ) {
         LOG( logINFO ) << "File contains light.";
         LOG( logINFO ) << "Light Loading begin...";
     }
 
     uint lightSize = sceneLightSize( scene );
     data.reserve( lightSize );
-    for ( uint lightId = 0; lightId < lightSize; ++lightId )
-    {
+    for ( uint lightId = 0; lightId < lightSize; ++lightId ) {
         data.emplace_back( loadLightData( scene, *( scene->mLights[lightId] ) ) );
     }
 
@@ -71,25 +67,22 @@ std::unique_ptr<LightData> AssimpLightDataLoader::loadLightData( const aiScene* 
     setFrame( frame );
     auto color = assimpToCore( light.mColorDiffuse );
 
-    switch ( builtLight->getType() )
-    {
+    switch ( builtLight->getType() ) {
     case LightData::DIRECTIONAL_LIGHT: {
         Core::Vector4 dir( light.mDirection[0], light.mDirection[1], light.mDirection[2], 0.0 );
         builtLight->setLight( color, -( frame.transpose().inverse() * dir ).head<3>() );
-    }
-    break;
+    } break;
 
     case LightData::POINT_LIGHT: {
         builtLight->setLight(
             color,
             ( frame *
-              Core::Vector4 {light.mPosition[0], light.mPosition[1], light.mPosition[2], 1.0} )
+              Core::Vector4 { light.mPosition[0], light.mPosition[1], light.mPosition[2], 1.0 } )
                 .hnormalized(),
             LightData::LightAttenuation( light.mAttenuationConstant,
                                          light.mAttenuationLinear,
                                          light.mAttenuationQuadratic ) );
-    }
-    break;
+    } break;
 
     case LightData::SPOT_LIGHT: {
         Core::Vector4 dir( light.mDirection[0], light.mDirection[1], light.mDirection[2], 0.0 );
@@ -97,7 +90,7 @@ std::unique_ptr<LightData> AssimpLightDataLoader::loadLightData( const aiScene* 
         builtLight->setLight(
             color,
             ( frame *
-              Core::Vector4 {light.mPosition[0], light.mPosition[1], light.mPosition[2], 1.0} )
+              Core::Vector4 { light.mPosition[0], light.mPosition[1], light.mPosition[2], 1.0 } )
                 .hnormalized(),
             -( frame.transpose().inverse() * dir ).head<3>(),
             light.mAngleInnerCone,
@@ -105,18 +98,15 @@ std::unique_ptr<LightData> AssimpLightDataLoader::loadLightData( const aiScene* 
             LightData::LightAttenuation( light.mAttenuationConstant,
                                          light.mAttenuationLinear,
                                          light.mAttenuationQuadratic ) );
-    }
-    break;
+    } break;
 
     case LightData::AREA_LIGHT: {
         LOG( logWARNING ) << "Light " << builtLight->getName()
                           << " : AREA light are not yet supported.";
-    }
-    break;
+    } break;
     default: {
         LOG( logWARNING ) << "Light " << builtLight->getName() << " : unknown type.";
-    }
-    break;
+    } break;
     }
     return builtLight;
 }
@@ -126,8 +116,7 @@ Core::Matrix4 AssimpLightDataLoader::loadLightFrame( const aiScene* scene,
                                                      const std::string& lightName ) const {
     const aiNode* lightNode = scene->mRootNode->FindNode( lightName.c_str() );
 
-    if ( lightNode != nullptr )
-    {
+    if ( lightNode != nullptr ) {
 
         auto t0 = Core::Matrix4::NullaryExpr(
             [&scene]( int i, int j ) { return scene->mRootNode->mTransformation[i][j]; } );
@@ -144,8 +133,7 @@ std::string AssimpLightDataLoader::fetchName( const aiLight& light ) const {
 }
 
 LightData::LightType AssimpLightDataLoader::fetchType( const aiLight& light ) const {
-    switch ( light.mType )
-    {
+    switch ( light.mType ) {
     case aiLightSource_DIRECTIONAL: {
         return LightData::DIRECTIONAL_LIGHT;
     }

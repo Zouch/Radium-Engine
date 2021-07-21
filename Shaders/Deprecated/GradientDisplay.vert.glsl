@@ -22,8 +22,7 @@ void main() {
 
     float l     = length( inNormal );
     vec4 normal = vec4( inNormal, 0.0 );
-    if ( l != 0.0 )
-    {
+    if ( l != 0.0 ) {
         normal = normalize( normal );
         normal = ( 0.5 * normal ) + vec4( 0.5, 0.5, 0.5, 0.0 );
     }

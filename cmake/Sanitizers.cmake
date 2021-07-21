@@ -1,7 +1,7 @@
 list(APPEND CMAKE_MESSAGE_INDENT "[Sanitizers] ")
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 # Clang and gcc sanitizers
-if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     message(STATUS "Sanitizers:")
 
     option(ADDRESS_SANITIZER "description" OFF)
@@ -26,7 +26,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL
     endif()
 
     # Clang only
-    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         option(MEMORY_SANITIZER "description" OFF)
         message(STATUS "  + MEMORY_SANITIZER                      ${MEMORY_SANITIZER}")
         if(MEMORY_SANITIZER)

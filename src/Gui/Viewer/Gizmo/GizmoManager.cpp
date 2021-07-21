@@ -22,8 +22,7 @@ KeyMappingGizmo
 
 void GizmoManager::configureKeyMapping_impl() {
     GizmoMapping::setContext( Gui::KeyMappingManager::getInstance()->getContext( "GizmoContext" ) );
-    if ( GizmoMapping::getContext().isInvalid() )
-    {
+    if ( GizmoMapping::getContext().isInvalid() ) {
         LOG( Ra::Core::Utils::logINFO )
             << "GizmoContext not defined (maybe the configuration file do not contains it)";
         LOG( Ra::Core::Utils::logERROR ) << "GizmoContext all keymapping invalide !";
@@ -68,8 +67,7 @@ GizmoManager::GizmoManager( QObject* parent ) :
                                        Ra::Core::Transform::Identity(),
                                        m_transform,
                                        m_mode ) );
-    for ( auto& g : m_gizmos )
-    {
+    for ( auto& g : m_gizmos ) {
         if ( g ) { g->show( false ); }
     }
 }
@@ -80,17 +78,14 @@ void GizmoManager::setEditable( const Engine::Scene::ItemEntry& ent ) {
 }
 
 void GizmoManager::updateGizmo() {
-    for ( auto& g : m_gizmos )
-    {
+    for ( auto& g : m_gizmos ) {
         if ( g ) { g->show( false ); }
     }
 
-    if ( canEdit() )
-    {
+    if ( canEdit() ) {
         Core::Transform worldTransform = getWorldTransform();
         auto g                         = currentGizmo();
-        if ( g )
-        {
+        if ( g ) {
             g->updateTransform( m_mode, worldTransform, m_transform );
             g->show( true );
         }
@@ -108,11 +103,11 @@ void GizmoManager::changeGizmoType( GizmoManager::GizmoType type ) {
 }
 
 void GizmoManager::updateValues() {
-    if ( canEdit() )
-    {
+    if ( canEdit() ) {
         getTransform();
-        if ( currentGizmo() )
-        { currentGizmo()->updateTransform( m_mode, getWorldTransform(), m_transform ); }
+        if ( currentGizmo() ) {
+            currentGizmo()->updateTransform( m_mode, getWorldTransform(), m_transform );
+        }
     }
 }
 
@@ -122,8 +117,9 @@ bool GizmoManager::handleMousePressEvent( QMouseEvent* event,
                                           int key,
                                           const Core::Asset::Camera& cam ) {
 
-    if ( !canEdit() || m_currentGizmoType == NONE || !currentGizmo()->isSelected() )
-    { return false; }
+    if ( !canEdit() || m_currentGizmoType == NONE || !currentGizmo()->isSelected() ) {
+        return false;
+    }
     auto action = KeyMappingManager::getInstance()->getAction(
         GizmoMapping::getContext(), buttons, modifiers, key, false );
 
@@ -150,8 +146,7 @@ bool GizmoManager::handleMouseMoveEvent( QMouseEvent* event,
         GizmoMapping::getContext(), buttons, modifiers, key, false );
 
     if ( m_currentGizmoType != NONE && canEdit() && isValidAction( action ) && currentGizmo() &&
-         currentGizmo()->isSelected() )
-    {
+         currentGizmo()->isSelected() ) {
         Core::Vector2 currentXY( event->x(), event->y() );
         bool step  = action == GIZMOMANAGER_STEP || action == GIZMOMANAGER_STEP_WHOLE;
         bool whole = action == GIZMOMANAGER_WHOLE || action == GIZMOMANAGER_STEP_WHOLE;
@@ -173,8 +168,7 @@ Gizmo* GizmoManager::currentGizmo() {
 }
 
 void GizmoManager::cleanup() {
-    for ( auto& g : m_gizmos )
-    {
+    for ( auto& g : m_gizmos ) {
         g.reset( nullptr );
     }
 }

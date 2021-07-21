@@ -26,7 +26,7 @@ class TimelineTimeScale : public QFrame
 
   private:
     /// The TimelineScrollArea.
-    TimelineScrollArea* m_scrollArea {nullptr};
+    TimelineScrollArea* m_scrollArea { nullptr };
 };
 
 } // namespace Ra::Gui

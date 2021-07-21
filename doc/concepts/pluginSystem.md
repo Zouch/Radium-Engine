@@ -1,4 +1,4 @@
-\page pluginSystem Plugin System 
+\page pluginSystem Plugin System
 \todo check and update
 [TOC]
 

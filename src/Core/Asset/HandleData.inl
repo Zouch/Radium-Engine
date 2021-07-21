@@ -55,8 +55,7 @@ HandleData::setComponents( const Core::AlignedStdVector<HandleComponentData>& co
     const uint size = components.size();
     m_component.resize( size );
 #pragma omp parallel for
-    for ( int i = 0; i < int( size ); ++i )
-    {
+    for ( int i = 0; i < int( size ); ++i ) {
         m_component[i] = components[i];
     }
 }
@@ -83,8 +82,7 @@ inline void HandleData::setEdges( const Core::AlignedStdVector<Core::Vector2ui>&
     const uint size = edgeList.size();
     m_edge.resize( size );
 #pragma omp parallel for
-    for ( int i = 0; i < int( size ); ++i )
-    {
+    for ( int i = 0; i < int( size ); ++i ) {
         m_edge[i] = edgeList[i];
     }
 }
@@ -101,16 +99,14 @@ inline void HandleData::setFaces( const Core::AlignedStdVector<Core::VectorNui>&
     const uint size = faceList.size();
     m_face.resize( size );
 #pragma omp parallel for
-    for ( int i = 0; i < int( size ); ++i )
-    {
+    for ( int i = 0; i < int( size ); ++i ) {
         m_face[i] = faceList[i];
     }
 }
 
 inline void HandleData::recomputeAllIndices() {
     m_nameTable.clear();
-    for ( uint i = 0; i < getComponentDataSize(); ++i )
-    {
+    for ( uint i = 0; i < getComponentDataSize(); ++i ) {
         m_nameTable[m_component[i].m_name] = i;
     }
 }
@@ -164,8 +160,7 @@ inline const std::set<std::string>& HandleData::getBindMeshes() const {
 inline void HandleData::displayInfo() const {
     using namespace Core::Utils; // log
     std::string type;
-    switch ( m_type )
-    {
+    switch ( m_type ) {
     case UNKNOWN:
         type = "UNKNOWN";
         break;

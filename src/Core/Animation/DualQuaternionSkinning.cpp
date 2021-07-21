@@ -17,8 +17,7 @@ DQList computeDQ( const Pose& pose, const Sparse& weight ) {
     std::vector<DualQuaternion> poseDQ( pose.size() );
 
     // Loop through all transforms Tj
-    for ( int j = 0; j < weight.outerSize(); ++j )
-    {
+    for ( int j = 0; j < weight.outerSize(); ++j ) {
         poseDQ[j] = DualQuaternion( pose[j] );
         // Count how many vertices are influenced by the given transform
         const int nonZero = weight.col( j ).nonZeros();
@@ -38,8 +37,7 @@ DQList computeDQ( const Pose& pose, const Sparse& weight ) {
          */
         // Loop through all vertices vi who depend on Tj
 
-        for ( int nz = 0; nz < nonZero; ++nz )
-        {
+        for ( int nz = 0; nz < nonZero; ++nz ) {
             Sparse::InnerIterator itn = it0 + Eigen::Index( nz );
             const uint i              = itn.row();
             const Scalar w            = itn.value();
@@ -55,8 +53,7 @@ DQList computeDQ( const Pose& pose, const Sparse& weight ) {
 
     // Normalize all dual quats.
 #pragma omp parallel for
-    for ( int i = 0; i < int( DQ.size() ); ++i )
-    {
+    for ( int i = 0; i < int( DQ.size() ); ++i ) {
         DQ[i].normalize();
     }
 
@@ -73,17 +70,14 @@ DQList computeDQ_naive( const Pose& pose, const Sparse& weight ) {
 
     // 1. Convert all transforms to DQ
 #pragma omp parallel for
-    for ( int j = 0; j < weight.cols(); ++j )
-    {
+    for ( int j = 0; j < weight.cols(); ++j ) {
         poseDQ[j] = DualQuaternion( pose[j] );
     }
 
     // 2. for all vertices, blend the dual quats.
-    for ( int i = 0; i < weight.rows(); ++i )
-    {
+    for ( int i = 0; i < weight.rows(); ++i ) {
         int firstNonZero = -1;
-        for ( uint j = 0; j < weight.cols(); ++j )
-        {
+        for ( uint j = 0; j < weight.cols(); ++j ) {
             const Scalar& w = weight.coeff( i, j );
             if ( w == 0 ) { continue; }
 
@@ -100,8 +94,7 @@ DQList computeDQ_naive( const Pose& pose, const Sparse& weight ) {
 
     // 3. renormalize all dual quats.
 #pragma omp parallel for
-    for ( int i = 0; i < int( DQ.size() ); ++i )
-    {
+    for ( int i = 0; i < int( DQ.size() ); ++i ) {
         DQ[i].normalize();
     }
 
@@ -111,8 +104,7 @@ DQList computeDQ_naive( const Pose& pose, const Sparse& weight ) {
 Vector3Array applyDualQuaternions( const DQList& DQ, const Vector3Array& vertices ) {
     Vector3Array out( vertices.size(), Vector3::Zero() );
 #pragma omp parallel for
-    for ( int i = 0; i < int( vertices.size() ); ++i )
-    {
+    for ( int i = 0; i < int( vertices.size() ); ++i ) {
         out[i] = DQ[i].transform( vertices[i] );
     }
     return out;
@@ -125,8 +117,7 @@ void dualQuaternionSkinning( const SkinningRefData& refData,
     // prepare the pose w.r.t. the bind matrices and the mesh tranform
     auto pose = frameData.m_skeleton.getPose( HandleArray::SpaceType::MODEL );
 #pragma omp parallel for
-    for ( int i = 0; i < int( frameData.m_skeleton.size() ); ++i )
-    {
+    for ( int i = 0; i < int( frameData.m_skeleton.size() ); ++i ) {
         pose[i] = refData.m_meshTransformInverse * pose[i] * refData.m_bindMatrices[i];
     }
     // compute the dual quaternion for each vertex
@@ -135,8 +126,7 @@ void dualQuaternionSkinning( const SkinningRefData& refData,
     const auto& vertices = refData.m_referenceMesh.vertices();
     const auto& normals  = refData.m_referenceMesh.normals();
 #pragma omp parallel for
-    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
-    {
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i ) {
         const auto& DQi                 = DQ[i];
         frameData.m_currentPosition[i]  = DQi.transform( vertices[i] );
         frameData.m_currentNormal[i]    = DQi.rotate( normals[i] );

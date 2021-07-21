@@ -15,10 +15,9 @@ make ExamplePluginWithLib
 Note that calling this target will force the installation of Radium, as both Upstream and Downstream
 plugins needs an installed Radium cmake package.
 
-Alternatively, this process can be replicated by compiling the Upstream and Downstream projects separately, 
+Alternatively, this process can be replicated by compiling the Upstream and Downstream projects separately,
 by following the compilation instructions given in `Upstream/CMakefile.txt` and then `Downstream/CMakefile.txt`.
 
 ## Use
 Load the Upstream and Downstream plugins into any plugin compatible Radium app, a confirmation
 message should be printed to standard output.
-

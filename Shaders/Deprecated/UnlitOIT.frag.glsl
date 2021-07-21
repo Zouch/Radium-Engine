@@ -12,8 +12,9 @@ layout( location = 2 ) in vec3 in_color;
 
 void main() {
     if ( ( material.tex.hasAlpha == 1 && texture( material.tex.alpha, in_texcoord.st ).r < 0.1 ) ||
-         material.alpha < 0.01 )
-    { discard; }
+         material.alpha < 0.01 ) {
+        discard;
+    }
 
     float a = material.alpha;
     float z = -in_position.z;
@@ -30,8 +31,9 @@ void main() {
 
     vec3 color;
     if ( material.tex.hasKd == 1 ) { color = texture( material.tex.kd, in_texcoord.st ).rgb; }
-    else
-    { color = in_color; }
+    else {
+        color = in_color;
+    }
 
     f_Accumulation = vec4( color * a, a ) * w;
     f_Revealage    = vec4( a );

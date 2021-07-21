@@ -38,10 +38,10 @@ struct NLinearInterpolator<2> {
         const uint i1 = i0 < size[0] ? i0 + 1 : i0;
         const uint j1 = j0 < size[1] ? j0 + 1 : j0;
 
-        const T v00 = grid.at( {i0, j0} );
-        const T v01 = grid.at( {i0, j1} );
-        const T v10 = grid.at( {i1, j0} );
-        const T v11 = grid.at( {i1, j1} );
+        const T v00 = grid.at( { i0, j0 } );
+        const T v01 = grid.at( { i0, j1 } );
+        const T v10 = grid.at( { i1, j0 } );
+        const T v11 = grid.at( { i1, j1 } );
 
         const T c0 = v00 * ( 1.0 - fact[0] ) + v10 * fact[0];
         const T c1 = v01 * ( 1.0 - fact[0] ) + v11 * fact[0];
@@ -65,14 +65,14 @@ struct NLinearInterpolator<3> {
         const uint j1 = j0 < size[1] ? j0 + 1 : j0;
         const uint k1 = k0 < size[2] ? k0 + 1 : k0;
 
-        const T v000 = grid.at( {i0, j0, k0} );
-        const T v001 = grid.at( {i0, j0, k1} );
-        const T v010 = grid.at( {i0, j1, k0} );
-        const T v011 = grid.at( {i0, j1, k1} );
-        const T v100 = grid.at( {i1, j0, k0} );
-        const T v101 = grid.at( {i1, j0, k1} );
-        const T v110 = grid.at( {i1, j1, k0} );
-        const T v111 = grid.at( {i1, j1, k1} );
+        const T v000 = grid.at( { i0, j0, k0 } );
+        const T v001 = grid.at( { i0, j0, k1 } );
+        const T v010 = grid.at( { i0, j1, k0 } );
+        const T v011 = grid.at( { i0, j1, k1 } );
+        const T v100 = grid.at( { i1, j0, k0 } );
+        const T v101 = grid.at( { i1, j0, k1 } );
+        const T v110 = grid.at( { i1, j1, k0 } );
+        const T v111 = grid.at( { i1, j1, k1 } );
 
         const T c00 = v000 * ( 1.0 - fact[0] ) + v100 * fact[0];
         const T c10 = v010 * ( 1.0 - fact[0] ) + v110 * fact[0];

@@ -50,8 +50,7 @@ class DemoWindow : public Ra::Gui::SimpleWindow
             "DEMO_COLORRESET", "Key_O", "", "", "false", [this]( QKeyEvent* event ) {
                 this->colorreset( event );
             } );
-        if ( DEMO_COLORUP.isInvalid() || DEMO_COLORDOWN.isInvalid() )
-        {
+        if ( DEMO_COLORUP.isInvalid() || DEMO_COLORDOWN.isInvalid() ) {
             LOG( Ra::Core::Utils::logERROR ) << "Error : invalid context or actions for custom"
                                              << "Color Up [" << DEMO_COLORUP
                                              << "], "
@@ -95,17 +94,17 @@ class DemoWindow : public Ra::Gui::SimpleWindow
     Ra::Gui::KeyMappingManager::KeyMappingAction DEMO_COLORRESET;
 
     std::shared_ptr<Ra::Engine::Rendering::RenderObject> m_obj;
-    std::array<Ra::Core::Utils::Color, 10> m_colors {Ra::Core::Utils::Color::Green(),
-                                                     Ra::Core::Utils::Color::Blue(),
-                                                     Ra::Core::Utils::Color::Yellow(),
-                                                     Ra::Core::Utils::Color::Magenta(),
-                                                     Ra::Core::Utils::Color::Cyan(),
-                                                     Ra::Core::Utils::Color::White(),
-                                                     Ra::Core::Utils::Color::Grey(),
-                                                     Ra::Core::Utils::Color::Black(),
-                                                     Ra::Core::Utils::Color::Skin(),
-                                                     Ra::Core::Utils::Color::Red()};
-    int m_colIdx {0};
+    std::array<Ra::Core::Utils::Color, 10> m_colors { Ra::Core::Utils::Color::Green(),
+                                                      Ra::Core::Utils::Color::Blue(),
+                                                      Ra::Core::Utils::Color::Yellow(),
+                                                      Ra::Core::Utils::Color::Magenta(),
+                                                      Ra::Core::Utils::Color::Cyan(),
+                                                      Ra::Core::Utils::Color::White(),
+                                                      Ra::Core::Utils::Color::Grey(),
+                                                      Ra::Core::Utils::Color::Black(),
+                                                      Ra::Core::Utils::Color::Skin(),
+                                                      Ra::Core::Utils::Color::Red() };
+    int m_colIdx { 0 };
 };
 
 /**
@@ -129,13 +128,13 @@ int main( int argc, char* argv[] ) {
     //! [Creating the application]
 
     //! [Creating the cube]
-    auto cube = Ra::Core::Geometry::makeSharpBox( {0.1f, 0.1f, 0.1f} );
+    auto cube = Ra::Core::Geometry::makeSharpBox( { 0.1f, 0.1f, 0.1f } );
     //! [Creating the cube]
 
     //! [Colorize the Cube]
     cube.addAttrib(
         "in_color",
-        Ra::Core::Vector4Array {cube.vertices().size(), Ra::Core::Utils::Color::Green()} );
+        Ra::Core::Vector4Array { cube.vertices().size(), Ra::Core::Utils::Color::Green() } );
     //! [Colorize the Cube]
 
     //! [Create the engine entity for the cube]

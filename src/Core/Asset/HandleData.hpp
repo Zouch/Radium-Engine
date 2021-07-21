@@ -27,7 +27,7 @@ struct RA_CORE_API HandleComponentData {
     std::string m_name;
 
     /// Handle transformation in model space.
-    Core::Transform m_frame {Core::Transform::Identity()};
+    Core::Transform m_frame { Core::Transform::Identity() };
 
     /// Per skinned-mesh matrix from mesh space to bone space (local).
     std::map<std::string, Core::Transform> m_bindMatrices;
@@ -238,13 +238,13 @@ class RA_CORE_API HandleData : public AssetData
     HandleType m_type;
 
     /// The transformation of the Handle system.
-    Core::Transform m_frame {Core::Transform::Identity()};
+    Core::Transform m_frame { Core::Transform::Identity() };
 
     /// Whether the Handle System needs end bones.
-    bool m_endNode {false};
+    bool m_endNode { false };
 
     /// The maximal number of vertices influenced by a Handle of the system.
-    uint m_vertexSize {0};
+    uint m_vertexSize { 0 };
 
     /// The map from Handle name to storage index.
     std::map<std::string, uint> m_nameTable;

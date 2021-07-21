@@ -48,10 +48,10 @@ class RA_ENGINE_API SkeletonBasedAnimationSystem : public System
 
   private:
     /// True if we want to show xray-bones.
-    bool m_xrayOn {false};
+    bool m_xrayOn { false };
 
     /// The current animation time.
-    Scalar m_time {0_ra};
+    Scalar m_time { 0_ra };
 };
 
 } // namespace Scene

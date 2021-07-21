@@ -74,7 +74,7 @@ class RA_ENGINE_API LightManager : public System
 
   protected:
     /// Stores the object that stores the lights...
-    std::unique_ptr<LightStorage> m_data {nullptr};
+    std::unique_ptr<LightStorage> m_data { nullptr };
 };
 
 } // namespace Scene

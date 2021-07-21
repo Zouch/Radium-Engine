@@ -8,11 +8,11 @@
 static const std::string defaultVertexShader {
     Ra::Core::Resources::getRadiumResourcesPath().value_or(
         "[[Default resrouces path not found]]" ) +
-    "Shaders/Materials/Plain/Plain.vert.glsl"};
+    "Shaders/Materials/Plain/Plain.vert.glsl" };
 static const std::string defaultFragmentShader {
     Ra::Core::Resources::getRadiumResourcesPath().value_or(
         "[[Default resrouces path not found]]" ) +
-    "Shaders/Materials/Plain/Plain.frag.glsl"};
+    "Shaders/Materials/Plain/Plain.frag.glsl" };
 
 namespace Ra {
 namespace Engine {
@@ -22,22 +22,18 @@ std::ostream& operator<<( std::ostream& stream, const ShaderConfiguration& confi
 
     stream << " -- shader configuration [" << config.m_name << "]\n";
 
-    for ( const auto& s : config.m_shaders )
-    {
+    for ( const auto& s : config.m_shaders ) {
         stream << " shaders  [" << s.first << " " << s.second << " ]\n";
     }
 
-    for ( const auto& s : config.m_properties )
-    {
+    for ( const auto& s : config.m_properties ) {
         stream << "props  [" << s << "]\n";
     }
 
-    for ( const auto& s : config.m_includes )
-    {
+    for ( const auto& s : config.m_includes ) {
         stream << "inc  [" << s.first << "]\n";
     }
-    for ( const auto& s : config.m_named_strings )
-    {
+    for ( const auto& s : config.m_named_strings ) {
         stream << "props  [" << s.first << "]\n";
     }
     return stream;
@@ -48,22 +44,22 @@ ShaderConfiguration ShaderConfiguration::m_defaultShaderConfig( "Default Program
                                                                 defaultFragmentShader );
 
 ShaderConfiguration::ShaderConfiguration( const std::string& name ) :
-    m_name {name}, m_version {"#version 410"} {}
+    m_name { name }, m_version { "#version 410" } {}
 
 ShaderConfiguration::ShaderConfiguration( const std::string& name,
                                           const std::string& vertexShader,
                                           const std::string& fragmentShader ) :
-    m_name {name}, m_version {"#version 410"} {
-    m_shaders[ShaderType_VERTEX]   = {vertexShader, true};
-    m_shaders[ShaderType_FRAGMENT] = {fragmentShader, true};
+    m_name { name }, m_version { "#version 410" } {
+    m_shaders[ShaderType_VERTEX]   = { vertexShader, true };
+    m_shaders[ShaderType_FRAGMENT] = { fragmentShader, true };
 }
 
 void ShaderConfiguration::addShader( ShaderType type, const std::string& name ) {
-    m_shaders[type] = {name, true};
+    m_shaders[type] = { name, true };
 }
 
 void ShaderConfiguration::addShaderSource( ShaderType type, const std::string& source ) {
-    m_shaders[type] = {source, false};
+    m_shaders[type] = { source, false };
 }
 
 void ShaderConfiguration::addProperty( const std::string& prop ) {
@@ -71,8 +67,7 @@ void ShaderConfiguration::addProperty( const std::string& prop ) {
 }
 
 void ShaderConfiguration::addProperties( const std::list<std::string>& props ) {
-    for ( const auto& prop : props )
-    {
+    for ( const auto& prop : props ) {
         m_properties.insert( "#define " + prop );
     }
 }
@@ -86,8 +81,7 @@ void ShaderConfiguration::addInclude( const std::string& incl, ShaderType type )
 }
 
 void ShaderConfiguration::addIncludes( const std::list<std::string>& incls, ShaderType type ) {
-    for ( const auto& incl : incls )
-    {
+    for ( const auto& incl : incls ) {
         m_includes.emplace_back( "#include " + incl, type );
     }
 }
@@ -111,20 +105,15 @@ bool ShaderConfiguration::isComplete() const {
 bool ShaderConfiguration::operator<( const ShaderConfiguration& o ) const {
     bool res = false;
 
-    for ( size_t i = 0; i < ShaderType_COUNT; ++i )
-    {
+    for ( size_t i = 0; i < ShaderType_COUNT; ++i ) {
         if ( m_shaders[i] != o.m_shaders[i] ) { return m_shaders[i] < o.m_shaders[i]; }
     }
 
-    if ( m_properties.size() == o.m_properties.size() )
-    {
-        if ( m_properties.empty() )
-        {
-            if ( m_includes.size() == o.m_includes.size() )
-            {
+    if ( m_properties.size() == o.m_properties.size() ) {
+        if ( m_properties.empty() ) {
+            if ( m_includes.size() == o.m_includes.size() ) {
                 if ( m_includes.empty() ) { res = false; }
-                else
-                {
+                else {
                     auto lit = m_includes.begin();
                     auto rit = o.m_includes.begin();
 
@@ -132,13 +121,13 @@ bool ShaderConfiguration::operator<( const ShaderConfiguration& o ) const {
                         ;
 
                     if ( lit == m_includes.end() ) { res = false; }
-                    else
-                    { res = *lit < *rit; }
+                    else {
+                        res = *lit < *rit;
+                    }
                 }
             }
         }
-        else
-        {
+        else {
             auto lit = m_properties.begin();
             auto rit = o.m_properties.begin();
 
@@ -146,12 +135,14 @@ bool ShaderConfiguration::operator<( const ShaderConfiguration& o ) const {
                 ;
 
             if ( lit == m_properties.end() ) { res = false; }
-            else
-            { res = *lit < *rit; }
+            else {
+                res = *lit < *rit;
+            }
         }
     }
-    else
-    { res = m_properties.size() < o.m_properties.size(); }
+    else {
+        res = m_properties.size() < o.m_properties.size();
+    }
 
     return res;
 }

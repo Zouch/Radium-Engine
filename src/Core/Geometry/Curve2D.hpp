@@ -33,7 +33,7 @@ class QuadraSpline : public Curve2D
     QuadraSpline( const Curve2D::Vector& p0,
                   const Curve2D::Vector& p1,
                   const Curve2D::Vector& p2 ) :
-        m_points {p0, p1, p2} {
+        m_points { p0, p1, p2 } {
         this->size = 3;
     }
     ~QuadraSpline() override = default;
@@ -56,7 +56,7 @@ class CubicBezier : public Curve2D
                  const Curve2D::Vector& p1,
                  const Curve2D::Vector& p2,
                  const Curve2D::Vector& p3 ) :
-        m_points {p0, p1, p2, p3} {
+        m_points { p0, p1, p2, p3 } {
         this->size = 4;
     }
     ~CubicBezier() override = default;
@@ -75,7 +75,7 @@ class Line : public Curve2D
 {
   public:
     Line() { this->size = 0; }
-    Line( const Vector& p0, const Vector& p1 ) : m_points {p0, p1} { this->size = 2; }
+    Line( const Vector& p0, const Vector& p1 ) : m_points { p0, p1 } { this->size = 2; }
     ~Line() override = default;
 
     inline void addPoint( const Vector p ) override;

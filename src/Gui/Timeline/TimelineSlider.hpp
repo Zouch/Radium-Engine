@@ -29,7 +29,7 @@ class TimelineSlider : public QLabel
 
   private:
     /// Whether the widget being dragged or not.
-    bool m_clicked {false};
+    bool m_clicked { false };
 };
 
 } // namespace Ra::Gui

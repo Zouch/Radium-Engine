@@ -36,8 +36,7 @@ void copyAttribToCoreVertex( HandleAndValueVector<T>& data,
                              const TopologicalMesh* topoMesh,
                              const std::vector<P>& vprop,
                              TopologicalMesh::HalfedgeHandle heh ) {
-    for ( auto pp : vprop )
-    {
+    for ( auto pp : vprop ) {
         data.push_back( std::make_pair( pp.first, topoMesh->property( pp.second, heh ) ) );
     }
 }
@@ -45,8 +44,7 @@ void copyAttribToCoreVertex( HandleAndValueVector<T>& data,
 template <typename T>
 void copyAttribToCore( TriangleMesh& triMesh, const HandleAndValueVector<T>& data ) {
 
-    for ( auto pp : data )
-    {
+    for ( auto pp : data ) {
         auto& attr     = triMesh.getAttrib( pp.first );
         auto& attrData = attr.getDataWithLock();
         attrData.push_back( pp.second );
@@ -57,7 +55,7 @@ void copyAttribToCore( TriangleMesh& triMesh, const HandleAndValueVector<T>& dat
 //! [Default command implementation]
 struct DefaultNonManifoldFaceCommand {
     /// \brief details string is printed along with the message
-    DefaultNonManifoldFaceCommand( const std::string& details = {} ) : m_details {details} {}
+    DefaultNonManifoldFaceCommand( const std::string& details = {} ) : m_details { details } {}
     /// \brief Initalize with input Ra::Core::Geometry::TriangleMesh
     inline void initialize( const TriangleMesh& /*triMesh*/ ) {}
     /// \brief Process non-manifold face
@@ -115,8 +113,9 @@ TriangleMesh TopologicalMesh::toTriangleMesh() {
 
     VertexMap vertexHandles;
 
-    if ( !get_property_handle( m_outputTriangleMeshIndexPph, "OutputTriangleMeshIndices" ) )
-    { add_property( m_outputTriangleMeshIndexPph, "OutputTriangleMeshIndices" ); }
+    if ( !get_property_handle( m_outputTriangleMeshIndexPph, "OutputTriangleMeshIndices" ) ) {
+        add_property( m_outputTriangleMeshIndexPph, "OutputTriangleMeshIndices" );
+    }
     std::vector<PropPair<Scalar>> vprop_float;
     std::vector<PropPair<Vector2>> vprop_vec2;
     std::vector<PropPair<Vector3>> vprop_vec3;
@@ -148,21 +147,20 @@ TriangleMesh TopologicalMesh::toTriangleMesh() {
     normals.reserve( n_vertices() );
     indices.reserve( n_faces() );
 
-    for ( TopologicalMesh::FaceIter f_it = faces_sbegin(); f_it != faces_end(); ++f_it )
-    {
+    for ( TopologicalMesh::FaceIter f_it = faces_sbegin(); f_it != faces_end(); ++f_it ) {
         int tindices[3];
         int i = 0;
 
         // iterator over vertex (through halfedge to get access to halfedge normals)
         for ( TopologicalMesh::ConstFaceHalfedgeIter fh_it = cfh_iter( *f_it ); fh_it.is_valid();
-              ++fh_it )
-        {
+              ++fh_it ) {
             VertexDataInternal v;
             CORE_ASSERT( i < 3, "Non-triangular face found." );
             v._vertex = point( to_vertex_handle( *fh_it ) );
 
-            if ( has_halfedge_normals() )
-            { v._normal = normal( to_vertex_handle( *fh_it ), *f_it ); }
+            if ( has_halfedge_normals() ) {
+                v._normal = normal( to_vertex_handle( *fh_it ), *f_it );
+            }
             copyAttribToCoreVertex( v._float, this, vprop_float, *fh_it );
             copyAttribToCoreVertex( v._vec2, this, vprop_vec2, *fh_it );
             copyAttribToCoreVertex( v._vec3, this, vprop_vec3, *fh_it );
@@ -170,8 +168,7 @@ TriangleMesh TopologicalMesh::toTriangleMesh() {
 
             int vi;
             VertexMap::iterator vtr = vertexHandles.find( v );
-            if ( vtr == vertexHandles.end() )
-            {
+            if ( vtr == vertexHandles.end() ) {
                 vi = int( vertexIndex++ );
                 vertexHandles.insert( vtr, VertexMap::value_type( v, vi ) );
                 vertices.push_back( v._vertex );
@@ -181,8 +178,9 @@ TriangleMesh TopologicalMesh::toTriangleMesh() {
                 copyAttribToCore( out, v._vec3 );
                 copyAttribToCore( out, v._vec4 );
             }
-            else
-            { vi = vtr->second; }
+            else {
+                vi = vtr->second;
+            }
             tindices[i]                                      = vi;
             property( m_outputTriangleMeshIndexPph, *fh_it ) = vi;
             i++;
@@ -230,8 +228,9 @@ bool TopologicalMesh::splitEdge( TopologicalMesh::EdgeHandle eh, Scalar f ) {
 
     // not triangles or holes
     if ( ( !is_boundary( he0 ) && valence( F0 ) != 3 ) ||
-         ( !is_boundary( he1 ) && valence( F1 ) != 3 ) )
-    { return false; }
+         ( !is_boundary( he1 ) && valence( F1 ) != 3 ) ) {
+        return false;
+    }
 
     // add the new vertex
     const Point p  = Point( f * point( v0 ) + ( Scalar( 1. ) - f ) * point( v1 ) );
@@ -244,8 +243,7 @@ bool TopologicalMesh::splitEdge( TopologicalMesh::EdgeHandle eh, Scalar f ) {
     set_vertex_handle( he1, v );
 
     // does F0 exist
-    if ( !is_boundary( he0 ) )
-    {
+    if ( !is_boundary( he0 ) ) {
         HalfedgeHandle h0 = next_halfedge_handle( he0 );
         HalfedgeHandle h1 = next_halfedge_handle( h0 );
         // create new edge
@@ -276,8 +274,7 @@ bool TopologicalMesh::splitEdge( TopologicalMesh::EdgeHandle eh, Scalar f ) {
         // copy at e0, and e2
         copyAllProps( he2, e0 );
     }
-    else
-    {
+    else {
         HalfedgeHandle h1 = prev_halfedge_handle( he0 );
         set_next_halfedge_handle( h1, he2 );
         set_next_halfedge_handle( he2, he0 );
@@ -286,8 +283,7 @@ bool TopologicalMesh::splitEdge( TopologicalMesh::EdgeHandle eh, Scalar f ) {
     }
 
     // does F1 exist
-    if ( !is_boundary( he1 ) )
-    {
+    if ( !is_boundary( he1 ) ) {
         HalfedgeHandle o1 = next_halfedge_handle( he1 );
         HalfedgeHandle o0 = next_halfedge_handle( o1 );
         // create new edge
@@ -321,8 +317,7 @@ bool TopologicalMesh::splitEdge( TopologicalMesh::EdgeHandle eh, Scalar f ) {
         copyAllProps( he1, e3 );
         copyAllProps( o1, e1 );
     }
-    else
-    {
+    else {
         HalfedgeHandle o1 = next_halfedge_handle( he1 );
         // next halfedge handle of o0 already is he1
         set_next_halfedge_handle( he1, he3 );
@@ -353,8 +348,7 @@ void TopologicalMesh::split( EdgeHandle _eh, VertexHandle _vh ) {
     set_halfedge_handle( _vh, h0 );
     set_vertex_handle( o0, _vh );
 
-    if ( !is_boundary( h0 ) )
-    {
+    if ( !is_boundary( h0 ) ) {
         HalfedgeHandle h1 = next_halfedge_handle( h0 );
         HalfedgeHandle h2 = next_halfedge_handle( h1 );
 
@@ -383,15 +377,13 @@ void TopologicalMesh::split( EdgeHandle _eh, VertexHandle _vh ) {
         set_next_halfedge_handle( h2, t1 );
         set_next_halfedge_handle( t1, e0 );
     }
-    else
-    {
+    else {
         set_next_halfedge_handle( prev_halfedge_handle( h0 ), t1 );
         set_next_halfedge_handle( t1, h0 );
         // halfedge handle of _vh already is h0
     }
 
-    if ( !is_boundary( o0 ) )
-    {
+    if ( !is_boundary( o0 ) ) {
         HalfedgeHandle o1 = next_halfedge_handle( o0 );
         HalfedgeHandle o2 = next_halfedge_handle( o1 );
 
@@ -420,8 +412,7 @@ void TopologicalMesh::split( EdgeHandle _eh, VertexHandle _vh ) {
         set_next_halfedge_handle( e2, o2 );
         set_next_halfedge_handle( o2, o0 );
     }
-    else
-    {
+    else {
         set_next_halfedge_handle( e1, next_halfedge_handle( o0 ) );
         set_next_halfedge_handle( o0, e1 );
         set_halfedge_handle( _vh, e1 );
@@ -446,13 +437,11 @@ void TopologicalMesh::split_copy( EdgeHandle _eh, VertexHandle _vh ) {
     for ( VEIter ve_it = ve_iter( _vh ); ve_it.is_valid(); ++ve_it )
         copy_all_properties( _eh, *ve_it, true );
 
-    for ( auto vh : {v0, v1} )
-    {
+    for ( auto vh : { v0, v1 } ) {
         // get the halfedge pointing from new vertex to old vertex
         const HalfedgeHandle h = find_halfedge( _vh, vh );
         // for boundaries there are no faces whose properties need to be copied
-        if ( !is_boundary( h ) )
-        {
+        if ( !is_boundary( h ) ) {
             FaceHandle fh0 = face_handle( h );
             FaceHandle fh1 = face_handle( opposite_halfedge_handle( prev_halfedge_handle( h ) ) );
             // is fh0 the new face?

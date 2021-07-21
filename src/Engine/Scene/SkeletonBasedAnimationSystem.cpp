@@ -22,9 +22,8 @@ namespace Engine {
 namespace Scene {
 
 SkeletonBasedAnimationSystem::SkeletonBasedAnimationSystem() : System(), m_xrayOn( false ) {
-    auto resourceDir {Core::Resources::getRadiumResourcesPath()};
-    if ( resourceDir )
-    {
+    auto resourceDir { Core::Resources::getRadiumResourcesPath() };
+    if ( resourceDir ) {
         auto* engine  = RadiumEngine::getInstance();
         auto* texMngr = engine->getTextureManager();
         // Register an entry into the texture manager
@@ -41,13 +40,10 @@ SkeletonBasedAnimationSystem::SkeletonBasedAnimationSystem() : System(), m_xrayO
 
 void SkeletonBasedAnimationSystem::generateTasks( Core::TaskQueue* taskQueue,
                                                   const FrameInfo& frameInfo ) {
-    for ( auto compEntry : m_components )
-    {
+    for ( auto compEntry : m_components ) {
         // deal with AnimationComponents
-        if ( auto animComp = dynamic_cast<SkeletonComponent*>( compEntry.second ) )
-        {
-            if ( !Core::Math::areApproxEqual( m_time, frameInfo.m_animationTime ) )
-            {
+        if ( auto animComp = dynamic_cast<SkeletonComponent*>( compEntry.second ) ) {
+            if ( !Core::Math::areApproxEqual( m_time, frameInfo.m_animationTime ) ) {
                 // here we update the skeleton w.r.t. the animation
                 auto animFunc =
                     std::bind( &SkeletonComponent::update, animComp, frameInfo.m_animationTime );
@@ -55,8 +51,7 @@ void SkeletonBasedAnimationSystem::generateTasks( Core::TaskQueue* taskQueue,
                     animFunc, "AnimatorTask_" + animComp->getSkeleton()->getName() );
                 taskQueue->registerTask( animTask );
             }
-            else
-            {
+            else {
                 // here we update the skeleton w.r.t. the manipulation
                 auto animFunc = std::bind( &SkeletonComponent::updateDisplay, animComp );
                 auto animTask = new Core::FunctionTask(
@@ -65,8 +60,7 @@ void SkeletonBasedAnimationSystem::generateTasks( Core::TaskQueue* taskQueue,
             }
         }
         // deal with SkinningComponents
-        else if ( auto skinComp = dynamic_cast<SkinningComponent*>( compEntry.second ) )
-        {
+        else if ( auto skinComp = dynamic_cast<SkinningComponent*>( compEntry.second ) ) {
             auto skinFunc = std::bind( &SkinningComponent::skin, skinComp );
             auto skinTask =
                 new Core::FunctionTask( skinFunc, "SkinnerTask_" + skinComp->getMeshName() );
@@ -93,8 +87,7 @@ void SkeletonBasedAnimationSystem::handleAssetLoading( Entity* entity,
     // deal with AnimationComponents
     Scalar startTime = std::numeric_limits<Scalar>::max();
     Scalar endTime   = 0;
-    for ( const auto& skel : skelData )
-    {
+    for ( const auto& skel : skelData ) {
         auto component = new SkeletonComponent( "AC_" + skel->getName(), entity );
         component->handleSkeletonLoading( skel );
         component->handleAnimationLoading( animData );
@@ -111,10 +104,8 @@ void SkeletonBasedAnimationSystem::handleAssetLoading( Entity* entity,
 
     // deal with SkinningComponents
     auto geomData = fileData->getGeometryData();
-    if ( geomData.size() > 0 && skelData.size() > 0 )
-    {
-        for ( const auto& geom : geomData )
-        {
+    if ( geomData.size() > 0 && skelData.size() > 0 ) {
+        for ( const auto& geom : geomData ) {
             // look for a skeleton skinning this mesh
             // warning: there should be at most one such skeleton!
             auto it = std::find_if( skelData.begin(), skelData.end(), [&geom]( const auto& skel ) {
@@ -124,8 +115,7 @@ void SkeletonBasedAnimationSystem::handleAssetLoading( Entity* entity,
                                          return meshName == geom->getName();
                                      } ) != skel->getBindMeshes().end();
             } );
-            if ( it != skelData.end() )
-            {
+            if ( it != skelData.end() ) {
                 const auto& skel             = *it;
                 SkinningComponent* component = new SkinningComponent(
                     "SkC_" + geom->getName(), SkinningComponent::LBS, entity );
@@ -140,10 +130,10 @@ void SkeletonBasedAnimationSystem::handleAssetLoading( Entity* entity,
 
 void SkeletonBasedAnimationSystem::setXray( bool on ) {
     m_xrayOn = on;
-    for ( const auto& comp : m_components )
-    {
-        if ( auto animComp = dynamic_cast<SkeletonComponent*>( comp.second ) )
-        { animComp->setXray( on ); }
+    for ( const auto& comp : m_components ) {
+        if ( auto animComp = dynamic_cast<SkeletonComponent*>( comp.second ) ) {
+            animComp->setXray( on );
+        }
     }
 }
 
@@ -152,10 +142,10 @@ bool SkeletonBasedAnimationSystem::isXrayOn() {
 }
 
 void SkeletonBasedAnimationSystem::toggleSkeleton( const bool status ) {
-    for ( const auto& comp : m_components )
-    {
-        if ( auto animComp = dynamic_cast<SkeletonComponent*>( comp.second ) )
-        { animComp->toggleSkeleton( status ); }
+    for ( const auto& comp : m_components ) {
+        if ( auto animComp = dynamic_cast<SkeletonComponent*>( comp.second ) ) {
+            animComp->toggleSkeleton( status );
+        }
     }
 }
 

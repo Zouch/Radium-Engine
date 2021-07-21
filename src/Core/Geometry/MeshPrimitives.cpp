@@ -38,25 +38,25 @@ TriangleMesh makeBox( const Vector3& halfExts, const Utils::optional<Utils::Colo
 
 TriangleMesh makeBox( const Aabb& aabb, const Utils::optional<Utils::Color>& color ) {
     TriangleMesh result;
-    result.setVertices( {aabb.corner( Aabb::BottomLeftFloor ),
-                         aabb.corner( Aabb::BottomRightFloor ),
-                         aabb.corner( Aabb::TopLeftFloor ),
-                         aabb.corner( Aabb::TopRightFloor ),
-                         aabb.corner( Aabb::BottomLeftCeil ),
-                         aabb.corner( Aabb::BottomRightCeil ),
-                         aabb.corner( Aabb::TopLeftCeil ),
-                         aabb.corner( Aabb::TopRightCeil )} );
+    result.setVertices( { aabb.corner( Aabb::BottomLeftFloor ),
+                          aabb.corner( Aabb::BottomRightFloor ),
+                          aabb.corner( Aabb::TopLeftFloor ),
+                          aabb.corner( Aabb::TopRightFloor ),
+                          aabb.corner( Aabb::BottomLeftCeil ),
+                          aabb.corner( Aabb::BottomRightCeil ),
+                          aabb.corner( Aabb::TopLeftCeil ),
+                          aabb.corner( Aabb::TopRightCeil ) } );
 
     static const Scalar a = 1_ra / std::sqrt( 3_ra );
 
-    result.setNormals( {Vector3( -a, -a, -a ),
-                        Vector3( +a, -a, -a ),
-                        Vector3( -a, +a, -a ),
-                        Vector3( +a, +a, -a ),
-                        Vector3( -a, -a, +a ),
-                        Vector3( +a, -a, +a ),
-                        Vector3( -a, +a, +a ),
-                        Vector3( +a, +a, +a )} );
+    result.setNormals( { Vector3( -a, -a, -a ),
+                         Vector3( +a, -a, -a ),
+                         Vector3( -a, +a, -a ),
+                         Vector3( +a, +a, -a ),
+                         Vector3( -a, -a, +a ),
+                         Vector3( +a, -a, +a ),
+                         Vector3( -a, +a, +a ),
+                         Vector3( +a, +a, +a ) } );
 
     result.setIndices( {
         Vector3ui( 0, 2, 1 ),
@@ -86,72 +86,72 @@ TriangleMesh makeSharpBox( const Vector3& halfExts, const Utils::optional<Utils:
 
 TriangleMesh makeSharpBox( const Aabb& aabb, const Utils::optional<Utils::Color>& color ) {
     TriangleMesh result;
-    result.setVertices( {// Floor Face
-                         aabb.corner( Aabb::BottomLeftFloor ),
-                         aabb.corner( Aabb::TopLeftFloor ),
-                         aabb.corner( Aabb::TopRightFloor ),
-                         aabb.corner( Aabb::BottomRightFloor ),
+    result.setVertices( { // Floor Face
+                          aabb.corner( Aabb::BottomLeftFloor ),
+                          aabb.corner( Aabb::TopLeftFloor ),
+                          aabb.corner( Aabb::TopRightFloor ),
+                          aabb.corner( Aabb::BottomRightFloor ),
 
+                          // Ceil Face
+                          aabb.corner( Aabb::BottomLeftCeil ),
+                          aabb.corner( Aabb::BottomRightCeil ),
+                          aabb.corner( Aabb::TopRightCeil ),
+                          aabb.corner( Aabb::TopLeftCeil ),
+
+                          // Left Face
+                          aabb.corner( Aabb::TopLeftFloor ),
+                          aabb.corner( Aabb::BottomLeftFloor ),
+                          aabb.corner( Aabb::BottomLeftCeil ),
+                          aabb.corner( Aabb::TopLeftCeil ),
+
+                          // Right Face
+                          aabb.corner( Aabb::BottomRightFloor ),
+                          aabb.corner( Aabb::TopRightFloor ),
+                          aabb.corner( Aabb::TopRightCeil ),
+                          aabb.corner( Aabb::BottomRightCeil ),
+
+                          // Bottom Face
+                          aabb.corner( Aabb::BottomLeftFloor ),
+                          aabb.corner( Aabb::BottomRightFloor ),
+                          aabb.corner( Aabb::BottomRightCeil ),
+                          aabb.corner( Aabb::BottomLeftCeil ),
+
+                          // Top face
+                          aabb.corner( Aabb::TopLeftFloor ),
+                          aabb.corner( Aabb::TopLeftCeil ),
+                          aabb.corner( Aabb::TopRightCeil ),
+                          aabb.corner( Aabb::TopRightFloor ) } );
+
+    result.setNormals( { // Floor face
+                         Vector3( 0, 0, -1 ),
+                         Vector3( 0, 0, -1 ),
+                         Vector3( 0, 0, -1 ),
+                         Vector3( 0, 0, -1 ),
                          // Ceil Face
-                         aabb.corner( Aabb::BottomLeftCeil ),
-                         aabb.corner( Aabb::BottomRightCeil ),
-                         aabb.corner( Aabb::TopRightCeil ),
-                         aabb.corner( Aabb::TopLeftCeil ),
-
+                         Vector3( 0, 0, +1 ),
+                         Vector3( 0, 0, +1 ),
+                         Vector3( 0, 0, +1 ),
+                         Vector3( 0, 0, +1 ),
                          // Left Face
-                         aabb.corner( Aabb::TopLeftFloor ),
-                         aabb.corner( Aabb::BottomLeftFloor ),
-                         aabb.corner( Aabb::BottomLeftCeil ),
-                         aabb.corner( Aabb::TopLeftCeil ),
-
+                         Vector3( -1, 0, 0 ),
+                         Vector3( -1, 0, 0 ),
+                         Vector3( -1, 0, 0 ),
+                         Vector3( -1, 0, 0 ),
                          // Right Face
-                         aabb.corner( Aabb::BottomRightFloor ),
-                         aabb.corner( Aabb::TopRightFloor ),
-                         aabb.corner( Aabb::TopRightCeil ),
-                         aabb.corner( Aabb::BottomRightCeil ),
-
+                         Vector3( +1, 0, 0 ),
+                         Vector3( +1, 0, 0 ),
+                         Vector3( +1, 0, 0 ),
+                         Vector3( +1, 0, 0 ),
                          // Bottom Face
-                         aabb.corner( Aabb::BottomLeftFloor ),
-                         aabb.corner( Aabb::BottomRightFloor ),
-                         aabb.corner( Aabb::BottomRightCeil ),
-                         aabb.corner( Aabb::BottomLeftCeil ),
-
-                         // Top face
-                         aabb.corner( Aabb::TopLeftFloor ),
-                         aabb.corner( Aabb::TopLeftCeil ),
-                         aabb.corner( Aabb::TopRightCeil ),
-                         aabb.corner( Aabb::TopRightFloor )} );
-
-    result.setNormals( {// Floor face
-                        Vector3( 0, 0, -1 ),
-                        Vector3( 0, 0, -1 ),
-                        Vector3( 0, 0, -1 ),
-                        Vector3( 0, 0, -1 ),
-                        // Ceil Face
-                        Vector3( 0, 0, +1 ),
-                        Vector3( 0, 0, +1 ),
-                        Vector3( 0, 0, +1 ),
-                        Vector3( 0, 0, +1 ),
-                        // Left Face
-                        Vector3( -1, 0, 0 ),
-                        Vector3( -1, 0, 0 ),
-                        Vector3( -1, 0, 0 ),
-                        Vector3( -1, 0, 0 ),
-                        // Right Face
-                        Vector3( +1, 0, 0 ),
-                        Vector3( +1, 0, 0 ),
-                        Vector3( +1, 0, 0 ),
-                        Vector3( +1, 0, 0 ),
-                        // Bottom Face
-                        Vector3( 0, -1, 0 ),
-                        Vector3( 0, -1, 0 ),
-                        Vector3( 0, -1, 0 ),
-                        Vector3( 0, -1, 0 ),
-                        // Top Face
-                        Vector3( 0, +1, 0 ),
-                        Vector3( 0, +1, 0 ),
-                        Vector3( 0, +1, 0 ),
-                        Vector3( 0, +1, 0 )} );
+                         Vector3( 0, -1, 0 ),
+                         Vector3( 0, -1, 0 ),
+                         Vector3( 0, -1, 0 ),
+                         Vector3( 0, -1, 0 ),
+                         // Top Face
+                         Vector3( 0, +1, 0 ),
+                         Vector3( 0, +1, 0 ),
+                         Vector3( 0, +1, 0 ),
+                         Vector3( 0, +1, 0 ) } );
 
     result.setIndices( {
 
@@ -195,10 +195,8 @@ makeGeodesicSphere( Scalar radius, uint numSubdiv, const Utils::optional<Utils::
     const Scalar sq5_5 = radius * std::sqrt( 5_ra ) / 5_ra;
 
     // Middle vertices are on pentagons inscribed on a circle of radius 2*sqrt(5)
-    for ( int i = 0; i < 5; ++i )
-    {
-        for ( int j = 0; j < 2; ++j )
-        {
+    for ( int i = 0; i < 5; ++i ) {
+        for ( int j = 0; j < 2; ++j ) {
             const Scalar theta = ( Scalar( i ) + ( j * 0.5_ra ) ) * Math::PiMul2 / 5_ra;
 
             const Scalar x = 2_ra * sq5_5 * std::cos( theta );
@@ -213,8 +211,7 @@ makeGeodesicSphere( Scalar radius, uint numSubdiv, const Utils::optional<Utils::
     vertices.emplace_back( 0, 0, -radius );
     normals.emplace_back( 0, 0, -1 );
 
-    for ( int i = 0; i < 5; ++i )
-    {
+    for ( int i = 0; i < 5; ++i ) {
         uint i1 = ( i + 1 ) % 5;
         // Top triangles
         indices.emplace_back( 0, 2 * i + 1, ( 2 * i1 + 1 ) );
@@ -222,27 +219,23 @@ makeGeodesicSphere( Scalar radius, uint numSubdiv, const Utils::optional<Utils::
         // Bottom triangles
         indices.emplace_back( 2 * i + 2, 11, ( 2 * i1 + 2 ) );
     }
-    for ( uint i = 0; i < 10; ++i )
-    {
+    for ( uint i = 0; i < 10; ++i ) {
         uint i1 = ( i + 0 ) % 10 + 1;
         uint i2 = ( i + 1 ) % 10 + 1;
         uint i3 = ( i + 2 ) % 10 + 1;
         ( i % 2 ) ? indices.emplace_back( i3, i2, i1 ) : indices.emplace_back( i2, i3, i1 );
     }
 
-    for ( uint n = 0; n < numSubdiv; ++n )
-    {
+    for ( uint n = 0; n < numSubdiv; ++n ) {
         VectorArray<Vector3ui> newTris; //= indices;
         // Now subdivide every face into 4 triangles.
-        for ( uint i = 0; i < indices.size(); ++i )
-        {
+        for ( uint i = 0; i < indices.size(); ++i ) {
             const Vector3ui& tri               = indices[i];
             std::array<Vector3, 3> triVertices = {
-                vertices[tri[0]], vertices[tri[1]], vertices[tri[2]]};
+                vertices[tri[0]], vertices[tri[1]], vertices[tri[2]] };
             std::array<uint, 3> middles;
 
-            for ( uint v = 0; v < 3; ++v )
-            {
+            for ( uint v = 0; v < 3; ++v ) {
                 middles[v] = uint( vertices.size() );
 
                 Vector3 vertex = 0.5_ra * ( triVertices[v] + triVertices[( v + 1 ) % 3] );
@@ -302,8 +295,7 @@ TriangleMesh makeCylinder( const Vector3& a,
     normals.push_back( dir );
 
     const Scalar thetaInc( Core::Math::PiMul2 / Scalar( nFaces ) );
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         const Scalar theta = i * thetaInc;
         Vector3 normal     = std::cos( theta ) * xPlane + std::sin( theta ) * yPlane;
 
@@ -317,8 +309,7 @@ TriangleMesh makeCylinder( const Vector3& a,
         normals.push_back( ( normal + dir ).normalized() );
     }
 
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         uint bl = 3 * i + 2;                      // bottom left corner of face
         uint br = 3 * ( ( i + 1 ) % nFaces ) + 2; // bottom right corner of face
         uint ml = bl + 1;                         // mid left
@@ -366,8 +357,7 @@ TriangleMesh makeCapsule( Scalar length,
     // Part 1 : create the cylinder based on 3 circles
     // Cylinder vertices.
     const Scalar thetaInc( Core::Math::PiMul2 / Scalar( nFaces ) );
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         const Scalar theta = i * thetaInc;
         Vector3 normal( std::cos( theta ), std::sin( theta ), 0 );
 
@@ -383,8 +373,7 @@ TriangleMesh makeCapsule( Scalar length,
     }
 
     // Cylinder side faces
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         uint bl = 3 * i;                      // bottom left corner of face
         uint br = 3 * ( ( i + 1 ) % nFaces ); // bottom right corner of face
         uint ml = bl + 1;                     // mid left
@@ -404,12 +393,10 @@ TriangleMesh makeCapsule( Scalar length,
     uint vert_count     = uint( vertices.size() );
 
     // Bottom hemisphere vertices
-    for ( uint j = 1; j <= nFaces / 2 - 1; ++j )
-    {
+    for ( uint j = 1; j <= nFaces / 2 - 1; ++j ) {
         const Scalar phi = Core::Math::PiDiv2 + j * phiInc;
 
-        for ( uint i = 0; i < nFaces; ++i )
-        {
+        for ( uint i = 0; i < nFaces; ++i ) {
             const Scalar theta = i * thetaInc;
 
             const Vector3 normal( std::cos( theta ) * std::sin( phi ),
@@ -428,8 +415,7 @@ TriangleMesh makeCapsule( Scalar length,
     normals.emplace_back( 0, 0, -1 );
 
     // First ring of sphere triangles (joining with the cylinder)
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         uint bl = 3 * i;
         uint br = 3 * ( ( i + 1 ) % nFaces );
 
@@ -441,10 +427,8 @@ TriangleMesh makeCapsule( Scalar length,
     }
 
     // Next rings of the sphere triangles
-    for ( uint j = 0; j < ( nFaces / 2 ) - 2; ++j )
-    {
-        for ( uint i = 0; i < nFaces; ++i )
-        {
+    for ( uint j = 0; j < ( nFaces / 2 ) - 2; ++j ) {
+        for ( uint i = 0; i < nFaces; ++i ) {
             uint bl = vert_count + j * nFaces + i;
             uint br = vert_count + j * nFaces + ( i + 1 ) % nFaces;
 
@@ -457,8 +441,7 @@ TriangleMesh makeCapsule( Scalar length,
     }
 
     // End cap triangles, joining with the pole
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         const uint j = nFaces / 2 - 2;
         uint bl      = vert_count + j * nFaces + i;
         uint br      = vert_count + j * nFaces + ( i + 1 ) % nFaces;
@@ -470,12 +453,10 @@ TriangleMesh makeCapsule( Scalar length,
     vert_count = uint( vertices.size() );
 
     // Top hemisphere vertices
-    for ( uint j = 1; j <= nFaces / 2 - 1; ++j )
-    {
+    for ( uint j = 1; j <= nFaces / 2 - 1; ++j ) {
         const Scalar phi = Core::Math::PiDiv2 - j * phiInc;
 
-        for ( uint i = 0; i < nFaces; ++i )
-        {
+        for ( uint i = 0; i < nFaces; ++i ) {
             const Scalar theta = i * thetaInc;
 
             const Vector3 normal( std::cos( theta ) * std::sin( phi ),
@@ -495,8 +476,7 @@ TriangleMesh makeCapsule( Scalar length,
     normals.emplace_back( 0, 0, 1 );
 
     // First ring of sphere triangles (joining with the cylinder)
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         uint bl = 3 * i + 2;
         uint br = 3 * ( ( i + 1 ) % nFaces ) + 2;
 
@@ -508,10 +488,8 @@ TriangleMesh makeCapsule( Scalar length,
     }
 
     // Next rigns of the sphere triangles
-    for ( uint j = 0; j < ( nFaces / 2 ) - 2; ++j )
-    {
-        for ( uint i = 0; i < nFaces; ++i )
-        {
+    for ( uint j = 0; j < ( nFaces / 2 ) - 2; ++j ) {
+        for ( uint i = 0; i < nFaces; ++i ) {
             uint bl = vert_count + j * nFaces + i;
             uint br = vert_count + j * nFaces + ( i + 1 ) % nFaces;
 
@@ -524,8 +502,7 @@ TriangleMesh makeCapsule( Scalar length,
     }
 
     // End cap triangles, joining with the pole
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         const uint j = nFaces / 2 - 2;
         uint bl      = vert_count + j * nFaces + i;
         uint br      = vert_count + j * nFaces + ( i + 1 ) % nFaces;
@@ -570,8 +547,7 @@ TriangleMesh makeTube( const Vector3& a,
     Vector3 c = 0.5 * ( a + b );
 
     const Scalar thetaInc( Core::Math::PiMul2 / Scalar( nFaces ) );
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         const Scalar theta = i * thetaInc;
 
         Vector3 normal = std::cos( theta ) * xPlane + std::sin( theta ) * yPlane;
@@ -593,8 +569,7 @@ TriangleMesh makeTube( const Vector3& a,
         normals.push_back( ( dir - normal ).normalized() );
     }
 
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         // Outer face.
         uint obl = 6 * i;                      // bottom left corner of outer face
         uint obr = 6 * ( ( i + 1 ) % nFaces ); // bottom right corner of outer face
@@ -672,8 +647,7 @@ TriangleMesh makeCone( const Vector3& base,
     normals.push_back( dir );
 
     const Scalar thetaInc( Core::Math::PiMul2 / Scalar( nFaces ) );
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         const Scalar theta = i * thetaInc;
         Vector3 normal     = std::cos( theta ) * xPlane + std::sin( theta ) * yPlane;
 
@@ -681,8 +655,7 @@ TriangleMesh makeCone( const Vector3& base,
         normals.push_back( ( normal - dir ).normalized() );
     }
 
-    for ( uint i = 0; i < nFaces; ++i )
-    {
+    for ( uint i = 0; i < nFaces; ++i ) {
         uint bl = i + 2;                      // bottom left corner of face
         uint br = ( ( i + 1 ) % nFaces ) + 2; // bottom right corner of face
 
@@ -725,24 +698,22 @@ TriangleMesh makePlaneGrid( const uint rows,
     const Vector3 y = ( 2_ra * halfExts[1] * Y ) / Scalar( rows );
     const Vector3 o = T.translation() - ( halfExts[0] * X ) - ( halfExts[1] * Y );
 
-    Grid<uint, 2> v( {R, C} );
-    for ( uint i = 0; i < R; ++i )
-    {
-        for ( uint j = 0; j < C; ++j )
-        {
-            const uint id  = ( i * C ) + j;
-            v.at( {i, j} ) = id;
-            vertices[id]   = o + ( i * y ) + ( j * x );
-            normals[id]    = Z;
+    Grid<uint, 2> v( { R, C } );
+    for ( uint i = 0; i < R; ++i ) {
+        for ( uint j = 0; j < C; ++j ) {
+            const uint id    = ( i * C ) + j;
+            v.at( { i, j } ) = id;
+            vertices[id]     = o + ( i * y ) + ( j * x );
+            normals[id]      = Z;
         }
     }
 
-    for ( uint i = 0; i < rows; ++i )
-    {
-        for ( uint j = 0; j < cols; ++j )
-        {
-            indices.emplace_back( v.at( {i, j} ), v.at( {i, j + 1} ), v.at( {i + 1, j + 1} ) );
-            indices.emplace_back( v.at( {i, j} ), v.at( {i + 1, j + 1} ), v.at( {i + 1, j} ) );
+    for ( uint i = 0; i < rows; ++i ) {
+        for ( uint j = 0; j < cols; ++j ) {
+            indices.emplace_back(
+                v.at( { i, j } ), v.at( { i, j + 1 } ), v.at( { i + 1, j + 1 } ) );
+            indices.emplace_back(
+                v.at( { i, j } ), v.at( { i + 1, j + 1 } ), v.at( { i + 1, j } ) );
         }
     }
     result.setVertices( std::move( vertices ) );

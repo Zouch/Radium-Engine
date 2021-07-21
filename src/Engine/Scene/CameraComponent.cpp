@@ -35,23 +35,31 @@ void CameraComponent::initialize() {
     // Create the render mesh for the camera
 
     Ra::Core::Geometry::LineMesh triMesh;
-    triMesh.setVertices( {{0_ra, 0_ra, 0_ra},
-                          {-.5_ra, -.5_ra, -1_ra},
-                          {-.5_ra, .5_ra, -1_ra},
-                          {.5_ra, .5_ra, -1_ra},
-                          {.5_ra, -.5_ra, -1_ra},
-                          {-.3_ra, .5_ra, -1_ra},
-                          {0_ra, .7_ra, -1_ra},
-                          {.3_ra, .5_ra, -1_ra}} );
-    triMesh.setIndices(
-        {{0, 1}, {0, 2}, {0, 3}, {0, 4}, {1, 2}, {1, 4}, {2, 3}, {3, 4}, {5, 6}, {6, 7}} );
+    triMesh.setVertices( { { 0_ra, 0_ra, 0_ra },
+                           { -.5_ra, -.5_ra, -1_ra },
+                           { -.5_ra, .5_ra, -1_ra },
+                           { .5_ra, .5_ra, -1_ra },
+                           { .5_ra, -.5_ra, -1_ra },
+                           { -.3_ra, .5_ra, -1_ra },
+                           { 0_ra, .7_ra, -1_ra },
+                           { .3_ra, .5_ra, -1_ra } } );
+    triMesh.setIndices( { { 0, 1 },
+                          { 0, 2 },
+                          { 0, 3 },
+                          { 0, 4 },
+                          { 1, 2 },
+                          { 1, 4 },
+                          { 2, 3 },
+                          { 3, 4 },
+                          { 5, 6 },
+                          { 6, 7 } } );
 
     auto m = std::make_shared<Data::LineMesh>( m_name + "_mesh" );
     m->loadGeometry( std::move( triMesh ) );
 
     // Create the RO
     auto mat              = Core::make_shared<PlainMaterial>( m_name + "_Material" );
-    mat->m_color          = {1_ra, .5_ra, 0_ra, 1_ra};
+    mat->m_color          = { 1_ra, .5_ra, 0_ra, 1_ra };
     mat->m_perVertexColor = false;
     m_RO                  = Rendering::RenderObject::createRenderObject( m_name + "_RO",
                                                         this,
@@ -83,7 +91,7 @@ void CameraComponent::updateTransform() {
 CameraComponent* CameraComponent::duplicate( Entity* cloneEntity,
                                              const std::string& cloneName ) const {
     auto cam =
-        new CameraComponent {cloneEntity, cloneName, m_camera->getWidth(), m_camera->getHeight()};
+        new CameraComponent { cloneEntity, cloneName, m_camera->getWidth(), m_camera->getHeight() };
     cam->getCamera()->setFrame( m_camera->getFrame() );
     cam->getCamera()->setProjMatrix( m_camera->getProjMatrix() );
     cam->getCamera()->setType( m_camera->getType() );

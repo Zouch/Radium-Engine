@@ -105,8 +105,7 @@ class RA_CORE_API Chrono
     template <std::size_t Times, class Function, class... Args>
     inline MicroSeconds test( Function&& f, Args&&... args ) {
         MicroSeconds avg = 0;
-        for ( std::size_t i = 0; i < Times; ++i )
-        {
+        for ( std::size_t i = 0; i < Times; ++i ) {
             m_start = Clock::now();
             f( args... );
             m_end = Clock::now();

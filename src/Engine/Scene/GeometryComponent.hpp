@@ -95,7 +95,7 @@ class SurfaceMeshComponent : public GeometryComponent
 
   private:
     // directly hold a reference to the displayMesh to simplify accesses in handlers
-    std::shared_ptr<RenderMeshType> m_displayMesh {nullptr};
+    std::shared_ptr<RenderMeshType> m_displayMesh { nullptr };
 };
 
 using TriangleMeshComponent = SurfaceMeshComponent<Ra::Core::Geometry::TriangleMesh>;
@@ -151,9 +151,9 @@ class RA_ENGINE_API PointCloudComponent : public GeometryComponent
 
   private:
     // directly hold a reference to the displayMesh to simplify accesses in handlers
-    std::shared_ptr<Data::PointCloud> m_displayMesh {nullptr};
+    std::shared_ptr<Data::PointCloud> m_displayMesh { nullptr };
     // The diameter of the splat when rendered
-    float m_splatSize {0.0025f};
+    float m_splatSize { 0.0025f };
 };
 
 /*-----------------------------------------------------------------------------------------------*/
@@ -194,7 +194,7 @@ class RA_ENGINE_API VolumeComponent : public Component
   private:
     Ra::Core::Utils::Index m_volumeIndex {};
     std::string m_contentName {};
-    std::shared_ptr<Data::VolumeObject> m_displayVolume {nullptr};
+    std::shared_ptr<Data::VolumeObject> m_displayVolume { nullptr };
 };
 
 } // namespace Scene

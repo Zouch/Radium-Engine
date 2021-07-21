@@ -349,7 +349,7 @@ class RA_ENGINE_API RadiumEngine
     std::unique_ptr<Data::ShaderProgramManager> m_shaderProgramManager;
     std::unique_ptr<Core::Asset::FileData> m_loadedFile;
 
-    bool m_loadingState {false};
+    bool m_loadingState { false };
 
     /// For internal resources management in a filesystem
     std::string m_resourcesRootDir;
@@ -361,7 +361,7 @@ class RA_ENGINE_API RadiumEngine
     {
       public:
         FboAndViewport( int fbo, std::array<int, 4>&& viewport ) :
-            m_fbo {fbo}, m_viewport {viewport} {}
+            m_fbo { fbo }, m_viewport { viewport } {}
         int m_fbo;
         std::array<int, 4> m_viewport;
     };
@@ -376,22 +376,22 @@ class RA_ENGINE_API RadiumEngine
          */
         void updateTime( Scalar dt );
 
-        Scalar m_dt {1_ra / 60_ra}; ///< The time delta between 2 consecutive frames.
-        Scalar m_startTime {0_ra};  ///< The `start` time for the time window.
-        Scalar m_endTime {1_ra};    ///< The `end` time for the time window.
-        Scalar m_time {0_ra};       ///< The current time.
-        bool m_play {false};        ///< Shall time flow.
-        bool m_singleStep {true};   ///< Shall time flow for only one frame.
-        bool m_realTime {false};    ///< Whether we use the effective time flow or the constant one.
-        bool m_forwardBackward {false}; ///< Is PingPong mode enabled.
-        bool m_isBackward {false};      ///< Whether time is going backwards.
+        Scalar m_dt { 1_ra / 60_ra }; ///< The time delta between 2 consecutive frames.
+        Scalar m_startTime { 0_ra };  ///< The `start` time for the time window.
+        Scalar m_endTime { 1_ra };    ///< The `end` time for the time window.
+        Scalar m_time { 0_ra };       ///< The current time.
+        bool m_play { false };        ///< Shall time flow.
+        bool m_singleStep { true };   ///< Shall time flow for only one frame.
+        bool m_realTime { false }; ///< Whether we use the effective time flow or the constant one.
+        bool m_forwardBackward { false }; ///< Is PingPong mode enabled.
+        bool m_isBackward { false };      ///< Whether time is going backwards.
     };
 
     TimeData m_timeData;
 
     /// OpenGL State, usefull to set state of the rendering pipeline. Initialized during
     /// initializedGL()
-    std::unique_ptr<globjects::State> m_openglState {nullptr};
+    std::unique_ptr<globjects::State> m_openglState { nullptr };
 };
 } // namespace Engine
 } // namespace Ra

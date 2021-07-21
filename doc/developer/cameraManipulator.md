@@ -40,7 +40,7 @@ contains a configuration. This will allow the users to edit and customize the pr
 
 The example application `CustomCameraManipulator` Demonstrate how to extend an existing manipulator and specialize
 its behavior for a given context.
-In the following code, the `Ra::Gui::TrackballCameraManipulator` class is used to define a simple pan and zoom 
+In the following code, the `Ra::Gui::TrackballCameraManipulator` class is used to define a simple pan and zoom
 manipulator, simply by ignoring rotation events:
 
 \snippet ExampleApps/CustomCameraManipulator/main.cpp extend trackball

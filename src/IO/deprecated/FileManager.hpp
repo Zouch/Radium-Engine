@@ -68,7 +68,7 @@ class FileManager
     inline void saveLog( const std::string& filename ); // Save the log into a text file.
 
     /// VARIABLE
-    std::string m_log {""};
+    std::string m_log { "" };
 };
 
 } // namespace IO

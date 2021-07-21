@@ -80,8 +80,7 @@ void PointCloudComponent::generatePointCloud( const Ra::Core::Asset::GeometryDat
     std::copy(
         data->getVertices().begin(), data->getVertices().end(), std::back_inserter( vertices ) );
 
-    if ( data->hasNormals() )
-    {
+    if ( data->hasNormals() ) {
         normals.reserve( data->getVerticesSize() );
         std::copy(
             data->getNormals().begin(), data->getNormals().end(), std::back_inserter( normals ) );
@@ -90,26 +89,22 @@ void PointCloudComponent::generatePointCloud( const Ra::Core::Asset::GeometryDat
     mesh.setVertices( std::move( vertices ) );
     mesh.setNormals( std::move( normals ) );
 
-    if ( data->hasTangents() )
-    {
+    if ( data->hasTangents() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_TANGENT ),
                         data->getTangents() );
     }
 
-    if ( data->hasBiTangents() )
-    {
+    if ( data->hasBiTangents() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_BITANGENT ),
                         data->getBiTangents() );
     }
 
-    if ( data->hasTextureCoordinates() )
-    {
+    if ( data->hasTextureCoordinates() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_TEXCOORD ),
                         data->getTexCoords() );
     }
 
-    if ( data->hasColors() )
-    {
+    if ( data->hasColors() ) {
         mesh.addAttrib( Data::Mesh::getAttribName( Data::Mesh::VERTEX_COLOR ), data->getColors() );
     }
 
@@ -130,14 +125,12 @@ void PointCloudComponent::finalizeROFromGeometry( const Core::Asset::MaterialDat
     // The technique for rendering this component
     std::shared_ptr<Data::Material> roMaterial;
     // First extract the material from asset or create a default one
-    if ( data != nullptr )
-    {
+    if ( data != nullptr ) {
         auto converter = Data::EngineMaterialConverters::getMaterialConverter( data->getType() );
         auto mat       = converter.second( data );
         roMaterial.reset( mat );
     }
-    else
-    {
+    else {
         auto mat             = new Data::BlinnPhongMaterial( m_contentName + "_DefaultBPMaterial" );
         mat->m_renderAsSplat = m_displayMesh->getNumFaces() == 0;
         mat->m_perVertexColor = m_displayMesh->getCoreGeometry().hasAttrib(
@@ -196,7 +189,7 @@ Ra::Core::Geometry::PointCloud* PointCloudComponent::getPointCloudRw() {
 VolumeComponent::VolumeComponent( const std::string& name,
                                   Entity* entity,
                                   const Ra::Core::Asset::VolumeData* data ) :
-    Component( name, entity ), m_displayVolume {nullptr} {
+    Component( name, entity ), m_displayVolume { nullptr } {
     generateVolumeRender( data );
 }
 

@@ -291,7 +291,7 @@ class RA_GUI_API Viewer : public WindowQt, public KeyMappingManageable<Viewer>
                          bool wheel );
 
     Scalar m_depthUnderMouse;
-    std::unique_ptr<QMessageBox> m_helpDialog {nullptr};
+    std::unique_ptr<QMessageBox> m_helpDialog { nullptr };
 
   protected:
     ///\todo make the following  private:
@@ -312,7 +312,7 @@ class RA_GUI_API Viewer : public WindowQt, public KeyMappingManageable<Viewer>
     /// Owning (QObject child) pointer to gizmo manager.
     GizmoManager* m_gizmoManager;
 
-    Core::Utils::Color m_backgroundColor {Core::Utils::Color::Grey( 0.0392_ra, 0_ra )};
+    Core::Utils::Color m_backgroundColor { Core::Utils::Color::Grey( 0.0392_ra, 0_ra ) };
 
     /// Name of the customisable key actions
     enum KeyEventType { KeyPressed = 0, KeyReleased, KeyEventTypeCount };

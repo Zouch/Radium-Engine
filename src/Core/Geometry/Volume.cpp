@@ -36,8 +36,7 @@ bool AbstractVolume::isSparse() const {
 void AbstractVolume::displayInfo() const {
     using namespace Core::Utils; // log
     std::string type;
-    switch ( m_type )
-    {
+    switch ( m_type ) {
     case UNKNOWN:
         type = "UNKNOWN";
         break;
@@ -62,8 +61,9 @@ void AbstractDiscreteVolume::clear() {
 }
 
 Aabb AbstractDiscreteVolume::computeAabb() const {
-    if ( !isAabbValid() )
-    { setAabb( Aabb( Vector3::Zero(), m_binSize.cwiseProduct( m_size.cast<Scalar>() ) ) ); }
+    if ( !isAabbValid() ) {
+        setAabb( Aabb( Vector3::Zero(), m_binSize.cwiseProduct( m_size.cast<Scalar>() ) ) );
+    }
     return getAabb();
 }
 

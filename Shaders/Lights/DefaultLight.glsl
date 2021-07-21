@@ -106,8 +106,7 @@ Light spotLightTransform( Light light, mat4 matrix ) {
 }
 
 Light transformLight( Light light, mat4 matrix ) {
-    switch ( light.type )
-    {
+    switch ( light.type ) {
     case 0:
         return directionalLightTransform( light, matrix );
     case 1:
@@ -118,8 +117,7 @@ Light transformLight( Light light, mat4 matrix ) {
 }
 
 vec3 getLightDirection( Light light, vec3 position ) {
-    switch ( light.type )
-    {
+    switch ( light.type ) {
     case 0:
         return directionalLightDirection( light );
     case 1:
@@ -132,8 +130,7 @@ vec3 getLightDirection( Light light, vec3 position ) {
 }
 
 vec3 lightContributionFrom( Light light, vec3 position ) {
-    switch ( light.type )
-    {
+    switch ( light.type ) {
     case 0:
         return directionalLightAttenuation( light ) * light.color.xyz;
     case 1:

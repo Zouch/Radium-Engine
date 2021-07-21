@@ -10,7 +10,7 @@ namespace Ra {
 namespace Engine {
 namespace Data {
 
-static const std::string materialName {"Plain"};
+static const std::string materialName { "Plain" };
 
 PlainMaterial::PlainMaterial( const std::string& instanceName ) :
     SimpleMaterial( instanceName, materialName, Material::MaterialAspect::MAT_OPAQUE ) {}
@@ -19,7 +19,7 @@ PlainMaterial::~PlainMaterial() = default;
 
 void PlainMaterial::registerMaterial() {
     // Get the Radium Resource location on the filesystem
-    auto resourcesRootDir {RadiumEngine::getInstance()->getResourcesDir()};
+    auto resourcesRootDir { RadiumEngine::getInstance()->getResourcesDir() };
     auto shaderProgramManager = RadiumEngine::getInstance()->getShaderProgramManager();
 
     shaderProgramManager->addNamedString( "/Plain.glsl",

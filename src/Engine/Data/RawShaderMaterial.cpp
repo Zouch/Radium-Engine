@@ -12,8 +12,8 @@ RawShaderMaterial::RawShaderMaterial(
     const std::vector<std::pair<Data::ShaderType, std::string>>& shaders,
     std::shared_ptr<Data::ShaderParameterProvider> paramProvider ) :
     Material( instanceName, instanceName, Material::MaterialAspect::MAT_OPAQUE ),
-    m_shaders {shaders},
-    m_paramProvider {std::move( paramProvider )} {
+    m_shaders { shaders },
+    m_paramProvider { std::move( paramProvider ) } {
     m_materialKey = computeKey();
     setMaterialName( m_materialKey );
     registerDefaultTechnique();
@@ -26,8 +26,7 @@ RawShaderMaterial::~RawShaderMaterial() {
 std::string RawShaderMaterial::computeKey() {
     // Hash the shader source to obtain identification keys
     auto content = std::to_string( std::size_t( this ) );
-    for ( const auto& p : m_shaders )
-    {
+    for ( const auto& p : m_shaders ) {
         content += p.second;
         content += std::to_string( std::size_t( this ) );
     }
@@ -38,16 +37,15 @@ void RawShaderMaterial::registerDefaultTechnique() {
     // Generate configuration using the given glsl source.
     // The configuration key/name is the hash of shader sources
     // The same configuration will be used as z-prepass config and opaque pass config.
-    Data::ShaderConfiguration myConfig {m_materialKey};
-    for ( const auto& p : m_shaders )
-    {
+    Data::ShaderConfiguration myConfig { m_materialKey };
+    for ( const auto& p : m_shaders ) {
         myConfig.addShaderSource( p.first, p.second );
     }
     Data::ShaderConfigurationFactory::addConfiguration( myConfig );
     // Register the technique builder for the custom material
     // For now, as we can't change the material name, always use the key of the initial
     // configuration
-    auto materialKey {m_materialKey};
+    auto materialKey { m_materialKey };
 
     Rendering::EngineRenderTechniques::registerDefaultTechnique(
         materialKey, [materialKey]( Rendering::RenderTechnique& rt, bool ) {

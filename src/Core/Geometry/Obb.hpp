@@ -32,8 +32,7 @@ class Obb
     inline Aabb toAabb() const {
         if ( m_aabb.isEmpty() ) { return m_aabb; }
         Aabb tmp;
-        for ( int i = 0; i < 8; ++i )
-        {
+        for ( int i = 0; i < 8; ++i ) {
             tmp.extend( worldCorner( i ) );
         }
         return tmp;

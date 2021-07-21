@@ -30,26 +30,21 @@ void AttribManager::clear() {
 }
 
 void AttribManager::copyAllAttributes( const AttribManager& m ) {
-    for ( const auto& attr : m.m_attribs )
-    {
+    for ( const auto& attr : m.m_attribs ) {
         if ( attr == nullptr ) continue;
-        if ( attr->isFloat() )
-        {
+        if ( attr->isFloat() ) {
             auto h = addAttrib<Scalar>( attr->getName() );
             getAttrib( h ).setData( static_cast<Attrib<Scalar>*>( attr.get() )->data() );
         }
-        else if ( attr->isVector2() )
-        {
+        else if ( attr->isVector2() ) {
             auto h = addAttrib<Vector2>( attr->getName() );
             getAttrib( h ).setData( static_cast<Attrib<Vector2>*>( attr.get() )->data() );
         }
-        else if ( attr->isVector3() )
-        {
+        else if ( attr->isVector3() ) {
             auto h = addAttrib<Vector3>( attr->getName() );
             getAttrib( h ).setData( static_cast<Attrib<Vector3>*>( attr.get() )->data() );
         }
-        else if ( attr->isVector4() )
-        {
+        else if ( attr->isVector4() ) {
             auto h = addAttrib<Vector4>( attr->getName() );
             getAttrib( h ).setData( static_cast<Attrib<Vector4>*>( attr.get() )->data() );
         }
@@ -62,14 +57,13 @@ void AttribManager::copyAllAttributes( const AttribManager& m ) {
 
 bool AttribManager::hasSameAttribs( const AttribManager& other ) {
     // one way
-    for ( const auto& attr : m_attribsIndex )
-    {
-        if ( other.m_attribsIndex.find( attr.first ) == other.m_attribsIndex.cend() )
-        { return false; }
+    for ( const auto& attr : m_attribsIndex ) {
+        if ( other.m_attribsIndex.find( attr.first ) == other.m_attribsIndex.cend() ) {
+            return false;
+        }
     }
     // the other way
-    for ( const auto& attr : other.m_attribsIndex )
-    {
+    for ( const auto& attr : other.m_attribsIndex ) {
         if ( m_attribsIndex.find( attr.first ) == m_attribsIndex.cend() ) { return false; }
     }
     return true;

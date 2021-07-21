@@ -22,28 +22,24 @@ void AssimpCameraDataLoader::loadData( const aiScene* scene,
                                        std::vector<std::unique_ptr<Camera>>& data ) {
     data.clear();
 
-    if ( scene == nullptr )
-    {
+    if ( scene == nullptr ) {
         LOG( logDEBUG ) << "AssimpCameraDataLoader : scene is nullptr.";
         return;
     }
 
-    if ( !sceneHasCamera( scene ) )
-    {
+    if ( !sceneHasCamera( scene ) ) {
         LOG( logDEBUG ) << "AssimpCameraDataLoader : scene has no Cameras.";
         return;
     }
 
-    if ( m_verbose )
-    {
+    if ( m_verbose ) {
         LOG( logINFO ) << "File contains Camera.";
         LOG( logINFO ) << "Camera Loading begin...";
     }
 
     uint CameraSize = sceneCameraSize( scene );
     data.reserve( CameraSize );
-    for ( uint CameraId = 0; CameraId < CameraSize; ++CameraId )
-    {
+    for ( uint CameraId = 0; CameraId < CameraSize; ++CameraId ) {
         Camera* camera = new Camera();
         loadCameraData( scene, *( scene->mCameras[CameraId] ), *camera );
         ///\todo process camera name to feed component name
@@ -82,7 +78,7 @@ void AssimpCameraDataLoader::loadCameraData( const aiScene* scene,
     view.block<3, 1>( 0, 1 ) = up;
     view.block<3, 1>( 0, 2 ) = lookAt;
     view.block<3, 1>( 0, 3 ) = pos;
-    data.setFrame( Core::Transform {view * frame} );
+    data.setFrame( Core::Transform { view * frame } );
 
     data.setType( Camera::ProjType::PERSPECTIVE ); // default value since not in aiCamera
     // assimp doc (the version we used, updated in assimp master) state mHorizontalFOV is half
@@ -114,8 +110,7 @@ Core::Matrix4 AssimpCameraDataLoader::loadCameraFrame( const aiScene* scene,
     Core::Matrix4 frame;
     frame.setIdentity();
 
-    while ( node != nullptr )
-    {
+    while ( node != nullptr ) {
         frame = Core::Matrix4::NullaryExpr(
                     [&node]( int i, int j ) { return node->mTransformation[i][j]; } ) *
                 frame;

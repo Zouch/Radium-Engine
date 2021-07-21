@@ -82,32 +82,32 @@ class TimelineScrollArea : public QScrollArea
     void mouseMoveEvent( QMouseEvent* event ) override;
 
   private:
-    int m_mousePosX {0}; ///< x coordinate of the mouse on mouse middle click.
-    int m_sliderPos {0}; ///< x coordinate of the slider on mouse middle click.
+    int m_mousePosX { 0 }; ///< x coordinate of the mouse on mouse middle click.
+    int m_sliderPos { 0 }; ///< x coordinate of the slider on mouse middle click.
 
-    Scalar m_maxDuration {20_ra}; ///< \b end  of the Timeline's playzone.
-    int m_nbInterval {0};         ///< Number of scale graduations.
-    Scalar m_step {1};            ///< Step between two scale graduations.
-    Scalar m_pixPerSec {10};      ///< Number of pixels used to display 1 second on the scale.
-    int m_zero {20};              ///< Pixel corresponding to time 0.
+    Scalar m_maxDuration { 20_ra }; ///< \b end  of the Timeline's playzone.
+    int m_nbInterval { 0 };         ///< Number of scale graduations.
+    Scalar m_step { 1 };            ///< Step between two scale graduations.
+    Scalar m_pixPerSec { 10 };      ///< Number of pixels used to display 1 second on the scale.
+    int m_zero { 20 };              ///< Pixel corresponding to time 0.
 
     /// Number of possible steps.
     static constexpr int s_nbSteps = 13;
 
     /// Possible steps.
-    static constexpr Scalar s_steps[s_nbSteps] = {0.01_ra,
-                                                  0.02_ra,
-                                                  0.05_ra,
-                                                  0.1_ra,
-                                                  0.2_ra,
-                                                  0.5_ra,
-                                                  1.0_ra,
-                                                  2.0_ra,
-                                                  5.0_ra,
-                                                  10.0_ra,
-                                                  20.0_ra,
-                                                  50.0_ra,
-                                                  100.0_ra};
+    static constexpr Scalar s_steps[s_nbSteps] = { 0.01_ra,
+                                                   0.02_ra,
+                                                   0.05_ra,
+                                                   0.1_ra,
+                                                   0.2_ra,
+                                                   0.5_ra,
+                                                   1.0_ra,
+                                                   2.0_ra,
+                                                   5.0_ra,
+                                                   10.0_ra,
+                                                   20.0_ra,
+                                                   50.0_ra,
+                                                   100.0_ra };
 };
 
 } // namespace Ra::Gui

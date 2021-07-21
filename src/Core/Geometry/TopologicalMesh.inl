@@ -40,28 +40,24 @@ inline bool TopologicalMesh::WedgeData::operator<( const TopologicalMesh::WedgeD
         if ( comp == 2 ) return true;
         if ( comp == 3 ) return false;
     }
-    for ( size_t i = 0; i < m_floatAttrib.size(); i++ )
-    {
+    for ( size_t i = 0; i < m_floatAttrib.size(); i++ ) {
         if ( m_floatAttrib[i] < lhs.m_floatAttrib[i] )
             return true;
         else if ( m_floatAttrib[i] > lhs.m_floatAttrib[i] )
             return false;
     }
 
-    for ( size_t i = 0; i < m_vector2Attrib.size(); i++ )
-    {
+    for ( size_t i = 0; i < m_vector2Attrib.size(); i++ ) {
         int comp = compareVector( m_vector2Attrib[i], lhs.m_vector2Attrib[i] );
         if ( comp == 2 ) return true;
         if ( comp == 3 ) return false;
     }
-    for ( size_t i = 0; i < m_vector3Attrib.size(); i++ )
-    {
+    for ( size_t i = 0; i < m_vector3Attrib.size(); i++ ) {
         int comp = compareVector( m_vector3Attrib[i], lhs.m_vector3Attrib[i] );
         if ( comp == 2 ) return true;
         if ( comp == 3 ) return false;
     }
-    for ( size_t i = 0; i < m_vector4Attrib.size(); i++ )
-    {
+    for ( size_t i = 0; i < m_vector4Attrib.size(); i++ ) {
         int comp = compareVector( m_vector4Attrib[i], lhs.m_vector4Attrib[i] );
         if ( comp == 2 ) return true;
         if ( comp == 3 ) return false;
@@ -93,8 +89,7 @@ inline VectorArray<T>& TopologicalMesh::WedgeData::getAttribArray() {
 // return 1 : equals, 2: strict less, 3: strict greater
 template <typename T>
 int TopologicalMesh::WedgeData::compareVector( const T& a, const T& b ) {
-    for ( int i = 0; i < T::RowsAtCompileTime; i++ )
-    {
+    for ( int i = 0; i < T::RowsAtCompileTime; i++ ) {
         if ( a[i] < b[i] ) return 2;
         if ( a[i] > b[i] ) return 3;
     }
@@ -146,17 +141,14 @@ template <typename T>
 inline const T&
 TopologicalMesh::WedgeCollection::getWedgeAttrib( const TopologicalMesh::WedgeIndex& idx,
                                                   const std::string& name ) const {
-    if ( idx.isValid() )
-    {
+    if ( idx.isValid() ) {
         auto nameArray = getNameArray<T>();
         auto itr       = std::find( nameArray.begin(), nameArray.end(), name );
-        if ( itr != nameArray.end() )
-        {
+        if ( itr != nameArray.end() ) {
             auto attrIndex = std::distance( nameArray.begin(), itr );
             return m_data[idx].getWedgeData().getAttribArray<T>()[attrIndex];
         }
-        else
-        {
+        else {
             LOG( logERROR ) << "Warning, set wedge: no wedge attrib named " << name << " of type "
                             << typeid( T ).name();
         }
@@ -188,8 +180,7 @@ inline void TopologicalMesh::WedgeCollection::setWedgeData( const TopologicalMes
     if ( !( wd.m_floatAttrib.size() == m_floatAttribNames.size() &&
             wd.m_vector2Attrib.size() == m_vector2AttribNames.size() &&
             wd.m_vector3Attrib.size() == m_vector3AttribNames.size() &&
-            wd.m_vector4Attrib.size() == m_vector4AttribNames.size() ) )
-    {
+            wd.m_vector4Attrib.size() == m_vector4AttribNames.size() ) ) {
         LOG( logWARNING ) << "Warning, topological mesh set wedge: number of attribs inconsistency";
     }
     if ( idx.isValid() ) m_data[idx].setWedgeData( wd );
@@ -201,14 +192,12 @@ inline bool TopologicalMesh::WedgeCollection::setWedgeAttrib( TopologicalMesh::W
                                                               const T& value ) {
     auto nameArray = getNameArray<T>();
     auto itr       = std::find( nameArray.begin(), nameArray.end(), name );
-    if ( itr != nameArray.end() )
-    {
+    if ( itr != nameArray.end() ) {
         auto attrIndex                    = std::distance( nameArray.begin(), itr );
         wd.getAttribArray<T>()[attrIndex] = value;
         return true;
     }
-    else
-    {
+    else {
         LOG( logERROR ) << "Warning, set wedge: no wedge attrib named " << name << " of type "
                         << typeid( T ).name();
     }
@@ -220,18 +209,15 @@ inline bool
 TopologicalMesh::WedgeCollection::setWedgeAttrib( const TopologicalMesh::WedgeIndex& idx,
                                                   const std::string& name,
                                                   const T& value ) {
-    if ( idx.isValid() )
-    {
+    if ( idx.isValid() ) {
         auto nameArray = getNameArray<T>();
         auto itr       = std::find( nameArray.begin(), nameArray.end(), name );
-        if ( itr != nameArray.end() )
-        {
+        if ( itr != nameArray.end() ) {
             auto attrIndex = std::distance( nameArray.begin(), itr );
             m_data[idx].getWedgeData().getAttribArray<T>()[attrIndex] = value;
             return true;
         }
-        else
-        {
+        else {
             LOG( logERROR ) << "Warning, set wedge: no wedge attrib named " << name << " of type "
                             << typeid( T ).name();
         }
@@ -258,8 +244,7 @@ inline int TopologicalMesh::WedgeCollection::getWedgeAttribIndex( const std::str
 inline bool
 TopologicalMesh::WedgeCollection::setWedgePosition( const TopologicalMesh::WedgeIndex& idx,
                                                     const Vector3& value ) {
-    if ( idx.isValid() )
-    {
+    if ( idx.isValid() ) {
         m_data[idx].getWedgeData().m_position = value;
         return true;
     }
@@ -312,8 +297,7 @@ template <typename T>
 int TopologicalMesh::WedgeCollection::addAttrib( const std::string& name, const T& value ) {
 
     auto index = addAttribName<T>( name );
-    for ( auto& w : m_data )
-    {
+    for ( auto& w : m_data ) {
         CORE_ASSERT( index = w.getWedgeData().getAttribArray<T>().size(),
                      "inconsistent wedge attrib" );
         w.getWedgeData().getAttribArray<T>().push_back( value );
@@ -342,8 +326,7 @@ inline void TopologicalMesh::WedgeCollection::clean() {
 
 template <typename T>
 void init( VectorArray<T>& vec, const std::vector<std::string> names ) {
-    for ( size_t i = 0; i < names.size(); ++i )
-    {
+    for ( size_t i = 0; i < names.size(); ++i ) {
         vec.emplace_back();
     }
 }
@@ -371,30 +354,26 @@ TopologicalMesh::WedgeCollection::newWedgeData( TopologicalMesh::VertexHandle vh
 ////////////////////////////////////////////////////////////////////////////////
 inline void
 TopologicalMesh::InitWedgeAttribsFromMultiIndexedGeometry::operator()( AttribBase* attr ) const {
-    if ( attr->getSize() != m_triMesh.vertices().size() )
-    { LOG( logWARNING ) << "[TopologicalMesh] Skip badly sized attribute " << attr->getName(); }
-    else if ( attr->getName() != std::string( "in_position" ) )
-    {
-        if ( attr->isFloat() )
-        {
+    if ( attr->getSize() != m_triMesh.vertices().size() ) {
+        LOG( logWARNING ) << "[TopologicalMesh] Skip badly sized attribute " << attr->getName();
+    }
+    else if ( attr->getName() != std::string( "in_position" ) ) {
+        if ( attr->isFloat() ) {
             m_topo->m_wedges.m_wedgeFloatAttribHandles.push_back(
                 m_triMesh.template getAttribHandle<Scalar>( attr->getName() ) );
             m_topo->m_wedges.addAttribName<Scalar>( attr->getName() );
         }
-        else if ( attr->isVector2() )
-        {
+        else if ( attr->isVector2() ) {
             m_topo->m_wedges.m_wedgeVector2AttribHandles.push_back(
                 m_triMesh.template getAttribHandle<Vector2>( attr->getName() ) );
             m_topo->m_wedges.addAttribName<Vector2>( attr->getName() );
         }
-        else if ( attr->isVector3() )
-        {
+        else if ( attr->isVector3() ) {
             m_topo->m_wedges.m_wedgeVector3AttribHandles.push_back(
                 m_triMesh.template getAttribHandle<Vector3>( attr->getName() ) );
             m_topo->m_wedges.addAttribName<Vector3>( attr->getName() );
         }
-        else if ( attr->isVector4() )
-        {
+        else if ( attr->isVector4() ) {
             m_topo->m_wedges.m_wedgeVector4AttribHandles.push_back(
                 m_triMesh.template getAttribHandle<Vector4>( attr->getName() ) );
             m_topo->m_wedges.addAttribName<Vector4>( attr->getName() );
@@ -461,8 +440,7 @@ void TopologicalMesh::initWithWedge(
     const auto& abstractLayer = mesh.getLayer( layerKey );
 
     if ( !abstractLayer.hasSemantic( TriangleIndexLayer::staticSemanticName ) &&
-         !abstractLayer.hasSemantic( PolyIndexLayer::staticSemanticName ) )
-    {
+         !abstractLayer.hasSemantic( PolyIndexLayer::staticSemanticName ) ) {
         LOG( logWARNING ) << "TopologicalMesh: mesh does not contains faces. Aborting conversion";
         return;
     }
@@ -477,10 +455,9 @@ void TopologicalMesh::initWithWedge(
     VertexMap vertexHandles;
 
     // loop over all attribs and build correspondance pair
-    mesh.vertexAttribs().for_each_attrib( InitWedgeAttribsFromMultiIndexedGeometry {this, mesh} );
+    mesh.vertexAttribs().for_each_attrib( InitWedgeAttribsFromMultiIndexedGeometry { this, mesh } );
 
-    for ( size_t i = 0; i < mesh.vertices().size(); ++i )
-    {
+    for ( size_t i = 0; i < mesh.vertices().size(); ++i ) {
         // create an empty wedge, with 0 ref
         Wedge w;
 
@@ -503,8 +480,7 @@ void TopologicalMesh::initWithWedge(
     LOG( logINFO ) << "TopologicalMesh: have  " << m_wedges.size() << " wedges ";
 
     const bool hasNormals = !mesh.normals().empty();
-    if ( !hasNormals )
-    {
+    if ( !hasNormals ) {
         release_face_normals();
         release_vertex_normals();
         release_halfedge_normals();
@@ -514,32 +490,30 @@ void TopologicalMesh::initWithWedge(
 
     auto processFaces = [&mesh, &vertexHandles, this, hasNormals, &command]( const auto& faces ) {
         size_t num_triangles = faces.size();
-        for ( unsigned int i = 0; i < num_triangles; i++ )
-        {
+        for ( unsigned int i = 0; i < num_triangles; i++ ) {
             const auto& face      = faces[i];
             const size_t num_vert = face.size();
             std::vector<TopologicalMesh::VertexHandle> face_vhandles( num_vert );
             std::vector<TopologicalMesh::Normal> face_normals( num_vert );
             std::vector<WedgeIndex> face_wedges( num_vert );
 
-            for ( size_t j = 0; j < num_vert; ++j )
-            {
+            for ( size_t j = 0; j < num_vert; ++j ) {
                 unsigned int inMeshVertexIndex = face[j];
                 const Vector3& p               = mesh.vertices()[inMeshVertexIndex];
 
                 typename VertexMap::iterator vtr = vertexHandles.find( p );
                 TopologicalMesh::VertexHandle vh;
-                if ( vtr == vertexHandles.end() )
-                {
+                if ( vtr == vertexHandles.end() ) {
                     vh = add_vertex( p );
                     vertexHandles.insert( vtr, typename VertexMap::value_type( p, vh ) );
                 }
-                else
-                { vh = vtr->second; }
+                else {
+                    vh = vtr->second;
+                }
 
                 face_vhandles[j] = vh;
                 if ( hasNormals ) face_normals[j] = mesh.normals()[inMeshVertexIndex];
-                face_wedges[j] = WedgeIndex {inMeshVertexIndex};
+                face_wedges[j] = WedgeIndex { inMeshVertexIndex };
                 m_wedges.m_data[inMeshVertexIndex].getWedgeData().m_vertexHandle = vh;
             }
 
@@ -549,14 +523,12 @@ void TopologicalMesh::initWithWedge(
             // e.g. 1 2 1 becomes 1 2
             {
                 auto begin = face_vhandles.begin();
-                if ( face_vhandles.size() > 2 )
-                {
+                if ( face_vhandles.size() > 2 ) {
                     auto end       = face_vhandles.end() - 1;
                     auto wedgeEnd  = face_wedges.end() - 1;
                     auto normalEnd = face_normals.end() - 1;
 
-                    while ( begin != end && *begin == *end )
-                    {
+                    while ( begin != end && *begin == *end ) {
                         end--;
                         wedgeEnd--;
                         normalEnd--;
@@ -579,20 +551,16 @@ void TopologicalMesh::initWithWedge(
                 auto normalFirst = face_normals.begin();
                 auto last        = face_vhandles.end();
 
-                if ( first != last )
-                {
+                if ( first != last ) {
                     auto result       = first;
                     auto wedgeResult  = wedgeFirst;
                     auto normalResult = normalFirst;
-                    while ( ++first != last )
-                    {
-                        if ( !( *result == *first ) )
-                        {
+                    while ( ++first != last ) {
+                        if ( !( *result == *first ) ) {
                             ++result;
                             ++wedgeResult;
                             ++normalResult;
-                            if ( result != first )
-                            {
+                            if ( result != first ) {
                                 *result       = std::move( *first );
                                 *wedgeResult  = std::move( *wedgeFirst );
                                 *normalResult = std::move( *normalFirst );
@@ -614,46 +582,41 @@ void TopologicalMesh::initWithWedge(
 
             // In case of topological inconsistancy, face will be invalid (or uninitialized <>
             // invalid)
-            if ( fh.is_valid() )
-            {
-                for ( size_t vindex = 0; vindex < face_vhandles.size(); vindex++ )
-                {
+            if ( fh.is_valid() ) {
+                for ( size_t vindex = 0; vindex < face_vhandles.size(); vindex++ ) {
                     TopologicalMesh::HalfedgeHandle heh =
                         halfedge_handle( face_vhandles[vindex], fh );
                     if ( hasNormals ) set_normal( heh, face_normals[vindex] );
                     property( m_wedgeIndexPph, heh ) = m_wedges.newReference( face_wedges[vindex] );
                 }
             }
-            else
-            { command.process( face_vhandles ); }
+            else {
+                command.process( face_vhandles );
+            }
             face_vhandles.clear();
             face_normals.clear();
         }
     };
 
-    if ( abstractLayer.hasSemantic( TriangleIndexLayer::staticSemanticName ) )
-    {
+    if ( abstractLayer.hasSemantic( TriangleIndexLayer::staticSemanticName ) ) {
         const auto& faces = static_cast<const TriangleIndexLayer&>( abstractLayer ).collection();
         LOG( logINFO ) << "TopologicalMesh: process " << faces.size() << " triangular faces ";
         processFaces( faces );
     }
-    else if ( abstractLayer.hasSemantic( PolyIndexLayer::staticSemanticName ) )
-    {
+    else if ( abstractLayer.hasSemantic( PolyIndexLayer::staticSemanticName ) ) {
         const auto& faces = static_cast<const PolyIndexLayer&>( abstractLayer ).collection();
         LOG( logINFO ) << "TopologicalMesh: process " << faces.size() << " polygonal faces ";
         processFaces( faces );
     }
 
     command.postProcess( *this );
-    if ( hasNormals )
-    {
+    if ( hasNormals ) {
         m_normalsIndex = m_wedges.getWedgeAttribIndex<Normal>( "in_normal" );
 
         m_vertexFaceWedgesWithSameNormals.clear();
         m_vertexFaceWedgesWithSameNormals.resize( n_vertices() );
 
-        for ( auto itr = vertices_begin(), stop = vertices_end(); itr != stop; ++itr )
-        {
+        for ( auto itr = vertices_begin(), stop = vertices_end(); itr != stop; ++itr ) {
             std::unordered_map<TopologicalMesh::Normal,
                                std::pair<std::set<FaceHandle>, std::set<WedgeIndex>>,
                                hash_vec>
@@ -661,21 +624,17 @@ void TopologicalMesh::initWithWedge(
 
             auto vh = *itr;
 
-            for ( ConstVertexIHalfedgeIter vh_it = cvih_iter( vh ); vh_it.is_valid(); ++vh_it )
-            {
+            for ( ConstVertexIHalfedgeIter vh_it = cvih_iter( vh ); vh_it.is_valid(); ++vh_it ) {
                 const auto& widx = property( m_wedgeIndexPph, *vh_it );
-                if ( widx.isValid() && !m_wedges.getWedge( widx ).isDeleted() )
-                {
+                if ( widx.isValid() && !m_wedges.getWedge( widx ).isDeleted() ) {
                     auto oldNormal = m_wedges.getWedgeData<Normal>( widx, m_normalsIndex );
                     normalSharedByWedges[oldNormal].first.insert( face_handle( *vh_it ) );
                     normalSharedByWedges[oldNormal].second.insert( widx );
                 }
             }
 
-            for ( const auto& pair : normalSharedByWedges )
-            {
-                for ( const auto& fh : pair.second.first )
-                {
+            for ( const auto& pair : normalSharedByWedges ) {
+                for ( const auto& fh : pair.second.first ) {
                     auto& v = m_vertexFaceWedgesWithSameNormals[vh.idx()][fh.idx()];
                     v.insert( v.end(), pair.second.second.begin(), pair.second.second.end() );
                 }
@@ -690,8 +649,7 @@ void TopologicalMesh::copyAttribToWedgeData( const MultiIndexedGeometry& mesh,
                                              unsigned int vindex,
                                              const std::vector<AttribHandle<T>>& attrHandleVec,
                                              VectorArray<T>* to ) {
-    for ( auto handle : attrHandleVec )
-    {
+    for ( auto handle : attrHandleVec ) {
         auto& attr = mesh.template getAttrib<T>( handle );
         to->push_back( attr.data()[vindex] );
     }
@@ -711,13 +669,11 @@ void TopologicalMesh::copyMeshToWedgeData( const MultiIndexedGeometry& mesh,
 }
 
 inline void TopologicalMesh::propagate_normal_to_wedges( VertexHandle vh ) {
-    if ( !has_halfedge_normals() )
-    {
+    if ( !has_halfedge_normals() ) {
         LOG( logERROR ) << "TopologicalMesh has no normals, nothing set";
         return;
     }
-    for ( VertexIHalfedgeIter vih_it = vih_iter( vh ); vih_it.is_valid(); ++vih_it )
-    {
+    for ( VertexIHalfedgeIter vih_it = vih_iter( vh ); vih_it.is_valid(); ++vih_it ) {
         auto wd = getWedgeData( property( getWedgeIndexPph(), *vih_it ) );
 
         m_wedges.setWedgeAttrib( wd, "in_normal", normal( vh ) );
@@ -728,8 +684,7 @@ inline void TopologicalMesh::propagate_normal_to_wedges( VertexHandle vh ) {
 
 inline TopologicalMesh::HalfedgeHandle TopologicalMesh::halfedge_handle( VertexHandle vh,
                                                                          FaceHandle fh ) const {
-    for ( ConstVertexIHalfedgeIter vih_it = cvih_iter( vh ); vih_it.is_valid(); ++vih_it )
-    {
+    for ( ConstVertexIHalfedgeIter vih_it = cvih_iter( vh ); vih_it.is_valid(); ++vih_it ) {
         if ( face_handle( *vih_it ) == fh ) { return *vih_it; }
     }
     CORE_ASSERT( false, "vh is not a vertex of face fh" );
@@ -750,8 +705,7 @@ inline std::set<TopologicalMesh::WedgeIndex>
 TopologicalMesh::getVertexWedges( OpenMesh::VertexHandle vh ) const {
     std::set<TopologicalMesh::WedgeIndex> ret;
 
-    for ( ConstVertexIHalfedgeIter vh_it = cvih_iter( vh ); vh_it.is_valid(); ++vh_it )
-    {
+    for ( ConstVertexIHalfedgeIter vh_it = cvih_iter( vh ); vh_it.is_valid(); ++vh_it ) {
         auto widx = property( m_wedgeIndexPph, *vh_it );
         if ( widx.isValid() && !m_wedges.getWedge( widx ).isDeleted() ) ret.insert( widx );
     }
@@ -815,15 +769,13 @@ inline void TopologicalMesh::replaceWedgeIndex( OpenMesh::HalfedgeHandle he,
 }
 
 inline void TopologicalMesh::mergeEqualWedges() {
-    for ( auto itr = vertices_begin(), stop = vertices_end(); itr != stop; ++itr )
-    {
+    for ( auto itr = vertices_begin(), stop = vertices_end(); itr != stop; ++itr ) {
         mergeEqualWedges( *itr );
     }
 }
 
 inline void TopologicalMesh::mergeEqualWedges( OpenMesh::VertexHandle vh ) {
-    for ( auto itr = vih_iter( vh ); itr.is_valid(); ++itr )
-    {
+    for ( auto itr = vih_iter( vh ); itr.is_valid(); ++itr ) {
         // replace will search if wedge already present and use it, so merge occurs.
         if ( !is_boundary( *itr ) )
             replaceWedge( *itr, getWedgeData( property( getWedgeIndexPph(), *itr ) ) );

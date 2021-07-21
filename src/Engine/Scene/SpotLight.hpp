@@ -44,13 +44,13 @@ class RA_ENGINE_API SpotLight final : public Ra::Engine::Scene::Light
     std::string getShaderInclude() const override;
 
   private:
-    Eigen::Matrix<Scalar, 3, 1> m_position {0, 0, 0};
-    Eigen::Matrix<Scalar, 3, 1> m_direction {0, -1, 0};
+    Eigen::Matrix<Scalar, 3, 1> m_position { 0, 0, 0 };
+    Eigen::Matrix<Scalar, 3, 1> m_direction { 0, -1, 0 };
 
-    Scalar m_innerAngle {Core::Math::PiDiv4};
-    Scalar m_outerAngle {Core::Math::PiDiv2};
+    Scalar m_innerAngle { Core::Math::PiDiv4 };
+    Scalar m_outerAngle { Core::Math::PiDiv2 };
 
-    Attenuation m_attenuation {1, 0, 0};
+    Attenuation m_attenuation { 1, 0, 0 };
 };
 } // namespace Scene
 } // namespace Engine

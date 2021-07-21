@@ -163,8 +163,8 @@ class RA_CORE_API Camera
     /// Fit the Z-range of the camera to the scene's aabb. This will maximize z-buffer precision
     void fitZRange( const Core::Aabb& aabb );
 
-    const Scalar m_minZNear {0.01_ra};
-    const Scalar m_minZRange {0.01_ra};
+    const Scalar m_minZNear { 0.01_ra };
+    const Scalar m_minZRange { 0.01_ra };
 
     /// Compute a project projection matrix as describe here
     /// https://github.com/KhronosGroup/glTF/tree/master/specification/2.0#cameras
@@ -207,28 +207,29 @@ class RA_CORE_API Camera
   private:
     /// Camera frame (inverse of the view matrix).
     /// This represent the transformation from view space to world space.
-    Core::Transform m_frame {Core::Transform::Identity()};
+    Core::Transform m_frame { Core::Transform::Identity() };
 
-    Core::Matrix4 m_projMatrix {Core::Matrix4::Identity()}; ///< Projection matrix
+    Core::Matrix4 m_projMatrix { Core::Matrix4::Identity() }; ///< Projection matrix
 
-    Scalar m_width {1_ra};  ///< Viewport width (in pixels)
-    Scalar m_height {1_ra}; ///< Viewport height (in pixels)
-    Scalar m_aspect {1_ra}; ///< Aspect ratio, i.e. width/height. Precomputed for updateProjMatrix.
+    Scalar m_width { 1_ra };  ///< Viewport width (in pixels)
+    Scalar m_height { 1_ra }; ///< Viewport height (in pixels)
+    Scalar m_aspect {
+        1_ra }; ///< Aspect ratio, i.e. width/height. Precomputed for updateProjMatrix.
 
-    ProjType m_projType {ProjType::PERSPECTIVE}; ///< Projection type
-    Scalar m_zoomFactor {1_ra};                  ///< Zoom factor (modifies the field of view)
-    Scalar m_zNear {0.1_ra};                     ///< Z Near plane distance
-    Scalar m_zFar {1000_ra};                     ///< Z Far plane distance
+    ProjType m_projType { ProjType::PERSPECTIVE }; ///< Projection type
+    Scalar m_zoomFactor { 1_ra };                  ///< Zoom factor (modifies the field of view)
+    Scalar m_zNear { 0.1_ra };                     ///< Z Near plane distance
+    Scalar m_zFar { 1000_ra };                     ///< Z Far plane distance
 
     /// \name Perspective projection parameters
     ///@{
-    Scalar m_fov {Core::Math::PiDiv4}; ///< Horizontal Field Of View
+    Scalar m_fov { Core::Math::PiDiv4 }; ///< Horizontal Field Of View
     ///@}
 
     /// \name Orthographic projection parameters
     ///@{
-    Scalar m_xmag {1_ra};
-    Scalar m_ymag {1_ra};
+    Scalar m_xmag { 1_ra };
+    Scalar m_ymag { 1_ra };
     ///@}
 };
 } // namespace Asset

@@ -11,7 +11,7 @@ namespace Ra {
 namespace Engine {
 namespace Data {
 
-static const std::string materialName {"Volumetric"};
+static const std::string materialName { "Volumetric" };
 
 VolumetricMaterial::VolumetricMaterial( const std::string& name ) :
     Material( name, materialName, Material::MaterialAspect::MAT_DENSITY ) {}
@@ -30,15 +30,15 @@ void VolumetricMaterial::updateRenderingParameters() {
     m_renderParameters.addParameter( "material.sigma_s", m_sigma_s );
     m_renderParameters.addParameter( "material.g", m_g );
     m_renderParameters.addParameter( "material.scale", m_scale );
-    if ( m_stepsize < 0 )
-    {
+    if ( m_stepsize < 0 ) {
         auto dim = std::sqrt( Scalar( m_texture->width() * m_texture->width() +
                                       m_texture->height() * m_texture->height() +
                                       m_texture->depth() * m_texture->depth() ) );
         m_renderParameters.addParameter( "material.stepsize", 1._ra / dim );
     }
-    else
-    { m_renderParameters.addParameter( "material.stepsize", m_stepsize ); }
+    else {
+        m_renderParameters.addParameter( "material.stepsize", m_stepsize );
+    }
     m_renderParameters.addParameter( "material.density", m_texture );
     m_renderParameters.addParameter( "material.modelToDensity", m_modelToMedium.matrix() );
 }
@@ -49,13 +49,13 @@ bool VolumetricMaterial::isTransparent() const {
 
 void VolumetricMaterial::registerMaterial() {
     // For resources access (glsl files) in a filesystem
-    auto resourcesRootDir {RadiumEngine::getInstance()->getResourcesDir()};
+    auto resourcesRootDir { RadiumEngine::getInstance()->getResourcesDir() };
     auto shaderProgramManager = RadiumEngine::getInstance()->getShaderProgramManager();
 
     shaderProgramManager->addShaderProgram(
-        {{"ComposeVolume"},
-         resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
-         resourcesRootDir + "Shaders/Materials/Volumetric/ComposeVolumeRender.frag.glsl"} );
+        { { "ComposeVolume" },
+          resourcesRootDir + "Shaders/2DShaders/Basic2D.vert.glsl",
+          resourcesRootDir + "Shaders/Materials/Volumetric/ComposeVolumeRender.frag.glsl" } );
 
     // adding the material glsl implementation file
     shaderProgramManager->addNamedString(

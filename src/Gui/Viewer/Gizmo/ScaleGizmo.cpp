@@ -30,8 +30,7 @@ ScaleGizmo::ScaleGizmo( Engine::Scene::Component* c,
     constexpr Scalar arrowFrac  = .125_ra;
     constexpr Scalar radius     = arrowScale * axisWidth / 2_ra;
 
-    for ( uint i = 0; i < 3; ++i )
-    {
+    for ( uint i = 0; i < 3; ++i ) {
         Core::Vector3 cylinderEnd             = Core::Vector3::Zero();
         cylinderEnd[i]                        = ( 1_ra - arrowFrac );
         Core::Geometry::TriangleMesh cylinder = Core::Geometry::makeCylinder(
@@ -54,8 +53,7 @@ ScaleGizmo::ScaleGizmo( Engine::Scene::Component* c,
         addRenderObject( arrowDrawable );
     }
 
-    for ( uint i = 0; i < 3; ++i )
-    {
+    for ( uint i = 0; i < 3; ++i ) {
         Core::Vector3 axis                        = Core::Vector3::Zero();
         axis[( i == 0 ? 1 : ( i == 1 ? 0 : 2 ) )] = 1;
         Core::Transform T                         = Core::Transform::Identity();
@@ -102,16 +100,14 @@ void ScaleGizmo::updateTransform( Gizmo::Mode mode,
         displayTransform.rotate( R );
     }
 
-    for ( const auto& ro : ros() )
-    {
+    for ( const auto& ro : ros() ) {
         ro->setLocalTransform( m_worldTo * displayTransform );
     }
 }
 
 void ScaleGizmo::selectConstraint( int drawableIdx ) {
     // deselect previously selected axis. Due to "whole" selection clear all states
-    for ( uint i = 0; i < 6; ++i )
-    {
+    for ( uint i = 0; i < 6; ++i ) {
         getControler( i )->clearState();
     }
     // prepare selection
@@ -124,14 +120,12 @@ void ScaleGizmo::selectConstraint( int drawableIdx ) {
     auto found = std::find_if( ros().cbegin(), ros().cend(), [drawableIdx]( const auto& ro ) {
         return ro->getIndex() == Core::Utils::Index( drawableIdx );
     } );
-    if ( found != ros().cend() )
-    {
+    if ( found != ros().cend() ) {
         int i = int( std::distance( ros().cbegin(), found ) );
         getControler( i )->setState();
         ( i < 3 ) ? m_selectedAxis = i : m_selectedPlane = i - 3;
         // Activate the axes correponding to the selected plane
-        if ( m_selectedPlane != -1 )
-        {
+        if ( m_selectedPlane != -1 ) {
             getControler( ( m_selectedPlane + 1 ) % 3 )->setState();
             getControler( ( m_selectedPlane + 2 ) % 3 )->setState();
         }
@@ -147,23 +141,18 @@ Core::Transform ScaleGizmo::mouseMove( const Core::Asset::Camera& cam,
     // Recolor gizmo
     // TODO : this appearance management has nothing to do in this method.
     //  Find how to move this on the selectConstraint method.
-    if ( whole )
-    {
-        for ( uint i = 0; i < 6; ++i )
-        {
+    if ( whole ) {
+        for ( uint i = 0; i < 6; ++i ) {
             getControler( i )->setState();
         }
     }
-    else
-    {
-        for ( uint i = 0; i < 6; ++i )
-        {
+    else {
+        for ( uint i = 0; i < 6; ++i ) {
             getControler( i )->clearState();
         }
         if ( m_selectedAxis > -1 ) { getControler( m_selectedAxis )->setState(); }
 
-        if ( m_selectedPlane > -1 )
-        {
+        if ( m_selectedPlane > -1 ) {
             getControler( m_selectedPlane + 3 )->setState();
             // Activate the axes correponding to the selected plane
             getControler( ( m_selectedPlane + 1 ) % 3 )->setState();
@@ -184,17 +173,19 @@ Core::Transform ScaleGizmo::mouseMove( const Core::Asset::Camera& cam,
     std::vector<Scalar> hits;
     bool found = false;
     Core::Vector3 endPoint;
-    if ( whole )
-    { found = findPointOnPlane( cam, origin, scaleDir, m_initialPix + nextXY, endPoint, hits ); }
-    else if ( m_selectedAxis > -1 )
-    { found = findPointOnAxis( cam, origin, scaleDir, m_initialPix + nextXY, endPoint, hits ); }
-    else if ( m_selectedPlane >= 0 )
-    { found = findPointOnPlane( cam, origin, scaleDir, m_initialPix + nextXY, endPoint, hits ); }
+    if ( whole ) {
+        found = findPointOnPlane( cam, origin, scaleDir, m_initialPix + nextXY, endPoint, hits );
+    }
+    else if ( m_selectedAxis > -1 ) {
+        found = findPointOnAxis( cam, origin, scaleDir, m_initialPix + nextXY, endPoint, hits );
+    }
+    else if ( m_selectedPlane >= 0 ) {
+        found = findPointOnPlane( cam, origin, scaleDir, m_initialPix + nextXY, endPoint, hits );
+    }
     if ( !found ) { return m_transform; }
 
     // Initialize scale
-    if ( !m_start )
-    {
+    if ( !m_start ) {
         m_start      = true;
         m_startPos   = m_transform.translation();
         m_prevScale  = Core::Vector3::Ones();
@@ -213,13 +204,11 @@ Core::Transform ScaleGizmo::mouseMove( const Core::Asset::Camera& cam,
     // Apply scale
     m_transform.scale( m_prevScale );
     if ( whole ) { m_prevScale = scale * Core::Vector3::Ones(); }
-    else if ( m_selectedAxis > -1 )
-    {
+    else if ( m_selectedAxis > -1 ) {
         m_prevScale                 = Core::Vector3::Ones();
         m_prevScale[m_selectedAxis] = scale;
     }
-    else if ( m_selectedPlane >= 0 )
-    {
+    else if ( m_selectedPlane >= 0 ) {
         m_prevScale                              = Core::Vector3::Ones();
         m_prevScale[( m_selectedPlane + 1 ) % 3] = scale;
         m_prevScale[( m_selectedPlane + 2 ) % 3] = scale;

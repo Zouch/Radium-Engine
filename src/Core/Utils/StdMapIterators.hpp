@@ -32,7 +32,7 @@ struct map_keys {
         auto operator*() -> typename std::add_lvalue_reference<value_t>::type {
             return under->first;
         }
-        auto operator-> () -> typename std::add_pointer<value_t>::type { return &under->first; }
+        auto operator->() -> typename std::add_pointer<value_t>::type { return &under->first; }
 
         bool operator!=( const iterator& o ) const { return under != o.under; }
 
@@ -82,7 +82,7 @@ struct map_values {
         auto operator*() -> typename std::add_lvalue_reference<value_t>::type {
             return under->second;
         }
-        auto operator-> () -> typename std::add_pointer<value_t>::type { return &under->second; }
+        auto operator->() -> typename std::add_pointer<value_t>::type { return &under->second; }
 
         bool operator!=( const iterator& o ) const { return under != o.under; }
 

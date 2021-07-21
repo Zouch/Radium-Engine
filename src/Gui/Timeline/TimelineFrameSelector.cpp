@@ -120,8 +120,7 @@ void TimelineFrameSelector::onChangeStart( Scalar time, bool internal ) {
     bool out    = std::abs( newStart - time ) > 1e-5_ra;
     bool change = std::abs( newStart - m_start ) > 1e-5_ra;
 
-    if ( change )
-    {
+    if ( change ) {
         m_start = newStart;
         updateStartSpin();
         redrawPlayZone();
@@ -129,8 +128,7 @@ void TimelineFrameSelector::onChangeStart( Scalar time, bool internal ) {
         // emit signal if time of emitter is internal changed due of limits
         if ( internal || out ) { emit startChanged( m_start ); }
     }
-    else
-    {
+    else {
         if ( out ) { updateStartSpin(); }
     }
 }
@@ -143,15 +141,13 @@ void TimelineFrameSelector::onChangeEnd( Scalar time, bool internal ) {
     bool change = std::abs( newEnd - m_end ) > 1e-5_ra;
 
     // emit signal only if new value of end
-    if ( change )
-    {
+    if ( change ) {
         m_end = newEnd;
         updateEndSpin();
         if ( internal || out ) { emit endChanged( m_end ); }
         update();
     }
-    else
-    {
+    else {
         if ( out ) { updateEndSpin(); }
     }
 }
@@ -163,8 +159,7 @@ void TimelineFrameSelector::onChangeDuration( Scalar time, bool internal ) {
     bool out    = std::abs( newDuration - time ) > 1e-5_ra;
     bool change = std::abs( newDuration - oldDuration ) > 1e-5_ra;
 
-    if ( change )
-    {
+    if ( change ) {
         oldDuration = newDuration;
         m_timelineUI->m_scrollArea->setMaxDuration( newDuration );
         m_timelineUI->m_scrollArea->onDrawRuler(
@@ -174,8 +169,7 @@ void TimelineFrameSelector::onChangeDuration( Scalar time, bool internal ) {
         // emit signal if time of emitter is internal changed due of limits
         if ( internal || out ) { emit durationChanged( newDuration ); }
     }
-    else
-    {
+    else {
         if ( out ) { updateDurationSpin(); }
     }
 
@@ -194,15 +188,13 @@ void TimelineFrameSelector::onChangeCursor( Scalar time, bool internal ) {
     bool out    = std::abs( newCursor - time ) > 1e-5_ra;
     bool change = std::abs( newCursor - m_cursor ) > 1e-5_ra;
 
-    if ( change )
-    {
+    if ( change ) {
         m_cursor = newCursor;
         updateCursorSpin();
         if ( internal || out ) { emit cursorChanged( m_cursor ); }
         update();
     }
-    else
-    {
+    else {
         if ( out ) { updateCursorSpin(); }
     }
 }
@@ -216,8 +208,7 @@ void TimelineFrameSelector::onAddingKeyFrame( Scalar time, bool internal ) {
     } );
 
     // if keyFrame not already here
-    if ( it == m_keyFrames.end() )
-    {
+    if ( it == m_keyFrames.end() ) {
         updateCursorSpin();
 
         m_keyFrames.push_back( time );
@@ -230,8 +221,7 @@ void TimelineFrameSelector::onAddingKeyFrame( Scalar time, bool internal ) {
         update();
     }
     // KeyFrame already here, change actual KeyFrame
-    else
-    {
+    else {
         if ( internal ) { emit keyFrameChanged( std::distance( m_keyFrames.begin(), it ) ); }
 
         m_updateKeyFrameFlash = 6;
@@ -301,8 +291,7 @@ void TimelineFrameSelector::onMoveKeyFrames( Scalar time, Scalar offset, bool in
 
     Scalar left = ( offset > 0 ) ? ( time ) : ( time + offset );
 
-    if ( m_start >= left )
-    {
+    if ( m_start >= left ) {
         m_start = std::max(
             std::min( m_start + offset, m_timelineUI->m_scrollArea->getMaxDuration() ), 0_ra );
         updateStartSpin();
@@ -310,22 +299,19 @@ void TimelineFrameSelector::onMoveKeyFrames( Scalar time, Scalar offset, bool in
     }
 
     Scalar right = *m_keyFrames.rbegin();
-    if ( right > m_timelineUI->m_scrollArea->getMaxDuration() )
-    {
+    if ( right > m_timelineUI->m_scrollArea->getMaxDuration() ) {
         m_timelineUI->m_scrollArea->setMaxDuration( right );
         updateDurationSpin();
         if ( internal ) { emit durationChanged( right ); }
     }
 
-    if ( m_end >= left )
-    {
+    if ( m_end >= left ) {
         m_end = m_end + offset;
         updateEndSpin();
         if ( internal ) { emit endChanged( m_end ); }
     }
 
-    if ( m_cursor >= left )
-    {
+    if ( m_cursor >= left ) {
         m_cursor = std::max( m_cursor + offset, 0_ra );
         updateCursorSpin();
 
@@ -401,8 +387,7 @@ void TimelineFrameSelector::paintEvent( QPaintEvent* ) {
     Scalar pixPerSec     = m_timelineUI->m_scrollArea->getPixPerSec();
     Scalar step          = m_timelineUI->m_scrollArea->getStep();
     int zero             = m_timelineUI->m_scrollArea->getZero();
-    for ( int i = 0; i < nbFrame; i++ )
-    {
+    for ( int i = 0; i < nbFrame; i++ ) {
         int x = int( i * frameDuration * pixPerSec + zero );
         painter.drawLine( x, 0, x, hUp );
     }
@@ -415,8 +400,7 @@ void TimelineFrameSelector::paintEvent( QPaintEvent* ) {
     // DRAW KEYFRAMES
     painter.setPen( QPen( QColor( 255, 255, 0, 255 ), 3 ) );
     int hTemp = h / 3 + 2;
-    for ( Scalar keyFrame : m_keyFrames )
-    {
+    for ( Scalar keyFrame : m_keyFrames ) {
         int xKeyFrame = int( zero + keyFrame * pixPerSec );
         painter.drawLine( xKeyFrame, hTemp, xKeyFrame, h );
     }
@@ -424,24 +408,20 @@ void TimelineFrameSelector::paintEvent( QPaintEvent* ) {
     // DRAW TIME SCALE
     int hDown = 2 * h / 3;
     painter.setPen( Qt::black );
-    for ( int i = 1; i < m_timelineUI->m_scrollArea->getNbInterval(); i++ )
-    {
+    for ( int i = 1; i < m_timelineUI->m_scrollArea->getNbInterval(); i++ ) {
         int x = int( i * step * pixPerSec );
         painter.drawLine( x, hDown, x, h );
     }
     int hDown2 = 3 * h / 4;
     painter.setPen( Qt::darkGray );
-    for ( int i = 1; i < m_timelineUI->m_scrollArea->getNbInterval() - 1; i++ )
-    {
+    for ( int i = 1; i < m_timelineUI->m_scrollArea->getNbInterval() - 1; i++ ) {
         int middle = int( ( i + 0.5_ra ) * step * pixPerSec );
         painter.drawLine( middle, hDown2, middle, h );
     }
 
-    if ( m_updateKeyFrameFlash > 0 )
-    {
+    if ( m_updateKeyFrameFlash > 0 ) {
 
-        if ( m_updateKeyFrameFlash % 2 == 0 )
-        {
+        if ( m_updateKeyFrameFlash % 2 == 0 ) {
             painter.setPen( QPen( QColor( 0, 0, 255, 255 ), 3 ) );
             int xKeyFrame = static_cast<int>( zero + m_keyFrameFlash * pixPerSec );
             painter.drawLine( xKeyFrame, hTemp, xKeyFrame, h );
@@ -465,26 +445,24 @@ void TimelineFrameSelector::mousePressEvent( QMouseEvent* event ) {
     bool shiftDown = event->modifiers() & Qt::Modifier::SHIFT;
     bool ctrlDown  = event->modifiers() & Qt::Modifier::CTRL;
     // ---------------------- LEFT CLICK --------------------------------------
-    if ( event->button() == Qt::LeftButton )
-    {
+    if ( event->button() == Qt::LeftButton ) {
         Scalar newCursor = std::max( Scalar( event->x() - m_timelineUI->m_scrollArea->getZero() ) /
                                          m_timelineUI->m_scrollArea->getPixPerSec(),
                                      0_ra );
         // move cursor without render
         if ( ctrlDown ) { onChangeCursor( newCursor, false ); }
         // delete keyFrames between cursor and newCursor
-        else if ( shiftDown )
-        { deleteZone( m_cursor, newCursor ); }
+        else if ( shiftDown ) {
+            deleteZone( m_cursor, newCursor );
+        }
         // move cursor and update renderer
-        else
-        {
+        else {
             onChangeCursor( newCursor );
             m_mouseLeftClicked = true;
         }
     }
     // ------------------ RIGHT CLICK -------------------------------------
-    else if ( event->button() == Qt::RightButton )
-    {
+    else if ( event->button() == Qt::RightButton ) {
         Scalar newFrame = std::max( Scalar( event->x() - m_timelineUI->m_scrollArea->getZero() ) /
                                         m_timelineUI->m_scrollArea->getPixPerSec(),
                                     0_ra );
@@ -493,23 +471,21 @@ void TimelineFrameSelector::mousePressEvent( QMouseEvent* event ) {
         } );
         // if already on keyFrame, move current KeyFrame
         // ------------------- CURSOR ON KEYFRAME -----------------------
-        if ( it != m_keyFrames.end() )
-        {
+        if ( it != m_keyFrames.end() ) {
             Scalar nearest = nearestStep( newFrame );
             // -------------- SINGLE MOVE -------------------------------------
-            if ( shiftDown )
-            {
+            if ( shiftDown ) {
                 // if no keyFrame under mouse, move KeyFrame to newFrame
                 auto it2 = std::find_if(
                     m_keyFrames.begin(), m_keyFrames.end(), [nearest]( const auto& t ) {
                         return Ra::Core::Math::areApproxEqual( t, nearest );
                     } );
-                if ( it2 == m_keyFrames.end() && ( std::abs( m_cursor - nearest ) > 1e-5_ra ) )
-                { onMoveKeyFrame( m_cursor, nearest ); }
+                if ( it2 == m_keyFrames.end() && ( std::abs( m_cursor - nearest ) > 1e-5_ra ) ) {
+                    onMoveKeyFrame( m_cursor, nearest );
+                }
             }
             // ---------- MULTIPLE MOVE -----------------------------------
-            else
-            {
+            else {
                 // if not before preceding KeyFrame, remove or insert time
                 auto itLeft = it;
                 --itLeft;
@@ -518,32 +494,30 @@ void TimelineFrameSelector::mousePressEvent( QMouseEvent* event ) {
             }
         }
         // ---------------- CURSOR NOT ON KEYFRAME --------------------------
-        else
-        {
+        else {
             // if shiftdown, slide first right KeyFrame to the left
             // --------------- MOVE RIGHT KEYFRAME TO THE LEFT -----------------
-            if ( shiftDown )
-            {
+            if ( shiftDown ) {
                 auto itRight = std::lower_bound( m_keyFrames.begin(), m_keyFrames.end(), newFrame );
                 // if KeyFrames on the right, remove or insert time
-                if ( itRight != m_keyFrames.end() )
-                { onMoveKeyFrames( *itRight, newFrame - *itRight ); }
+                if ( itRight != m_keyFrames.end() ) {
+                    onMoveKeyFrames( *itRight, newFrame - *itRight );
+                }
             }
             // if not shiftdown, slide first left KeyFrame to the right
             // ---------------- MOVE LEFT KEYFRAME TO THE RIGHT -----------
-            else
-            {
+            else {
                 auto itLeft =
                     --std::lower_bound( m_keyFrames.begin(), m_keyFrames.end(), newFrame );
                 // if KeyFrames on the left, remove or insert time
-                if ( itLeft != m_keyFrames.end() )
-                { onMoveKeyFrames( *itLeft, newFrame - *itLeft ); }
+                if ( itLeft != m_keyFrames.end() ) {
+                    onMoveKeyFrames( *itLeft, newFrame - *itLeft );
+                }
             }
         }
     }
     // no catch mouse event
-    else
-    {
+    else {
         event->ignore();
         return;
     }
@@ -551,39 +525,37 @@ void TimelineFrameSelector::mousePressEvent( QMouseEvent* event ) {
 }
 
 void TimelineFrameSelector::mouseMoveEvent( QMouseEvent* event ) {
-    if ( m_mouseLeftClicked )
-    {
+    if ( m_mouseLeftClicked ) {
         Scalar newCursor = std::max( Scalar( event->x() - m_timelineUI->m_scrollArea->getZero() ) /
                                          m_timelineUI->m_scrollArea->getPixPerSec(),
                                      0_ra );
 
         onChangeCursor( newCursor );
     }
-    else
-    { event->ignore(); }
+    else {
+        event->ignore();
+    }
 }
 
 void TimelineFrameSelector::mouseReleaseEvent( QMouseEvent* event ) {
-    if ( event->button() == Qt::LeftButton )
-    {
+    if ( event->button() == Qt::LeftButton ) {
         m_mouseLeftClicked = false;
         event->accept();
     }
-    else
-    { event->ignore(); }
+    else {
+        event->ignore();
+    }
 }
 
 void TimelineFrameSelector::updateCursorSpin() {
     auto it = std::find_if( m_keyFrames.begin(), m_keyFrames.end(), [this]( const auto& t ) {
         return Ra::Core::Math::areApproxEqual( t, m_cursor );
     } );
-    if ( it != m_keyFrames.end() )
-    {
+    if ( it != m_keyFrames.end() ) {
         m_timelineUI->m_cursorSpin->setStyleSheet( "background-color: yellow" );
         m_timelineUI->m_removeKeyFrameButton->setEnabled( true );
     }
-    else
-    {
+    else {
         m_timelineUI->m_cursorSpin->setStyleSheet( "background-color: #5555ff" );
         m_timelineUI->m_removeKeyFrameButton->setEnabled( false );
     }
@@ -618,11 +590,9 @@ Scalar TimelineFrameSelector::nearestStep( Scalar time ) const {
 
     Scalar newCursor = time;
 
-    for ( Scalar keyFrame : m_keyFrames )
-    {
+    for ( Scalar keyFrame : m_keyFrames ) {
         dist = qAbs( keyFrame - time );
-        if ( dist < deltaT && dist < minDist )
-        {
+        if ( dist < deltaT && dist < minDist ) {
             minDist   = dist;
             newCursor = keyFrame;
         }
@@ -630,20 +600,17 @@ Scalar TimelineFrameSelector::nearestStep( Scalar time ) const {
     }
 
     Scalar step = m_timelineUI->m_scrollArea->getStep();
-    for ( int i = 0; i < m_timelineUI->m_scrollArea->getNbInterval() - 1; ++i )
-    {
+    for ( int i = 0; i < m_timelineUI->m_scrollArea->getNbInterval() - 1; ++i ) {
         Scalar pos = i * step;
         dist       = std::abs( pos - time );
-        if ( dist < deltaT && dist < minDist )
-        {
+        if ( dist < deltaT && dist < minDist ) {
             minDist   = dist;
             newCursor = pos;
         }
 
         pos  = i * step + 0.5_ra * step;
         dist = std::abs( pos - time );
-        if ( dist < deltaT && dist < minDist )
-        {
+        if ( dist < deltaT && dist < minDist ) {
             minDist   = dist;
             newCursor = pos;
         }
@@ -663,36 +630,33 @@ void TimelineFrameSelector::deleteZone( Scalar time, Scalar time2 ) {
     // remove KeyFrames
     auto it    = m_keyFrames.begin();
     bool first = true;
-    while ( it != m_keyFrames.end() )
-    {
+    while ( it != m_keyFrames.end() ) {
         Scalar keyFrame = *it;
 
-        if ( keyFrame >= left )
-        {
+        if ( keyFrame >= left ) {
             it = m_keyFrames.erase( it );
 
-            if ( keyFrame > right )
-            {
-                if ( first )
-                {
+            if ( keyFrame > right ) {
+                if ( first ) {
                     emit keyFramesMoved( std::distance( m_keyFrames.begin(), it ), -dist );
                     first = false;
                 }
                 it = m_keyFrames.insert( it, keyFrame - dist );
                 ++it;
             }
-            else
-            { emit keyFrameDeleted( std::distance( m_keyFrames.begin(), it ) ); }
+            else {
+                emit keyFrameDeleted( std::distance( m_keyFrames.begin(), it ) );
+            }
         }
-        else
-        { ++it; }
+        else {
+            ++it;
+        }
     }
     updateNbKeyFrameSpin();
 
     // update playzone
     Scalar newStart = std::max( std::max( std::min( m_start, left ), m_start - dist ), 0_ra );
-    if ( std::abs( newStart - m_start ) > 1e-5_ra )
-    {
+    if ( std::abs( newStart - m_start ) > 1e-5_ra ) {
         m_start = newStart;
         updateStartSpin();
 
@@ -700,8 +664,7 @@ void TimelineFrameSelector::deleteZone( Scalar time, Scalar time2 ) {
     }
 
     Scalar newEnd = std::max( std::max( std::min( m_end, left ), m_end - dist ), 0_ra );
-    if ( std::abs( newEnd - m_end ) > 1e-5_ra )
-    {
+    if ( std::abs( newEnd - m_end ) > 1e-5_ra ) {
         m_end = newEnd;
         updateEndSpin();
 

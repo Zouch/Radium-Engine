@@ -11,9 +11,9 @@ namespace Scene {
 
 Entity::Entity( const std::string& name ) :
     Core::Utils::IndexedObject(),
-    m_transform {Core::Transform::Identity()},
-    m_doubleBufferedTransform {Core::Transform::Identity()},
-    m_name {name} {}
+    m_transform { Core::Transform::Identity() },
+    m_doubleBufferedTransform { Core::Transform::Identity() },
+    m_name { name } {}
 
 Entity::~Entity() {
     // Ensure components are deleted before the entity for consistent
@@ -67,20 +67,17 @@ void Entity::removeComponent( const std::string& name ) {
 }
 
 void Entity::swapTransformBuffers() {
-    if ( m_transformChanged )
-    {
+    if ( m_transformChanged ) {
         m_transform        = m_doubleBufferedTransform;
         m_transformChanged = false;
     }
 }
 
 Core::Aabb Entity::computeAabb() {
-    if ( !m_isAabbValid )
-    {
+    if ( !m_isAabbValid ) {
         Core::Aabb aabb;
 
-        for ( const auto& component : m_components )
-        {
+        for ( const auto& component : m_components ) {
             // transform is applied in ro aabb computation ...
             aabb.extend( component->computeAabb() );
         }

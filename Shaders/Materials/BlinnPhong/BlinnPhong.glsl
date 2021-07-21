@@ -75,8 +75,7 @@ float getNs( Material material, vec2 texCoord ) {
 }
 
 vec3 getNormal( Material material, vec3 texCoord, vec3 N, vec3 T, vec3 B ) {
-    if ( material.tex.hasNormal == 1 )
-    {
+    if ( material.tex.hasNormal == 1 ) {
         vec3 normalLocal = normalize( vec3( texture( material.tex.normal, texCoord.xy ) ) * 2 - 1 );
         mat3 tbn;
         tbn[0] = T;
@@ -103,8 +102,9 @@ vec3 specularBSDF( Material material, vec3 texC, vec3 L, vec3 V, vec3 N ) {
     float Ns = getNs( material, texC.xy );
     vec3 H   = V + L;
     if ( length( H ) < 0.001 ) { H = N; }
-    else
-    { H = normalize( H ); }
+    else {
+        H = normalize( H );
+    }
     float D  = ( Ns + 1 ) * OneOver2Pi * pow( max( dot( N, H ), 0.0f ), Ns );
     float FV = 0.25f * pow( clamp( dot( L, H ), 0.001f, 1.f ), -3.f );
     return Ks * D * FV;

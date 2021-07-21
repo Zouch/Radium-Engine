@@ -11,8 +11,7 @@ LightData::LightData( const std::string& name, const LightType& type ) :
 LightData::LightData( const LightData& data ) :
     AssetData( data ), m_frame( data.m_frame ), m_type( data.m_type ), m_color( data.m_color ) {
 
-    switch ( m_type )
-    {
+    switch ( m_type ) {
     case POINT_LIGHT:
         m_pointlight = data.m_pointlight;
         break;

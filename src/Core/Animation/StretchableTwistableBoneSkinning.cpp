@@ -11,11 +11,9 @@ namespace Animation {
 
 WeightMatrix computeSTBS_weights( const Vector3Array& inMesh, const Skeleton& skel ) {
     std::vector<Eigen::Triplet<Scalar>> triplets;
-    for ( int i = 0; i < int( inMesh.size() ); ++i )
-    {
+    for ( int i = 0; i < int( inMesh.size() ); ++i ) {
         const auto& pi = inMesh[uint( i )];
-        for ( int j = 0; j < int( skel.size() ); ++j )
-        {
+        for ( int j = 0; j < int( skel.size() ); ++j ) {
             Vector3 a, b;
             skel.getBonePoints( uint( j ), a, b );
             const Vector3 ab = b - a;
@@ -34,8 +32,7 @@ void linearBlendSkinningSTBS( const SkinningRefData& refData,
                               SkinningFrameData& frameData ) {
     // reset all outputs
 #pragma omp parallel for
-    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
-    {
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i ) {
         frameData.m_currentPosition[i]  = Vector3::Zero();
         frameData.m_currentNormal[i]    = Vector3::Zero();
         frameData.m_currentTangent[i]   = Vector3::Zero();
@@ -48,8 +45,7 @@ void linearBlendSkinningSTBS( const SkinningRefData& refData,
     const auto& vertices = refData.m_referenceMesh.vertices();
     const auto& normals  = refData.m_referenceMesh.normals();
     // for each bone
-    for ( uint k = 0; k < refData.m_weights.outerSize(); ++k )
-    {
+    for ( uint k = 0; k < refData.m_weights.outerSize(); ++k ) {
         // get the bone's full stretch vector
         Vector3 a, b, a_, b_;
         refData.m_skeleton.getBonePoints( k, a, b );
@@ -65,8 +61,7 @@ void linearBlendSkinningSTBS( const SkinningRefData& refData,
         const int nonZero = refData.m_weights.col( k ).nonZeros();
         WeightMatrix::InnerIterator it0( refData.m_weights, k );
 #pragma omp parallel for
-        for ( int nz = 0; nz < nonZero; ++nz )
-        {
+        for ( int nz = 0; nz < nonZero; ++nz ) {
             WeightMatrix::InnerIterator it = it0 + Eigen::Index( nz );
             const uint i                   = it.row();
             const uint j                   = it.col();
@@ -98,8 +93,7 @@ DQList computeDQSTBS( const SkinningRefData& refData, const Skeleton& poseSkel )
     std::vector<DualQuaternion> poseDQ( relPose.size() );
 
     // for each bone
-    for ( uint k = 0; k < weight.outerSize(); ++k )
-    {
+    for ( uint k = 0; k < weight.outerSize(); ++k ) {
         // get the bone's full stretch vector "e_s"
         Vector3 a, b, a_, b_;
         refData.m_skeleton.getBonePoints( k, a, b );
@@ -115,8 +109,7 @@ DQList computeDQSTBS( const SkinningRefData& refData, const Skeleton& poseSkel )
         const int nonZero = weight.col( k ).nonZeros();
         WeightMatrix::InnerIterator it0( weight, k );
 #pragma omp parallel for
-        for ( int nz = 0; nz < nonZero; ++nz )
-        {
+        for ( int nz = 0; nz < nonZero; ++nz ) {
             WeightMatrix::InnerIterator itn = it0 + Eigen::Index( nz );
             const uint i                    = itn.row();
             const uint j                    = itn.col();
@@ -137,8 +130,7 @@ DQList computeDQSTBS( const SkinningRefData& refData, const Skeleton& poseSkel )
     }
     // Normalize all dual quats.
 #pragma omp parallel for
-    for ( int i = 0; i < int( DQ.size() ); ++i )
-    {
+    for ( int i = 0; i < int( DQ.size() ); ++i ) {
         DQ[i].normalize();
     }
     return DQ;
@@ -154,8 +146,7 @@ void RA_CORE_API dualQuaternionSkinningSTBS( const SkinningRefData& refData,
     const auto& vertices = refData.m_referenceMesh.vertices();
     const auto& normals  = refData.m_referenceMesh.normals();
 #pragma omp parallel for
-    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i )
-    {
+    for ( int i = 0; i < int( frameData.m_currentPosition.size() ); ++i ) {
         const auto& DQi                 = DQ[i];
         frameData.m_currentPosition[i]  = DQi.transform( vertices[i] );
         frameData.m_currentNormal[i]    = DQi.rotate( normals[i] );

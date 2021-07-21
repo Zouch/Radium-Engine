@@ -108,8 +108,7 @@ class BaseCouplingSystem : public _BaseAbstractSystem
     /// \see CoupledTimedSystem for practical usage
     template <typename Functor>
     inline bool conditionnaldispatch( Functor f, bool abortWhenInvalid = true ) {
-        for ( auto& s : m_systems )
-        {
+        for ( auto& s : m_systems ) {
             if ( !f( s ) && abortWhenInvalid ) return false;
         }
         return true;
@@ -118,8 +117,7 @@ class BaseCouplingSystem : public _BaseAbstractSystem
     /// \see conditionnaldispatch
     template <typename Functor>
     inline bool conditionnaldispatch( Functor f, bool abortWhenInvalid = true ) const {
-        for ( const auto& s : m_systems )
-        {
+        for ( const auto& s : m_systems ) {
             if ( !f( s ) && abortWhenInvalid ) return false;
         }
         return true;

@@ -186,7 +186,7 @@ class RA_ENGINE_API SkinningComponent : public Component
     Getter<Core::Utils::Index> m_renderObjectReader;
 
     /// Whether the skinned mesh is a TriangleMesh or a PolyMesh.
-    bool m_meshIsPoly {false};
+    bool m_meshIsPoly { false };
 
     /// Getter/Setter to the skinned mesh, in case it is a TriangleMesh.
     ReadWrite<Core::Geometry::TriangleMesh> m_triMeshWriter;

@@ -37,10 +37,12 @@ std::string getDirName( const std::string& path ) {
     // The directory is actually "/" because the last slash is in first position.
     // In that case we should return "/"
     if ( pos == 0 ) { res = "/"; }
-    else if ( pos < res.length() )
-    { res = res.substr( 0, pos ); }
-    else
-    { res = "."; }
+    else if ( pos < res.length() ) {
+        res = res.substr( 0, pos );
+    }
+    else {
+        res = ".";
+    }
 
     return res;
 }
@@ -55,8 +57,7 @@ std::string getBaseName( const std::string& path, bool keepExtension ) {
     // Now find the previous slash and cut the string.
     pos = res.find_last_of( '/' );
     if ( pos < res.length() ) { res = res.substr( pos + 1 ); }
-    if ( !keepExtension )
-    {
+    if ( !keepExtension ) {
         pos = res.find_last_of( '.' );
         if ( pos < res.length() ) { res = res.substr( 0, pos ); }
     }

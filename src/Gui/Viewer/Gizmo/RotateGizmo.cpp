@@ -21,14 +21,12 @@ RotateGizmo::RotateGizmo( Engine::Scene::Component* c,
     constexpr Scalar torusOutRadius   = .1_ra;
     constexpr Scalar torusAspectRatio = .08_ra;
     // For x,y,z
-    for ( uint i = 0; i < 3; ++i )
-    {
+    for ( uint i = 0; i < 3; ++i ) {
         Core::Geometry::TriangleMesh torus = Core::Geometry::makeParametricTorus<32>(
             torusOutRadius, torusAspectRatio * torusOutRadius );
         // Transform the torus from z-axis to axis i.
         auto& data = torus.verticesWithLock();
-        for ( auto& v : data )
-        {
+        for ( auto& v : data ) {
             v = .5_ra * v;
             if ( i < 2 ) { std::swap( v[2], v[i] ); }
         }
@@ -55,8 +53,7 @@ void RotateGizmo::updateTransform( Gizmo::Mode mode,
     m_transform                      = t;
     Core::Transform displayTransform = Core::Transform::Identity();
     displayTransform.translate( m_transform.translation() );
-    if ( m_mode == LOCAL )
-    {
+    if ( m_mode == LOCAL ) {
         Core::Matrix3 R = m_transform.rotation();
         R.col( 0 ).normalize();
         R.col( 1 ).normalize();
@@ -64,16 +61,14 @@ void RotateGizmo::updateTransform( Gizmo::Mode mode,
         displayTransform.rotate( R );
     }
 
-    for ( auto ro : ros() )
-    {
+    for ( auto ro : ros() ) {
         ro->setLocalTransform( m_worldTo * displayTransform );
     }
 }
 
 void RotateGizmo::selectConstraint( int drawableIdx ) {
     // deselect previously selected axis
-    if ( m_selectedAxis != -1 )
-    {
+    if ( m_selectedAxis != -1 ) {
         getControler( m_selectedAxis )->clearState();
         m_selectedAxis = -1;
     }
@@ -84,8 +79,7 @@ void RotateGizmo::selectConstraint( int drawableIdx ) {
     auto found = std::find_if( ros().cbegin(), ros().cend(), [drawableIdx]( const auto& ro ) {
         return ro->getIndex() == Core::Utils::Index( drawableIdx );
     } );
-    if ( found != ros().cend() )
-    {
+    if ( found != ros().cend() ) {
         m_selectedAxis = int( std::distance( ros().cbegin(), found ) );
         getControler( m_selectedAxis )->setState();
     }
@@ -113,8 +107,7 @@ Core::Transform RotateGizmo::mouseMove( const Core::Asset::Camera& cam,
     const Core::Vector3 rotationAxisW = m_worldTo * rotationAxis;
 
     // Initialize rotation
-    if ( !m_start )
-    {
+    if ( !m_start ) {
         m_start      = true;
         m_totalAngle = 0;
         m_initialRot = rotationMat;
@@ -129,8 +122,7 @@ Core::Transform RotateGizmo::mouseMove( const Core::Asset::Camera& cam,
     // Compute the rotation angle
     Scalar angle;
     // standard check  +  guard against precision issues
-    if ( hit1 && hit2 && hits1[0] > .2_ra && hits2[0] > .2_ra )
-    {
+    if ( hit1 && hit2 && hits1[0] > .2_ra && hits2[0] > .2_ra ) {
         // Do the calculations relative to the circle center.
         originalHit -= originW;
         currentHit -= originW;
@@ -142,37 +134,35 @@ Core::Transform RotateGizmo::mouseMove( const Core::Asset::Camera& cam,
 
         angle = Core::Math::sign( c.dot( rotationAxisW ) ) * std::atan2( c.norm(), d );
     }
-    else
-    {
+    else {
         // Rotation plane is orthogonal to the image plane
         Core::Vector2 dir = ( cam.projectToScreen( originW + rotationAxisW ).head<2>() -
                               cam.projectToScreen( originW ).head<2>() )
                                 .normalized();
         if ( std::abs( dir( 0 ) ) < 1e-3_ra ) { dir << 1, 0; }
-        else if ( std::abs( dir( 1 ) ) < 1e-3_ra )
-        { dir << 0, 1; }
-        else
-        { dir = Core::Vector2( dir( 1 ), -dir( 0 ) ); }
+        else if ( std::abs( dir( 1 ) ) < 1e-3_ra ) {
+            dir << 0, 1;
+        }
+        else {
+            dir = Core::Vector2( dir( 1 ), -dir( 0 ) );
+        }
         Scalar diag = std::min( cam.getWidth(), cam.getHeight() );
         angle       = dir.dot( ( nextXY - m_initialPix ) ) * 8_ra / diag;
     }
     if ( std::isnan( angle ) ) { angle = 0_ra; }
     // Apply rotation
     Core::Vector2 nextXY_ = nextXY;
-    if ( stepped )
-    {
+    if ( stepped ) {
         angle = int( angle / step ) * step;
         if ( Core::Math::areApproxEqual( angle, 0_ra ) ) { nextXY_ = m_initialPix; }
-        if ( !m_stepped )
-        {
+        if ( !m_stepped ) {
             Scalar diff = m_totalAngle - int( m_totalAngle / step ) * step;
             angle -= diff;
         }
     }
     m_stepped = stepped;
     m_totalAngle += angle;
-    if ( !Core::Math::areApproxEqual( angle, 0_ra ) )
-    {
+    if ( !Core::Math::areApproxEqual( angle, 0_ra ) ) {
         auto newRot = Core::AngleAxis( angle, rotationAxis ) * rotationMat;
         m_transform.fromPositionOrientationScale( origin, newRot, scaleMat.diagonal() );
     }

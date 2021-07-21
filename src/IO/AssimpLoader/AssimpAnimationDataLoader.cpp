@@ -30,20 +30,17 @@ void AssimpAnimationDataLoader::loadData( const aiScene* scene,
                                           std::vector<std::unique_ptr<AnimationData>>& data ) {
     data.clear();
 
-    if ( scene == nullptr )
-    {
+    if ( scene == nullptr ) {
         LOG( logDEBUG ) << "AssimpAnimationDataLoader : scene is nullptr.";
         return;
     }
 
-    if ( !sceneHasAnimation( scene ) )
-    {
+    if ( !sceneHasAnimation( scene ) ) {
         LOG( logDEBUG ) << "AssimpAnimationDataLoader : scene has no animation.";
         return;
     }
 
-    if ( m_verbose )
-    {
+    if ( m_verbose ) {
         LOG( logDEBUG ) << "File contains animation.";
         LOG( logDEBUG ) << "Animation Loading begin...";
     }
@@ -76,13 +73,11 @@ void AssimpAnimationDataLoader::fetchTime( const aiAnimation* anim, AnimationDat
     AnimationTime time;
     AnimationTime::Time dt;
     time.setStart( 0.0 );
-    if ( Ra::Core::Math::areApproxEqual( tick, 0_ra ) )
-    {
+    if ( Ra::Core::Math::areApproxEqual( tick, 0_ra ) ) {
         dt = 0.0;
         time.setEnd( duration );
     }
-    else
-    {
+    else {
         dt = Scalar( 1.0 ) / tick;
         time.setEnd( dt * duration );
     }
@@ -96,8 +91,7 @@ void AssimpAnimationDataLoader::loadAnimationData(
     std::vector<std::unique_ptr<AnimationData>>& data ) const {
     const uint size = sceneAnimationSize( scene );
     data.resize( size );
-    for ( uint i = 0; i < size; ++i )
-    {
+    for ( uint i = 0; i < size; ++i ) {
         aiAnimation* anim       = scene->mAnimations[i];
         AnimationData* animData = new AnimationData();
         fetchName( anim, animData );
@@ -113,8 +107,7 @@ void AssimpAnimationDataLoader::fetchAnimation( const aiAnimation* anim,
     const uint size    = anim->mNumChannels;
     AnimationTime time = data->getTime();
     std::vector<HandleAnimation> keyFrame( size );
-    for ( uint i = 0; i < size; ++i )
-    {
+    for ( uint i = 0; i < size; ++i ) {
         fetchHandleAnimation( anim->mChannels[i], keyFrame[i], data->getTimeStep() );
         time.extends( keyFrame[i].m_animationTime );
     }
@@ -151,22 +144,19 @@ void AssimpAnimationDataLoader::fetchHandleAnimation( aiNodeAnim* node,
                                      assimpToCore( node->mScalingKeys[0].mValue ) );
 
     // fetch the other keyframes
-    for ( uint i = 1; i < T_size; ++i )
-    {
+    for ( uint i = 1; i < T_size; ++i ) {
         time = Scalar( node->mPositionKeys[i].mTime ) + timeOffset;
         tr.insertKeyFrame( time, assimpToCore( node->mPositionKeys[i].mValue ) );
         keyFrame.insert( time );
     }
 
-    for ( uint i = 1; i < R_size; ++i )
-    {
+    for ( uint i = 1; i < R_size; ++i ) {
         time = Scalar( node->mRotationKeys[i].mTime ) + timeOffset;
         rot.insertKeyFrame( time, assimpToCore( node->mRotationKeys[i].mValue ) );
         keyFrame.insert( time );
     }
 
-    for ( uint i = 1; i < S_size; ++i )
-    {
+    for ( uint i = 1; i < S_size; ++i ) {
         time = Scalar( node->mScalingKeys[i].mTime ) + timeOffset;
         s.insertKeyFrame( time, assimpToCore( node->mScalingKeys[i].mValue ) );
         keyFrame.insert( time );
@@ -174,8 +164,7 @@ void AssimpAnimationDataLoader::fetchHandleAnimation( aiNodeAnim* node,
 
     // fill data
     data.m_animationTime = AnimationTime( *keyFrame.begin(), *keyFrame.rbegin() );
-    for ( const auto& t : keyFrame )
-    {
+    for ( const auto& t : keyFrame ) {
         Core::Transform T;
         T.fromPositionOrientationScale( tr.at( t, linearInterpolate<Core::Vector3> ),
                                         rot.at( t, linearInterpolate<Core::Quaternion> ),

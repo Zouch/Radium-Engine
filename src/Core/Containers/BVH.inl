@@ -71,22 +71,18 @@ inline void BVH<T>::buildBottomUpSlow() {
     std::vector<NodePtr> toMerge( m_leaves );
 
     // As long as there are several leaves to merge
-    while ( toMerge.size() > 2 )
-    {
+    while ( toMerge.size() > 2 ) {
         Scalar low = m_root_aabb.isEmpty() ? 0 : m_root_aabb.volume();
         typename std::vector<NodePtr>::iterator l_min, r_min;
         Aabb merge;
 
         for ( typename std::vector<NodePtr>::iterator it = toMerge.begin(); it != toMerge.end();
-              ++it )
-        {
+              ++it ) {
             for ( typename std::vector<NodePtr>::iterator it2 = ( it + 1 ); it2 != toMerge.end();
-                  ++it2 )
-            {
+                  ++it2 ) {
                 // Find the merger with smallest volume
                 merge = it->get()->getAabb().merged( it2->get()->getAabb() );
-                if ( merge.volume() < low )
-                {
+                if ( merge.volume() < low ) {
                     low   = merge.volume();
                     l_min = it;
                     r_min = it2;
@@ -113,24 +109,20 @@ template <typename T>
 inline void BVH<T>::getInFrustumSlow( std::vector<std::shared_ptr<T>>& objects,
                                       const Geometry::Frustum& frustum ) const {
 
-    if ( m_root )
-    {
+    if ( m_root ) {
         std::vector<NodePtr> toCheck;
         toCheck.push_back( m_root );
 
-        while ( !toCheck.empty() )
-        {
+        while ( !toCheck.empty() ) {
             NodePtr current = toCheck.back();
             toCheck.pop_back();
 
             if ( current->isFinal() )
                 objects.push_back( current->getData() );
-            else
-            {
+            else {
                 // If BBOX cuts the frustum, add child in toCheck list
                 bool isIn = true;
-                for ( uint i = 0; i < 6 && isIn; ++i )
-                {
+                for ( uint i = 0; i < 6 && isIn; ++i ) {
                     const auto& plane = frustum.getPlane( i );
                     Aabb aabb         = current->getAabb();
 
@@ -149,8 +141,7 @@ inline void BVH<T>::getInFrustumSlow( std::vector<std::shared_ptr<T>>& objects,
                         isIn = false;
                 }
 
-                if ( isIn )
-                {
+                if ( isIn ) {
                     toCheck.push_back( current->getLeftChild() );
                     toCheck.push_back( current->getRightChild() );
                 }

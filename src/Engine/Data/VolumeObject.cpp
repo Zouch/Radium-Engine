@@ -16,8 +16,7 @@ VolumeObject::VolumeObject( const std::string& name ) :
 VolumeObject::~VolumeObject() {}
 
 void VolumeObject::loadGeometry( Core::Geometry::AbstractVolume* volume, const Core::Aabb& aabb ) {
-    if ( volume != nullptr && volume->isDense() )
-    {
+    if ( volume != nullptr && volume->isDense() ) {
 
         m_mesh.loadGeometry( Core::Geometry::makeSharpBox( aabb ) );
 
@@ -52,20 +51,20 @@ void VolumeObject::loadGeometry( Core::Geometry::AbstractVolume* volume, const C
         m_volume = std::unique_ptr<Core::Geometry::AbstractVolume>( volume );
 
         auto dim = grid->size();
-        TextureParameters texparam {getName(),
-                                    GL_TEXTURE_3D,
-                                    size_t( dim( 0 ) ),
-                                    size_t( dim( 1 ) ),
-                                    size_t( dim( 2 ) ),
-                                    GL_RED,
-                                    GL_R32F,
-                                    GL_SCALAR,
-                                    GL_CLAMP_TO_BORDER,
-                                    GL_CLAMP_TO_BORDER,
-                                    GL_CLAMP_TO_BORDER,
-                                    GL_LINEAR,
-                                    GL_LINEAR,
-                                    grid->data().data()};
+        TextureParameters texparam { getName(),
+                                     GL_TEXTURE_3D,
+                                     size_t( dim( 0 ) ),
+                                     size_t( dim( 1 ) ),
+                                     size_t( dim( 2 ) ),
+                                     GL_RED,
+                                     GL_R32F,
+                                     GL_SCALAR,
+                                     GL_CLAMP_TO_BORDER,
+                                     GL_CLAMP_TO_BORDER,
+                                     GL_CLAMP_TO_BORDER,
+                                     GL_LINEAR,
+                                     GL_LINEAR,
+                                     grid->data().data() };
         m_tex.setParameters( texparam );
 
         m_isDirty = true;
@@ -77,8 +76,7 @@ void VolumeObject::loadGeometry( Core::Geometry::AbstractVolume* volume ) {
 }
 
 void VolumeObject::updateGL() {
-    if ( m_isDirty )
-    {
+    if ( m_isDirty ) {
         m_mesh.updateGL();
         GL_CHECK_ERROR;
         m_tex.initializeGL();

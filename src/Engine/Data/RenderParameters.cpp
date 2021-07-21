@@ -88,53 +88,43 @@ void RenderParameters::addParameter( const std::string& name, Data::Texture* tex
 }
 
 void RenderParameters::concatParameters( const RenderParameters& params ) {
-    for ( const auto& param : params.m_intParamsVector )
-    {
+    for ( const auto& param : params.m_intParamsVector ) {
         m_intParamsVector.insert( param );
     }
 
-    for ( const auto& param : params.m_uintParamsVector )
-    {
+    for ( const auto& param : params.m_uintParamsVector ) {
         m_uintParamsVector.insert( param );
     }
 
-    for ( const auto& param : params.m_scalarParamsVector )
-    {
+    for ( const auto& param : params.m_scalarParamsVector ) {
         m_scalarParamsVector.insert( param );
     }
 
-    for ( const auto& param : params.m_vec2ParamsVector )
-    {
+    for ( const auto& param : params.m_vec2ParamsVector ) {
         m_vec2ParamsVector.insert( param );
     }
 
-    for ( const auto& param : params.m_vec3ParamsVector )
-    {
+    for ( const auto& param : params.m_vec3ParamsVector ) {
         m_vec3ParamsVector.insert( param );
     }
 
-    for ( const auto& param : params.m_vec4ParamsVector )
-    {
+    for ( const auto& param : params.m_vec4ParamsVector ) {
         m_vec4ParamsVector.insert( param );
     }
 
-    for ( const auto& param : params.m_mat2ParamsVector )
-    {
+    for ( const auto& param : params.m_mat2ParamsVector ) {
         m_mat2ParamsVector.insert( param );
     }
 
-    for ( const auto& param : params.m_mat3ParamsVector )
-    {
+    for ( const auto& param : params.m_mat3ParamsVector ) {
         m_mat3ParamsVector.insert( param );
     }
 
-    for ( const auto& param : params.m_mat4ParamsVector )
-    {
+    for ( const auto& param : params.m_mat4ParamsVector ) {
         m_mat4ParamsVector.insert( param );
     }
 
-    for ( const auto& param : params.m_texParamsVector )
-    {
+    for ( const auto& param : params.m_texParamsVector ) {
         m_texParamsVector.insert( param );
     }
 }

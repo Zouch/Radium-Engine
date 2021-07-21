@@ -22,52 +22,48 @@
 
 find_package(Qt5 COMPONENTS Core REQUIRED)
 
-# Retrieve the absolute path to qmake and then use that path to find
-# the windeployqt binary
+# Retrieve the absolute path to qmake and then use that path to find the windeployqt binary
 get_target_property(_qmake_executable Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(_qt_bin_dir "${_qmake_executable}" DIRECTORY)
 find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${_qt_bin_dir}")
 
 # Running this with MSVC 2015 requires CMake 3.6+
-if((MSVC_VERSION VERSION_EQUAL 1900 OR MSVC_VERSION VERSION_GREATER 1900)
-        AND CMAKE_VERSION VERSION_LESS "3.6")
+if((MSVC_VERSION VERSION_EQUAL 1900 OR MSVC_VERSION VERSION_GREATER 1900) AND CMAKE_VERSION
+                                                                              VERSION_LESS "3.6"
+)
     message(WARNING "Deploying with MSVC 2015+ requires CMake 3.6+")
 endif()
 
-# Add commands that copy the Qt runtime to the target's output directory after
-# build and install the Qt runtime to the specified directory
+# Add commands that copy the Qt runtime to the target's output directory after build and install the
+# Qt runtime to the specified directory
 function(windeployqt target directory)
 
-	# execute windeployqt in a tmp directory after build
-    add_custom_command(TARGET ${target}
+    # execute windeployqt in a tmp directory after build
+    add_custom_command(
+        TARGET ${target}
         POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E rm -rf "${CMAKE_CURRENT_BINARY_DIR}/windeployqt-${target}"
         COMMAND set PATH="${_qt_bin_dir}"
-        COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/windeployqt-${target}"
-        COMMAND "${WINDEPLOYQT_EXECUTABLE}" --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt-${target}" --verbose 0 --no-compiler-runtime --no-translations --no-angle --release --no-opengl-sw "$<TARGET_FILE:${target}>"
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+                "${CMAKE_CURRENT_BINARY_DIR}/windeployqt-${target}"
+        COMMAND
+            "${WINDEPLOYQT_EXECUTABLE}" --dir "${CMAKE_CURRENT_BINARY_DIR}/windeployqt-${target}"
+            --verbose 0 --no-compiler-runtime --no-translations --no-angle --release --no-opengl-sw
+            "$<TARGET_FILE:${target}>"
         COMMENT "Run WinQTDeploy on ${target}"
-        USES_TERMINAL
-        COMMAND_EXPAND_LISTS
+        USES_TERMINAL COMMAND_EXPAND_LISTS
     )
 
-	# copy deployment directory during installation
-    install(
-        DIRECTORY
-        "${CMAKE_CURRENT_BINARY_DIR}/windeployqt-${target}/"
-        DESTINATION ${directory}
-    )
+    # copy deployment directory during installation
+    install(DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/windeployqt-${target}/" DESTINATION ${directory})
 
-    # windeployqt doesn't work correctly with the system runtime libraries,
-    # so we fall back to one of CMake's own modules for copying them over
+    # windeployqt doesn't work correctly with the system runtime libraries, so we fall back to one
+    # of CMake's own modules for copying them over
     set(CMAKE_INSTALL_UCRT_LIBRARIES TRUE)
     include(InstallRequiredSystemLibraries)
-    # foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS})
-    #     get_filename_component(filename "${lib}" NAME)
-    #     add_custom_command(TARGET ${target} POST_BUILD
-    #         COMMAND "${CMAKE_COMMAND}" -E
-    #             copy_if_different "${lib}" \"$<TARGET_FILE_DIR:${target}>\"
-    #     )
-    # endforeach()
+    # foreach(lib ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}) get_filename_component(filename "${lib}"
+    # NAME) add_custom_command(TARGET ${target} POST_BUILD COMMAND "${CMAKE_COMMAND}" -E
+    # copy_if_different "${lib}" \"$<TARGET_FILE_DIR:${target}>\" ) endforeach()
 
 endfunction()
 

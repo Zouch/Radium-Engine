@@ -5,7 +5,7 @@
 # run form scripts directory
 # ./generateFilelistForModule.sh Engine
 # ----------------------------------------------------
-set( engine_sources
+set(engine_sources
     Data/BlinnPhongMaterial.cpp
     Data/DrawPrimitives.cpp
     Data/LambertianMaterial.cpp
@@ -55,7 +55,7 @@ set( engine_sources
     Scene/SystemDisplay.cpp
 )
 
-set( engine_headers
+set(engine_headers
     Data/BlinnPhongMaterial.hpp
     Data/DisplayableObject.hpp
     Data/DrawPrimitives.hpp
@@ -114,7 +114,7 @@ set( engine_headers
     Scene/System.hpp
 )
 
-set( engine_inlines
+set(engine_inlines
     Data/BlinnPhongMaterial.inl
     Data/Material.inl
     Data/Mesh.inl

@@ -169,8 +169,7 @@ class RA_GUI_API BaseApplication : public QApplication
     void updateRadiumFrameIfNeeded() {
         // Main loop
         if ( m_isUpdateNeeded.load() ) radiumFrame();
-        if ( m_continuousUpdateRequest <= 0 )
-        {
+        if ( m_continuousUpdateRequest <= 0 ) {
             m_continuousUpdateRequest.store( 0 );
             m_isUpdateNeeded.store( false );
         }
@@ -270,10 +269,10 @@ class RA_GUI_API BaseApplication : public QApplication
     bool m_isAboutToQuit;
 
     /// If true update the viewer frame next time
-    std::atomic_bool m_isUpdateNeeded {true};
+    std::atomic_bool m_isUpdateNeeded { true };
 
     /// If counter is >= 0, continuously update viewer frame
-    std::atomic<int> m_continuousUpdateRequest {1};
+    std::atomic<int> m_continuousUpdateRequest { 1 };
 
     Plugins::Context m_pluginContext;
     QCommandLineParser* m_parser;

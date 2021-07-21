@@ -49,4 +49,3 @@ print("\n\nConfigure your Radium build with:")
 
 for key in dep:
     print(f"{key} {dep[key]['installdir']}")
-

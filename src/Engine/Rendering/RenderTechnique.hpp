@@ -177,7 +177,7 @@ class RA_ENGINE_API RenderTechnique final
 
   private:
     /// Maximum number of passses in the technique
-    static constexpr int s_maxNbPasses {32};
+    static constexpr int s_maxNbPasses { 32 };
 
     /// A pass configuration is a pair of Data::ShaderConfiguration and a Data::ShaderProgram
     using PassConfiguration = std::pair<Data::ShaderConfiguration, const Data::ShaderProgram*>;
@@ -197,9 +197,9 @@ class RA_ENGINE_API RenderTechnique final
 
     // Change this if there is more than 32 configurations
     /// Dirty bits representing the compiled state of passes. bit i is 1 if pass i is dirty
-    unsigned int m_dirtyBits {0xFFFFFFFF};
+    unsigned int m_dirtyBits { 0xFFFFFFFF };
     /// Bit arrays indicating which pass is active. Bit i is 1 if pass i is active
-    unsigned int m_setPasses {0x00000000};
+    unsigned int m_setPasses { 0x00000000 };
 };
 
 ///////////////////////////////////////////////

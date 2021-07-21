@@ -26,7 +26,7 @@ int main( int argc, char* argv[] ) {
     // Create app and show viewer window
     MinimalApp app( argc, argv );
     app.m_viewer->show();
-    app.m_viewer->resize( {500, 500} );
+    app.m_viewer->resize( { 500, 500 } );
     CORE_ASSERT( app.m_viewer->getContext()->isValid(), "OpenGL was not initialized" );
     // process all events so that everithing is initialized
     QApplication::processEvents();

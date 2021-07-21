@@ -35,7 +35,9 @@ struct PointToTriangleOutput {
     enum Flags { HIT_FACE = 0, HIT_VERTEX = 1, HIT_EDGE = 2 };
 
     PointToTriangleOutput() :
-        meshPoint( {0, 0, 0} ), distanceSquared( std::numeric_limits<Scalar>::max() ), flags( 0 ) {}
+        meshPoint( { 0, 0, 0 } ),
+        distanceSquared( std::numeric_limits<Scalar>::max() ),
+        flags( 0 ) {}
 
     Vector3 meshPoint;      //! the point hit on the mesh
     Scalar distanceSquared; //! distance squared to the point

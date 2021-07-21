@@ -1,5 +1,5 @@
 #!/bin/bash
-# dlyr 2020, based on 
+# dlyr 2020, based on
 # https://stackoverflow.com/questions/26983700/git-run-shell-command-for-each-commit
 # https://stackoverflow.com/questions/3824050/telling-if-a-git-commit-is-a-merge-revert-commit
 
@@ -18,7 +18,7 @@ else
     ko=""
     while read -r rev; do
 	echo "check " `git log -1 --pretty=oneline  --abbrev-commit  ${rev}`
-	ok=`gitismerge $rev` 
+	ok=`gitismerge $rev`
 	if [[ -n $ok ]]; then
 	    echo " ${rev} is a merge commit, please rebase and remove (e.g. squash) all merge commits";
 	    ko="1"
@@ -29,5 +29,5 @@ else
 	exit 0
     else
 	exit 1
-    fi	   
+    fi
 fi

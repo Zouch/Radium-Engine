@@ -15,8 +15,7 @@ Pose relativePose( const Pose& modelPose, const RestPose& restPose ) {
     CORE_ASSERT( compatible( modelPose, restPose ), " Poses with different size " );
     Pose T( restPose.size() );
 #pragma omp parallel for
-    for ( int i = 0; i < int( T.size() ); ++i )
-    {
+    for ( int i = 0; i < int( T.size() ); ++i ) {
         T[i] = modelPose[i] * restPose[i].inverse( Eigen::Affine );
     }
     return T;
@@ -25,8 +24,7 @@ Pose relativePose( const Pose& modelPose, const RestPose& restPose ) {
 Pose applyTransformation( const Pose& pose, const AlignedStdVector<Transform>& transform ) {
     Pose T( std::min( pose.size(), transform.size() ) );
 #pragma omp parallel for
-    for ( int i = 0; i < int( T.size() ); ++i )
-    {
+    for ( int i = 0; i < int( T.size() ); ++i ) {
         T[i] = transform[i] * pose[i];
     }
     return T;
@@ -35,8 +33,7 @@ Pose applyTransformation( const Pose& pose, const AlignedStdVector<Transform>& t
 Pose applyTransformation( const Pose& pose, const Transform& transform ) {
     Pose T( pose.size() );
 #pragma omp parallel for
-    for ( int i = 0; i < int( T.size() ); ++i )
-    {
+    for ( int i = 0; i < int( T.size() ); ++i ) {
         T[i] = transform * pose[i];
     }
     return T;
@@ -45,8 +42,7 @@ Pose applyTransformation( const Pose& pose, const Transform& transform ) {
 bool areEqual( const Pose& p0, const Pose& p1 ) {
     CORE_ASSERT( compatible( p0, p1 ), " Poses with different size " );
     const uint n = p0.size();
-    for ( uint i = 0; i < n; ++i )
-    {
+    for ( uint i = 0; i < n; ++i ) {
         if ( !p0[i].isApprox( p1[i] ) ) { return false; }
     }
     return true;
@@ -60,8 +56,7 @@ Pose interpolatePoses( const Pose& a, const Pose& b, const Scalar t ) {
     Pose interpolatedPose( size );
 
 #pragma omp parallel for
-    for ( int i = 0; i < int( size ); ++i )
-    {
+    for ( int i = 0; i < int( size ); ++i ) {
         interpolatedPose[i] = Math::linearInterpolate( a[i], b[i], t );
     }
 
