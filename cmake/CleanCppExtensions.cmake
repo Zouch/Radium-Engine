@@ -30,7 +30,7 @@ endmacro()
 #     external_header_only_add("Catch"
 #         "https://github.com/catchorg/Catch2.git" "origin/master" "single_include/catch2")
 # ~~~
-# Use with: *    target_link_libraries(unittests Catch) This will add the INCLUDE_FOLDER_PATH to the
+# Use with target_link_libraries(unittests Catch) This will add the INCLUDE_FOLDER_PATH to the
 # `unittests` target.
 
 macro(external_header_only_add LIBNAME REPOSITORY GIT_TAG INCLUDE_FOLDER_PATH)

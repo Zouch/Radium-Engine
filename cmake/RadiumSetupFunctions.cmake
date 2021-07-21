@@ -664,11 +664,13 @@ endfunction()
 #         [PREFIX prefix] # <- add prefix to resrouces see install_target_resources doc
 # )
 # ~~~
+#
 # * NAME  must be an executable
 # * USE_PLUGINS The application uses Radium Plugins : install available plugins into the bundle if
 #   it is one
 # * RESOURCES accept a list of directories
 # * PREFIX add prefix to resrouces see install_target_resources doc
+#
 function(configure_radium_app)
     # "declare" and parse parameters
     cmake_parse_arguments(
@@ -721,12 +723,13 @@ endfunction()
 #         [INSTALL_IN_RADIUM_BUNDLE]
 # )
 # ~~~
+#
 # * NAME Name of the target (standard dynamic library) corresponding to the plugin
 # * RESOURCES Optional. List of resources directories (only directories are allowed for plugins)
 # * HELPER_LIBS Optional. List of libraries (local target or imported targets) the plugin depends on
 # * INSTALL_IN_RADIUM_BUNDLE Optional. If given, the plugin is installed into
 #   ${RADIUM_ROOT_DIR}/Plugins. If not, the installation is performed into ${CMAKE_INSTALL_PREFIX}
-
+#
 function(configure_radium_plugin)
     # "declare" and parse parameters
     cmake_parse_arguments(
@@ -846,11 +849,18 @@ endfunction()
 # ---------------------------------------------------------------------------------------------
 
 # This function configures the package `NAME` for installation and for further import in client
-# project using `find_package(<NAME>)`. mandatory parameters : NAME : The name of the package to
-# install PACKAGE_CONFIG : The package configuration file
+# project using `find_package(<NAME>)`.
 #
-# optional arguments PACKAGE_DIR : The directory in which the cmake package config file will be
-# installed (default <prefix>/lib/cmake/Radium)
+# Mandatory parameters
+#
+# * NAME : The name of the package to install
+# * PACKAGE_CONFIG : The package configuration file
+#
+# Optional arguments
+#
+# * PACKAGE_DIR : The directory in which the cmake package config file will be installed (default
+#   <prefix>/lib/cmake/Radium)
+#
 function(configure_radium_package)
     # parse and verify args
     cmake_parse_arguments(
@@ -882,15 +892,14 @@ endfunction()
 # in client project using `find_package(<TARGET>)`. mandatory parameters : TARGET : The name of the
 # target to install FILES : The list of files (headers) to install
 #
-# optional arguments
+# Optional arguments
 #
 # * TARGET_DIR : The directory where FILES will be installed (default : <prefix>/include/<TARGET>
-# * NAMESPACE : The namespace in which the library will be added (default Radium)
+# * NAMESPACE : The namespace in which the library will be added (default  Radium)
 # * PACKAGE_DIR : The directory in which the cmake package config file will be installed (default
 #   <prefix>/lib/cmake/Radium)
 # * PACKAGE_CONFIG : If given, a configure script, to be used by `find_package`, will be generated.
 #
-
 function(configure_radium_library)
     # parse and verify args
     cmake_parse_arguments(
@@ -1037,8 +1046,11 @@ function(print_target_properties tgt)
     endforeach(prop)
 endfunction(print_target_properties)
 
-# Add the directory location of a target to a variable usage * add_imported_dir( FROM targetName TO
-# varName) do nothing if either targetName or varName is not defined
+# Add the directory location of a target to a variable usage
+# ~~~
+# add_imported_dir( FROM targetName TO varName)
+# ~~~
+# do nothing if either targetName or varName is not defined
 function(add_imported_dir)
     # "declare" and parse parameters
     cmake_parse_arguments(

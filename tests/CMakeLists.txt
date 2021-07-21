@@ -47,8 +47,9 @@ if(MSVC OR MSVC_IDE OR MINGW)
     endif()
 endif()
 # ------------------------------------------------------------------------------
-# CTest test suite use add_test() to add a new test to the test suit. When executed test fails
-# (returns not 0), test failed. There are more options, check CMake documentation.
+# ---- CTest test suite --------------------------------------------------------
+# use add_test() to add a new test to the test suit. When executed test fails (returns not 0), test
+# failed. There are more options, check CMake documentation.
 #
 # the add_test() are done in subfolder's CMakeLists.txt
 

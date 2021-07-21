@@ -26,6 +26,7 @@
 # └───────────────────┘
 #
 # Depending of the DISPLAY_WIDTH value
+# ~~~
 
 # set default value
 if(NOT DEFINED DISPLAY_WIDTH)
